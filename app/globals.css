@@ -6,6 +6,9 @@
   --color-brand-neon: #85E320;        /* 2026 High-Energy Neon Accent */
   --color-brand-charcoal: #121212;    /* Stark Black */
   --color-brand-cream: #FAF8F5;       /* Warm Sand Background */
+  --color-brand-ddsl: #006A4E;        /* DDSL Green color */
+  --color-brand-sage: #E2ECE9;        /* Soft Sage Green for Inclusive Portal */
+  --color-brand-cream-dark: #FAF6F0;  /* Soothing Warm Cream panel background */
   
   --font-sans: var(--font-inter), sans-serif;
   --font-display: var(--font-jakarta), sans-serif; /* High-energy sports headers */

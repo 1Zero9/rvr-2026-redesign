@@ -1,0 +1,186 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum KitSubmissionStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum FunRunCheckoutStatus {
+  DRAFT
+  CHECKOUT_CREATED
+  PAID
+  CANCELLED
+  REFUNDED
+}
+
+enum DonationProvider {
+  SPOTFUND
+  PITCHIN
+  MANUAL
+}
+
+model KitCompetition {
+  id                  String                @id @default(cuid())
+  slug                String                @unique
+  title               String
+  subtitle            String?
+  templatePdfUrl      String
+  downloadLeadCount   Int                   @default(0)
+  votingOpen          Boolean               @default(true)
+  submissionDeadline  DateTime?
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+  submissions         KitDesignSubmission[]
+}
+
+model KitDesignSubmission {
+  id              String              @id @default(cuid())
+  competitionId   String
+  designerName    String
+  designerAge     Int?
+  guardianName    String?
+  email           String
+  title           String
+  story           String?
+  fileUrl         String
+  fileMimeType    String
+  thumbnailUrl    String?
+  status          KitSubmissionStatus @default(PENDING)
+  voteCount       Int                 @default(0)
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+  competition     KitCompetition      @relation(fields: [competitionId], references: [id], onDelete: Cascade)
+  votes           KitDesignVote[]
+
+  @@index([competitionId, status])
+}
+
+model KitDesignVote {
+  id             String              @id @default(cuid())
+  submissionId   String
+  voterHash      String
+  createdAt      DateTime            @default(now())
+  submission     KitDesignSubmission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+
+  @@unique([submissionId, voterHash])
+  @@index([voterHash])
+}
+
+model FunRunCampaign {
+  id                    String               @id @default(cuid())
+  slug                  String               @unique
+  title                 String
+  dateLabel             String
+  locationLabel         String
+  registrationFeeCents  Int
+  stripePriceId         String?
+  targetAmountCents     Int
+  provider              DonationProvider     @default(SPOTFUND)
+  providerCampaignUrl   String?
+  providerCampaignId    String?
+  raisedAmountCents     Int                  @default(0)
+  createdAt             DateTime             @default(now())
+  updatedAt             DateTime             @updatedAt
+  merchItems            FunRunMerchItem[]
+  registrations         FunRunRegistration[]
+  donations             DonationTransaction[]
+}
+
+model FunRunMerchItem {
+  id             String                  @id @default(cuid())
+  campaignId     String
+  name           String
+  description    String?
+  priceCents     Int
+  stockQuantity  Int?
+  active         Boolean                 @default(true)
+  campaign       FunRunCampaign          @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  selections     FunRunMerchSelection[]
+
+  @@index([campaignId, active])
+}
+
+model FunRunRegistration {
+  id                         String                  @id @default(cuid())
+  campaignId                 String
+  participantFirstName       String
+  participantLastName        String
+  participantAge             Int
+  guardianName               String
+  guardianEmail              String
+  guardianPhone              String
+  emergencyContactName       String
+  emergencyContactPhone      String
+  medicalNotes               String?
+  consentToPhotography       Boolean                 @default(false)
+  marketingConsent           Boolean                 @default(false)
+  checkoutStatus             FunRunCheckoutStatus    @default(DRAFT)
+  stripeCheckoutSessionId    String?                 @unique
+  totalAmountCents           Int
+  createdAt                  DateTime                @default(now())
+  updatedAt                  DateTime                @updatedAt
+  campaign                   FunRunCampaign          @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  merchSelections            FunRunMerchSelection[]
+
+  @@index([campaignId, checkoutStatus])
+  @@index([guardianEmail])
+}
+
+model FunRunMerchSelection {
+  id              String             @id @default(cuid())
+  registrationId  String
+  merchItemId     String
+  quantity        Int                @default(1)
+  unitPriceCents  Int
+  registration    FunRunRegistration @relation(fields: [registrationId], references: [id], onDelete: Cascade)
+  merchItem       FunRunMerchItem    @relation(fields: [merchItemId], references: [id], onDelete: Restrict)
+
+  @@unique([registrationId, merchItemId])
+}
+
+model DonationTransaction {
+  id                     String          @id @default(cuid())
+  campaignId             String
+  provider               DonationProvider
+  providerTransactionId   String?
+  donorDisplayName       String?
+  amountCents            Int
+  message                String?
+  createdAt              DateTime        @default(now())
+  campaign               FunRunCampaign  @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+
+  @@index([campaignId, createdAt])
+}
+
+model LottoWidget {
+  id                 String            @id @default(cuid())
+  slug               String            @unique
+  jackpotCents       Int
+  currency           String            @default("EUR")
+  nextDrawLabel      String
+  providerName       String
+  providerUrl        String
+  active             Boolean           @default(true)
+  updatedAt          DateTime          @updatedAt
+  recentResults      LottoDrawResult[]
+}
+
+model LottoDrawResult {
+  id              String       @id @default(cuid())
+  lottoWidgetId   String
+  drawDate        DateTime
+  numbers         Int[]
+  bonusNumber     Int?
+  winnerSummary   String?
+  jackpotCents    Int
+  widget          LottoWidget  @relation(fields: [lottoWidgetId], references: [id], onDelete: Cascade)
+
+  @@index([lottoWidgetId, drawDate])
+}

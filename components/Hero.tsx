@@ -34,7 +34,7 @@ export default function Hero() {
       </div>
       <div className="absolute bottom-16 right-12 hidden lg:block -rotate-6 scale-95 hover:rotate-2 transition-transform duration-300">
         <div className="bg-white text-brand-green font-display font-black text-sm px-5 py-3 border-3 border-brand-charcoal rounded-2xl shadow-brutalist-green">
-          ★ DUBLIN'S BEST Astro Pitch
+          ★ DUBLIN&apos;S BEST Astro Pitch
         </div>
       </div>
 
@@ -53,7 +53,7 @@ export default function Hero() {
         
         {/* Descriptive Pitch */}
         <p className="font-sans text-lg md:text-2xl text-zinc-200 max-w-2xl mx-auto mb-12 leading-relaxed font-medium">
-          Rivervalley Rangers AFC is Swords' premier soccer club. Empowering local athletes across all ages, formats, and levels.
+          Rivervalley Rangers AFC is Swords&apos; premier soccer club. Empowering local athletes across all ages, formats, and levels.
         </p>
 
         {/* Double CTA Buttons */}
@@ -67,11 +67,11 @@ export default function Hero() {
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
-              stroke-width="3"
+              strokeWidth="3"
               stroke="currentColor"
               className="w-5 h-5 group-hover:translate-x-1 transition-transform"
             >
-              <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
             </svg>
           </a>
           
@@ -84,13 +84,13 @@ export default function Hero() {
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
-              stroke-width="3"
+              strokeWidth="3"
               stroke="currentColor"
               className="w-5 h-5 group-hover:rotate-12 transition-transform"
             >
               <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
+                strokeLinecap="round"
+                strokeLinejoin="round"
                 d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"
               />
             </svg>

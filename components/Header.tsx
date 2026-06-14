@@ -1,6 +1,7 @@
 'use client'; // Next.js Client Component
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 
 export default function Header() {
   const [activeMenu, setActiveMenu] = useState<'none' | 'equality' | 'format'>('none');
@@ -23,7 +24,7 @@ export default function Header() {
         <div className="max-w-6xl mx-auto px-4 md:px-6 h-20 flex items-center justify-between">
           
           {/* Logo Brand area */}
-          <a href="/" className="flex items-center gap-2 group">
+          <Link href="/" className="flex items-center gap-2 group">
             <div className="w-10 h-10 rounded-xl bg-brand-green border-2 border-brand-charcoal flex items-center justify-center shadow-[2px_2px_0px_0px_rgba(18,18,18,1)] group-hover:-translate-y-0.5 group-hover:shadow-[3px_3px_0px_0px_rgba(18,18,18,1)] transition-all">
               <span className="font-display font-black text-brand-neon text-xl italic select-none">R</span>
             </div>
@@ -35,7 +36,7 @@ export default function Header() {
                 Rangers AFC
               </span>
             </div>
-          </a>
+          </Link>
 
           {/* Desktop Navigation Links */}
           <nav className="hidden md:flex items-center gap-6">
@@ -48,8 +49,8 @@ export default function Header() {
               }`}
             >
               Teams (Equality-First)
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" className={`w-4 h-4 transition-transform duration-200 ${activeMenu === 'equality' ? 'rotate-180' : ''}`}>
-                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor" className={`w-4 h-4 transition-transform duration-200 ${activeMenu === 'equality' ? 'rotate-180' : ''}`}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
               </svg>
             </button>
 
@@ -62,8 +63,8 @@ export default function Header() {
               }`}
             >
               Squads by Format
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" className={`w-4 h-4 transition-transform duration-200 ${activeMenu === 'format' ? 'rotate-180' : ''}`}>
-                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor" className={`w-4 h-4 transition-transform duration-200 ${activeMenu === 'format' ? 'rotate-180' : ''}`}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
               </svg>
             </button>
 
@@ -78,6 +79,9 @@ export default function Header() {
 
           {/* Right Action Button (Desktop) */}
           <div className="hidden md:flex items-center gap-4">
+            <a href="/membership-calculator" className="font-display font-bold text-sm uppercase tracking-wide text-brand-charcoal hover:text-brand-green px-2 py-1 transition-colors">
+              Fees Calculator
+            </a>
             <a href="/astro-booking" className="btn-brutalist-neon px-5 py-2.5 text-sm">
               Book Astro
             </a>
@@ -90,12 +94,12 @@ export default function Header() {
             aria-label="Toggle Navigation Menu"
           >
             {mobileMenuOpen ? (
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" className="w-6 h-6 text-brand-charcoal">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor" className="w-6 h-6 text-brand-charcoal">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
               </svg>
             ) : (
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" className="w-6 h-6 text-brand-charcoal">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor" className="w-6 h-6 text-brand-charcoal">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
               </svg>
             )}
           </button>
@@ -113,7 +117,7 @@ export default function Header() {
                   Equality First
                 </div>
                 <h3 className="font-display font-black text-2xl text-brand-green italic uppercase mb-6 flex items-center gap-2">
-                  <span className="text-3xl">♀</span> Girls & Women's Pathway
+                  <span className="text-3xl">♀</span> Girls &amp; Women&apos;s Pathway
                 </h3>
                 <div className="grid grid-cols-2 gap-6">
                   <div>
@@ -150,7 +154,7 @@ export default function Header() {
               {/* Boys & Men's Section (Secondary Right Position) */}
               <div className="p-6 bg-white border-3 border-brand-charcoal rounded-2xl shadow-brutalist relative overflow-hidden">
                 <h3 className="font-display font-black text-2xl text-brand-charcoal italic uppercase mb-6 flex items-center gap-2">
-                  <span className="text-3xl">♂</span> Boys & Men's Pathway
+                  <span className="text-3xl">♂</span> Boys &amp; Men&apos;s Pathway
                 </h3>
                 <div className="grid grid-cols-2 gap-6">
                   <div>
@@ -231,9 +235,14 @@ export default function Header() {
                   <p className="text-xs text-brand-muted mt-3 mb-4 leading-tight">
                     Competitive leagues, high-performance coaching and fitness modules.
                   </p>
-                  <a href="/programmes/youths" className="text-xs font-extrabold text-brand-green hover:underline flex items-center gap-1">
-                    View Leagues →
-                  </a>
+                  <div className="flex flex-col gap-2">
+                    <a href="/programmes/youths" className="text-xs font-extrabold text-brand-green hover:underline flex items-center gap-1">
+                      View Leagues →
+                    </a>
+                    <a href="/ddsl-jmo" className="text-xs font-extrabold text-brand-ddsl hover:underline flex items-center gap-1">
+                      Referee Program (16+) →
+                    </a>
+                  </div>
                 </div>
 
                 {/* Q3: Seniors */}
@@ -269,7 +278,7 @@ export default function Header() {
                   <p className="text-xs text-brand-muted mt-3 mb-4 leading-tight">
                     Pan-disability programs, sensory sessions, and accessibility football.
                   </p>
-                  <a href="/programmes/inclusive" className="text-xs font-extrabold text-brand-green hover:underline flex items-center gap-1">
+                  <a href="/football-for-all" className="text-xs font-extrabold text-brand-green hover:underline flex items-center gap-1">
                     View Accessibility →
                   </a>
                 </div>
@@ -295,8 +304,8 @@ export default function Header() {
                 className="w-full flex items-center justify-between font-display font-black text-lg text-brand-green uppercase italic"
               >
                 <span>♀/♂ Teams Pathway</span>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" className={`w-5 h-5 transition-transform ${mobileEqualityOpen ? 'rotate-180' : ''}`}>
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="3" stroke="currentColor" className={`w-5 h-5 transition-transform ${mobileEqualityOpen ? 'rotate-180' : ''}`}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
                 </svg>
               </button>
               {mobileEqualityOpen && (
@@ -327,16 +336,17 @@ export default function Header() {
                 className="w-full flex items-center justify-between font-display font-black text-lg text-brand-charcoal uppercase italic"
               >
                 <span>Format & Level</span>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" className={`w-5 h-5 transition-transform ${mobileFormatOpen ? 'rotate-180' : ''}`}>
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="3" stroke="currentColor" className={`w-5 h-5 transition-transform ${mobileFormatOpen ? 'rotate-180' : ''}`}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
                 </svg>
               </button>
               {mobileFormatOpen && (
                 <div className="mt-4 pt-4 border-t border-zinc-200 space-y-4 text-sm font-semibold pl-2">
                   <a href="/programmes/juniors" className="block text-brand-charcoal hover:text-brand-green">Junior Academy [U7-U12]</a>
                   <a href="/programmes/youths" className="block text-brand-charcoal hover:text-brand-green">Youth Competitive [U13-U18]</a>
+                  <a href="/ddsl-jmo" className="block text-brand-ddsl hover:text-brand-green font-bold">Join JMO Referee Program (16+)</a>
                   <a href="/programmes/seniors" className="block text-brand-charcoal hover:text-brand-green">Seniors [Adult]</a>
-                  <a href="/programmes/inclusive" className="block text-brand-charcoal hover:text-brand-green">Inclusive Football For All</a>
+                  <a href="/football-for-all" className="block text-brand-charcoal hover:text-brand-green font-bold">Inclusive Football For All</a>
                 </div>
               )}
             </div>
@@ -354,8 +364,8 @@ export default function Header() {
             <a href="/astro-booking" className="btn-brutalist-neon py-3 text-center text-base">
               Book Astro Pitch
             </a>
-            <a href="/join" className="btn-brutalist-green py-3 text-center text-base">
-              Join Academy
+            <a href="/membership-calculator" className="btn-brutalist-green py-3 text-center text-base">
+              Fees Calculator
             </a>
           </div>
 

@@ -1,6 +1,34 @@
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import Stats from "@/components/Stats";
+import LottoWidget from "@/components/campaigns/LottoWidget";
+import type { LottoWidgetData } from "@/types/campaigns";
+
+const lottoData: LottoWidgetData = {
+  jackpotCents: 420000,
+  currency: "EUR",
+  nextDrawLabel: "Sunday, 21 June",
+  providerName: "Clubforce",
+  providerUrl: "https://clubforce.com/",
+  recentResults: [
+    {
+      id: "draw-2026-06-07",
+      drawDate: "2026-06-07T20:00:00.000Z",
+      numbers: [3, 11, 18, 24],
+      bonusNumber: 29,
+      winnerSummary: "No jackpot winner. Three match-three prizes paid.",
+      jackpotCents: 400000,
+    },
+    {
+      id: "draw-2026-05-31",
+      drawDate: "2026-05-31T20:00:00.000Z",
+      numbers: [6, 9, 15, 27],
+      bonusNumber: 31,
+      winnerSummary: "No jackpot winner. Next draw rolled over.",
+      jackpotCents: 380000,
+    },
+  ],
+};
 
 export default function Home() {
   return (
@@ -9,6 +37,7 @@ export default function Home() {
       <main className="flex-grow">
         <Hero />
         <Stats />
+        <LottoWidget data={lottoData} />
       </main>
       
       {/* Simple, premium footer */}
@@ -19,7 +48,7 @@ export default function Home() {
               RIVERVALLEY RANGERS AFC
             </h4>
             <p className="text-zinc-400 text-sm leading-relaxed max-w-xs">
-              Swords' leading community football club, established in 1981. Dedicated to equality, youth development, and inclusive sports.
+              Swords&apos; leading community football club, established in 1981. Dedicated to equality, youth development, and inclusive sports.
             </p>
           </div>
           <div>
