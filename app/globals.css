@@ -1,0 +1,105 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-green: #005C39;       /* RVR Deep Athletic Green */
+  --color-brand-green-dark: #004027;  /* Darker shade for contrast */
+  --color-brand-neon: #85E320;        /* 2026 High-Energy Neon Accent */
+  --color-brand-charcoal: #121212;    /* Stark Black */
+  --color-brand-cream: #FAF8F5;       /* Warm Sand Background */
+  
+  --font-sans: var(--font-inter), sans-serif;
+  --font-display: var(--font-jakarta), sans-serif; /* High-energy sports headers */
+
+  --border-width-3: 3px;
+  --border-width-4: 4px;
+
+  --shadow-brutalist: 6px 6px 0px 0px #121212;
+  --shadow-brutalist-green: 6px 6px 0px 0px #005C39;
+  --shadow-brutalist-neon: 4px 4px 0px 0px #85E320;
+  --shadow-hover-brutalist: 2px 2px 0px 0px #121212;
+  
+  --animate-bounce-spring: bounceSpring 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+}
+
+@keyframes bounceSpring {
+  0% { transform: scale(0.95); }
+  100% { transform: scale(1); }
+}
+
+:root {
+  --background: #FAF8F5;
+  --foreground: #121212;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  min-height: 100vh;
+}
+
+/* Glassmorphism Classes */
+.glass-frosted {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  background: rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.glass-liquid {
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  background: rgba(255, 255, 255, 0.45);
+  border: 2px solid rgba(255, 255, 255, 0.35);
+}
+
+/* Cute-alism Elements */
+.brutalist-card {
+  border: 4px solid #121212;
+  border-radius: 1rem;
+  background-color: #FFFFFF;
+  box-shadow: 6px 6px 0px 0px #121212;
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.brutalist-card:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 8px 8px 0px 0px #121212;
+}
+
+.btn-brutalist-neon {
+  border: 3px solid #121212;
+  border-radius: 9999px;
+  background-color: #85E320;
+  color: #121212;
+  box-shadow: 4px 4px 0px 0px #121212;
+  transition: all 0.15s ease-in-out;
+  font-weight: 800;
+  text-transform: uppercase;
+  font-family: var(--font-display);
+}
+
+.btn-brutalist-neon:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 5px 5px 0px 0px #121212;
+  background-color: #96f431;
+}
+
+.btn-brutalist-green {
+  border: 3px solid #121212;
+  border-radius: 9999px;
+  background-color: #005C39;
+  color: #FFFFFF;
+  box-shadow: 4px 4px 0px 0px #121212;
+  transition: all 0.15s ease-in-out;
+  font-weight: 800;
+  text-transform: uppercase;
+  font-family: var(--font-display);
+}
+
+.btn-brutalist-green:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 5px 5px 0px 0px #121212;
+  background-color: #007347;
+}
+
