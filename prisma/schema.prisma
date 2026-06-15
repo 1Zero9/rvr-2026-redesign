@@ -6,389 +6,274 @@ datasource db {
   provider = "postgresql"
 }
 
-enum KitSubmissionStatus {
+/// Vetting status for any adult who needs safeguarding clearance.
+enum VettingStatus {
+  PENDING
+  APPROVED
+  EXPIRED
+}
+
+/// Consent status for privacy-sensitive youth profile features.
+enum ConsentStatus {
+  NOT_REQUESTED
+  PENDING
+  SIGNED
+  REVOKED
+}
+
+/// Payment state for campaign orders, donations, and fundraising entries.
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
+
+/// Publication state for public-facing community submissions.
+enum ModerationStatus {
   PENDING
   APPROVED
   REJECTED
 }
 
-enum FunRunCheckoutStatus {
-  DRAFT
-  CHECKOUT_CREATED
-  PAID
-  CANCELLED
-  REFUNDED
+/// Campaign type for community fundraising modules.
+enum FundraisingCampaignType {
+  KIT_DESIGN
+  FUN_RUN
+  LOTTO
+  DONATION
 }
 
-enum DonationProvider {
-  SPOTFUND
-  PITCHIN
-  MANUAL
+/// Kit and event merchandise sizing options.
+enum ClothingSize {
+  CHILD_SMALL
+  CHILD_MEDIUM
+  CHILD_LARGE
+  ADULT_SMALL
+  ADULT_MEDIUM
+  ADULT_LARGE
+  ADULT_EXTRA_LARGE
 }
 
-model KitCompetition {
-  id                  String                @id @default(cuid())
-  slug                String                @unique
-  title               String
-  subtitle            String?
-  templatePdfUrl      String
-  downloadLeadCount   Int                   @default(0)
-  votingOpen          Boolean               @default(true)
-  submissionDeadline  DateTime?
-  createdAt           DateTime              @default(now())
-  updatedAt           DateTime              @updatedAt
-  submissions         KitDesignSubmission[]
+/// Privacy-guarded player profile for mobile player cards.
+model PlayerProfile {
+  id                    String          @id @default(cuid())
+  firstName             String
+  lastName              String
+  displayName           String
+  yearOfBirth           Int
+  teamName              String?
+  position              String?
+  profileSummary        String?
+  cardImageUrl          String?
+  isPrivate             Boolean         @default(true)
+  photoConsentStatus    ConsentStatus   @default(NOT_REQUESTED)
+  medicalConsentStatus  ConsentStatus   @default(NOT_REQUESTED)
+  dataConsentStatus     ConsentStatus   @default(NOT_REQUESTED)
+  parentConsents        ParentConsent[]
+  createdAt             DateTime        @default(now())
+  updatedAt             DateTime        @updatedAt
+
+  @@index([teamName])
+  @@index([isPrivate])
+  @@index([lastName, firstName])
+  @@index([photoConsentStatus, dataConsentStatus])
 }
 
-model KitDesignSubmission {
-  id              String              @id @default(cuid())
-  competitionId   String
-  designerName    String
-  designerAge     Int?
-  guardianName    String?
-  email           String
-  title           String
-  story           String?
-  fileUrl         String
-  fileMimeType    String
-  thumbnailUrl    String?
-  status          KitSubmissionStatus @default(PENDING)
-  voteCount       Int                 @default(0)
-  createdAt       DateTime            @default(now())
-  updatedAt       DateTime            @updatedAt
-  competition     KitCompetition      @relation(fields: [competitionId], references: [id], onDelete: Cascade)
-  votes           KitDesignVote[]
-
-  @@index([competitionId, status])
-}
-
-model KitDesignVote {
-  id             String              @id @default(cuid())
-  submissionId   String
-  voterHash      String
-  createdAt      DateTime            @default(now())
-  submission     KitDesignSubmission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
-
-  @@unique([submissionId, voterHash])
-  @@index([voterHash])
-}
-
-model KitSubmission {
-  id            String       @id @default(cuid())
-  designerName  String
-  teamName      String
-  imageUrl      String
-  votesCount    Int          @default(0)
-  isApproved    Boolean      @default(false)
-  createdAt     DateTime     @default(now())
-  voteRecords   VoteRecord[]
-
-  @@index([isApproved, createdAt])
-  @@index([votesCount])
-}
-
-model VoteRecord {
+/// Digitally signed consent record for a player profile.
+model ParentConsent {
   id                 String        @id @default(cuid())
-  kitSubmissionId    String
-  voterFingerprint   String
-  createdAt          DateTime      @default(now())
-  kitSubmission      KitSubmission @relation(fields: [kitSubmissionId], references: [id], onDelete: Cascade)
+  playerProfileId    String
+  playerProfile      PlayerProfile @relation(fields: [playerProfileId], references: [id], onDelete: Cascade)
+  parentName         String
+  parentEmail        String
+  signatureHash      String
+  photoRelease       Boolean       @default(false)
+  medicalTreatment   Boolean       @default(false)
+  dataProcessing     Boolean       @default(false)
+  signedAt           DateTime      @default(now())
+  revokedAt          DateTime?
 
-  @@unique([kitSubmissionId, voterFingerprint])
+  @@index([parentEmail])
+  @@index([playerProfileId, signedAt])
+}
+
+/// Coach record for compliance checks, team assignment, and training history.
+model CoachProfile {
+  id                         String        @id @default(cuid())
+  firstName                  String
+  lastName                   String
+  email                      String        @unique
+  phone                      String?
+  teamName                   String?
+  qualificationLevel         String?
+  vettingStatus              VettingStatus @default(PENDING)
+  vettingSubmittedAt         DateTime?
+  vettingApprovedAt          DateTime?
+  vettingExpiresAt           DateTime?
+  safeguardingTrainingAt     DateTime?
+  isActive                   Boolean       @default(true)
+  complianceChecks           ComplianceCheck[]
+  createdAt                  DateTime      @default(now())
+  updatedAt                  DateTime      @updatedAt
+
+  @@index([teamName])
+  @@index([vettingStatus])
+  @@index([isActive])
+  @@index([lastName, firstName])
+}
+
+/// Club welfare contact and policy ownership record.
+model ClubWelfareContact {
+  id                         String        @id @default(cuid())
+  roleTitle                  String
+  firstName                  String
+  lastName                   String
+  email                      String
+  phone                      String?
+  vettingStatus              VettingStatus @default(PENDING)
+  safeguardingTrainingAt     DateTime?
+  policyOwner                Boolean       @default(false)
+  publicContact              Boolean       @default(false)
+  isActive                   Boolean       @default(true)
+  complianceChecks           ComplianceCheck[]
+  createdAt                  DateTime      @default(now())
+  updatedAt                  DateTime      @updatedAt
+
+  @@index([roleTitle])
+  @@index([vettingStatus])
+  @@index([publicContact, isActive])
+}
+
+/// Compliance check that can be attached to either a coach or welfare contact.
+model ComplianceCheck {
+  id                    String              @id @default(cuid())
+  coachProfileId        String?
+  coachProfile          CoachProfile?       @relation(fields: [coachProfileId], references: [id], onDelete: Cascade)
+  welfareContactId      String?
+  welfareContact        ClubWelfareContact? @relation(fields: [welfareContactId], references: [id], onDelete: Cascade)
+  checkName             String
+  status                VettingStatus       @default(PENDING)
+  dueAt                 DateTime?
+  completedAt           DateTime?
+  notes                 String?
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+
+  @@index([coachProfileId, status])
+  @@index([welfareContactId, status])
+  @@index([status, dueAt])
+}
+
+/// Community fundraising campaign for kit design, events, donations, and lotto.
+model FundraisingCampaign {
+  id                  String                  @id @default(cuid())
+  slug                String                  @unique
+  title               String
+  campaignType        FundraisingCampaignType
+  targetAmountCents   Int
+  raisedAmountCents   Int                     @default(0)
+  startsAt            DateTime?
+  endsAt              DateTime?
+  isActive            Boolean                 @default(true)
+  donations           Donation[]
+  kitSubmissions      KitDesignSubmission[]
+  funRunRegistrations FunRunRegistration[]
+  lottoDraws          LottoDraw[]
+  createdAt           DateTime                @default(now())
+  updatedAt           DateTime                @updatedAt
+
+  @@index([campaignType, isActive])
+  @@index([slug])
+}
+
+/// Donation or sponsorship payment attached to a fundraising campaign.
+model Donation {
+  id                    String              @id @default(cuid())
+  campaignId            String
+  campaign              FundraisingCampaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  donorName             String?
+  donorEmail            String?
+  amountCents           Int
+  message               String?
+  paymentStatus         PaymentStatus       @default(PENDING)
+  paymentReference      String?             @unique
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+
+  @@index([campaignId, paymentStatus])
+  @@index([donorEmail])
+}
+
+/// Public kit design submission with moderation and vote tracking.
+model KitDesignSubmission {
+  id                String              @id @default(cuid())
+  campaignId        String
+  campaign          FundraisingCampaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  submitterName     String
+  submitterEmail    String
+  teamName          String?
+  designFileUrl     String
+  thumbnailUrl      String?
+  moderationStatus  ModerationStatus    @default(PENDING)
+  voteCount         Int                 @default(0)
+  votes             KitDesignVote[]
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+
+  @@index([campaignId, moderationStatus])
+  @@index([voteCount])
+}
+
+/// Vote record used to prevent repeated voting on the same kit design.
+model KitDesignVote {
+  id                    String              @id @default(cuid())
+  kitDesignSubmissionId String
+  kitDesignSubmission   KitDesignSubmission @relation(fields: [kitDesignSubmissionId], references: [id], onDelete: Cascade)
+  voterFingerprint      String
+  createdAt             DateTime            @default(now())
+
+  @@unique([kitDesignSubmissionId, voterFingerprint])
   @@index([voterFingerprint])
 }
 
-model FunRunCampaign {
-  id                    String               @id @default(cuid())
-  slug                  String               @unique
-  title                 String
-  dateLabel             String
-  locationLabel         String
-  registrationFeeCents  Int
-  stripePriceId         String?
-  targetAmountCents     Int
-  provider              DonationProvider     @default(SPOTFUND)
-  providerCampaignUrl   String?
-  providerCampaignId    String?
-  raisedAmountCents     Int                  @default(0)
-  createdAt             DateTime             @default(now())
-  updatedAt             DateTime             @updatedAt
-  merchItems            FunRunMerchItem[]
-  registrations         FunRunRegistration[]
-  donations             DonationTransaction[]
-}
-
-model FunRunMerchItem {
-  id             String                  @id @default(cuid())
-  campaignId     String
-  name           String
-  description    String?
-  priceCents     Int
-  stockQuantity  Int?
-  active         Boolean                 @default(true)
-  campaign       FunRunCampaign          @relation(fields: [campaignId], references: [id], onDelete: Cascade)
-  selections     FunRunMerchSelection[]
-
-  @@index([campaignId, active])
-}
-
+/// Fun run registration with optional merchandise and payment tracking.
 model FunRunRegistration {
-  id                         String                  @id @default(cuid())
-  campaignId                 String
-  participantFirstName       String
-  participantLastName        String
-  participantAge             Int
-  guardianName               String
-  guardianEmail              String
-  guardianPhone              String
-  emergencyContactName       String
-  emergencyContactPhone      String
-  medicalNotes               String?
-  consentToPhotography       Boolean                 @default(false)
-  marketingConsent           Boolean                 @default(false)
-  checkoutStatus             FunRunCheckoutStatus    @default(DRAFT)
-  stripeCheckoutSessionId    String?                 @unique
-  totalAmountCents           Int
-  createdAt                  DateTime                @default(now())
-  updatedAt                  DateTime                @updatedAt
-  campaign                   FunRunCampaign          @relation(fields: [campaignId], references: [id], onDelete: Cascade)
-  merchSelections            FunRunMerchSelection[]
+  id                   String              @id @default(cuid())
+  campaignId           String
+  campaign             FundraisingCampaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  participantName      String
+  participantAge       Int
+  guardianName         String
+  guardianEmail        String
+  guardianPhone        String
+  clothingSize         ClothingSize?
+  powderPackQuantity   Int                 @default(0)
+  sunglassesQuantity   Int                 @default(0)
+  totalAmountCents     Int
+  paymentStatus        PaymentStatus       @default(PENDING)
+  paymentReference     String?             @unique
+  createdAt            DateTime            @default(now())
+  updatedAt            DateTime            @updatedAt
 
-  @@index([campaignId, checkoutStatus])
+  @@index([campaignId, paymentStatus])
   @@index([guardianEmail])
 }
 
-model FunRunMerchSelection {
-  id              String             @id @default(cuid())
-  registrationId  String
-  merchItemId     String
-  quantity        Int                @default(1)
-  unitPriceCents  Int
-  registration    FunRunRegistration @relation(fields: [registrationId], references: [id], onDelete: Cascade)
-  merchItem       FunRunMerchItem    @relation(fields: [merchItemId], references: [id], onDelete: Restrict)
+/// Weekly lotto draw information for a public headless widget.
+model LottoDraw {
+  id                String              @id @default(cuid())
+  campaignId        String
+  campaign          FundraisingCampaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  drawDate          DateTime
+  jackpotCents      Int
+  winningNumbers    Int[]
+  bonusNumber       Int?
+  winnerSummary     String?
+  providerName      String
+  providerUrl       String
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
 
-  @@unique([registrationId, merchItemId])
-}
-
-model DonationTransaction {
-  id                     String          @id @default(cuid())
-  campaignId             String
-  provider               DonationProvider
-  providerTransactionId   String?
-  donorDisplayName       String?
-  amountCents            Int
-  message                String?
-  createdAt              DateTime        @default(now())
-  campaign               FunRunCampaign  @relation(fields: [campaignId], references: [id], onDelete: Cascade)
-
-  @@index([campaignId, createdAt])
-}
-
-model LottoWidget {
-  id                 String            @id @default(cuid())
-  slug               String            @unique
-  jackpotCents       Int
-  currency           String            @default("EUR")
-  nextDrawLabel      String
-  providerName       String
-  providerUrl        String
-  active             Boolean           @default(true)
-  updatedAt          DateTime          @updatedAt
-  recentResults      LottoDrawResult[]
-}
-
-model LottoDrawResult {
-  id              String       @id @default(cuid())
-  lottoWidgetId   String
-  drawDate        DateTime
-  numbers         Int[]
-  bonusNumber     Int?
-  winnerSummary   String?
-  jackpotCents    Int
-  widget          LottoWidget  @relation(fields: [lottoWidgetId], references: [id], onDelete: Cascade)
-
-  @@index([lottoWidgetId, drawDate])
-}
-
-// ---------------------------------------------------------------------------
-// Stripe Subscription Billing
-// ---------------------------------------------------------------------------
-
-enum SubscriptionStatus {
-  OPEN       // Created; awaiting first payment
-  PAID       // invoice.payment_succeeded — active and current
-  PAST_DUE   // invoice.payment_failed — grace period active
-  CANCELLED  // customer.subscription_deleted
-}
-
-/**
- * One StripeSubscription per billing contact (parent/guardian).
- * A single subscription can cover multiple MembershipOrders, allowing
- * one parent to be the named payer for several children registered
- * across different transactions.
- */
-model StripeSubscription {
-  id                   String             @id @default(cuid())
-  stripeSubscriptionId String             @unique
-  stripeCustomerId     String
-  status               SubscriptionStatus @default(OPEN)
-  currentPeriodStart   DateTime?
-  currentPeriodEnd     DateTime?
-  cancelledAt          DateTime?
-  billingEmail         String
-  billingName          String?
-  membershipOrders     MembershipOrder[]
-  createdAt            DateTime           @default(now())
-  updatedAt            DateTime           @updatedAt
-
-  @@index([stripeCustomerId])
-  @@index([status, currentPeriodEnd])
-  @@index([billingEmail])
-}
-
-// ---------------------------------------------------------------------------
-// FAI Safeguarding & Club Mark Compliance
-// ---------------------------------------------------------------------------
-
-enum StaffRole {
-  COACH
-  MENTOR
-  TEAM_MANAGER
-  WELFARE_OFFICER
-  COMMITTEE_MEMBER
-  VOLUNTEER
-}
-
-enum ComplianceAlertType {
-  VETTING_EXPIRING_SOON
-  VETTING_EXPIRED
-  SAFEGUARDING_1_MISSING
-  SAFEGUARDING_1_OUTDATED
-}
-
-enum AlertStatus {
-  PENDING
-  EMAIL_SENT
-  ACKNOWLEDGED
-  RESOLVED
-}
-
-model StaffMember {
-  id                       String            @id @default(cuid())
-  firstName                String
-  lastName                 String
-  email                    String            @unique
-  phone                    String?
-  role                     StaffRole
-
-  // FAI COMET system identifier — issued by FAI, not nullable once registered
-  faiCometId               String?           @unique
-
-  // Garda Vetting — via FAI COMET only (FAI Governance Handbook §12.3–12.4)
-  gardaVettingApprovedAt   DateTime?
-  isGardaVetted            Boolean           @default(false)
-  isVettingExpired         Boolean           @default(false)
-
-  // FAI Safeguarding 1 (Child Welfare & Safeguarding) certificate
-  safeguarding1CompletedAt DateTime?
-  isSafeguarding1Current   Boolean           @default(false)
-
-  // Derived Club Mark compliance flag — true only when all gates pass
-  isClubMarkCompliant      Boolean           @default(false)
-  lastComplianceCheckedAt  DateTime?
-
-  // Controls public API visibility
-  isActivelyCoaching       Boolean           @default(true)
-
-  teamAssignments          TeamAssignment[]
-  complianceAlerts         ComplianceAlert[]
-
-  createdAt                DateTime          @default(now())
-  updatedAt                DateTime          @updatedAt
-
-  @@index([isGardaVetted, isVettingExpired])
-  @@index([role])
-  @@index([faiCometId])
-  @@index([isClubMarkCompliant, isActivelyCoaching])
-}
-
-model TeamAssignment {
-  id        String      @id @default(cuid())
-  staffId   String
-  teamName  String      // e.g. "U10 Boys A"
-  ageGroup  String      // e.g. "U10"
-  season    String      // e.g. "2025-2026"
-  isPrimary Boolean     @default(false)
-  staff     StaffMember @relation(fields: [staffId], references: [id], onDelete: Cascade)
-
-  @@unique([staffId, teamName, season])
-  @@index([teamName, season])
-}
-
-model ComplianceAlert {
-  id          String              @id @default(cuid())
-  staffId     String
-  alertType   ComplianceAlertType
-  status      AlertStatus         @default(PENDING)
-  triggeredAt DateTime            @default(now())
-  emailSentAt DateTime?
-  resolvedAt  DateTime?
-  notes       String?
-  staff       StaffMember         @relation(fields: [staffId], references: [id], onDelete: Cascade)
-
-  @@index([staffId, alertType, status])
-  @@index([status, triggeredAt])
-}
-
-// ---------------------------------------------------------------------------
-// Membership
-// ---------------------------------------------------------------------------
-
-enum MemberClassification {
-  JUVENILE
-  MINOR
-  NON_PLAYING_ACTIVE
-  PARENT
-}
-
-enum MembershipOrderStatus {
-  PENDING
-  PAID
-  CANCELLED
-  REFUNDED
-}
-
-model MembershipOrder {
-  id                      String              @id @default(cuid())
-  status                  MembershipOrderStatus @default(PENDING)
-  totalAmountCents        Int
-  appliedOption           String?
-  contactEmail            String?
-  stripeCheckoutSessionId String?             @unique
-  stripePaymentIntentId   String?
-  // Subscription link — set when this order is covered by a recurring subscription
-  subscriptionId          String?
-  subscription            StripeSubscription? @relation(fields: [subscriptionId], references: [id])
-  members                 MembershipMember[]
-  createdAt               DateTime            @default(now())
-  updatedAt               DateTime            @updatedAt
-
-  @@index([status])
-  @@index([stripeCheckoutSessionId])
-  @@index([subscriptionId])
-  @@index([contactEmail])
-}
-
-model MembershipMember {
-  id               String               @id @default(cuid())
-  orderId          String
-  firstName        String
-  lastName         String
-  dateOfBirth      DateTime
-  classification   MemberClassification
-  teamRegistration String?
-  amountCents      Int
-  order            MembershipOrder      @relation(fields: [orderId], references: [id], onDelete: Cascade)
-
-  @@index([orderId])
+  @@index([campaignId, drawDate])
 }
