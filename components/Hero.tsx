@@ -48,7 +48,7 @@ export default function Hero() {
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-6 w-full max-w-lg">
           <a
-            href="/join"
+            href="/register"
             className="btn-brutalist-neon px-8 py-4.5 text-lg w-full sm:w-auto text-center inline-flex items-center justify-center gap-2 group"
           >
             Join RVR Academy

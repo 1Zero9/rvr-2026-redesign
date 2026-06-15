@@ -45,8 +45,8 @@ const sections = [
       { href: "/teams", label: "Squad Directory" },
       { href: "/teams/matches", label: "Fixtures & Results" },
       { href: "/football-for-all", label: "Fun Football Sessions" },
-      { href: "/family-registration", label: "Registration Portal" },
-      { href: "/sibling-pricing", label: "Sibling Pricing Guide" },
+      { href: "/register", label: "Register Now" },
+      { href: "/register", label: "Family Registration" },
     ],
   },
   {
@@ -57,8 +57,8 @@ const sections = [
       { href: "/teams/matches", label: "Fixtures & Results" },
       { href: "/ddsl-jmo", label: "DDSL Schedule" },
       { href: "/teams", label: "Squad Directory" },
-      { href: "/family-registration", label: "Registration Portal" },
-      { href: "/sibling-pricing", label: "Sibling Pricing Guide" },
+      { href: "/register", label: "Register Now" },
+      { href: "/register", label: "Family Registration" },
     ],
   },
   {
@@ -194,7 +194,7 @@ export default function Header() {
 
         {/* Desktop CTA */}
         <div className="hidden shrink-0 items-center lg:flex">
-          <Link href="/join" className="btn-brutalist-neon px-5 py-2.5 text-sm whitespace-nowrap">
+          <Link href="/register" className="btn-brutalist-neon px-5 py-2.5 text-sm whitespace-nowrap">
             Join the Team
           </Link>
         </div>
@@ -301,7 +301,7 @@ export default function Header() {
             {/* Mobile CTAs */}
             <div className="mt-4 grid gap-3">
               <Link
-                href="/join"
+                href="/register"
                 onClick={closeDrawer}
                 className="btn-brutalist-neon block py-3.5 text-center text-sm"
               >

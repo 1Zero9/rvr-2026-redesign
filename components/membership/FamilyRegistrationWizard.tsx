@@ -314,9 +314,9 @@ export default function FamilyRegistrationWizard({
       });
 
       if (!response.ok) throw new Error("Registration request failed");
-      setSubmitMessage("Family registration prepared for secure checkout.");
+      setSubmitMessage("Registration received. Our team will be in touch to confirm your membership.");
     } catch {
-      setSubmitMessage("Registration is valid locally. Backend endpoint is not connected yet.");
+      setSubmitMessage("Something went wrong. Please try again or contact the club directly.");
     }
   };
 
@@ -331,8 +331,8 @@ export default function FamilyRegistrationWizard({
             Register the whole family in one flow.
           </h1>
           <p className="mt-5 max-w-3xl text-base font-semibold leading-7 text-zinc-700 md:text-lg">
-            Parent details, sibling roster, GDPR permissions and a live discount
-            summary before the backend creates the membership order.
+            Parent details, sibling roster, and GDPR permissions. Sibling
+            discounts are applied automatically before checkout.
           </p>
         </div>
 
@@ -571,11 +571,10 @@ export default function FamilyRegistrationWizard({
             {step === 4 && (
               <div className="mt-8 rounded-2xl border-3 border-brand-charcoal bg-[#f1ffe1] p-6">
                 <h2 className="font-display text-3xl font-black uppercase">
-                  Review and send to backend
+                  Review &amp; Submit
                 </h2>
                 <p className="mt-3 text-sm font-semibold leading-6 text-zinc-700">
-                  The live summary reflects sibling discounts before the typed payload
-                  is posted to the registration endpoint.
+                  Check your sibling discount summary below before submitting your registration.
                 </p>
                 <div className="mt-6 space-y-3">
                   {paymentSummary.lineItems.map((item) => (
@@ -659,8 +658,7 @@ export default function FamilyRegistrationWizard({
               </div>
             </div>
             <p className="mt-5 rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-xs font-semibold leading-5 text-zinc-200">
-              Pricing is client-side for preview only. The backend should recalculate
-              the same rules before creating payment.
+              Pricing shown is an estimate. Final amounts are confirmed at secure checkout.
             </p>
           </aside>
         </div>

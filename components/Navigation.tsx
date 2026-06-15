@@ -44,8 +44,8 @@ export default function Navigation() {
         { label: 'Squad Directory', path: '/teams' },
         { label: 'Fixtures & Results', path: '/teams/matches' },
         { label: 'Football For All Sessions', path: '/football-for-all' },
-        { label: 'Registration Portal', path: '/family-registration' },
-        { label: 'Sibling Pricing Guide', path: '/sibling-pricing' },
+        { label: 'Register Now', path: '/register' },
+        { label: 'Family Registration', path: '/register' },
       ],
     },
     {
@@ -55,8 +55,8 @@ export default function Navigation() {
         { label: 'Fixtures & Results', path: '/teams/matches' },
         { label: 'DDSL Match Schedules', path: '/ddsl-jmo' },
         { label: 'Squad Directory', path: '/teams' },
-        { label: 'Registration Portal', path: '/family-registration' },
-        { label: 'Sibling Pricing Guide', path: '/sibling-pricing' },
+        { label: 'Register Now', path: '/register' },
+        { label: 'Family Registration', path: '/register' },
       ],
     },
     {
@@ -148,7 +148,7 @@ export default function Navigation() {
 
           {/* Desktop CTA */}
           <div className="hidden lg:flex items-center shrink-0">
-            <a href="/join" className="btn-brutalist-neon px-5 py-2.5 text-xs whitespace-nowrap">
+            <a href="/register" className="btn-brutalist-neon px-5 py-2.5 text-xs whitespace-nowrap">
               Join the Team
             </a>
           </div>
@@ -239,7 +239,7 @@ export default function Navigation() {
 
             <div className="p-6 bg-white border-t-4 border-brand-charcoal space-y-3">
               <a
-                href="/join"
+                href="/register"
                 onClick={() => setIsOpen(false)}
                 className="w-full btn-brutalist-neon py-3.5 text-center text-xs block"
               >
