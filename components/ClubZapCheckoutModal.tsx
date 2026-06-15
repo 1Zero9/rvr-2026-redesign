@@ -1,178 +1,210 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { X, ExternalLink, ShieldAlert, CreditCard } from 'lucide-react';
+import { ExternalLink, LockKeyhole, ShieldCheck, X } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import {
+  PaymentTarget,
+  clubZapPaymentMap,
+} from "@/config/payments";
 
-interface Product {
-  id: string;
-  title: string;
-  price: string;
+type PaymentProductKey = keyof typeof clubZapPaymentMap;
+
+interface ProductDisplay {
   description: string;
-  badge: string;
-  clubZapUrl: string;
+  ctaLabel: string;
 }
 
-export default function ClubZapCheckoutModal() {
-  const [selectedUrl, setSelectedUrl] = useState<string | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+interface ClubZapCheckoutModalProps {
+  productKeys?: PaymentProductKey[];
+}
 
-  // Lock body scroll when modal is active
+const productDisplay: Record<string, ProductDisplay> = {
+  membership: {
+    description:
+      "Complete player, parent, and volunteer registration through the club payment portal.",
+    ctaLabel: "Secure Registration",
+  },
+  shop: {
+    description:
+      "Order official club clothing, training gear, and supporter items through the club shop.",
+    ctaLabel: "Secure Checkout",
+  },
+  lotto: {
+    description:
+      "Enter the weekly club draw and support community football development.",
+    ctaLabel: "Enter Draw",
+  },
+  camps: {
+    description:
+      "Book places for club camps, seasonal events, and player development sessions.",
+    ctaLabel: "Secure Booking",
+  },
+  fees: {
+    description:
+      "Pay team fees, training balances, and approved club charges securely.",
+    ctaLabel: "Pay Fees",
+  },
+};
+
+const defaultProductKeys = Object.keys(clubZapPaymentMap) as PaymentProductKey[];
+
+export default function ClubZapCheckoutModal({
+  productKeys = defaultProductKeys,
+}: ClubZapCheckoutModalProps) {
+  const [selectedProduct, setSelectedProduct] = useState<PaymentTarget | null>(
+    null,
+  );
+
+  const products = useMemo(
+    () =>
+      productKeys
+        .map((key) => clubZapPaymentMap[key])
+        .filter(Boolean)
+        .map((product) => ({
+          ...product,
+          description:
+            productDisplay[product.id]?.description ??
+            "Complete this club payment securely through the checkout portal.",
+          ctaLabel:
+            productDisplay[product.id]?.ctaLabel ?? "Secure Registration",
+        })),
+    [productKeys],
+  );
+
   useEffect(() => {
-    if (isModalOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
+    if (!selectedProduct) return;
+
+    const originalOverflow = document.body.style.overflow;
+    const originalTouchAction = document.body.style.touchAction;
+    document.body.style.overflow = "hidden";
+    document.body.style.touchAction = "none";
+
     return () => {
-      document.body.style.overflow = '';
+      document.body.style.overflow = originalOverflow;
+      document.body.style.touchAction = originalTouchAction;
     };
-  }, [isModalOpen]);
+  }, [selectedProduct]);
 
-  const handleOpenCheckout = (url: string) => {
-    setSelectedUrl(url);
-    setIsModalOpen(true);
-  };
+  useEffect(() => {
+    if (!selectedProduct) return;
 
-  const handleCloseCheckout = () => {
-    setIsModalOpen(false);
-    setSelectedUrl(null);
-  };
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setSelectedProduct(null);
+    };
 
-  // RVR club product listings (e.g. memberships & summer tournament registrations)
-  const products: Product[] = [
-    {
-      id: 'summer-mini-leagues',
-      title: 'Summer Mini Leagues',
-      price: '€25',
-      description: 'Annual June youth mini-leagues. Open to boys and girls of all skill levels.',
-      badge: 'Tournament',
-      clubZapUrl: 'https://clubzap.com/example-mini-leagues',
-    },
-    {
-      id: 'youth-membership',
-      title: 'Annual Youth Membership',
-      price: '€250',
-      description: 'Full season registration including weekly league matches, training, and club insurance.',
-      badge: 'Season 2026',
-      clubZapUrl: 'https://clubzap.com/example-youth-membership',
-    },
-    {
-      id: 'social-membership',
-      title: 'Non-Playing Member',
-      price: '€140',
-      description: 'Support the club as a mentor or community associate member with full club voting rights.',
-      badge: 'Associate',
-      clubZapUrl: 'https://clubzap.com/example-social-membership',
-    },
-  ];
+    window.addEventListener("keydown", closeOnEscape);
+    return () => window.removeEventListener("keydown", closeOnEscape);
+  }, [selectedProduct]);
 
   return (
-    <section className="max-w-6xl mx-auto px-6 py-20">
-      
-      {/* Grid of Product Cards */}
-      <div className="text-center mb-12">
-        <h2 className="font-display font-black text-3xl md:text-5xl uppercase italic tracking-tighter text-brand-charcoal">
-          Registrations & Memberships
+    <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:py-16">
+      <div className="mb-8">
+        <p className="mb-3 inline-flex rounded-full border-3 border-brand-charcoal bg-brand-neon px-4 py-2 font-display text-xs font-black uppercase text-brand-charcoal">
+          Club payments
+        </p>
+        <h2 className="font-display text-3xl font-black uppercase leading-none tracking-tight text-brand-charcoal md:text-5xl">
+          Registration and checkout
         </h2>
-        <div className="h-2 w-32 bg-brand-neon mx-auto mt-4 border-2 border-brand-charcoal -rotate-1"></div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
         {products.map((product) => (
-          <div
+          <article
             key={product.id}
-            className="brutalist-card p-6 flex flex-col justify-between min-h-[280px] bg-white hover:shadow-brutalist transition-shadow"
+            className="flex min-h-64 flex-col justify-between rounded-2xl border-4 border-brand-charcoal bg-white p-6 shadow-[6px_6px_0_#121212] transition hover:-translate-y-0.5 hover:shadow-[8px_8px_0_#121212]"
           >
             <div>
-              <span className="inline-block bg-brand-green text-white font-display font-extrabold text-[10px] px-3 py-1 rounded-full uppercase tracking-wider mb-4 border-2 border-brand-charcoal">
-                {product.badge}
-              </span>
-              <h3 className="font-display font-black text-2xl text-brand-charcoal uppercase italic leading-tight mb-2">
+              <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl border-3 border-brand-charcoal bg-brand-neon shadow-[3px_3px_0_#121212]">
+                <LockKeyhole className="h-6 w-6 text-brand-charcoal" />
+              </div>
+              <h3 className="font-display text-2xl font-black uppercase leading-tight text-brand-charcoal">
                 {product.title}
               </h3>
-              <p className="font-display font-black text-3xl text-brand-green mb-4">
-                {product.price}
-              </p>
-              <p className="font-sans text-sm font-semibold text-zinc-600 leading-relaxed">
+              <p className="mt-4 text-base font-semibold leading-relaxed text-zinc-700">
                 {product.description}
               </p>
             </div>
 
             <button
-              onClick={() => handleOpenCheckout(product.clubZapUrl)}
-              className="mt-6 w-full btn-brutalist-neon py-3.5 text-center text-xs uppercase font-display font-black tracking-wider bg-brand-neon hover:bg-[#96f431] flex items-center justify-center gap-2"
-              aria-label={`Register online for ${product.title}`}
+              type="button"
+              onClick={() => setSelectedProduct(product)}
+              className="btn-brutalist-neon mt-6 inline-flex min-h-12 w-full items-center justify-center gap-2 px-5 py-3 text-sm"
+              aria-label={`Open secure checkout for ${product.title}`}
             >
-              Register Online
-              <CreditCard className="w-4 h-4" />
+              <ShieldCheck className="h-5 w-5" />
+              {product.ctaLabel}
             </button>
-          </div>
+          </article>
         ))}
       </div>
 
-      {/* Embedded Iframe Modal */}
-      {isModalOpen && selectedUrl && (
-        <div 
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-charcoal/40 backdrop-blur-md transition-opacity duration-300"
-          onClick={handleCloseCheckout}
+      {selectedProduct && (
+        <div
+          className="fixed inset-0 z-[80] flex items-center justify-center bg-brand-charcoal/55 p-3 backdrop-blur-xl sm:p-5"
+          role="presentation"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) setSelectedProduct(null);
+          }}
         >
-          <div
-            className="brutalist-card bg-white w-full max-w-4xl h-[85vh] flex flex-col overflow-hidden shadow-brutalist animate-bounce-spring"
-            onClick={(e) => e.stopPropagation()}
+          <section
             role="dialog"
             aria-modal="true"
-            aria-labelledby="checkout-title"
+            aria-labelledby="clubzap-checkout-title"
+            className="flex h-[calc(100dvh-1.5rem)] w-full max-w-5xl flex-col overflow-hidden rounded-2xl border-4 border-brand-charcoal bg-white shadow-[6px_6px_0_#121212] sm:h-[min(88dvh,820px)]"
           >
-            
-            {/* Modal Header bar */}
-            <div className="bg-brand-charcoal text-white px-6 py-4 flex items-center justify-between border-b-4 border-brand-charcoal">
-              <div className="flex items-center gap-2 text-brand-neon">
-                <ShieldAlert className="w-5 h-5" />
-                <h3 id="checkout-title" className="font-display font-black text-sm uppercase tracking-wider">
-                  Secure Checkout Bridge
+            <header className="flex shrink-0 items-center justify-between gap-4 border-b-4 border-brand-charcoal bg-brand-charcoal px-4 py-3 text-white sm:px-5">
+              <div className="min-w-0">
+                <p className="font-display text-[10px] font-black uppercase tracking-wide text-brand-neon">
+                  Secure checkout
+                </p>
+                <h3
+                  id="clubzap-checkout-title"
+                  className="truncate font-display text-base font-black uppercase sm:text-lg"
+                >
+                  {selectedProduct.title}
                 </h3>
               </div>
               <button
-                onClick={handleCloseCheckout}
-                className="p-2 hover:bg-white/10 rounded-lg transition-colors focus:ring-2 focus:ring-brand-neon focus:outline-none"
-                aria-label="Close Checkout Modal"
+                type="button"
+                onClick={() => setSelectedProduct(null)}
+                className="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-xl border-2 border-white/20 text-white transition hover:bg-white/10 focus:outline-none focus:ring-4 focus:ring-brand-neon"
+                aria-label="Close checkout"
               >
-                <X className="w-5 h-5 text-white" />
+                <X className="h-6 w-6" />
               </button>
-            </div>
+            </header>
 
-            {/* iOS & Android Scroll-Compliant Iframe Enclosure */}
-            <div className="flex-1 w-full bg-zinc-50 relative overflow-y-auto -webkit-overflow-scrolling-touch">
+            <div className="min-h-0 flex-1 overflow-hidden bg-zinc-50">
               <iframe
-                src={selectedUrl}
-                className="w-full h-full border-0 absolute inset-0"
-                title="ClubZap Secure Checkout Integration"
-                sandbox="allow-same-origin allow-scripts allow-forms allow-popups"
+                src={selectedProduct.targetUrl}
+                title={`${selectedProduct.title} checkout`}
+                className="block h-full w-full border-0"
                 loading="lazy"
-              ></iframe>
+                sandbox="allow-forms allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"
+                referrerPolicy="strict-origin-when-cross-origin"
+                style={{
+                  WebkitOverflowScrolling: "touch",
+                  overscrollBehavior: "contain",
+                }}
+              />
             </div>
 
-            {/* Modal Footer Safeguard Info */}
-            <div className="p-4 bg-brand-cream border-t-4 border-brand-charcoal flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-semibold text-brand-charcoal">
-              <p className="flex items-center gap-1.5">
-                <span>🛡️</span> Secure payments processed directly via ClubZap checkout.
-              </p>
+            <footer className="flex shrink-0 flex-col gap-3 border-t-4 border-brand-charcoal bg-brand-cream px-4 py-3 text-sm font-semibold text-brand-charcoal sm:flex-row sm:items-center sm:justify-between">
+              <span>Payments are completed in the secure checkout window.</span>
               <a
-                href={selectedUrl}
+                href={selectedProduct.targetUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-1 text-brand-green-aaa hover:underline focus:ring-2 focus:ring-brand-green-aaa focus:outline-none rounded"
-                aria-label="Open payment screen in a new tab"
+                className="inline-flex items-center gap-2 rounded-lg font-display text-xs font-black uppercase text-brand-green underline-offset-4 hover:underline focus:outline-none focus:ring-4 focus:ring-brand-neon"
+                aria-label={`Open ${selectedProduct.title} checkout in a new tab`}
               >
-                Open in New Tab
-                <ExternalLink className="w-3.5 h-3.5" />
+                Open in new tab
+                <ExternalLink className="h-4 w-4" />
               </a>
-            </div>
-
-          </div>
+            </footer>
+          </section>
         </div>
       )}
-
     </section>
   );
 }
