@@ -6,7 +6,7 @@
  * set the handler falls back to a mock dataset so the endpoint remains usable
  * during local development and CI.
  *
- * Mercy Rule (DDSL policy, U7–U12):
+ * Mercy Rule (DDSL policy, U7–U11):
  *   The publicly visible score margin is capped at 5 goals.
  *   Formula: displayMargin = Math.min(winningScore − losingScore, 5)
  *   The losing score is held constant; only the winning total is adjusted.
@@ -54,7 +54,7 @@ interface FixturesResponse {
 // Mercy Rule
 // ---------------------------------------------------------------------------
 
-const MERCY_RULE_AGE_GROUPS = new Set(["U7", "U8", "U9", "U10", "U11", "U12"]);
+const MERCY_RULE_AGE_GROUPS = new Set(["U7", "U8", "U9", "U10", "U11"]);
 
 function buildScore(home: number, away: number, ageGroup: string): Score {
   const eligible = MERCY_RULE_AGE_GROUPS.has(ageGroup);

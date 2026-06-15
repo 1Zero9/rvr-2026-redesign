@@ -48,13 +48,13 @@ interface FixturesResponse {
 
 // ---------------------------------------------------------------------------
 // Score capping — applied client-side before any fixture reaches the render tree.
-// U7–U12 youth fixtures: visible margin is capped at 5 goals.
-// Formula: displayMargin = Math.min(winningScore − losingScore, 5)
-// Senior and U13+ scores are returned exactly as received.
+// U7–U11 youth fixtures: visible margin is capped at 5 goals.
+// Formula: displayMargin = Math.min(winningScore - losingScore, 5)
+// U12, U13–U18, and Senior scores are returned exactly as received.
 // ---------------------------------------------------------------------------
 
 const MERCY_RULE_AGE_GROUPS = new Set([
-  "U7", "U8", "U9", "U10", "U11", "U12",
+  "U7", "U8", "U9", "U10", "U11",
 ]);
 
 function sanitiseScore(fixture: Fixture): Fixture {
@@ -322,8 +322,8 @@ export default function MatchesPage() {
               </h1>
               <p className="mt-5 text-base font-semibold leading-relaxed text-zinc-600 md:text-lg">
                 All RVR matches across every age group and division. Youth scores
-                for U7–U12 follow the DDSL Mercy Rule — a maximum visible margin
-                of 5 goals.
+                for U7–U11 follow the DDSL Mercy Rule — a maximum visible margin
+                of 5 goals. U12 and above display exact results.
               </p>
             </div>
           </div>
