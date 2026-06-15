@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { Menu, ShieldCheck, Users, X } from "lucide-react";
+import { ASSET_PATHS } from "@/config/assets";
 import { useState } from "react";
 
 const pathwayLinks = [
@@ -47,9 +49,17 @@ export default function Header() {
     <header className="relative sticky top-0 z-50 border-b-4 border-brand-charcoal bg-brand-cream/95 backdrop-blur">
       <div className="mx-auto flex h-20 max-w-6xl items-center justify-between px-4 md:px-6">
         <Link href="/" className="flex items-center gap-3" onClick={closeDrawer}>
-          <span className="flex h-11 w-11 items-center justify-center rounded-xl border-2 border-brand-charcoal bg-brand-green font-display text-sm font-black italic text-brand-neon shadow-[2px_2px_0_#121212]">
+          <span className="flex h-11 w-11 items-center justify-center rounded-xl border-2 border-brand-charcoal bg-brand-green font-display text-sm font-black italic text-brand-neon shadow-[2px_2px_0_#121212] sm:hidden">
             RVR
           </span>
+          <Image
+            src={ASSET_PATHS.crestMaster}
+            alt="Rivervalley Rangers AFC crest"
+            width={44}
+            height={44}
+            className="hidden sm:block"
+            priority
+          />
           <span className="grid leading-none">
             <span className="font-display text-lg font-black uppercase italic tracking-tight text-brand-charcoal md:text-xl">
               Rivervalley
