@@ -211,6 +211,42 @@ model LottoDrawResult {
 }
 
 // ---------------------------------------------------------------------------
+// Stripe Subscription Billing
+// ---------------------------------------------------------------------------
+
+enum SubscriptionStatus {
+  OPEN       // Created; awaiting first payment
+  PAID       // invoice.payment_succeeded — active and current
+  PAST_DUE   // invoice.payment_failed — grace period active
+  CANCELLED  // customer.subscription_deleted
+}
+
+/**
+ * One StripeSubscription per billing contact (parent/guardian).
+ * A single subscription can cover multiple MembershipOrders, allowing
+ * one parent to be the named payer for several children registered
+ * across different transactions.
+ */
+model StripeSubscription {
+  id                   String             @id @default(cuid())
+  stripeSubscriptionId String             @unique
+  stripeCustomerId     String
+  status               SubscriptionStatus @default(OPEN)
+  currentPeriodStart   DateTime?
+  currentPeriodEnd     DateTime?
+  cancelledAt          DateTime?
+  billingEmail         String
+  billingName          String?
+  membershipOrders     MembershipOrder[]
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+
+  @@index([stripeCustomerId])
+  @@index([status, currentPeriodEnd])
+  @@index([billingEmail])
+}
+
+// ---------------------------------------------------------------------------
 // FAI Safeguarding & Club Mark Compliance
 // ---------------------------------------------------------------------------
 
@@ -323,19 +359,24 @@ enum MembershipOrderStatus {
 }
 
 model MembershipOrder {
-  id                      String                @id @default(cuid())
+  id                      String              @id @default(cuid())
   status                  MembershipOrderStatus @default(PENDING)
   totalAmountCents        Int
   appliedOption           String?
   contactEmail            String?
-  stripeCheckoutSessionId String?               @unique
+  stripeCheckoutSessionId String?             @unique
   stripePaymentIntentId   String?
+  // Subscription link — set when this order is covered by a recurring subscription
+  subscriptionId          String?
+  subscription            StripeSubscription? @relation(fields: [subscriptionId], references: [id])
   members                 MembershipMember[]
-  createdAt               DateTime              @default(now())
-  updatedAt               DateTime              @updatedAt
+  createdAt               DateTime            @default(now())
+  updatedAt               DateTime            @updatedAt
 
   @@index([status])
   @@index([stripeCheckoutSessionId])
+  @@index([subscriptionId])
+  @@index([contactEmail])
 }
 
 model MembershipMember {
