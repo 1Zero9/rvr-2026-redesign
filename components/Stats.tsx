@@ -32,7 +32,7 @@ export default function Stats() {
       badge: 'UEFA/FAI Certified',
       title: '25+',
       desc: 'Qualified coaches delivering football excellence.',
-      badgeBg: 'bg-brand-charcoal text-white',
+      badgeBg: 'bg-brand-navy text-white',
       cardBg: 'bg-[#FAF5ED] hover:bg-[#F3EBE0]',
       shadowColor: 'hover:shadow-brutalist',
     },
@@ -56,7 +56,7 @@ export default function Stats() {
           RVR BY THE NUMBERS
         </h2>
         {/* Playful underline accent */}
-        <div className="h-3.5 w-48 bg-brand-neon mx-auto border-3 border-brand-charcoal -rotate-1 shadow-sm mt-3"></div>
+        <div className="h-3.5 w-48 bg-brand-neon mx-auto border-3 border-brand-navy -rotate-1 shadow-sm mt-3"></div>
         
         {/* Decorative Cute-alism scribbles/details */}
         <div className="absolute top-0 right-1/4 hidden lg:block text-brand-green text-3xl font-display font-bold italic rotate-12">
@@ -85,7 +85,7 @@ export default function Stats() {
             <div>
               {/* Badge */}
               <span
-                className={`inline-block font-display font-extrabold text-[10px] px-3 py-1 rounded-full uppercase tracking-wider mb-4 border-2 border-brand-charcoal ${stat.badgeBg}`}
+                className={`inline-block font-display font-extrabold text-[10px] px-3 py-1 rounded-full uppercase tracking-wider mb-4 border-2 border-brand-navy ${stat.badgeBg}`}
               >
                 {stat.badge}
               </span>

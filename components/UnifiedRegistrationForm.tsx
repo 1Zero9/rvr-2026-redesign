@@ -434,7 +434,7 @@ export default function UnifiedRegistrationForm() {
           </section>
         </div>
 
-        <aside className="h-fit rounded-2xl border-4 border-brand-charcoal bg-brand-charcoal p-5 text-white shadow-[6px_6px_0_#121212] lg:sticky lg:top-28">
+        <aside className="h-fit rounded-2xl border border-brand-sky/20 bg-brand-navy p-5 text-white lg:sticky lg:top-28">
           <p className="font-display text-xs font-black uppercase text-brand-neon">
             Live registration summary
           </p>
@@ -493,7 +493,7 @@ export default function UnifiedRegistrationForm() {
 
           {status === "submitted" && (
             <p className="mt-5 rounded-2xl border-3 border-brand-neon bg-[#f1ffe1] p-4 text-sm font-bold text-brand-green">
-              Registration dataset is ready for backend submission.
+              Your registration is ready. Please review and submit.
             </p>
           )}
 

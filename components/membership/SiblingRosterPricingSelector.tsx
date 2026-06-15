@@ -498,7 +498,7 @@ export default function SiblingRosterPricingSelector() {
             </div>
           </div>
 
-          <aside className="brutalist-card h-fit bg-brand-charcoal p-6 text-white lg:sticky lg:top-28">
+          <aside className="brutalist-card h-fit bg-brand-navy p-6 text-white lg:sticky lg:top-28">
             <p className="font-display text-xs font-black uppercase text-brand-neon">
               Live option selector
             </p>

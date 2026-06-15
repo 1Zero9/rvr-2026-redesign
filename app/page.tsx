@@ -13,7 +13,7 @@ export default function Home() {
         <Stats />
       </main>
 
-      <footer className="bg-brand-charcoal text-white border-t-4 border-brand-charcoal py-12">
+      <footer className="bg-brand-navy text-white border-t border-brand-sky/20 py-12">
         <div className="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
             <h4 className="font-display font-black text-xl italic uppercase tracking-tight text-brand-neon mb-4">

@@ -4,7 +4,7 @@ import React from 'react';
 
 export default function Hero() {
   return (
-    <section className="relative min-h-[80vh] w-full overflow-hidden flex items-center justify-center bg-brand-charcoal text-white border-b-4 border-brand-charcoal">
+    <section className="relative min-h-[80vh] w-full overflow-hidden flex items-center justify-center bg-brand-navy text-white border-b border-brand-sky/20">
       <div className="absolute inset-0 z-0 select-none pointer-events-none">
         <video
           autoPlay
@@ -18,7 +18,7 @@ export default function Hero() {
             type="video/mp4"
           />
         </video>
-        <div className="absolute inset-0 bg-gradient-to-b from-brand-charcoal/80 via-transparent to-brand-charcoal/95" />
+        <div className="absolute inset-0 bg-gradient-to-b from-brand-navy/80 via-transparent to-brand-navy/95" />
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]" />
       </div>
 
