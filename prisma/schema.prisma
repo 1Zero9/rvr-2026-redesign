@@ -277,3 +277,206 @@ model LottoDraw {
 
   @@index([campaignId, drawDate])
 }
+
+// ---------------------------------------------------------------------------
+// Kit Design Voting (headless public vote widget)
+// ---------------------------------------------------------------------------
+
+/// A kit design entry eligible for public voting.
+model KitSubmission {
+  id         String       @id @default(cuid())
+  title      String
+  imageUrl   String?
+  votesCount Int          @default(0)
+  votes      VoteRecord[]
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+
+  @@index([votesCount])
+}
+
+/// Voter fingerprint record — prevents repeat votes from the same client.
+model VoteRecord {
+  id               String       @id @default(cuid())
+  kitSubmissionId  String
+  kitSubmission    KitSubmission @relation(fields: [kitSubmissionId], references: [id], onDelete: Cascade)
+  voterFingerprint String
+  createdAt        DateTime     @default(now())
+
+  @@unique([kitSubmissionId, voterFingerprint])
+  @@index([kitSubmissionId])
+}
+
+// ---------------------------------------------------------------------------
+// Safeguarding & Staff Compliance
+// ---------------------------------------------------------------------------
+
+/// Role of a staff member for display, filtering, and compliance routing.
+enum StaffRole {
+  COACH
+  MENTOR
+  TEAM_MANAGER
+  WELFARE_OFFICER
+  COMMITTEE_MEMBER
+  VOLUNTEER
+}
+
+/// Type of compliance alert raised by the weekly safeguarding cron.
+enum ComplianceAlertType {
+  VETTING_EXPIRED
+  VETTING_EXPIRING_SOON
+  SAFEGUARDING_1_MISSING
+  SAFEGUARDING_1_OUTDATED
+}
+
+/// Lifecycle status of a ComplianceAlert.
+enum AlertStatus {
+  PENDING
+  EMAIL_SENT
+  ACKNOWLEDGED
+  RESOLVED
+}
+
+/// Staff member record tracking FAI compliance status.
+/// Public API only returns records where all compliance gates are green.
+model StaffMember {
+  id                       String             @id @default(cuid())
+  firstName                String
+  lastName                 String
+  email                    String             @unique
+  role                     StaffRole          @default(COACH)
+  faiCometId               String?
+  isGardaVetted            Boolean            @default(false)
+  isVettingExpired         Boolean            @default(false)
+  gardaVettingApprovedAt   DateTime?
+  safeguarding1CompletedAt DateTime?
+  isSafeguarding1Current   Boolean            @default(false)
+  isClubMarkCompliant      Boolean            @default(false)
+  isActivelyCoaching       Boolean            @default(true)
+  lastComplianceCheckedAt  DateTime?
+  teamAssignments          TeamAssignment[]
+  complianceAlerts         ComplianceAlert[]
+  createdAt                DateTime           @default(now())
+  updatedAt                DateTime           @updatedAt
+
+  @@index([isActivelyCoaching, isClubMarkCompliant])
+  @@index([email])
+  @@index([lastName, firstName])
+}
+
+/// Team assignment linking a staff member to a squad for a given season.
+model TeamAssignment {
+  id            String      @id @default(cuid())
+  staffMemberId String
+  staffMember   StaffMember @relation(fields: [staffMemberId], references: [id], onDelete: Cascade)
+  teamName      String
+  ageGroup      String
+  season        String
+  isPrimary     Boolean     @default(false)
+  createdAt     DateTime    @default(now())
+
+  @@index([staffMemberId])
+  @@index([season, teamName])
+}
+
+/// Alert raised by the weekly cron when a compliance deadline is missed or approaching.
+model ComplianceAlert {
+  id          String              @id @default(cuid())
+  staffId     String
+  staff       StaffMember         @relation(fields: [staffId], references: [id], onDelete: Cascade)
+  alertType   ComplianceAlertType
+  status      AlertStatus         @default(PENDING)
+  notes       String?
+  emailSentAt DateTime?
+  triggeredAt DateTime            @default(now())
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+
+  @@index([staffId, alertType, status])
+  @@index([status, triggeredAt])
+}
+
+// ---------------------------------------------------------------------------
+// Membership Orders & Billing
+// ---------------------------------------------------------------------------
+
+/// FAI age-based classification used to determine the applicable membership fee.
+enum MemberClassification {
+  JUVENILE
+  MINOR
+  NON_PLAYING_ACTIVE
+  PARENT
+}
+
+/// Payment lifecycle status for a membership order.
+enum MembershipOrderStatus {
+  PENDING
+  PAID
+  CANCELLED
+  REFUNDED
+}
+
+/// Lifecycle status of a Stripe subscription.
+enum SubscriptionStatus {
+  OPEN
+  PAID
+  PAST_DUE
+  CANCELLED
+}
+
+/// Stripe subscription record supporting one payer for multiple members.
+model StripeSubscription {
+  id                   String             @id @default(cuid())
+  stripeSubscriptionId String             @unique
+  stripeCustomerId     String
+  status               SubscriptionStatus @default(OPEN)
+  currentPeriodStart   DateTime?
+  currentPeriodEnd     DateTime?
+  cancelledAt          DateTime?
+  billingEmail         String
+  billingName          String?
+  membershipOrders     MembershipOrder[]
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+
+  @@index([stripeCustomerId])
+  @@index([status, currentPeriodEnd])
+  @@index([billingEmail])
+}
+
+/// A family membership order created at checkout, containing one or more members.
+model MembershipOrder {
+  id                      String                @id @default(cuid())
+  status                  MembershipOrderStatus @default(PENDING)
+  totalAmountCents        Int
+  appliedOption           String?
+  contactEmail            String?
+  stripeCheckoutSessionId String?               @unique
+  stripePaymentIntentId   String?
+  subscriptionId          String?
+  subscription            StripeSubscription?   @relation(fields: [subscriptionId], references: [id])
+  members                 MembershipMember[]
+  createdAt               DateTime              @default(now())
+  updatedAt               DateTime              @updatedAt
+
+  @@index([status])
+  @@index([stripeCheckoutSessionId])
+  @@index([subscriptionId])
+  @@index([contactEmail])
+}
+
+/// Individual member row within a MembershipOrder.
+model MembershipMember {
+  id               String               @id @default(cuid())
+  orderId          String
+  order            MembershipOrder      @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  firstName        String
+  lastName         String
+  dateOfBirth      DateTime
+  classification   MemberClassification
+  teamRegistration String?
+  amountCents      Int
+  createdAt        DateTime             @default(now())
+
+  @@index([orderId])
+}
