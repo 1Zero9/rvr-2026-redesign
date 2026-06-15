@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Menu, X, ChevronDown, ChevronRight, Shield, Heart, Trophy, Activity, Users, HelpCircle } from 'lucide-react';
+import { Menu, X, ChevronDown, ChevronRight, Shield, Heart, Trophy, Activity, Users, HelpCircle, Megaphone } from 'lucide-react';
 
 interface NavLink {
   label: string;
@@ -44,6 +44,8 @@ export default function Navigation() {
         { label: 'Squad Directory', path: '/teams' },
         { label: 'Fixtures & Results', path: '/teams/matches' },
         { label: 'Football For All Sessions', path: '/football-for-all' },
+        { label: 'Registration Portal', path: '/family-registration' },
+        { label: 'Sibling Pricing Guide', path: '/sibling-pricing' },
       ],
     },
     {
@@ -53,6 +55,8 @@ export default function Navigation() {
         { label: 'Fixtures & Results', path: '/teams/matches' },
         { label: 'DDSL Match Schedules', path: '/ddsl-jmo' },
         { label: 'Squad Directory', path: '/teams' },
+        { label: 'Registration Portal', path: '/family-registration' },
+        { label: 'Sibling Pricing Guide', path: '/sibling-pricing' },
       ],
     },
     {
@@ -81,6 +85,16 @@ export default function Navigation() {
         { label: 'Contact Us', path: '/contact' },
       ],
     },
+    {
+      title: 'Campaigns',
+      icon: <Megaphone className="w-5 h-5 text-brand-green-aaa" />,
+      links: [
+        { label: 'Colour Fun Run', path: '/campaigns/colour-fun-run' },
+        { label: '40th Anniversary Kit', path: '/club/anniversary' },
+        { label: 'Shop', path: '/shop' },
+        { label: 'Fees Calculator', path: '/membership-calculator' },
+      ],
+    },
   ];
 
   return (
@@ -104,11 +118,11 @@ export default function Navigation() {
           </a>
 
           {/* Desktop navigation */}
-          <nav className="hidden lg:flex items-center gap-0.5 min-w-0" aria-label="Main navigation">
+          <nav className="hidden lg:flex items-center gap-0 min-w-0 flex-1" aria-label="Main navigation">
             {sections.map((section) => (
               <div key={section.title} className="relative group/menu">
                 <button
-                  className="font-display font-extrabold text-[11px] uppercase tracking-wide text-brand-charcoal hover:text-brand-green-aaa py-2 px-2 rounded-lg flex items-center gap-1 transition-all whitespace-nowrap"
+                  className="font-display font-extrabold text-[10px] uppercase tracking-normal text-brand-charcoal hover:text-brand-green-aaa py-2 px-1.5 rounded-lg flex items-center gap-0.5 transition-all whitespace-nowrap"
                   aria-label={`Open ${section.title} menu`}
                   aria-haspopup="true"
                 >
@@ -132,20 +146,8 @@ export default function Navigation() {
             ))}
           </nav>
 
-          {/* Desktop CTAs */}
-          <div className="hidden lg:flex items-center gap-3 shrink-0">
-            <a
-              href="/shop"
-              className="font-display font-black text-xs uppercase tracking-wider text-brand-charcoal hover:text-brand-green transition-colors"
-            >
-              Shop
-            </a>
-            <a
-              href="/membership-calculator"
-              className="font-display font-black text-xs uppercase tracking-wider text-brand-charcoal hover:text-brand-green transition-colors"
-            >
-              Fees
-            </a>
+          {/* Desktop CTA */}
+          <div className="hidden lg:flex items-center shrink-0">
             <a href="/join" className="btn-brutalist-neon px-5 py-2.5 text-xs whitespace-nowrap">
               Join the Team
             </a>
