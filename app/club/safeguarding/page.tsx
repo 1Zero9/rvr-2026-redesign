@@ -108,16 +108,22 @@ export default function SafeguardingPage() {
             </div>
           </div>
 
-          {/* Under construction notice */}
-          <div className="mt-6 rounded-2xl border-4 border-dashed border-brand-charcoal bg-white p-6">
-            <p className="font-display text-sm font-black uppercase tracking-wide text-brand-charcoal">
-              Under Construction
+          {/* Welfare contact CTA */}
+          <div className="mt-6 rounded-2xl border-4 border-brand-green bg-[#F3FAF6] p-6">
+            <p className="font-display text-sm font-black uppercase tracking-wide text-brand-green">
+              Welfare Concerns
             </p>
-            <p className="mt-2 text-sm font-semibold leading-relaxed text-zinc-600">
-              The live coach compliance dashboard and downloadable policy
-              documents will be published here. For urgent welfare concerns,
-              contact the club welfare officer directly.
+            <p className="mt-2 text-sm font-semibold leading-relaxed text-zinc-700">
+              If you have a safeguarding concern relating to a child at
+              Rivervalley Rangers AFC, contact the club welfare officer directly.
+              All disclosures are treated with full confidentiality.
             </p>
+            <a
+              href="/contact"
+              className="btn-brutalist-green mt-4 inline-block px-5 py-2.5 text-sm"
+            >
+              Contact Welfare Officer
+            </a>
           </div>
         </section>
       </main>

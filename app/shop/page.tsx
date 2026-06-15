@@ -1,33 +1,34 @@
 import type { Metadata } from "next";
 import Header from "@/components/Header";
 import { ShoppingBag } from "lucide-react";
+import { PAYMENT_URLS } from "@/config/payments";
 
 export const metadata: Metadata = {
   title: "Shop | Rivervalley Rangers AFC",
   description:
-    "Official Rivervalley Rangers AFC kit, training wear, and accessories. Club merchandise available ahead of the 2026/27 season.",
+    "Official Rivervalley Rangers AFC kit, training wear, and accessories.",
 };
 
 const categories = [
   {
     label: "Match Kit",
     description: "Official home and away kits for all age groups.",
-    placeholder: "Home and away strips, goalkeeping kit.",
+    items: "Home strip, away strip, goalkeeping kit.",
   },
   {
     label: "Training Wear",
     description: "Performance tops, tracksuit bottoms, and training bibs.",
-    placeholder: "Training tops, base layers, training jackets.",
+    items: "Training tops, base layers, jackets.",
   },
   {
     label: "Accessories",
     description: "Bags, bottles, socks, and club branded accessories.",
-    placeholder: "Kit bags, water bottles, shin guards, socks.",
+    items: "Kit bags, water bottles, shin guards, socks.",
   },
   {
     label: "Supporter Wear",
     description: "Casual club wear for supporters of all ages.",
-    placeholder: "Hoodies, caps, scarves, and leisure wear.",
+    items: "Hoodies, caps, scarves, leisure wear.",
   },
 ];
 
@@ -49,8 +50,8 @@ export default function ShopPage() {
                 RVR Shop
               </h1>
               <p className="mt-5 text-base font-semibold leading-relaxed text-zinc-600 md:text-lg">
-                Official club kit, training wear, and accessories. The shop
-                opens alongside the 2026/27 season registration window.
+                Official club kit, training wear, and accessories — all
+                processed securely through the club portal.
               </p>
             </div>
           </div>
@@ -65,16 +66,16 @@ export default function ShopPage() {
                 key={category.label}
                 className="brutalist-card relative overflow-hidden bg-white p-6"
               >
-                {/* Coming soon overlay */}
+                {/* Season launch overlay */}
                 <div className="absolute inset-0 z-10 flex items-center justify-center rounded-2xl bg-brand-cream/80 backdrop-blur-[2px]">
                   <span className="rounded-full border-3 border-brand-charcoal bg-brand-neon px-4 py-1.5 font-display text-[10px] font-black uppercase tracking-wider shadow-[2px_2px_0_#121212]">
-                    Coming Soon
+                    Season 2026/27
                   </span>
                 </div>
 
-                {/* Content behind overlay */}
+                {/* Category content shown beneath the overlay */}
                 <div aria-hidden="true" className="space-y-3">
-                  <div className="h-32 rounded-xl border-2 border-dashed border-zinc-300 bg-zinc-50" />
+                  <div className="h-32 rounded-xl border-2 border-zinc-200 bg-zinc-50" />
                   <h3 className="font-display text-lg font-black uppercase tracking-tight">
                     {category.label}
                   </h3>
@@ -82,31 +83,31 @@ export default function ShopPage() {
                     {category.description}
                   </p>
                   <p className="text-[10px] font-medium text-zinc-400">
-                    {category.placeholder}
+                    {category.items}
                   </p>
                 </div>
               </article>
             ))}
           </div>
 
-          {/* Launch notice */}
+          {/* ClubZap shop CTA */}
           <div className="mt-10 rounded-2xl border-4 border-brand-charcoal bg-brand-charcoal p-6 text-white shadow-brutalist md:p-8">
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
               <div>
                 <p className="font-display text-sm font-black uppercase tracking-wide text-brand-neon">
-                  Shop Opens With Season Registration
+                  Order Kit Through the Club Portal
                 </p>
                 <p className="mt-2 max-w-xl text-sm font-semibold leading-relaxed text-zinc-300">
-                  Kit ordering for the 2026/27 season will open alongside the
-                  membership registration window. All orders are fulfilled
-                  through the club directly.
+                  All kit orders are processed securely through the RVR club
+                  portal. Orders open alongside season registration.
                 </p>
               </div>
               <a
-                href="/membership-calculator"
+                href={PAYMENT_URLS.shop.url}
+                aria-label={PAYMENT_URLS.shop.label}
                 className="btn-brutalist-neon shrink-0 px-6 py-3 text-sm"
               >
-                Calculate Fees
+                Order Kit
               </a>
             </div>
           </div>

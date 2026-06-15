@@ -128,16 +128,26 @@ export default function TeamsPage() {
             ))}
           </div>
 
-          {/* Under construction notice */}
-          <div className="mt-10 rounded-2xl border-4 border-brand-charcoal bg-brand-charcoal p-6 text-white shadow-brutalist">
-            <p className="font-display text-sm font-black uppercase tracking-wide text-brand-neon">
-              Under Construction
-            </p>
-            <p className="mt-2 text-sm font-semibold leading-relaxed text-zinc-300">
-              Individual squad pages — rosters, fixtures, and coaching staff —
-              will be live before the 2026/27 season registration window opens.
-              Contact the club directly for current squad information.
-            </p>
+          {/* Registration CTA */}
+          <div className="mt-10 rounded-2xl border-4 border-brand-charcoal bg-brand-charcoal p-6 text-white shadow-brutalist md:p-8">
+            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+              <div>
+                <p className="font-display text-sm font-black uppercase tracking-wide text-brand-neon">
+                  2026/27 Season Registration
+                </p>
+                <p className="mt-2 max-w-xl text-sm font-semibold leading-relaxed text-zinc-300">
+                  Membership opens ahead of the new season. Use the fees
+                  calculator to price up your family, then complete registration
+                  through the club portal.
+                </p>
+              </div>
+              <a
+                href="/membership-calculator"
+                className="btn-brutalist-neon shrink-0 px-6 py-3 text-sm"
+              >
+                Calculate Fees
+              </a>
+            </div>
           </div>
         </section>
       </main>
