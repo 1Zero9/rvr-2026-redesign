@@ -1,47 +1,33 @@
-/**
- * ClubZap embedded checkout URL map.
- *
- * The `?iframe=1` parameter instructs ClubZap to strip the legacy navigation
- * header so the checkout renders cleanly inside an <iframe> on this site.
- *
- * Usage:
- *   import { PAYMENT_URLS } from '@/config/payments';
- *   <iframe src={PAYMENT_URLS.membership} title="Membership signup" />
- */
-
-export type PaymentKey =
-  | "membership"
-  | "shop"
-  | "lotto"
-  | "camps"
-  | "fees";
-
 export interface PaymentTarget {
-  /** Absolute URL to the ClubZap checkout page */
-  url: string;
-  /** Human-readable label for use in <title>, aria-label, and UI headings */
-  label: string;
+  id: string;
+  title: string;
+  targetUrl: string;
 }
 
-export const PAYMENT_URLS: Record<PaymentKey, PaymentTarget> = {
+export const clubZapPaymentMap: Record<string, PaymentTarget> = {
   membership: {
-    url: "https://rvrafc.ie/membership_signup?iframe=1",
-    label: "Membership Signup",
+    id: "membership",
+    title: "Club Membership Signup",
+    targetUrl: "https://rvrafc.ie/membership_signup?iframe=1",
   },
   shop: {
-    url: "https://rvrafc.ie/products?iframe=1",
-    label: "Merchandise and Shop",
+    id: "shop",
+    title: "Official Merchandise & Gear",
+    targetUrl: "https://rvrafc.ie/products?iframe=1",
   },
   lotto: {
-    url: "https://rvrafc.ie/draws?iframe=1",
-    label: "Lotto and Weekly Draws",
+    id: "lotto",
+    title: "Club Lotto & Weekly Draws",
+    targetUrl: "https://rvrafc.ie/draws?iframe=1",
   },
   camps: {
-    url: "https://rvrafc.ie/categories/camp/products?iframe=1",
-    label: "Summer Camps and Mini-Leagues",
+    id: "camps",
+    title: "Summer Camps & Mini-Leagues",
+    targetUrl: "https://rvrafc.ie/categories/camp/products?iframe=1",
   },
   fees: {
-    url: "https://rvrafc.ie/categories/fees/products?iframe=1",
-    label: "Training and Team Fees",
+    id: "fees",
+    title: "Training & Team Fees",
+    targetUrl: "https://rvrafc.ie/categories/fees/products?iframe=1",
   },
-} as const;
+};

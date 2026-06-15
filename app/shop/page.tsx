@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Header from "@/components/Header";
 import { ShoppingBag } from "lucide-react";
-import { PAYMENT_URLS } from "@/config/payments";
+import { clubZapPaymentMap } from "@/config/payments";
 
 export const metadata: Metadata = {
   title: "Shop | Rivervalley Rangers AFC",
@@ -103,8 +103,8 @@ export default function ShopPage() {
                 </p>
               </div>
               <a
-                href={PAYMENT_URLS.shop.url}
-                aria-label={PAYMENT_URLS.shop.label}
+                href={clubZapPaymentMap.shop.targetUrl}
+                aria-label={clubZapPaymentMap.shop.title}
                 className="btn-brutalist-neon shrink-0 px-6 py-3 text-sm"
               >
                 Order Kit
