@@ -9,6 +9,7 @@ import {
   ChevronRight,
   Heart,
   HelpCircle,
+  Megaphone,
   Menu,
   Shield,
   ShieldCheck,
@@ -44,6 +45,8 @@ const sections = [
       { href: "/teams", label: "Squad Directory" },
       { href: "/teams/matches", label: "Fixtures & Results" },
       { href: "/football-for-all", label: "Fun Football Sessions" },
+      { href: "/family-registration", label: "Registration Portal" },
+      { href: "/sibling-pricing", label: "Sibling Pricing Guide" },
     ],
   },
   {
@@ -54,6 +57,8 @@ const sections = [
       { href: "/teams/matches", label: "Fixtures & Results" },
       { href: "/ddsl-jmo", label: "DDSL Schedule" },
       { href: "/teams", label: "Squad Directory" },
+      { href: "/family-registration", label: "Registration Portal" },
+      { href: "/sibling-pricing", label: "Sibling Pricing Guide" },
     ],
   },
   {
@@ -82,7 +87,18 @@ const sections = [
     links: [
       { href: "/club/safeguarding", label: "Safeguarding Statement" },
       { href: "/club/safeguarding", label: "Garda Vetting" },
-      { href: "/club/safeguarding", label: "FAI Club Mark" },
+      { href: "/contact", label: "Contact Us" },
+    ],
+  },
+  {
+    label: "Campaigns",
+    description: "Club events and initiatives",
+    icon: Megaphone,
+    links: [
+      { href: "/campaigns/colour-fun-run", label: "Colour Fun Run" },
+      { href: "/club/anniversary", label: "40th Anniversary Kit" },
+      { href: "/shop", label: "Shop" },
+      { href: "/membership-calculator", label: "Fees Calculator" },
     ],
   },
 ] as const;
@@ -147,11 +163,11 @@ export default function Header() {
         </span>
 
         {/* Desktop dropdown navigation */}
-        <nav className="hidden min-w-0 items-center gap-0.5 lg:flex" aria-label="Main navigation">
+        <nav className="hidden min-w-0 flex-1 items-center gap-0 lg:flex" aria-label="Main navigation">
           {sections.map((section) => (
             <div key={section.label} className="relative group/menu">
               <button
-                className="flex items-center gap-1 whitespace-nowrap rounded-lg px-2.5 py-2 font-display text-[11px] font-black uppercase tracking-wide text-brand-charcoal transition hover:bg-white hover:text-brand-green"
+                className="flex items-center gap-0.5 whitespace-nowrap rounded-lg px-1.5 py-2 font-display text-[10px] font-black uppercase tracking-normal text-brand-charcoal transition hover:bg-white hover:text-brand-green"
                 aria-haspopup="true"
                 aria-label={`Open ${section.label} menu`}
               >
@@ -176,17 +192,8 @@ export default function Header() {
           ))}
         </nav>
 
-        {/* Desktop utility links + CTA */}
-        <div className="hidden shrink-0 items-center gap-3 lg:flex">
-          {utilityLinks.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="font-display text-xs font-black uppercase tracking-wide text-brand-charcoal hover:text-brand-green"
-            >
-              {item.label}
-            </Link>
-          ))}
+        {/* Desktop CTA */}
+        <div className="hidden shrink-0 items-center lg:flex">
           <Link href="/join" className="btn-brutalist-neon px-5 py-2.5 text-sm whitespace-nowrap">
             Join the Team
           </Link>
