@@ -44,11 +44,11 @@ export default function Header() {
   const closeDrawer = () => setDrawerOpen(false);
 
   return (
-    <header className="sticky top-0 z-50 border-b-4 border-brand-charcoal bg-brand-cream/95 backdrop-blur">
+    <header className="relative sticky top-0 z-50 border-b-4 border-brand-charcoal bg-brand-cream/95 backdrop-blur">
       <div className="mx-auto flex h-20 max-w-6xl items-center justify-between px-4 md:px-6">
         <Link href="/" className="flex items-center gap-3" onClick={closeDrawer}>
-          <span className="flex h-11 w-11 items-center justify-center rounded-xl border-2 border-brand-charcoal bg-brand-green font-display text-xl font-black italic text-brand-neon shadow-[2px_2px_0_#121212]">
-            R
+          <span className="flex h-11 w-11 items-center justify-center rounded-xl border-2 border-brand-charcoal bg-brand-green font-display text-sm font-black italic text-brand-neon shadow-[2px_2px_0_#121212]">
+            RVR
           </span>
           <span className="grid leading-none">
             <span className="font-display text-lg font-black uppercase italic tracking-tight text-brand-charcoal md:text-xl">
@@ -59,6 +59,10 @@ export default function Header() {
             </span>
           </span>
         </Link>
+
+        <span className="absolute right-4 top-1 font-mono text-[10px] uppercase tracking-widest bg-neutral-900 text-white px-1.5 py-0.5 rounded lg:hidden">
+          v2026.06.15-ALPHA
+        </span>
 
         <nav className="hidden items-center gap-1 lg:flex" aria-label="Main navigation">
           {pathwayLinks.map((item) => (
