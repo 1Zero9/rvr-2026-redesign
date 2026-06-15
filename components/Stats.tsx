@@ -6,7 +6,7 @@ export default function Stats() {
   const statsData = [
     {
       badge: 'Since 1981',
-      title: '44 Yrs',
+      title: '45 Yrs',
       desc: 'Strong community football legacy in Dublin.',
       badgeBg: 'bg-brand-green text-white',
       cardBg: 'bg-white hover:bg-zinc-50',

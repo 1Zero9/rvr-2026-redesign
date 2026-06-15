@@ -33,7 +33,7 @@ function warn(table: string, id: string, detail: string) {
 const PLACEHOLDER_PATTERNS = [
   /^(test|demo|example|placeholder|coach \d+|player \d+|member \d+|n\/a|tbd|unknown)$/i,
   /^(john doe|jane doe|first name|last name)$/i,
-  /^(sarah mitchell|brian example)$/i, // known demo names from beta site
+  /^(sarah mitchell|brian example)$/i, // known fictitious names used during development seeding
 ];
 
 function isPlaceholder(s: string): boolean {

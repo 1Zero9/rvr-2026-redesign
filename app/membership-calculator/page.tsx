@@ -15,18 +15,13 @@ const PRICING: Record<MemberRole, { label: string; price: number }> = {
   'adult-player': { label: 'Adult Player', price: 250 },
   'student-over-18': { label: 'Student Over 18', price: 250 },
   'youth-player': { label: 'Juvenile/Youth Player (U7-U18)', price: 250 },
-  'junior-academy': { label: 'Boden Óg/Junior Academy Player', price: 120 },
+  'junior-academy': { label: 'Junior Academy Player (U6 and Under)', price: 120 },
   'volunteer': { label: 'Non-Playing Volunteer/Mentor', price: 140 },
 };
 
 export default function MembershipCalculatorPage() {
-  // Start with a default family of 1 Volunteer Parent and 2 Kids to guide the user
-  const [members, setMembers] = useState<Member[]>([
-    { id: 1, name: 'Sarah Dunne', role: 'volunteer' },
-    { id: 2, name: 'Liam Dunne', role: 'youth-player' },
-    { id: 3, name: 'Emma Dunne', role: 'junior-academy' },
-  ]);
-  const [nextId, setNextId] = useState(4);
+  const [members, setMembers] = useState<Member[]>([]);
+  const [nextId, setNextId] = useState(1);
 
   const addMember = (isAdult: boolean) => {
     const defaultRole: MemberRole = isAdult ? 'volunteer' : 'youth-player';
@@ -138,7 +133,7 @@ export default function MembershipCalculatorPage() {
             Family Membership Pricing Calculator
           </h1>
           <p className="font-sans text-base md:text-lg font-semibold text-zinc-600 mt-3 max-w-xl mx-auto leading-relaxed">
-            Register multiple family members together and unlock automated tiered discounts inspired by Ballyboden St Endas.
+            Register multiple family members together and unlock automated tiered pricing. The more you register, the more you save.
           </p>
         </div>
 

@@ -192,7 +192,7 @@ export default function Header() {
               
               <div className="mb-6 flex items-center justify-between">
                 <h3 className="font-display font-black text-xl text-brand-charcoal uppercase italic">
-                  Bloomsbury Inspired Squad Structure
+                  RVR Squad Structure
                 </h3>
                 <span className="text-xs font-bold text-brand-green bg-[#E8F4F0] px-3 py-1 rounded-full border border-brand-green/30">
                   Select a Level to View Schedules
