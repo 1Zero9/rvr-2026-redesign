@@ -32,38 +32,35 @@ export default function Navigation() {
       title: 'Girls & Women',
       icon: <Users className="w-5 h-5 text-brand-green-aaa" />,
       links: [
-        { label: 'Womens First Team', path: '/teams/womens-firsts' },
-        { label: 'Womens Development Squad', path: '/teams/womens-dev' },
-        { label: 'Girls Academy U12–U18', path: '/teams/girls-academy' },
-        { label: 'Girls Soccer Academy U8–U11', path: '/teams/girls-stars' },
+        { label: 'Squad Directory', path: '/teams' },
+        { label: 'Fixtures & Results', path: '/teams/matches' },
+        { label: 'Football For All', path: '/football-for-all' },
       ],
     },
     {
       title: 'Junior Academy',
       icon: <HelpCircle className="w-5 h-5 text-brand-green-aaa" />,
       links: [
-        { label: 'Junior Academy Programme', path: '/programmes/juniors' },
-        { label: 'U7 to U12 Training', path: '/teams/juniors-training' },
-        { label: 'Fun Skills Development', path: '/programmes/skills' },
+        { label: 'Squad Directory', path: '/teams' },
+        { label: 'Fixtures & Results', path: '/teams/matches' },
+        { label: 'Football For All Sessions', path: '/football-for-all' },
       ],
     },
     {
       title: 'Youth Competitive',
       icon: <Activity className="w-5 h-5 text-brand-green-aaa" />,
       links: [
-        { label: 'Boys U13 to U18', path: '/teams/boys-academy' },
-        { label: 'Girls U13 to U18', path: '/teams/girls-academy' },
         { label: 'Fixtures & Results', path: '/teams/matches' },
         { label: 'DDSL Match Schedules', path: '/ddsl-jmo' },
+        { label: 'Squad Directory', path: '/teams' },
       ],
     },
     {
       title: 'Senior Divisions',
       icon: <Trophy className="w-5 h-5 text-brand-green-aaa" />,
       links: [
-        { label: 'Mens First Team LSL', path: '/teams/mens-firsts' },
-        { label: 'Saturday & Sunday Squads', path: '/teams/mens-academy' },
-        { label: 'Over 35s Veterans', path: '/teams/mens-over35' },
+        { label: 'Squad Directory', path: '/teams' },
+        { label: 'Fixtures & Results', path: '/teams/matches' },
       ],
     },
     {
@@ -79,9 +76,9 @@ export default function Navigation() {
       title: 'Safeguarding',
       icon: <Shield className="w-5 h-5 text-brand-green-aaa" />,
       links: [
+        { label: 'Safeguarding Statement', path: '/club/safeguarding' },
         { label: 'Garda Vetting', path: '/club/safeguarding' },
-        { label: 'Child Safeguarding Statement', path: '/club/safeguarding' },
-        { label: 'FAI Club Mark', path: '/club/safeguarding' },
+        { label: 'Contact Us', path: '/contact' },
       ],
     },
   ];
