@@ -56,8 +56,8 @@ export default function Home() {
               Our Locations
             </h4>
             <ul className="space-y-2 text-zinc-400 text-sm">
-              <li>📍 Ward Rivervalley Park, Swords, Co. Dublin</li>
-              <li>🏟️ Ward Rivervalley All-Weather Astro Pitch</li>
+              <li>Ward Rivervalley Park, Swords, Co. Dublin</li>
+              <li>Ward Rivervalley All-Weather Astro Pitch</li>
             </ul>
           </div>
           <div>
@@ -65,9 +65,9 @@ export default function Home() {
               Legal & Safety
             </h4>
             <ul className="space-y-2 text-zinc-400 text-sm">
-              <li>✓ 100% Garda Vetted Coaches</li>
-              <li>✓ Child Safeguarding Statement</li>
-              <li>✓ FAI Club Mark Accredited</li>
+              <li>100% Garda Vetted Coaches</li>
+              <li>Child Safeguarding Statement</li>
+              <li>FAI Club Mark Accredited</li>
             </ul>
           </div>
         </div>

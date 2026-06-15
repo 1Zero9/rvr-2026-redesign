@@ -53,6 +53,7 @@ export default function Navigation() {
       links: [
         { label: 'Boys U13 to U18', path: '/teams/boys-academy' },
         { label: 'Girls U13 to U18', path: '/teams/girls-academy' },
+        { label: 'Fixtures & Results', path: '/teams/matches' },
         { label: 'DDSL Match Schedules', path: '/ddsl-jmo' },
       ],
     },
@@ -78,9 +79,9 @@ export default function Navigation() {
       title: 'Safeguarding',
       icon: <Shield className="w-5 h-5 text-brand-green-aaa" />,
       links: [
-        { label: 'Garda Vetting', path: '/membership-calculator' },
+        { label: 'Garda Vetting', path: '/club/safeguarding' },
         { label: 'Child Safeguarding Statement', path: '/club/safeguarding' },
-        { label: 'FAI Club Mark', path: '/compliance' },
+        { label: 'FAI Club Mark', path: '/club/safeguarding' },
       ],
     },
   ];
@@ -137,12 +138,18 @@ export default function Navigation() {
           {/* Desktop CTAs */}
           <div className="hidden lg:flex items-center gap-3 shrink-0">
             <a
+              href="/shop"
+              className="font-display font-black text-xs uppercase tracking-wider text-brand-charcoal hover:text-brand-green transition-colors"
+            >
+              Shop
+            </a>
+            <a
               href="/membership-calculator"
               className="font-display font-black text-xs uppercase tracking-wider text-brand-charcoal hover:text-brand-green transition-colors"
             >
               Fees
             </a>
-            <a href="/membership-calculator" className="btn-brutalist-neon px-5 py-2.5 text-xs whitespace-nowrap">
+            <a href="/join" className="btn-brutalist-neon px-5 py-2.5 text-xs whitespace-nowrap">
               Join the Team
             </a>
           </div>
@@ -213,18 +220,38 @@ export default function Navigation() {
               })}
             </div>
 
-            <div className="p-6 bg-white border-t-4 border-brand-charcoal space-y-3">
+            {/* Utility links — Fees and Shop */}
+            <div className="px-6 pb-3 grid grid-cols-2 gap-3">
               <a
                 href="/membership-calculator"
+                onClick={() => setIsOpen(false)}
+                className="rounded-xl border-3 border-brand-charcoal bg-white px-4 py-3 text-center font-display text-xs font-black uppercase text-brand-charcoal shadow-[3px_3px_0_#121212] hover:bg-brand-cream transition-colors"
+              >
+                Fees
+              </a>
+              <a
+                href="/shop"
+                onClick={() => setIsOpen(false)}
+                className="rounded-xl border-3 border-brand-charcoal bg-white px-4 py-3 text-center font-display text-xs font-black uppercase text-brand-charcoal shadow-[3px_3px_0_#121212] hover:bg-brand-cream transition-colors"
+              >
+                Shop
+              </a>
+            </div>
+
+            <div className="p-6 bg-white border-t-4 border-brand-charcoal space-y-3">
+              <a
+                href="/join"
+                onClick={() => setIsOpen(false)}
                 className="w-full btn-brutalist-neon py-3.5 text-center text-xs block"
               >
                 Join the Team
               </a>
               <a
-                href="/ddsl-jmo"
+                href="/astro-booking"
+                onClick={() => setIsOpen(false)}
                 className="w-full btn-brutalist-green py-3.5 text-center text-xs block"
               >
-                DDSL Fixtures
+                Book Astro Pitch
               </a>
             </div>
           </div>
