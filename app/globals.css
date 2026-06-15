@@ -9,6 +9,9 @@
   --color-brand-ddsl: #006A4E;        /* DDSL Green color */
   --color-brand-sage: #E2ECE9;        /* Soft Sage Green for Inclusive Portal */
   --color-brand-cream-dark: #FAF6F0;  /* Soothing Warm Cream panel background */
+  --color-brand-green-aaa: #006A4E;   /* AAA-compliant emerald green */
+  --color-brand-cream-aaa: #FAF8F5;   /* Warm Cream background */
+  --color-brand-charcoal-aaa: #121212;/* Charcoal dark mode base */
   
   --font-sans: var(--font-inter), sans-serif;
   --font-display: var(--font-jakarta), sans-serif; /* High-energy sports headers */
@@ -27,6 +30,27 @@
 @keyframes bounceSpring {
   0% { transform: scale(0.95); }
   100% { transform: scale(1); }
+}
+
+/* Accessibility & performance helper styles */
+.tap-target-comfort {
+  min-width: 48px;
+  min-height: 48px;
+  padding: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.thumb-zone-sticky {
+  position: fixed;
+  bottom: 1.5rem; /* Floating lower region */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 50;
+  max-width: calc(100% - 2rem);
+  width: 380px;
 }
 
 :root {
@@ -106,3 +130,18 @@ body {
   background-color: #007347;
 }
 
+.input-brutalist {
+  width: 100%;
+  border: 3px solid #121212;
+  border-radius: 0.75rem;
+  background-color: #ffffff;
+  padding: 0.75rem 1rem;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  text-transform: none;
+  outline: none;
+}
+
+.input-brutalist:focus {
+  box-shadow: 0 0 0 4px #85E320;
+}

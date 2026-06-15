@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
+import MobileNavBar from "@/components/MobileNavBar";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -27,7 +28,10 @@ export default function RootLayout({
       lang="en"
       className={`${inter.variable} ${jakarta.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-brand-cream text-brand-charcoal">{children}</body>
+      <body className="min-h-full flex flex-col bg-brand-cream text-brand-charcoal">
+        {children}
+        <MobileNavBar />
+      </body>
     </html>
   );
 }

@@ -73,6 +73,31 @@ model KitDesignVote {
   @@index([voterHash])
 }
 
+model KitSubmission {
+  id            String       @id @default(cuid())
+  designerName  String
+  teamName      String
+  imageUrl      String
+  votesCount    Int          @default(0)
+  isApproved    Boolean      @default(false)
+  createdAt     DateTime     @default(now())
+  voteRecords   VoteRecord[]
+
+  @@index([isApproved, createdAt])
+  @@index([votesCount])
+}
+
+model VoteRecord {
+  id                 String        @id @default(cuid())
+  kitSubmissionId    String
+  voterFingerprint   String
+  createdAt          DateTime      @default(now())
+  kitSubmission      KitSubmission @relation(fields: [kitSubmissionId], references: [id], onDelete: Cascade)
+
+  @@unique([kitSubmissionId, voterFingerprint])
+  @@index([voterFingerprint])
+}
+
 model FunRunCampaign {
   id                    String               @id @default(cuid())
   slug                  String               @unique
@@ -183,4 +208,146 @@ model LottoDrawResult {
   widget          LottoWidget  @relation(fields: [lottoWidgetId], references: [id], onDelete: Cascade)
 
   @@index([lottoWidgetId, drawDate])
+}
+
+// ---------------------------------------------------------------------------
+// FAI Safeguarding & Club Mark Compliance
+// ---------------------------------------------------------------------------
+
+enum StaffRole {
+  COACH
+  MENTOR
+  TEAM_MANAGER
+  WELFARE_OFFICER
+  COMMITTEE_MEMBER
+  VOLUNTEER
+}
+
+enum ComplianceAlertType {
+  VETTING_EXPIRING_SOON
+  VETTING_EXPIRED
+  SAFEGUARDING_1_MISSING
+  SAFEGUARDING_1_OUTDATED
+}
+
+enum AlertStatus {
+  PENDING
+  EMAIL_SENT
+  ACKNOWLEDGED
+  RESOLVED
+}
+
+model StaffMember {
+  id                       String            @id @default(cuid())
+  firstName                String
+  lastName                 String
+  email                    String            @unique
+  phone                    String?
+  role                     StaffRole
+
+  // FAI COMET system identifier — issued by FAI, not nullable once registered
+  faiCometId               String?           @unique
+
+  // Garda Vetting — via FAI COMET only (FAI Governance Handbook §12.3–12.4)
+  gardaVettingApprovedAt   DateTime?
+  isGardaVetted            Boolean           @default(false)
+  isVettingExpired         Boolean           @default(false)
+
+  // FAI Safeguarding 1 (Child Welfare & Safeguarding) certificate
+  safeguarding1CompletedAt DateTime?
+  isSafeguarding1Current   Boolean           @default(false)
+
+  // Derived Club Mark compliance flag — true only when all gates pass
+  isClubMarkCompliant      Boolean           @default(false)
+  lastComplianceCheckedAt  DateTime?
+
+  // Controls public API visibility
+  isActivelyCoaching       Boolean           @default(true)
+
+  teamAssignments          TeamAssignment[]
+  complianceAlerts         ComplianceAlert[]
+
+  createdAt                DateTime          @default(now())
+  updatedAt                DateTime          @updatedAt
+
+  @@index([isGardaVetted, isVettingExpired])
+  @@index([role])
+  @@index([faiCometId])
+  @@index([isClubMarkCompliant, isActivelyCoaching])
+}
+
+model TeamAssignment {
+  id        String      @id @default(cuid())
+  staffId   String
+  teamName  String      // e.g. "U10 Boys A"
+  ageGroup  String      // e.g. "U10"
+  season    String      // e.g. "2025-2026"
+  isPrimary Boolean     @default(false)
+  staff     StaffMember @relation(fields: [staffId], references: [id], onDelete: Cascade)
+
+  @@unique([staffId, teamName, season])
+  @@index([teamName, season])
+}
+
+model ComplianceAlert {
+  id          String              @id @default(cuid())
+  staffId     String
+  alertType   ComplianceAlertType
+  status      AlertStatus         @default(PENDING)
+  triggeredAt DateTime            @default(now())
+  emailSentAt DateTime?
+  resolvedAt  DateTime?
+  notes       String?
+  staff       StaffMember         @relation(fields: [staffId], references: [id], onDelete: Cascade)
+
+  @@index([staffId, alertType, status])
+  @@index([status, triggeredAt])
+}
+
+// ---------------------------------------------------------------------------
+// Membership
+// ---------------------------------------------------------------------------
+
+enum MemberClassification {
+  JUVENILE
+  MINOR
+  NON_PLAYING_ACTIVE
+  PARENT
+}
+
+enum MembershipOrderStatus {
+  PENDING
+  PAID
+  CANCELLED
+  REFUNDED
+}
+
+model MembershipOrder {
+  id                      String                @id @default(cuid())
+  status                  MembershipOrderStatus @default(PENDING)
+  totalAmountCents        Int
+  appliedOption           String?
+  contactEmail            String?
+  stripeCheckoutSessionId String?               @unique
+  stripePaymentIntentId   String?
+  members                 MembershipMember[]
+  createdAt               DateTime              @default(now())
+  updatedAt               DateTime              @updatedAt
+
+  @@index([status])
+  @@index([stripeCheckoutSessionId])
+}
+
+model MembershipMember {
+  id               String               @id @default(cuid())
+  orderId          String
+  firstName        String
+  lastName         String
+  dateOfBirth      DateTime
+  classification   MemberClassification
+  teamRegistration String?
+  amountCents      Int
+  order            MembershipOrder      @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([orderId])
 }

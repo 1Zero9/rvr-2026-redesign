@@ -2,6 +2,28 @@ export type CurrencyCode = "EUR" | "GBP" | "USD";
 
 export type KitSubmissionStatus = "PENDING" | "APPROVED" | "REJECTED";
 
+export interface KitSubmission {
+  id: string;
+  designerName: string;
+  teamName: string;
+  imageUrl: string;
+  votesCount: number;
+  isApproved: boolean;
+  createdAt: string;
+}
+
+export interface KitSubmissionFormValues {
+  designerName: string;
+  teamName: string;
+  designFile: FileList;
+}
+
+export interface KitVoteResponse {
+  submissionId: string;
+  votesCount: number;
+  alreadyVoted?: boolean;
+}
+
 export interface KitDesignSubmission {
   id: string;
   competitionId: string;
