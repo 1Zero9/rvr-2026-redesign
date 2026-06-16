@@ -63,6 +63,31 @@ export interface SportLoMoEnvelope<T> {
   data: T[];
 }
 
+// Raw standings types returned by the SportLoMo standings endpoint
+export interface SportLoMoStandingsRow {
+  position: number;
+  team: {
+    teamId: number;
+    teamName: string;
+    clubId: number;
+  };
+  played: number;
+  won: number;
+  drawn: number;
+  lost: number;
+  goalsFor: number;
+  goalsAgainst: number;
+  goalDifference: number;
+  points: number;
+}
+
+export interface SportLoMoStandingsTable {
+  competitionId: number;
+  competitionName: string;
+  season: string;
+  standings: SportLoMoStandingsRow[];
+}
+
 // ---------------------------------------------------------------------------
 // Normalised / enriched output types (what the API routes return to clients)
 // ---------------------------------------------------------------------------
@@ -115,4 +140,46 @@ export interface MatchesResponse {
   cachedAt: string;       // ISO timestamp
   cacheExpiresAt: string;
   matches: NormalisedMatch[];
+}
+
+// ---------------------------------------------------------------------------
+// League standings output types (returned by /api/fixtures/tables)
+// ---------------------------------------------------------------------------
+
+export interface TableRow {
+  position: number;
+  teamName: string;
+  played: number;
+  won: number;
+  drawn: number;
+  lost: number;
+  goalsFor: number;
+  goalsAgainst: number;
+  goalDifference: number;
+  points: number;
+  isRvr: boolean;
+}
+
+export interface LeagueTable {
+  competitionId: number;
+  competitionName: string;
+  ageGroup: AgeGroup;
+  season: string;
+  rows: TableRow[];
+}
+
+export interface BlockedDivision {
+  competitionId: number;
+  competitionName: string;
+  ageGroup: AgeGroup;
+  reason: string;
+}
+
+export interface TablesResponse {
+  source: 'live' | 'mock';
+  fetchedAt: string;
+  cacheExpiresAt: string;
+  total: number;
+  tables: LeagueTable[];
+  blockedDivisions: BlockedDivision[];
 }

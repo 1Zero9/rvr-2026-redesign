@@ -14,6 +14,7 @@
 import type {
   SportLoMoEnvelope,
   SportLoMoFixture,
+  SportLoMoStandingsTable,
 } from './types';
 
 // ---------------------------------------------------------------------------
@@ -165,5 +166,18 @@ export async function fetchLive(): Promise<SportLoMoEnvelope<SportLoMoFixture>> 
   const { clubId } = getConfig();
   return fetchJson<SportLoMoEnvelope<SportLoMoFixture>>(
     `/Club/${clubId}/Live`,
+  );
+}
+
+/**
+ * League standings for all divisions in which RVR is registered.
+ *
+ * SportLoMo endpoint: GET /Club/{clubId}/Standings
+ * Returns every competition table the club appears in for the active season.
+ */
+export async function fetchStandings(): Promise<SportLoMoEnvelope<SportLoMoStandingsTable>> {
+  const { clubId } = getConfig();
+  return fetchJson<SportLoMoEnvelope<SportLoMoStandingsTable>>(
+    `/Club/${clubId}/Standings`,
   );
 }
