@@ -52,4 +52,17 @@ export function cacheStats(): { size: number; keys: string[] } {
   return { size: store.size, keys: [...store.keys()] };
 }
 
+/**
+ * Removes every entry from the store unconditionally.
+ *
+ * Use this after a data reset so the next inbound request triggers a full
+ * re-fetch from SportLoMo rather than serving stale cached responses.
+ * Returns the number of entries that were cleared.
+ */
+export function cacheClearAll(): number {
+  const count = store.size;
+  store.clear();
+  return count;
+}
+
 export { TTL_MS };

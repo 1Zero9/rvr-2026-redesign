@@ -7,6 +7,7 @@ import {
   SportLoMoConfigError,
 } from '@/lib/ddsl/client';
 import { cacheGet, cacheSet, TTL_MS } from '@/lib/ddsl/cache';
+import { applyDivisionFilter } from '@/lib/ddsl/division-filter';
 import { parseAgeGroup } from '@/lib/ddsl/mercy-rule';
 import { transformAll, transformStandingsTable } from '@/lib/ddsl/transform';
 import type {
@@ -299,6 +300,12 @@ export async function GET(_req: NextRequest): Promise<NextResponse<SyncResponse>
   // transformAll applies mercy-rule score capping and venue resolution.
   const fixtures = transformAll(rawFixtures);
   const results  = transformAll(rawResults);
+
+  // Strip any standings rows that are not in the registered member list for
+  // their competition. This catches data contamination caused by incorrect
+  // competition IDs in the SportLoMo feed (e.g. Coolmine Athletic appearing
+  // in the U12 Major Saturday table due to a mismatched ID at source).
+  rawStandings = applyDivisionFilter(rawStandings);
 
   // Build a deduplicated competition map seeded from standings (authoritative
   // source for competitionId) then supplemented by any fixture-only divisions.

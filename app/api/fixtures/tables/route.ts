@@ -5,6 +5,7 @@ import {
   SportLoMoApiError,
 } from "@/lib/ddsl/client";
 import { cacheGet, cacheSet, TTL_MS } from "@/lib/ddsl/cache";
+import { applyDivisionFilter } from "@/lib/ddsl/division-filter";
 import { parseAgeGroup } from "@/lib/ddsl/mercy-rule";
 import { parseTeamSlug, matchesSlug } from "@/lib/ddsl/team-slug";
 import type {
@@ -221,6 +222,11 @@ export async function GET(req: NextRequest): Promise<NextResponse<TablesResponse
     rawTables = MOCK_STANDINGS;
     source = "mock";
   }
+
+  // Strip rows that are not in the known-members allowlist for registered
+  // competitions. Must run before tableContainsRvr so that contaminated tables
+  // with an RVR row alongside incorrect clubs are cleaned first.
+  rawTables = applyDivisionFilter(rawTables);
 
   // Isolate divisions where an RVR team is registered
   const rvrTables = rawTables.filter(tableContainsRvr);
