@@ -104,21 +104,14 @@ export async function GET(_req: NextRequest): Promise<NextResponse> {
       ` results: ${rawResults.length}, standings tables: ${rawStandings.length}`,
     );
   } catch (err) {
-    // Missing env vars is a hard server config error — surface it immediately.
+    // All failure modes degrade gracefully to an empty payload so the UI
+    // renders its "no data" state rather than freezing on a loading loop.
     if (err instanceof SportLoMoConfigError) {
-      console.error('[api/fixtures/sync] DDSL environment not configured:', err.message);
-      return NextResponse.json(
-        {
-          error: 'DDSL connection not configured — set SPORTLOMO_BASE_URL, ' +
-                 'SPORTLOMO_API_KEY, and SPORTLOMO_CLUB_ID in environment variables',
-        },
-        { status: 503, headers: { 'Cache-Control': 'no-store, max-age=0, must-revalidate' } },
+      console.error(
+        '[api/fixtures/sync] DDSL environment variables not configured — serving empty payload.',
+        'Set SPORTLOMO_BASE_URL, SPORTLOMO_API_KEY, and SPORTLOMO_CLUB_ID in production env.',
       );
-    }
-    // For all API errors (including 404) and network failures, log and continue
-    // with empty arrays so the frontend renders its "no data" state gracefully
-    // instead of an error page.
-    if (err instanceof SportLoMoApiError) {
+    } else if (err instanceof SportLoMoApiError) {
       console.error(
         `[api/fixtures/sync] DDSL feed returned HTTP ${err.status} — serving empty payload:`,
         err.message,
