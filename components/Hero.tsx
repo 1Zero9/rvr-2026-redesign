@@ -7,18 +7,6 @@ export default function Hero() {
   return (
     <section className="relative min-h-[80vh] w-full overflow-hidden flex items-center justify-center bg-brand-navy text-white border-b border-brand-sky/20">
       <div className="absolute inset-0 z-0 select-none pointer-events-none">
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="w-full h-full object-cover opacity-45 scale-105"
-        >
-          <source
-            src="https://assets.mixkit.co/videos/preview/mixkit-soccer-player-kicking-ball-in-rain-4893-large.mp4"
-            type="video/mp4"
-          />
-        </video>
         <div className="absolute inset-0 bg-gradient-to-b from-brand-navy/80 via-transparent to-brand-navy/95" />
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]" />
       </div>

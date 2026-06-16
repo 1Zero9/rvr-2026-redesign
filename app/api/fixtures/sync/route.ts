@@ -7,6 +7,7 @@ import {
   SportLoMoConfigError,
 } from '@/lib/ddsl/client';
 import { cacheGet, cacheSet, TTL_MS } from '@/lib/ddsl/cache';
+import { LOCAL_SEED } from '@/lib/ddsl/local-seed';
 import { applyDivisionFilter } from '@/lib/ddsl/division-filter';
 import { parseAgeGroup } from '@/lib/ddsl/mercy-rule';
 import { transformAll, transformStandingsTable } from '@/lib/ddsl/transform';
@@ -25,6 +26,9 @@ export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 const CACHE_KEY = 'ddsl:sync';
+
+// Set to false to restore live outbound DDSL API fetching via SportLoMo.
+const USE_LOCAL_SEED = true;
 
 // ---------------------------------------------------------------------------
 // Age-tier gate
@@ -90,36 +94,44 @@ export async function GET(_req: NextRequest): Promise<NextResponse> {
   let rawStandings: SportLoMoStandingsTable[] = [];
   let fetchFailed = false;
 
-  try {
-    console.log('[api/fixtures/sync] Initiating outbound DDSL connection call...');
-    // Fetch all pages in parallel — covers all 29 active RVR squads across
-    // every division without being truncated by a single-page size cap.
-    [rawFixtures, rawResults, rawStandings] = await Promise.all([
-      fetchAllFixtures(),
-      fetchAllResults(),
-      fetchAllStandings(),
-    ]);
+  if (USE_LOCAL_SEED) {
+    rawFixtures  = [...LOCAL_SEED.fixtures];
+    rawResults   = [...LOCAL_SEED.results];
+    rawStandings = [...LOCAL_SEED.standings];
     console.log(
-      `[api/fixtures/sync] Raw payload received — fixtures: ${rawFixtures.length},` +
-      ` results: ${rawResults.length}, standings tables: ${rawStandings.length}`,
+      `[api/fixtures/sync] Local seed active — fixtures: ${rawFixtures.length},` +
+      ` results: ${rawResults.length}, standings: ${rawStandings.length}`,
     );
-  } catch (err) {
-    // All failure modes degrade gracefully to an empty payload so the UI
-    // renders its "no data" state rather than freezing on a loading loop.
-    if (err instanceof SportLoMoConfigError) {
-      console.error(
-        '[api/fixtures/sync] DDSL environment variables not configured — serving empty payload.',
-        'Set SPORTLOMO_BASE_URL, SPORTLOMO_API_KEY, and SPORTLOMO_CLUB_ID in production env.',
+  } else {
+    try {
+      console.log('[api/fixtures/sync] Initiating outbound DDSL connection call...');
+      [rawFixtures, rawResults, rawStandings] = await Promise.all([
+        fetchAllFixtures(),
+        fetchAllResults(),
+        fetchAllStandings(),
+      ]);
+      console.log(
+        `[api/fixtures/sync] Raw payload received — fixtures: ${rawFixtures.length},` +
+        ` results: ${rawResults.length}, standings tables: ${rawStandings.length}`,
       );
-    } else if (err instanceof SportLoMoApiError) {
-      console.error(
-        `[api/fixtures/sync] DDSL feed returned HTTP ${err.status} — serving empty payload:`,
-        err.message,
-      );
-    } else {
-      console.error('[api/fixtures/sync] Unexpected error during DDSL fetch — serving empty payload:', err);
+    } catch (err) {
+      // All failure modes degrade gracefully to an empty payload so the UI
+      // renders its "no data" state rather than freezing on a loading loop.
+      if (err instanceof SportLoMoConfigError) {
+        console.error(
+          '[api/fixtures/sync] DDSL environment variables not configured — serving empty payload.',
+          'Set SPORTLOMO_BASE_URL, SPORTLOMO_API_KEY, and SPORTLOMO_CLUB_ID in production env.',
+        );
+      } else if (err instanceof SportLoMoApiError) {
+        console.error(
+          `[api/fixtures/sync] DDSL feed returned HTTP ${err.status} — serving empty payload:`,
+          err.message,
+        );
+      } else {
+        console.error('[api/fixtures/sync] Unexpected error during DDSL fetch — serving empty payload:', err);
+      }
+      fetchFailed = true;
     }
-    fetchFailed = true;
   }
 
   // Transform raw fixtures and results through the shared pipeline.
