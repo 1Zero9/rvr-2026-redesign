@@ -18,6 +18,7 @@ import {
   X,
 } from "lucide-react";
 import { ASSET_PATHS } from "@/config/assets";
+import { CLUB_SEASON } from "@/config/club-season";
 
 const sections = [
   {
@@ -32,7 +33,7 @@ const sections = [
   },
   {
     label: "Junior Academy",
-    description: "U7 to U12 foundation football",
+    description: `${CLUB_SEASON.juniorAcademyAges} · Foundation football`,
     icon: HelpCircle,
     links: [
       { href: "/teams", label: "Squad Directory" },
@@ -44,7 +45,7 @@ const sections = [
   },
   {
     label: "Youth Competitive",
-    description: "U13 to U18 league teams",
+    description: `${CLUB_SEASON.youthCompetitiveAges} · League teams`,
     icon: Activity,
     links: [
       { href: "/teams/matches", label: "Fixtures & Results" },
@@ -89,7 +90,7 @@ const sections = [
     icon: Megaphone,
     links: [
       { href: "/campaigns/colour-fun-run", label: "Colour Fun Run" },
-      { href: "/club/anniversary", label: "45th Anniversary Kit" },
+      { href: "/club/anniversary", label: `${CLUB_SEASON.anniversaryEdition} Anniversary Kit` },
       { href: "/shop", label: "Shop" },
       { href: "/membership-calculator", label: "Fees Calculator" },
     ],

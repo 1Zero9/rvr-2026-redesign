@@ -1,12 +1,13 @@
 'use client';
 
 import React from 'react';
+import { CLUB_SEASON } from '@/config/club-season';
 
 export default function Stats() {
   const statsData = [
     {
-      badge: 'Since 1981',
-      title: '45 Yrs',
+      badge: `Since ${CLUB_SEASON.foundingYear}`,
+      title: `${CLUB_SEASON.anniversaryYears} Yrs`,
       desc: 'Strong community football legacy in Dublin.',
       badgeBg: 'bg-brand-green text-white',
       cardBg: 'bg-white hover:bg-zinc-50',

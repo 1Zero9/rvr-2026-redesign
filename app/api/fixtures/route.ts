@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { parseTeamSlug, matchesSlug } from "@/lib/ddsl/team-slug";
+import { resolveActiveSeason } from "@/lib/db/active-season";
 
 export const dynamic = "force-dynamic";
 
@@ -175,8 +176,11 @@ async function fetchFromSportLoMo(): Promise<Fixture[]> {
   const baseUrl = process.env.SPORTLOMO_BASE_URL?.replace(/\/$/, "");
   const apiKey = process.env.SPORTLOMO_API_KEY;
   const clubId = process.env.SPORTLOMO_CLUB_ID;
-  const season =
-    process.env.SPORTLOMO_SEASON ?? new Date().getFullYear().toString();
+  // resolveActiveSeason() reads the active Season row from the database first,
+  // then falls back to SPORTLOMO_SEASON env var, then to the current year.
+  // This ties the live SportLoMo query to whichever season the DB marks active,
+  // ensuring historical HistoricalStanding rows never contaminate the live feed.
+  const season = await resolveActiveSeason();
 
   if (!baseUrl || !apiKey || !clubId) {
     throw new Error("SportLoMo environment variables not configured");

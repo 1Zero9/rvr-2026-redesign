@@ -2,6 +2,7 @@ import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import LottoWidget from "@/components/LottoWidget";
 import Stats from "@/components/Stats";
+import { CLUB_SEASON } from "@/config/club-season";
 
 export default function Home() {
   return (
@@ -20,7 +21,7 @@ export default function Home() {
               RIVERVALLEY RANGERS AFC
             </h4>
             <p className="text-zinc-400 text-sm leading-relaxed max-w-xs">
-              Swords&apos; leading community football club, established in 1981.
+              Swords&apos; leading community football club, established in {CLUB_SEASON.foundingYear}.
               Dedicated to equality, youth development, and inclusive sports.
             </p>
           </div>
@@ -46,7 +47,7 @@ export default function Home() {
         </div>
         <div className="max-w-6xl mx-auto px-6 mt-12 pt-8 border-t border-zinc-800 flex flex-col md:flex-row items-center justify-between text-xs text-zinc-500">
           <p>&copy; {new Date().getFullYear()} Rivervalley Rangers AFC. All rights reserved.</p>
-          <p>Dublin Football Pride Since 1981</p>
+          <p>Dublin Football Pride Since {CLUB_SEASON.foundingYear}</p>
         </div>
       </footer>
     </div>

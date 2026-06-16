@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { CLUB_SEASON } from '@/config/club-season';
 
 export default function Hero() {
   return (
@@ -24,7 +25,7 @@ export default function Hero() {
 
       <div className="absolute top-12 left-10 hidden lg:block rotate-12 scale-90 animate-pulse">
         <div className="bg-brand-neon text-brand-charcoal font-display font-black text-xs px-4 py-2 border-3 border-brand-charcoal rounded-xl shadow-brutalist">
-          EST. 1981
+          EST. {CLUB_SEASON.foundingYear}
         </div>
       </div>
       <div className="absolute bottom-16 right-12 hidden lg:block -rotate-6 scale-95 hover:rotate-2 transition-transform duration-300">

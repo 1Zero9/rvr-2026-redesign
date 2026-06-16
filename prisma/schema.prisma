@@ -480,3 +480,56 @@ model MembershipMember {
 
   @@index([orderId])
 }
+
+// ---------------------------------------------------------------------------
+// Season Registry & Historical Standings
+// ---------------------------------------------------------------------------
+
+/// Competitive season record used to scope all historical data.
+///
+/// Invariant: exactly one row should carry isActive = true at any time.
+/// Enforce this at the application layer: when activating a new season, first
+/// set all existing rows to isActive = false in the same transaction.
+///
+/// label format follows the DDSL convention "YYYY/YY" (e.g., "2025/26").
+model Season {
+  id                  String               @id @default(cuid())
+  label               String               @unique
+  isActive            Boolean              @default(false)
+  historicalStandings HistoricalStanding[]
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+
+  @@index([isActive])
+}
+
+/// Immutable final league table row for one team in one division at the close
+/// of a completed season.
+///
+/// Safety rule: always query through ACTIVE_SEASON_WHERE (see lib/db/active-season.ts)
+/// so archived seasons never surface in live DDSL data streams.
+///
+/// onDelete: Restrict on the Season relation prevents accidental data loss —
+/// a Season row cannot be deleted while historical standings reference it.
+model HistoricalStanding {
+  id             String   @id @default(cuid())
+  seasonId       String
+  season         Season   @relation(fields: [seasonId], references: [id], onDelete: Restrict)
+  divisionName   String
+  position       Int
+  teamName       String
+  played         Int
+  won            Int
+  drawn          Int
+  lost           Int
+  goalsFor       Int
+  goalsAgainst   Int
+  goalDifference Int
+  points         Int
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([seasonId, divisionName])
+  @@index([seasonId, divisionName, position])
+  @@index([teamName])
+}
