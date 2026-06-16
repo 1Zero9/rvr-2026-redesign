@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { VettingStatus } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
@@ -7,45 +8,125 @@ export const dynamic = "force-dynamic";
 // Constants
 // ---------------------------------------------------------------------------
 
-const VETTING_VALIDITY_MS = 3 * 365.25 * 24 * 60 * 60 * 1000; // 3 years in ms
+// 3 years expressed in milliseconds using the Julian year (365.25 days).
+const VETTING_VALIDITY_MS = 3 * 365.25 * 24 * 60 * 60 * 1000;
 
 // FAI COMET IDs are 6–12 digit numeric strings issued by faiconnect.ie/mycomet.
 const COMET_ID_PATTERN = /^\d{6,12}$/;
 
+// Renewal submissions are accepted up to 90 days before expiry.
+const RENEWAL_WINDOW_MS = 90 * 24 * 60 * 60 * 1000;
+
 // ---------------------------------------------------------------------------
-// Expiration check
+// Pure helpers
 // ---------------------------------------------------------------------------
 
 function isVettingExpired(approvedAt: Date): boolean {
   return Date.now() - approvedAt.getTime() > VETTING_VALIDITY_MS;
 }
 
-function expiresAt(approvedAt: Date): Date {
+function computeExpiresAt(approvedAt: Date): Date {
   return new Date(approvedAt.getTime() + VETTING_VALIDITY_MS);
 }
 
+function daysUntilExpiry(approvedAt: Date): number {
+  return Math.ceil(
+    (computeExpiresAt(approvedAt).getTime() - Date.now()) / (24 * 60 * 60 * 1000),
+  );
+}
+
 // ---------------------------------------------------------------------------
-// GET /api/club/vetting
-//
-// Sweeps all Garda-vetted staff members and marks any whose 3-year window has
-// lapsed as expired. Safe to call from the weekly cron or an admin dashboard.
-//
-// Response shape:
-//   { checked: number, nowExpired: number, alreadyExpired: number, staff: VettingSummary[] }
+// Response types
 // ---------------------------------------------------------------------------
 
-interface VettingSummary {
+interface CoachVettingSummary {
+  coachId: string;
+  fullName: string;
+  vettingStatus: VettingStatus;
+  approvedAt: string;
+  expiresAt: string;
+  nowMarkedExpired: boolean;
+}
+
+interface StaffVettingSummary {
   staffId: string;
   fullName: string;
   faiCometId: string | null;
   approvedAt: string | null;
   expiresAt: string | null;
   status: "active" | "expired" | "pending";
+  nowMarkedExpired: boolean;
 }
+
+// ---------------------------------------------------------------------------
+// GET /api/club/vetting
+//
+// Sweeps CoachProfile (VettingStatus enum) and StaffMember (boolean flags).
+// Any record whose 3-year window has lapsed is written as EXPIRED in one pass.
+//
+// Response:
+//   {
+//     coaches: { checked, nowExpired, alreadyExpired, records }
+//     staff:   { checked, nowExpired, alreadyExpired, records }
+//   }
+// ---------------------------------------------------------------------------
 
 export async function GET(): Promise<NextResponse> {
   try {
-    const staff = await prisma.staffMember.findMany({
+    // ---- CoachProfile sweep ------------------------------------------------
+    const coaches = await prisma.coachProfile.findMany({
+      where: { vettingApprovedAt: { not: null } },
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        vettingStatus: true,
+        vettingApprovedAt: true,
+      },
+    });
+
+    const toExpireCoachIds: string[] = [];
+    let alreadyExpiredCoaches = 0;
+    const coachSummaries: CoachVettingSummary[] = [];
+
+    for (const coach of coaches) {
+      const approved = coach.vettingApprovedAt as Date;
+      const expired = isVettingExpired(approved);
+      const alreadyFlagged = coach.vettingStatus === VettingStatus.EXPIRED;
+
+      if (expired && !alreadyFlagged) {
+        toExpireCoachIds.push(coach.id);
+      } else if (alreadyFlagged) {
+        alreadyExpiredCoaches++;
+      }
+
+      coachSummaries.push({
+        coachId: coach.id,
+        fullName: `${coach.firstName} ${coach.lastName}`,
+        vettingStatus: expired ? VettingStatus.EXPIRED : coach.vettingStatus,
+        approvedAt: approved.toISOString(),
+        expiresAt: computeExpiresAt(approved).toISOString(),
+        nowMarkedExpired: expired && !alreadyFlagged,
+      });
+    }
+
+    if (toExpireCoachIds.length > 0) {
+      await Promise.all(
+        toExpireCoachIds.map((id) => {
+          const coach = coaches.find((c) => c.id === id)!;
+          return prisma.coachProfile.update({
+            where: { id },
+            data: {
+              vettingStatus: VettingStatus.EXPIRED,
+              vettingExpiresAt: computeExpiresAt(coach.vettingApprovedAt as Date),
+            },
+          });
+        }),
+      );
+    }
+
+    // ---- StaffMember sweep -------------------------------------------------
+    const staffMembers = await prisma.staffMember.findMany({
       where: { isGardaVetted: true },
       select: {
         id: true,
@@ -57,21 +138,22 @@ export async function GET(): Promise<NextResponse> {
       },
     });
 
-    const expiredIds: string[] = [];
-    let alreadyExpired = 0;
-    const summaries: VettingSummary[] = [];
+    const toExpireStaffIds: string[] = [];
+    let alreadyExpiredStaff = 0;
+    const staffSummaries: StaffVettingSummary[] = [];
 
-    for (const member of staff) {
+    for (const member of staffMembers) {
       const approved = member.gardaVettingApprovedAt;
 
       if (!approved) {
-        summaries.push({
+        staffSummaries.push({
           staffId: member.id,
           fullName: `${member.firstName} ${member.lastName}`,
           faiCometId: member.faiCometId,
           approvedAt: null,
           expiresAt: null,
           status: "pending",
+          nowMarkedExpired: false,
         });
         continue;
       }
@@ -79,24 +161,25 @@ export async function GET(): Promise<NextResponse> {
       const expired = isVettingExpired(approved);
 
       if (expired && !member.isVettingExpired) {
-        expiredIds.push(member.id);
+        toExpireStaffIds.push(member.id);
       } else if (member.isVettingExpired) {
-        alreadyExpired++;
+        alreadyExpiredStaff++;
       }
 
-      summaries.push({
+      staffSummaries.push({
         staffId: member.id,
         fullName: `${member.firstName} ${member.lastName}`,
         faiCometId: member.faiCometId,
         approvedAt: approved.toISOString(),
-        expiresAt: expiresAt(approved).toISOString(),
+        expiresAt: computeExpiresAt(approved).toISOString(),
         status: expired ? "expired" : "active",
+        nowMarkedExpired: expired && !member.isVettingExpired,
       });
     }
 
-    if (expiredIds.length > 0) {
+    if (toExpireStaffIds.length > 0) {
       await prisma.staffMember.updateMany({
-        where: { id: { in: expiredIds } },
+        where: { id: { in: toExpireStaffIds } },
         data: {
           isVettingExpired: true,
           isGardaVetted: false,
@@ -107,10 +190,18 @@ export async function GET(): Promise<NextResponse> {
     }
 
     return NextResponse.json({
-      checked: staff.length,
-      nowExpired: expiredIds.length,
-      alreadyExpired,
-      staff: summaries,
+      coaches: {
+        checked: coaches.length,
+        nowExpired: toExpireCoachIds.length,
+        alreadyExpired: alreadyExpiredCoaches,
+        records: coachSummaries,
+      },
+      staff: {
+        checked: staffMembers.length,
+        nowExpired: toExpireStaffIds.length,
+        alreadyExpired: alreadyExpiredStaff,
+        records: staffSummaries,
+      },
     });
   } catch (err) {
     console.error("[api/club/vetting] GET error:", err);
@@ -124,20 +215,22 @@ export async function GET(): Promise<NextResponse> {
 // ---------------------------------------------------------------------------
 // POST /api/club/vetting
 //
-// Registers or renews a Garda Vetting record for a staff member.
-// Requires a valid FAI COMET portal ID — paper-based submissions are rejected.
+// Records or renews a Garda Vetting approval for a StaffMember.
+// Only submissions carrying a valid FAI COMET portal ID are accepted.
+// Paper-based submissions are rejected as legally invalid under FAI policy.
 //
 // Request body:
 //   {
-//     staffId:    string,   // StaffMember.id
-//     cometId:    string,   // 6–12 digit ID from faiconnect.ie/mycomet
-//     approvedAt: string,   // ISO 8601 date — the date printed on the vetting letter
+//     staffId:    string   — StaffMember.id
+//     cometId:    string   — 6–12 digit numeric ID from faiconnect.ie/mycomet
+//     approvedAt: string   — ISO 8601 date printed on the vetting letter
+//     paperBased: boolean  — must be absent or false; true is rejected immediately
 //   }
 //
-// Response 200: { staffId, cometId, approvedAt, expiresAt, status }
-// Response 400: { error, field? }
-// Response 404: { error }
-// Response 409: { error } — if vetting is current and not yet within renewal window
+// 200  { staffId, fullName, cometId, approvedAt, expiresAt, daysUntilExpiry, status }
+// 400  { error, field? }
+// 404  { error }
+// 409  { error, expiresAt, daysUntilExpiry }   vetting is current, not in renewal window
 // ---------------------------------------------------------------------------
 
 interface VettingPostBody {
@@ -147,39 +240,43 @@ interface VettingPostBody {
   paperBased?: unknown;
 }
 
-const RENEWAL_WINDOW_MS = 90 * 24 * 60 * 60 * 1000; // allow renewal 90 days before expiry
-
 export async function POST(req: NextRequest): Promise<NextResponse> {
   let body: VettingPostBody;
 
   try {
     body = (await req.json()) as VettingPostBody;
   } catch {
-    return NextResponse.json({ error: "Request body must be valid JSON" }, { status: 400 });
+    return NextResponse.json(
+      { error: "Request body must be valid JSON" },
+      { status: 400 },
+    );
   }
 
-  // Reject any payload that explicitly declares paper-based submission
+  // Reject paper-based submissions — only FAI COMET portal submissions are valid.
   if (body.paperBased === true) {
     return NextResponse.json(
       {
         error:
-          "Paper-based vetting submissions are not accepted. All Garda Vetting must be submitted through the FAI COMET portal at faiconnect.ie/mycomet.",
+          "Paper-based vetting submissions are not accepted. All Garda Vetting must be completed through the FAI COMET portal at faiconnect.ie/mycomet.",
       },
       { status: 400 },
     );
   }
 
   // Validate staffId
-  if (!body.staffId || typeof body.staffId !== "string" || !body.staffId.trim()) {
-    return NextResponse.json({ error: "staffId is required", field: "staffId" }, { status: 400 });
+  if (typeof body.staffId !== "string" || !body.staffId.trim()) {
+    return NextResponse.json(
+      { error: "staffId is required", field: "staffId" },
+      { status: 400 },
+    );
   }
 
-  // Validate cometId — must be present and match the COMET numeric format
-  if (!body.cometId || typeof body.cometId !== "string") {
+  // Validate cometId — must be a numeric string matching the COMET portal format.
+  if (typeof body.cometId !== "string" || !body.cometId.trim()) {
     return NextResponse.json(
       {
         error:
-          "cometId is required. Obtain your FAI COMET ID at faiconnect.ie/mycomet.",
+          "cometId is required. Obtain your FAI COMET submission ID at faiconnect.ie/mycomet.",
         field: "cometId",
       },
       { status: 400 },
@@ -192,7 +289,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     return NextResponse.json(
       {
         error:
-          "cometId must be a 6–12 digit numeric string as issued by the FAI COMET portal.",
+          "cometId must be a 6–12 digit numeric string as issued by the FAI COMET portal. Mock IDs and non-numeric formats are not accepted.",
         field: "cometId",
       },
       { status: 400 },
@@ -200,9 +297,12 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   }
 
   // Validate approvedAt
-  if (!body.approvedAt || typeof body.approvedAt !== "string") {
+  if (typeof body.approvedAt !== "string" || !body.approvedAt.trim()) {
     return NextResponse.json(
-      { error: "approvedAt is required (ISO 8601 date string)", field: "approvedAt" },
+      {
+        error: "approvedAt is required (ISO 8601 date string)",
+        field: "approvedAt",
+      },
       { status: 400 },
     );
   }
@@ -211,7 +311,10 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
   if (isNaN(approvedDate.getTime())) {
     return NextResponse.json(
-      { error: "approvedAt must be a valid ISO 8601 date string", field: "approvedAt" },
+      {
+        error: "approvedAt must be a valid ISO 8601 date string",
+        field: "approvedAt",
+      },
       { status: 400 },
     );
   }
@@ -225,7 +328,6 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
   const staffId = body.staffId.trim();
 
-  // Confirm the staff member exists
   const existing = await prisma.staffMember.findUnique({
     where: { id: staffId },
     select: {
@@ -245,22 +347,22 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     );
   }
 
-  // Block renewal if current vetting is still active and outside the 90-day renewal window
+  // Block renewal if the current approval is still active and outside the 90-day window.
   if (
     existing.isGardaVetted &&
     !existing.isVettingExpired &&
     existing.gardaVettingApprovedAt &&
     !isVettingExpired(existing.gardaVettingApprovedAt)
   ) {
-    const expiry = expiresAt(existing.gardaVettingApprovedAt);
-    const daysUntilExpiry = Math.ceil((expiry.getTime() - Date.now()) / (24 * 60 * 60 * 1000));
+    const expiry = computeExpiresAt(existing.gardaVettingApprovedAt);
+    const remainingMs = expiry.getTime() - Date.now();
 
-    if (expiry.getTime() - Date.now() > RENEWAL_WINDOW_MS) {
+    if (remainingMs > RENEWAL_WINDOW_MS) {
       return NextResponse.json(
         {
-          error: `Vetting is current and cannot be renewed until the 90-day renewal window opens. Days remaining: ${daysUntilExpiry}.`,
+          error: `Vetting is current. Renewal submissions open 90 days before expiry.`,
           expiresAt: expiry.toISOString(),
-          daysUntilExpiry,
+          daysUntilExpiry: Math.ceil(remainingMs / (24 * 60 * 60 * 1000)),
         },
         { status: 409 },
       );
@@ -268,7 +370,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   }
 
   const expired = isVettingExpired(approvedDate);
-  const computedExpiry = expiresAt(approvedDate);
+  const expiry = computeExpiresAt(approvedDate);
 
   try {
     await prisma.staffMember.update({
@@ -294,7 +396,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     fullName: `${existing.firstName} ${existing.lastName}`,
     cometId,
     approvedAt: approvedDate.toISOString(),
-    expiresAt: computedExpiry.toISOString(),
+    expiresAt: expiry.toISOString(),
+    daysUntilExpiry: expired ? 0 : daysUntilExpiry(approvedDate),
     status: expired ? "expired" : "active",
   });
 }
