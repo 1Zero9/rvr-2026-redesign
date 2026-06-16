@@ -14,6 +14,7 @@ import {
   Trophy,
 } from "lucide-react";
 import { CLUB_SEASON } from "@/config/club-season";
+import { RVR_TEAM_RE } from "@/lib/ddsl/normalize";
 import type {
   AgeGroup,
   DevelopmentDivision,
@@ -25,21 +26,21 @@ import type {
 } from "@/lib/ddsl/types";
 
 // ---------------------------------------------------------------------------
-// Kit theme configuration
+// Dynamic accent — derived from the selected division name
 // ---------------------------------------------------------------------------
 
-type KitTheme = "club" | "boys" | "girls";
+const ACCENT_GIRLS = "#EC4899";
+const ACCENT_BOYS  = "#38BDF8";
+const ACCENT_CLUB  = "#39FF14";
 
-interface KitThemeConfig {
-  label: string;
-  accent: string;
+function inferAccentFromDivision(name: string | null): string {
+  if (!name) return ACCENT_CLUB;
+  const n = name.toUpperCase();
+  if (/GIRLS|WNL|WOMEN/.test(n))          return ACCENT_GIRLS;
+  if (/BLITZ|ACADEMY/.test(n))            return ACCENT_CLUB;
+  if (/BOYS|MEN|SENIOR|DIVISION/.test(n)) return ACCENT_BOYS;
+  return ACCENT_CLUB;
 }
-
-const KIT_THEMES = {
-  club:  { label: "Club",           accent: "#39FF14" },
-  boys:  { label: "Boys Sections",  accent: "#38BDF8" },
-  girls: { label: "Girls Sections", accent: "#EC4899" },
-} as const satisfies Record<KitTheme, KitThemeConfig>;
 
 // ---------------------------------------------------------------------------
 // Season configuration
@@ -118,7 +119,7 @@ function formatStatus(status: NormalisedMatch["status"]) {
 }
 
 function getCrestLabel(teamName: string) {
-  if (/river\s*valley\s+rangers|(?<![a-z])rvr(?![a-z])/i.test(teamName)) {
+  if (RVR_TEAM_RE.test(teamName)) {
     return "RVR";
   }
   return teamName
@@ -404,7 +405,6 @@ function DevelopmentNotice({
 // ---------------------------------------------------------------------------
 
 export default function MatchesPage() {
-  const [selectedTheme, setSelectedTheme] = useState<KitTheme>("club");
   const [selectedSeason, setSelectedSeason] = useState<SeasonKey>("current");
 
   // Current-season data (from /api/fixtures/sync)
@@ -419,7 +419,6 @@ export default function MatchesPage() {
 
   const [selectedDivisionKey, setSelectedDivisionKey] = useState<SelectedDivisionKey>("all");
 
-  const accent = KIT_THEMES[selectedTheme].accent;
   const isArchived = selectedSeason === "archived";
 
   // Fetch current-season sync on mount
@@ -491,6 +490,8 @@ export default function MatchesPage() {
   const selectedDivision =
     divisionOptions.find((o) => o.key === selectedDivisionKey) ?? divisionOptions[0];
 
+  const accent = inferAccentFromDivision(selectedDivision?.competitionName ?? null);
+
   // Current-season filtered data
   const liveMatches = useMemo(() => {
     if (!syncData || isArchived) return [];
@@ -524,14 +525,14 @@ export default function MatchesPage() {
     ? (historicalData ? `Season ${historicalData.season}` : "Archived")
     : syncData
     ? `Updated ${formatDate(syncData.syncedAt.slice(0, 10))}`
-    : "Connecting to the league feed.";
+    : "Scanning DDSL Master Feed...";
 
   const sourceLabel = isArchived
     ? (historicalData?.source === "db" ? "Archive" : "Empty")
     : syncData?.source === "live"
     ? "Live"
     : loading
-    ? "Loading"
+    ? "Syncing"
     : "Ready";
 
   return (
@@ -582,34 +583,6 @@ export default function MatchesPage() {
         {/* ── Controls row ─────────────────────────────────────────────────── */}
         <section className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
           <div className="flex flex-col gap-4">
-
-            {/* Kit theme selector pills */}
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="font-display text-xs font-black uppercase tracking-wider text-white/60">
-                Kit theme
-              </span>
-              {(Object.entries(KIT_THEMES) as [KitTheme, KitThemeConfig][]).map(
-                ([key, cfg]) => (
-                  <button
-                    key={key}
-                    onClick={() => setSelectedTheme(key)}
-                    className={`rounded-full border-3 px-4 py-1.5 font-display text-xs font-black uppercase transition-all ${
-                      selectedTheme === key
-                        ? "border-white text-brand-charcoal shadow-[3px_3px_0_#FFFFFF]"
-                        : "border-white/30 text-white hover:border-white/70"
-                    }`}
-                    style={
-                      selectedTheme === key
-                        ? { backgroundColor: cfg.accent }
-                        : undefined
-                    }
-                    aria-pressed={selectedTheme === key}
-                  >
-                    {cfg.label}
-                  </button>
-                ),
-              )}
-            </div>
 
             {/* Season + division row */}
             <div className="grid gap-3 sm:grid-cols-2">

@@ -7,6 +7,7 @@ import {
 import { cacheGet, cacheSet, TTL_MS } from "@/lib/ddsl/cache";
 import { applyDivisionFilter } from "@/lib/ddsl/division-filter";
 import { parseAgeGroup } from "@/lib/ddsl/mercy-rule";
+import { isRvrTeam } from "@/lib/ddsl/transform";
 import { parseTeamSlug, matchesSlug } from "@/lib/ddsl/team-slug";
 import type {
   AgeGroup,
@@ -38,16 +39,6 @@ function isCompetitiveTier(ageGroup: AgeGroup): boolean {
 // ---------------------------------------------------------------------------
 // RVR team name matching
 // ---------------------------------------------------------------------------
-
-// Matches both spellings the DDSL system uses:
-//   "Rivervalley Rangers"  (one word — official club registration)
-//   "River Valley Rangers" (two words — seen in some legacy DDSL exports)
-// \s* between "river" and "valley" covers both variants in one branch.
-const RVR_NAME_PATTERN = /river\s*valley\s+rangers|(?<![a-z])rvr(?![a-z])/i;
-
-function isRvrTeam(teamName: string): boolean {
-  return RVR_NAME_PATTERN.test(teamName);
-}
 
 function tableContainsRvr(table: SportLoMoStandingsTable): boolean {
   return table.standings.some((row) => isRvrTeam(row.team.teamName));
@@ -131,12 +122,6 @@ const MOCK_STANDINGS: SportLoMoStandingsTable[] = [
         team: { teamId: 203, teamName: "Lucan United FC", clubId: 21 },
         played: 10, won: 5, drawn: 1, lost: 4,
         goalsFor: 18, goalsAgainst: 17, goalDifference: 1, points: 16,
-      },
-      {
-        position: 4,
-        team: { teamId: 204, teamName: "Coolmine Athletic FC", clubId: 22 },
-        played: 10, won: 3, drawn: 2, lost: 5,
-        goalsFor: 14, goalsAgainst: 22, goalDifference: -8, points: 11,
       },
     ],
   },

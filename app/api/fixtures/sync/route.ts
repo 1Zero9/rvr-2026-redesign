@@ -165,17 +165,6 @@ const MOCK_RESULTS: SportLoMoFixture[] = [
     score: { home: 8, away: 1 }, // mercy rule reduces to 6–1 on output
   },
   {
-    fixtureId: 2002,
-    fixtureDate: '2026-06-18',
-    fixtureTime: '19:00',
-    homeTeam: { teamId: 302, teamName: 'Coolmine Athletic FC', clubId: 31, clubName: 'Coolmine Athletic FC' },
-    awayTeam: RVR_TEAM,
-    venue: { venueName: 'Coolmine Sports Ground', venueAddress: 'Coolmine, Dublin 15' },
-    competition: COMPS.U12_BOYS_D1,
-    status: 'Result',
-    score: { home: 2, away: 3 },
-  },
-  {
     fixtureId: 2003,
     fixtureDate: '2026-06-20',
     fixtureTime: '20:00',
@@ -216,9 +205,8 @@ const MOCK_STANDINGS: SportLoMoStandingsTable[] = [
     season: '2025-2026',
     standings: [
       { position: 1, team: { teamId: 11,  teamName: 'Rivervalley Rangers AFC', clubId: 11 }, played: 10, won: 8, drawn: 1, lost: 1, goalsFor: 27, goalsAgainst: 10, goalDifference: 17, points: 25 },
-      { position: 2, team: { teamId: 301, teamName: 'Blanchardstown AFC',       clubId: 30 }, played: 10, won: 7, drawn: 1, lost: 2, goalsFor: 24, goalsAgainst: 12, goalDifference: 12, points: 22 },
-      { position: 3, team: { teamId: 302, teamName: 'Coolmine Athletic FC',     clubId: 31 }, played: 10, won: 5, drawn: 2, lost: 3, goalsFor: 18, goalsAgainst: 16, goalDifference:  2, points: 17 },
-      { position: 4, team: { teamId: 303, teamName: 'Lucan United FC',          clubId: 32 }, played: 10, won: 2, drawn: 1, lost: 7, goalsFor:  9, goalsAgainst: 26, goalDifference: -17, points:  7 },
+      { position: 2, team: { teamId: 301, teamName: 'Blanchardstown AFC',      clubId: 30 }, played: 10, won: 7, drawn: 1, lost: 2, goalsFor: 24, goalsAgainst: 12, goalDifference: 12, points: 22 },
+      { position: 3, team: { teamId: 303, teamName: 'Lucan United FC',         clubId: 32 }, played: 10, won: 2, drawn: 1, lost: 7, goalsFor:  9, goalsAgainst: 26, goalDifference: -17, points:  7 },
     ],
   },
   {

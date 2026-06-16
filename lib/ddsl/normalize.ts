@@ -30,6 +30,10 @@ const RVR_CANONICAL = 'Rivervalley Rangers';
 const RVR_VARIANT_RE =
   /^river\s*valley\s+r(?:angers|grs)(?:\s+(?:afc|fc))?$/i;
 
+// Exported for shared use across the ingestion pipeline and UI layers.
+// Matches the canonical name, legacy two-word variant, and the RVR acronym.
+export const RVR_TEAM_RE = /river\s*valley\s+rangers|(?<![a-z])rvr(?![a-z])/i;
+
 // ---------------------------------------------------------------------------
 // normalizeTeamName
 // ---------------------------------------------------------------------------

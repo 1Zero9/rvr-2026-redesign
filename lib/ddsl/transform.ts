@@ -1,5 +1,5 @@
 import { applyMercyRule, parseAgeGroup } from './mercy-rule';
-import { normalizeKickoffTime, normalizeTeamName, normalizeVenueName } from './normalize';
+import { normalizeKickoffTime, normalizeTeamName, normalizeVenueName, RVR_TEAM_RE } from './normalize';
 import { resolveVenue } from './venue';
 import type {
   AgeGroup,
@@ -70,16 +70,8 @@ export function transformAll(fixtures: SportLoMoFixture[]): NormalisedMatch[] {
 // Standings transform — shared with tables and sync routes
 // ---------------------------------------------------------------------------
 
-// Matches both spellings the DDSL system uses:
-//   "Rivervalley Rangers"  (one word, as the club registers)
-//   "River Valley Rangers" (two words, seen in some legacy DDSL exports)
-// \s* between "river" and "valley" covers the space-variant without a second
-// alternation branch. Lookbehind/lookahead instead of \b for the RVR acronym
-// because word boundaries behave inconsistently around all-caps tokens.
-const RVR_NAME_RE = /river\s*valley\s+rangers|(?<![a-z])rvr(?![a-z])/i;
-
 export function isRvrTeam(teamName: string): boolean {
-  return RVR_NAME_RE.test(teamName);
+  return RVR_TEAM_RE.test(teamName);
 }
 
 export function transformStandingsTable(
