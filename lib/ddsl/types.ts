@@ -217,3 +217,15 @@ export interface SyncResponse {
   tables: LeagueTable[];
   developmentDivisions: DevelopmentDivision[];
 }
+
+// ---------------------------------------------------------------------------
+// Historical standings endpoint output types (/api/historical/standings)
+// ---------------------------------------------------------------------------
+
+export interface HistoricalSeasonResponse {
+  source: 'db' | 'empty';
+  season: string;
+  fetchedAt: string;
+  total: number;
+  tables: LeagueTable[];
+}

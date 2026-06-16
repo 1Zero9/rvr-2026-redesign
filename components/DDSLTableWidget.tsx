@@ -18,7 +18,19 @@ interface DDSLTableWidgetProps {
    * When absent for a team the form strip shows a "not available" notice.
    */
   form?: Record<string, FormResult[]>;
+  /** Hex accent colour used for RVR highlights. Defaults to brand neon green. */
+  accent?: string;
 }
+
+// Converts a 6-digit hex colour to an rgba() string for inline style opacity variants.
+function hexToRgba(hex: string, alpha: number): string {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return `rgba(${r},${g},${b},${alpha})`;
+}
+
+const DEFAULT_ACCENT = '#85E320';
 
 // Total number of <th>/<td> columns in the table (including mobile-only chevron
 // and desktop-only stat columns). The accordion <td> uses this as its colSpan
@@ -30,10 +42,21 @@ const TOTAL_COLS = 11;
 // Sub-components
 // ---------------------------------------------------------------------------
 
-function FormBadge({ result }: { result: FormResult }) {
+function FormBadge({ result, accent }: { result: FormResult; accent: string }) {
   const label = result === 'W' ? 'Win' : result === 'D' ? 'Draw' : 'Loss';
-  const cls: Record<FormResult, string> = {
-    W: 'bg-brand-neon text-brand-charcoal',
+  if (result === 'W') {
+    return (
+      <span
+        aria-label={label}
+        title={label}
+        className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full font-display text-xs font-black text-brand-charcoal"
+        style={{ backgroundColor: accent }}
+      >
+        {result}
+      </span>
+    );
+  }
+  const cls: Record<'D' | 'L', string> = {
     D: 'bg-brand-sky/60 text-brand-navy',
     L: 'bg-brand-maroon text-white',
   };
@@ -62,7 +85,7 @@ function GDCell({ value }: { value: number }) {
 // Main widget
 // ---------------------------------------------------------------------------
 
-export default function DDSLTableWidget({ table, form }: DDSLTableWidgetProps) {
+export default function DDSLTableWidget({ table, form, accent = DEFAULT_ACCENT }: DDSLTableWidgetProps) {
   const [expanded, setExpanded] = useState<Set<number>>(new Set());
 
   function toggleRow(position: number) {
@@ -85,7 +108,7 @@ export default function DDSLTableWidget({ table, form }: DDSLTableWidgetProps) {
     return (
       <div className="overflow-hidden rounded-2xl border-4 border-brand-navy bg-white shadow-brutalist">
         <div className="border-b-4 border-brand-navy bg-brand-navy px-5 py-4">
-          <p className="font-display text-xs font-black uppercase tracking-wider text-brand-neon">
+          <p className="font-display text-xs font-black uppercase tracking-wider" style={{ color: accent }}>
             DDSL League Table
           </p>
           <h3 className="mt-0.5 font-display text-lg font-black uppercase leading-tight text-white">
@@ -114,7 +137,7 @@ export default function DDSLTableWidget({ table, form }: DDSLTableWidgetProps) {
       {/* ── Widget header ──────────────────────────────────────────────────── */}
       <div className="flex flex-col gap-2 border-b-4 border-brand-navy bg-brand-navy px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
         <div>
-          <p className="font-display text-xs font-black uppercase tracking-wider text-brand-neon">
+          <p className="font-display text-xs font-black uppercase tracking-wider" style={{ color: accent }}>
             DDSL League Table
           </p>
           <h3 className="mt-0.5 font-display text-lg font-black uppercase leading-tight text-white sm:text-xl">
@@ -125,7 +148,10 @@ export default function DDSLTableWidget({ table, form }: DDSLTableWidgetProps) {
           <span className="rounded-full border-2 border-brand-sky/40 px-3 py-1 font-display text-xs font-black uppercase text-brand-sky">
             {table.season}
           </span>
-          <span className="flex items-center gap-1 rounded-full bg-brand-neon/20 px-3 py-1 font-display text-xs font-black uppercase text-brand-neon">
+          <span
+            className="flex items-center gap-1 rounded-full px-3 py-1 font-display text-xs font-black uppercase"
+            style={{ backgroundColor: hexToRgba(accent, 0.2), color: accent }}
+          >
             <ShieldCheck className="h-3 w-3" aria-hidden="true" />
             DDSL
           </span>
@@ -248,9 +274,12 @@ export default function DDSLTableWidget({ table, form }: DDSLTableWidgetProps) {
               const teamForm = form?.[row.teamName];
               const isAlternate = index % 2 === 1;
 
-              // RVR row gets a left neon border and tinted background
+              // RVR row gets a left accent border and tinted background
+              const rvrRowStyle = row.isRvr
+                ? { borderLeftColor: accent, backgroundColor: hexToRgba(accent, 0.1) }
+                : undefined;
               const rowBase = row.isRvr
-                ? 'border-l-4 border-brand-neon bg-brand-neon/10'
+                ? 'border-l-4'
                 : isAlternate
                 ? 'border-l-4 border-transparent bg-brand-cream/50'
                 : 'border-l-4 border-transparent bg-white';
@@ -271,13 +300,15 @@ export default function DDSLTableWidget({ table, form }: DDSLTableWidgetProps) {
                     }}
                     aria-expanded={open}
                     aria-label={`${row.teamName} — tap to ${open ? 'collapse' : 'expand'} match details`}
-                    className={`cursor-pointer border-b border-brand-navy/10 transition-colors hover:bg-brand-neon/5 md:cursor-auto ${rowBase}`}
+                    className={`cursor-pointer border-b border-brand-navy/10 transition-colors md:cursor-auto ${rowBase}`}
+                    style={rvrRowStyle}
                   >
 
                     {/* Position */}
                     <td className="py-3 pl-4 pr-2 text-center sm:pl-6">
                       <span
-                        className={`font-display text-sm font-black ${row.isRvr ? 'text-brand-green' : 'text-brand-navy'}`}
+                        className="font-display text-sm font-black"
+                        style={row.isRvr ? { color: accent } : undefined}
                       >
                         {row.position}
                       </span>
@@ -287,16 +318,16 @@ export default function DDSLTableWidget({ table, form }: DDSLTableWidgetProps) {
                     <td className="py-3 pr-4">
                       <div className="flex items-center gap-2">
                         <span
-                          className={`leading-tight ${
-                            row.isRvr
-                              ? 'font-black text-brand-green'
-                              : 'font-semibold text-brand-navy'
-                          }`}
+                          className={`leading-tight ${row.isRvr ? 'font-black' : 'font-semibold text-brand-navy'}`}
+                          style={row.isRvr ? { color: accent } : undefined}
                         >
                           {row.teamName}
                         </span>
                         {row.isRvr && (
-                          <span className="shrink-0 rounded border-2 border-brand-neon bg-brand-neon px-1.5 py-0.5 font-display text-[10px] font-black uppercase leading-none text-brand-charcoal">
+                          <span
+                            className="shrink-0 rounded border-2 px-1.5 py-0.5 font-display text-[10px] font-black uppercase leading-none text-brand-charcoal"
+                            style={{ backgroundColor: accent, borderColor: accent }}
+                          >
                             RVR
                           </span>
                         )}
@@ -341,7 +372,8 @@ export default function DDSLTableWidget({ table, form }: DDSLTableWidgetProps) {
                     {/* PTS */}
                     <td className="py-3 pl-2 pr-4 text-center sm:pr-6">
                       <span
-                        className={`font-display text-sm font-black ${row.isRvr ? 'text-brand-green' : 'text-brand-navy'}`}
+                        className="font-display text-sm font-black"
+                        style={row.isRvr ? { color: accent } : { color: '#0B1F3B' }}
                       >
                         {row.points}
                       </span>
@@ -367,9 +399,8 @@ export default function DDSLTableWidget({ table, form }: DDSLTableWidgetProps) {
                         inert={!open ? ('' as unknown as boolean) : undefined}
                       >
                         <div
-                          className={`border-b-2 border-brand-navy/10 px-4 py-4 ${
-                            row.isRvr ? 'bg-brand-neon/8' : 'bg-brand-navy/5'
-                          }`}
+                          className="border-b-2 border-brand-navy/10 px-4 py-4"
+                          style={row.isRvr ? { backgroundColor: hexToRgba(accent, 0.08) } : { backgroundColor: 'rgba(11,31,59,0.05)' }}
                         >
 
                           {/* Expanded stat tiles: W / D / L / GD */}
@@ -402,7 +433,7 @@ export default function DDSLTableWidget({ table, form }: DDSLTableWidgetProps) {
                             {teamForm && teamForm.length > 0 ? (
                               <div className="flex gap-1.5">
                                 {teamForm.slice(0, 5).map((result, i) => (
-                                  <FormBadge key={i} result={result} />
+                                  <FormBadge key={i} result={result} accent={accent} />
                                 ))}
                               </div>
                             ) : (
