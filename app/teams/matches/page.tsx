@@ -117,7 +117,7 @@ function formatStatus(status: NormalisedMatch["status"]) {
 }
 
 function getCrestLabel(teamName: string) {
-  if (/rivervalley\s+rangers|(?<![a-z])rvr(?![a-z])/i.test(teamName)) {
+  if (/river\s*valley\s+rangers|(?<![a-z])rvr(?![a-z])/i.test(teamName)) {
     return "RVR";
   }
   return teamName

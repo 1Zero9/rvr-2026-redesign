@@ -177,7 +177,7 @@ async function fetchFromSportLoMo(): Promise<Fixture[]> {
   const apiKey = process.env.SPORTLOMO_API_KEY;
   const clubId = process.env.SPORTLOMO_CLUB_ID;
   // resolveActiveSeason() reads the active Season row from the database first,
-  // then falls back to SPORTLOMO_SEASON env var, then to the current year.
+  // then falls back to SPORTLOMO_SEASON env var, then to CLUB_SEASON.currentSeason.
   // This ties the live SportLoMo query to whichever season the DB marks active,
   // ensuring historical HistoricalStanding rows never contaminate the live feed.
   const season = await resolveActiveSeason();
@@ -186,21 +186,35 @@ async function fetchFromSportLoMo(): Promise<Fixture[]> {
     throw new Error("SportLoMo environment variables not configured");
   }
 
-  const url = new URL(`${baseUrl}/Club/${clubId}/Fixtures`);
-  url.searchParams.set("season", season);
-  url.searchParams.set("pageSize", "100");
+  // Paginate until the server has no more rows — needed to capture all active
+  // divisions when the club has a large number of registered squads.
+  const PAGE_SIZE = 100;
+  const all: SportLoMoRawFixture[] = [];
+  let page = 1;
 
-  const res = await fetch(url.toString(), {
-    headers: { Authorization: `Bearer ${apiKey}`, Accept: "application/json" },
-    cache: "no-store",
-  });
+  for (;;) {
+    const url = new URL(`${baseUrl}/Club/${clubId}/Fixtures`);
+    url.searchParams.set("season", season);
+    url.searchParams.set("page", String(page));
+    url.searchParams.set("pageSize", String(PAGE_SIZE));
 
-  if (!res.ok) {
-    throw new Error(`SportLoMo responded with ${res.status}`);
+    const res = await fetch(url.toString(), {
+      headers: { Authorization: `Bearer ${apiKey}`, Accept: "application/json" },
+      cache: "no-store",
+    });
+
+    if (!res.ok) {
+      throw new Error(`SportLoMo responded with ${res.status}`);
+    }
+
+    const envelope = (await res.json()) as { total: number; data: SportLoMoRawFixture[] };
+    all.push(...envelope.data);
+
+    if (all.length >= (envelope.total ?? 0) || envelope.data.length < PAGE_SIZE) break;
+    page++;
   }
 
-  const envelope = (await res.json()) as { data: SportLoMoRawFixture[] };
-  return envelope.data.map(mapRawFixture);
+  return all.map(mapRawFixture);
 }
 
 // ---------------------------------------------------------------------------

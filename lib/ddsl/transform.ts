@@ -55,10 +55,13 @@ export function transformAll(fixtures: SportLoMoFixture[]): NormalisedMatch[] {
 // Standings transform — shared with tables and sync routes
 // ---------------------------------------------------------------------------
 
-// Matches "Rivervalley Rangers" (with or without "AFC") and the standalone
-// acronym "RVR". Lookbehind/lookahead instead of \b because word boundaries
-// behave inconsistently around all-caps tokens.
-const RVR_NAME_RE = /rivervalley\s+rangers|(?<![a-z])rvr(?![a-z])/i;
+// Matches both spellings the DDSL system uses:
+//   "Rivervalley Rangers"  (one word, as the club registers)
+//   "River Valley Rangers" (two words, seen in some legacy DDSL exports)
+// \s* between "river" and "valley" covers the space-variant without a second
+// alternation branch. Lookbehind/lookahead instead of \b for the RVR acronym
+// because word boundaries behave inconsistently around all-caps tokens.
+const RVR_NAME_RE = /river\s*valley\s+rangers|(?<![a-z])rvr(?![a-z])/i;
 
 export function isRvrTeam(teamName: string): boolean {
   return RVR_NAME_RE.test(teamName);

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import {
-  fetchStandings,
+  fetchAllStandings,
   SportLoMoConfigError,
   SportLoMoApiError,
 } from "@/lib/ddsl/client";
@@ -38,10 +38,11 @@ function isCompetitiveTier(ageGroup: AgeGroup): boolean {
 // RVR team name matching
 // ---------------------------------------------------------------------------
 
-// Matches "Rivervalley Rangers" (with or without "AFC") and the standalone
-// acronym "RVR". The word-boundary assertions prevent false matches against
-// other team names that happen to contain those characters.
-const RVR_NAME_PATTERN = /rivervalley\s+rangers|(?<![a-z])rvr(?![a-z])/i;
+// Matches both spellings the DDSL system uses:
+//   "Rivervalley Rangers"  (one word — official club registration)
+//   "River Valley Rangers" (two words — seen in some legacy DDSL exports)
+// \s* between "river" and "valley" covers both variants in one branch.
+const RVR_NAME_PATTERN = /river\s*valley\s+rangers|(?<![a-z])rvr(?![a-z])/i;
 
 function isRvrTeam(teamName: string): boolean {
   return RVR_NAME_PATTERN.test(teamName);
@@ -204,8 +205,7 @@ export async function GET(req: NextRequest): Promise<NextResponse<TablesResponse
   let rawTables: SportLoMoStandingsTable[];
 
   try {
-    const envelope = await fetchStandings();
-    rawTables = envelope.data;
+    rawTables = await fetchAllStandings();
     source = "live";
   } catch (err) {
     if (err instanceof SportLoMoConfigError) {

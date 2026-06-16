@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import {
-  fetchFixtures,
-  fetchResults,
-  fetchStandings,
+  fetchAllFixtures,
+  fetchAllResults,
+  fetchAllStandings,
   SportLoMoApiError,
   SportLoMoConfigError,
 } from '@/lib/ddsl/client';
@@ -270,14 +270,13 @@ export async function GET(_req: NextRequest): Promise<NextResponse<SyncResponse>
   let rawStandings: SportLoMoStandingsTable[];
 
   try {
-    const [fixtureEnv, resultEnv, standingsEnv] = await Promise.all([
-      fetchFixtures({ pageSize: 100 }),
-      fetchResults({ pageSize: 100 }),
-      fetchStandings(),
+    // Fetch all pages in parallel — covers all 29 active RVR squads across
+    // every division without being truncated by a single-page size cap.
+    [rawFixtures, rawResults, rawStandings] = await Promise.all([
+      fetchAllFixtures(),
+      fetchAllResults(),
+      fetchAllStandings(),
     ]);
-    rawFixtures  = fixtureEnv.data;
-    rawResults   = resultEnv.data;
-    rawStandings = standingsEnv.data;
     source = 'live';
   } catch (err) {
     if (err instanceof SportLoMoConfigError) {

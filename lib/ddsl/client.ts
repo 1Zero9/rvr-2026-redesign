@@ -117,6 +117,36 @@ async function fetchJson<T>(path: string, extra: Record<string, string> = {}): P
 }
 
 // ---------------------------------------------------------------------------
+// Pagination helper
+// ---------------------------------------------------------------------------
+
+// Keeps fetching pages until the server has delivered all rows.
+// Termination conditions (either is sufficient):
+//   (a) accumulated count has reached the envelope's stated total
+//   (b) the last page returned fewer rows than the requested pageSize (final page)
+async function fetchAllPages<T>(
+  endpoint: string,
+  extra: Record<string, string> = {},
+  pageSize = 100,
+): Promise<T[]> {
+  const all: T[] = [];
+  let page = 1;
+
+  for (;;) {
+    const envelope = await fetchJson<SportLoMoEnvelope<T>>(endpoint, {
+      ...extra,
+      page:     String(page),
+      pageSize: String(pageSize),
+    });
+    all.push(...envelope.data);
+    if (all.length >= (envelope.total ?? 0) || envelope.data.length < pageSize) break;
+    page++;
+  }
+
+  return all;
+}
+
+// ---------------------------------------------------------------------------
 // Public API
 // ---------------------------------------------------------------------------
 
@@ -181,4 +211,35 @@ export async function fetchStandings(): Promise<SportLoMoEnvelope<SportLoMoStand
   return fetchJson<SportLoMoEnvelope<SportLoMoStandingsTable>>(
     `/Club/${clubId}/Standings`,
   );
+}
+
+// ---------------------------------------------------------------------------
+// Paginated bulk fetchers — use these in route handlers to capture all 29
+// RVR squads across every active division without hitting the page-size cap.
+// ---------------------------------------------------------------------------
+
+/**
+ * Fetches ALL fixture pages for the club, walking pagination until exhausted.
+ * Covers all active divisions and age groups in a single call sequence.
+ */
+export async function fetchAllFixtures(): Promise<SportLoMoFixture[]> {
+  const { clubId } = getConfig();
+  return fetchAllPages<SportLoMoFixture>(`/Club/${clubId}/Fixtures`);
+}
+
+/**
+ * Fetches ALL result pages for the club, walking pagination until exhausted.
+ */
+export async function fetchAllResults(): Promise<SportLoMoFixture[]> {
+  const { clubId } = getConfig();
+  return fetchAllPages<SportLoMoFixture>(`/Club/${clubId}/Results`);
+}
+
+/**
+ * Fetches ALL standings pages for the club.
+ * With 29 active teams across multiple divisions this may span multiple pages.
+ */
+export async function fetchAllStandings(): Promise<SportLoMoStandingsTable[]> {
+  const { clubId } = getConfig();
+  return fetchAllPages<SportLoMoStandingsTable>(`/Club/${clubId}/Standings`);
 }
