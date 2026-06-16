@@ -20,19 +20,27 @@
 // The single canonical name used across the entire platform.
 const RVR_CANONICAL = 'Rivervalley Rangers';
 
-// Covers all known variants returned by the DDSL / SportLoMo system:
+// Covers all known variants returned by the DDSL / SportLoMo system.
+// NOTE: \s* between "river" and "valley" intentionally matches BOTH the
+// official one-word spelling ("Rivervalley") and the legacy two-word export
+// spelling ("River Valley") that SportLoMo sometimes emits.
+//
 //   "Rivervalley Rangers"        official one-word spelling
-//   "River Valley Rangers"       two-word legacy export spelling
-//   "Rivervalley Rgrs"           abbreviated short form
-//   "River Valley Rgrs"          abbreviated + space variant
+//   "River Valley Rangers"       two-word legacy export spelling — \s* handles this
 //   "Rivervalley Rangers FC"     with FC suffix
 //   "Rivervalley Rangers AFC"    with AFC suffix
+//   "River Valley Rangers FC"    two-word + FC — \s* handles this
+//   "River Valley Rangers AFC"   two-word + AFC — \s* handles this
+//   "Rivervalley Rgrs"           abbreviated short form
+//   "River Valley Rgrs"          abbreviated + space variant
 const RVR_VARIANT_RE =
   /^river\s*valley\s+r(?:angers|grs)(?:\s+(?:afc|fc))?$/i;
 
 // Exported for shared use across the ingestion pipeline and UI layers.
-// Matches the canonical name, legacy two-word variant, and the RVR acronym.
-export const RVR_TEAM_RE = /river\s*valley\s+rangers|(?<![a-z])rvr(?![a-z])/i;
+// \s* between "river" and "valley" matches both "Rivervalley" (one word)
+// and "River Valley" (two words, as emitted by some SportLoMo exports).
+// r(?:angers|grs) covers the full "Rangers" spelling and the "Rgrs" abbreviation.
+export const RVR_TEAM_RE = /river\s*valley\s+r(?:angers|grs)|(?<![a-z])rvr(?![a-z])/i;
 
 // ---------------------------------------------------------------------------
 // normalizeTeamName
@@ -64,10 +72,12 @@ export function normalizeTeamName(raw: string): string {
   name = name.replace(/\.(?=[A-Za-z])/g, '. ');
 
   // Step 5: missing space before terminal FC / AFC suffix
-  // Only fires when the character immediately before the suffix is a letter
-  // (prevents splitting intentional all-caps acronyms like "WAFC" which are rare
-  // but would be "W AFC" without the lowercase guard)
-  name = name.replace(/([a-z])(AFC|FC)$/i, '$1 $2');
+  // Only fires when the character immediately before the suffix is a lowercase
+  // letter — intentionally NO i flag so that [a-z] stays lowercase-only.
+  // If the i flag were present, [a-z] would also match uppercase, which causes
+  // "Rivervalley Rangers AFC" to be misread as [A][FC] and split into
+  // "Rivervalley Rangers A FC", breaking the RVR variant match in step 6.
+  name = name.replace(/([a-z])(AFC|FC)$/, '$1 $2');
 
   // Step 6: RVR canonical mapping
   if (RVR_VARIANT_RE.test(name)) {

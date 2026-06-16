@@ -83,18 +83,20 @@ export function transformStandingsTable(
     competitionName: raw.competitionName,
     ageGroup,
     season: raw.season,
-    rows: raw.standings.map((row) => ({
-      position:       row.position,
-      teamName:       row.team.teamName,
-      played:         row.played,
-      won:            row.won,
-      drawn:          row.drawn,
-      lost:           row.lost,
-      goalsFor:       row.goalsFor,
-      goalsAgainst:   row.goalsAgainst,
-      goalDifference: row.goalDifference,
-      points:         row.points,
-      isRvr:          isRvrTeam(row.team.teamName),
-    })),
+    rows: raw.standings
+      .map((row) => ({
+        position:       row.position,
+        teamName:       row.team.teamName,
+        played:         row.played,
+        won:            row.won,
+        drawn:          row.drawn,
+        lost:           row.lost,
+        goalsFor:       row.goalsFor,
+        goalsAgainst:   row.goalsAgainst,
+        goalDifference: row.goalDifference,
+        points:         row.points,
+        isRvr:          isRvrTeam(row.team.teamName),
+      }))
+      .sort((a, b) => a.position - b.position),
   };
 }

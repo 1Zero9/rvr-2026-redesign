@@ -197,7 +197,12 @@ export async function GET(_req: NextRequest): Promise<NextResponse> {
         upcomingDates,
       });
     } else {
-      tables.push(transformStandingsTable(raw, ageGroup));
+      const table = transformStandingsTable(raw, ageGroup);
+      console.log(
+        `[api/fixtures/sync] Table "${raw.competitionName}" — rows: ${table.rows.length},` +
+        ` RVR row present: ${table.rows.some((r) => r.isRvr)}`,
+      );
+      tables.push(table);
     }
   }
 

@@ -8,7 +8,12 @@
  *
  * U12 Boys Major Saturday: complete 2025/26 double round-robin season,
  * 14 clubs, 26 games played each. Standings are mathematically consistent:
- *   Sum(W) = Sum(L) = 155, Sum(D) = 54, Sum(GF) = Sum(GA) = 634, Sum(GD) = 0
+ *   Sum(W) = Sum(L) = 153, Sum(D) = 58, Sum(GF) = Sum(GA) = 646, Sum(GD) = 0
+ *
+ * Official final positions from the DDSL league ledger:
+ *   P1  Kilnamanagh AFC      (Pts 65)
+ *   P4  Belvedere FC         (Pts 49)
+ *   P13 Rivervalley Rangers  (W5 D5 L16, Pts 20)
  *
  * To re-enable live API fetching set USE_LOCAL_SEED = false in
  * app/api/fixtures/sync/route.ts.
@@ -18,7 +23,11 @@ import type { SportLoMoFixture, SportLoMoStandingsTable } from './types';
 
 const SEASON     = '2025/26';
 const RVR_ID     = 87086;
-const RVR_NAME   = 'Rivervalley Rangers AFC';
+// Standings rows use the canonical short form so the rendered TableRow.teamName
+// is already clean.  Fixtures and results keep the full "AFC" form because
+// normalizeTeamName() in transformFixture() resolves it to the canonical name.
+const RVR_NAME       = 'Rivervalley Rangers AFC';  // used in fixture/result homeTeam/awayTeam
+const RVR_NAME_SHORT = 'Rivervalley Rangers';       // used in standings rows
 const RVR_HOME_1 = {
   venueId:      1001,
   venueName:    'Rivervalley Astro Pitch',
@@ -44,20 +53,23 @@ const STANDINGS: SportLoMoStandingsTable[] = [
     competitionName: 'DDSL U12 Boys Major Saturday',
     season:          SEASON,
     standings: [
-      { position:  1, team: { teamId: 11001, teamName: 'Kilnamanagh AFC',         clubId: 22000 }, played: 26, won: 21, drawn: 2, lost:  3, goalsFor: 72, goalsAgainst: 30, goalDifference:  42, points: 65 },
-      { position:  2, team: { teamId: 23001, teamName: 'Home Farm FC',            clubId: 23000 }, played: 26, won: 19, drawn: 3, lost:  4, goalsFor: 70, goalsAgainst: 34, goalDifference:  36, points: 60 },
-      { position:  3, team: { teamId: 24001, teamName: 'Cherry Orchard FC',       clubId: 24000 }, played: 26, won: 17, drawn: 3, lost:  6, goalsFor: 66, goalsAgainst: 38, goalDifference:  28, points: 54 },
-      { position:  4, team: { teamId: 87101, teamName: RVR_NAME,                  clubId: RVR_ID }, played: 26, won: 15, drawn: 4, lost:  7, goalsFor: 60, goalsAgainst: 38, goalDifference:  22, points: 49 },
-      { position:  5, team: { teamId: 25001, teamName: 'Leixlip United AFC',      clubId: 25000 }, played: 26, won: 14, drawn: 3, lost:  9, goalsFor: 54, goalsAgainst: 40, goalDifference:  14, points: 45 },
-      { position:  6, team: { teamId: 26001, teamName: 'Beechwood SC',            clubId: 26000 }, played: 26, won: 13, drawn: 3, lost: 10, goalsFor: 48, goalsAgainst: 42, goalDifference:   6, points: 42 },
-      { position:  7, team: { teamId: 27001, teamName: 'Crumlin United AFC',      clubId: 27000 }, played: 26, won: 11, drawn: 5, lost: 10, goalsFor: 46, goalsAgainst: 44, goalDifference:   2, points: 38 },
-      { position:  8, team: { teamId: 28001, teamName: 'St Francis FC',           clubId: 28000 }, played: 26, won: 10, drawn: 5, lost: 11, goalsFor: 42, goalsAgainst: 46, goalDifference:  -4, points: 35 },
-      { position:  9, team: { teamId: 12001, teamName: 'Belvedere FC',            clubId: 12000 }, played: 26, won:  9, drawn: 4, lost: 13, goalsFor: 38, goalsAgainst: 50, goalDifference: -12, points: 31 },
-      { position: 10, team: { teamId: 29001, teamName: 'Leicester Celtic FC',     clubId: 29000 }, played: 26, won:  8, drawn: 4, lost: 14, goalsFor: 34, goalsAgainst: 52, goalDifference: -18, points: 28 },
-      { position: 11, team: { teamId: 30001, teamName: 'Bohemian FC',             clubId: 30000 }, played: 26, won:  7, drawn: 5, lost: 14, goalsFor: 30, goalsAgainst: 54, goalDifference: -24, points: 26 },
-      { position: 12, team: { teamId: 31001, teamName: 'Ballyoulster United FC',  clubId: 31000 }, played: 26, won:  5, drawn: 5, lost: 16, goalsFor: 26, goalsAgainst: 56, goalDifference: -30, points: 20 },
-      { position: 13, team: { teamId: 32001, teamName: 'Corduff FC',              clubId: 32000 }, played: 26, won:  4, drawn: 3, lost: 19, goalsFor: 22, goalsAgainst: 60, goalDifference: -38, points: 15 },
-      { position: 14, team: { teamId: 13001, teamName: 'Greystones AFC',          clubId: 13000 }, played: 26, won:  2, drawn: 5, lost: 19, goalsFor: 26, goalsAgainst: 50, goalDifference: -24, points: 11 },
+      // Source: official DDSL league ledger (image_cef35d.jpg).
+      // Position 4 is Belvedere FC (49 pts). Position 13 is Rivervalley Rangers (20 pts).
+      // Stats: Sum(W)=Sum(L)=153, Sum(D)=58, Sum(GF)=Sum(GA)=646, Sum(GD)=0.
+      { position:  1, team: { teamId: 11001, teamName: 'Kilnamanagh AFC',        clubId: 22000 }, played: 26, won: 21, drawn: 2, lost:  3, goalsFor: 82, goalsAgainst: 22, goalDifference:  60, points: 65 },
+      { position:  2, team: { teamId: 23001, teamName: 'Home Farm FC',           clubId: 23000 }, played: 26, won: 19, drawn: 3, lost:  4, goalsFor: 74, goalsAgainst: 26, goalDifference:  48, points: 60 },
+      { position:  3, team: { teamId: 24001, teamName: 'Cherry Orchard FC',      clubId: 24000 }, played: 26, won: 17, drawn: 3, lost:  6, goalsFor: 65, goalsAgainst: 30, goalDifference:  35, points: 54 },
+      { position:  4, team: { teamId: 12001, teamName: 'Belvedere FC',           clubId: 12000 }, played: 26, won: 15, drawn: 4, lost:  7, goalsFor: 58, goalsAgainst: 34, goalDifference:  24, points: 49 },
+      { position:  5, team: { teamId: 25001, teamName: 'Leixlip United AFC',     clubId: 25000 }, played: 26, won: 14, drawn: 3, lost:  9, goalsFor: 54, goalsAgainst: 36, goalDifference:  18, points: 45 },
+      { position:  6, team: { teamId: 26001, teamName: 'Beechwood SC',           clubId: 26000 }, played: 26, won: 12, drawn: 4, lost: 10, goalsFor: 48, goalsAgainst: 42, goalDifference:   6, points: 40 },
+      { position:  7, team: { teamId: 28001, teamName: 'St Francis FC',          clubId: 28000 }, played: 26, won: 10, drawn: 5, lost: 11, goalsFor: 44, goalsAgainst: 46, goalDifference:  -2, points: 35 },
+      { position:  8, team: { teamId: 27001, teamName: 'Crumlin United AFC',     clubId: 27000 }, played: 26, won:  9, drawn: 5, lost: 12, goalsFor: 40, goalsAgainst: 48, goalDifference:  -8, points: 32 },
+      { position:  9, team: { teamId: 29001, teamName: 'Leicester Celtic FC',    clubId: 29000 }, played: 26, won:  8, drawn: 6, lost: 12, goalsFor: 38, goalsAgainst: 50, goalDifference: -12, points: 30 },
+      { position: 10, team: { teamId: 30001, teamName: 'Bohemian FC',            clubId: 30000 }, played: 26, won:  7, drawn: 5, lost: 14, goalsFor: 35, goalsAgainst: 54, goalDifference: -19, points: 26 },
+      { position: 11, team: { teamId: 31001, teamName: 'Ballyoulster United FC', clubId: 31000 }, played: 26, won:  6, drawn: 5, lost: 15, goalsFor: 30, goalsAgainst: 58, goalDifference: -28, points: 23 },
+      { position: 12, team: { teamId: 32001, teamName: 'Corduff FC',             clubId: 32000 }, played: 26, won:  6, drawn: 4, lost: 16, goalsFor: 28, goalsAgainst: 62, goalDifference: -34, points: 22 },
+      { position: 13, team: { teamId: 87101, teamName: RVR_NAME_SHORT,           clubId: RVR_ID }, played: 26, won:  5, drawn: 5, lost: 16, goalsFor: 28, goalsAgainst: 66, goalDifference: -38, points: 20 },
+      { position: 14, team: { teamId: 13001, teamName: 'Greystones AFC',         clubId: 13000 }, played: 26, won:  4, drawn: 4, lost: 18, goalsFor: 22, goalsAgainst: 72, goalDifference: -50, points: 16 },
     ],
   },
 
@@ -70,7 +82,7 @@ const STANDINGS: SportLoMoStandingsTable[] = [
     season:          SEASON,
     standings: [
       { position: 1, team: { teamId: 15001, teamName: 'Swords Celtic AFC',             clubId: 15000 }, played: 8, won: 7, drawn: 0, lost: 1, goalsFor: 26, goalsAgainst:  9, goalDifference:  17, points: 21 },
-      { position: 2, team: { teamId: 87102, teamName: RVR_NAME,                        clubId: RVR_ID }, played: 8, won: 6, drawn: 1, lost: 1, goalsFor: 22, goalsAgainst: 10, goalDifference:  12, points: 19 },
+      { position: 2, team: { teamId: 87102, teamName: RVR_NAME_SHORT,                  clubId: RVR_ID }, played: 8, won: 6, drawn: 1, lost: 1, goalsFor: 22, goalsAgainst: 10, goalDifference:  12, points: 19 },
       { position: 3, team: { teamId: 14001, teamName: 'Malahide United AFC',           clubId: 14000 }, played: 8, won: 4, drawn: 2, lost: 2, goalsFor: 18, goalsAgainst: 14, goalDifference:   4, points: 14 },
       { position: 4, team: { teamId: 16001, teamName: "St Kevin's Boys AFC",           clubId: 16000 }, played: 8, won: 3, drawn: 1, lost: 4, goalsFor: 13, goalsAgainst: 16, goalDifference:  -3, points: 10 },
       { position: 5, team: { teamId: 17001, teamName: 'Donabate Portside United FC',   clubId: 17000 }, played: 8, won: 2, drawn: 0, lost: 6, goalsFor:  9, goalsAgainst: 23, goalDifference: -14, points:  6 },
@@ -88,7 +100,7 @@ const STANDINGS: SportLoMoStandingsTable[] = [
     season:          SEASON,
     standings: [
       { position: 1, team: { teamId: 19001, teamName: 'Shelbourne FC',                clubId: 19000 }, played: 8, won: 7, drawn: 0, lost: 1, goalsFor: 24, goalsAgainst:  8, goalDifference:  16, points: 21 },
-      { position: 2, team: { teamId: 87103, teamName: RVR_NAME,                       clubId: RVR_ID }, played: 8, won: 6, drawn: 0, lost: 2, goalsFor: 22, goalsAgainst: 11, goalDifference:  11, points: 18 },
+      { position: 2, team: { teamId: 87103, teamName: RVR_NAME_SHORT,                 clubId: RVR_ID }, played: 8, won: 6, drawn: 0, lost: 2, goalsFor: 22, goalsAgainst: 11, goalDifference:  11, points: 18 },
       { position: 3, team: { teamId: 20001, teamName: 'Raheny United AFC',            clubId: 20000 }, played: 8, won: 4, drawn: 2, lost: 2, goalsFor: 18, goalsAgainst: 13, goalDifference:   5, points: 14 },
       { position: 4, team: { teamId: 14002, teamName: 'Malahide United AFC',          clubId: 14000 }, played: 8, won: 3, drawn: 2, lost: 3, goalsFor: 14, goalsAgainst: 16, goalDifference:  -2, points: 11 },
       { position: 5, team: { teamId: 21001, teamName: "St Joseph's Boys AFC",         clubId: 21000 }, played: 8, won: 1, drawn: 2, lost: 5, goalsFor:  9, goalsAgainst: 22, goalDifference: -13, points:  5 },
@@ -105,7 +117,7 @@ const STANDINGS: SportLoMoStandingsTable[] = [
     season:          SEASON,
     standings: [
       { position: 1, team: { teamId: 20002, teamName: 'Raheny United AFC',            clubId: 20000 }, played: 8, won: 7, drawn: 1, lost: 0, goalsFor: 26, goalsAgainst:  7, goalDifference:  19, points: 22 },
-      { position: 2, team: { teamId: 87104, teamName: RVR_NAME,                       clubId: RVR_ID }, played: 8, won: 6, drawn: 1, lost: 1, goalsFor: 22, goalsAgainst: 10, goalDifference:  12, points: 19 },
+      { position: 2, team: { teamId: 87104, teamName: RVR_NAME_SHORT,                 clubId: RVR_ID }, played: 8, won: 6, drawn: 1, lost: 1, goalsFor: 22, goalsAgainst: 10, goalDifference:  12, points: 19 },
       { position: 3, team: { teamId: 19002, teamName: 'Shelbourne FC',                clubId: 19000 }, played: 8, won: 4, drawn: 1, lost: 3, goalsFor: 16, goalsAgainst: 14, goalDifference:   2, points: 13 },
       { position: 4, team: { teamId: 15002, teamName: 'Swords Celtic AFC',            clubId: 15000 }, played: 8, won: 2, drawn: 1, lost: 5, goalsFor: 11, goalsAgainst: 21, goalDifference: -10, points:  7 },
       { position: 5, team: { teamId: 18002, teamName: 'Portmarnock AFC',              clubId: 18000 }, played: 8, won: 0, drawn: 0, lost: 8, goalsFor:  4, goalsAgainst: 27, goalDifference: -23, points:  0 },
@@ -121,7 +133,7 @@ const STANDINGS: SportLoMoStandingsTable[] = [
     season:          SEASON,
     standings: [
       { position: 1, team: { teamId: 14003, teamName: 'Malahide United AFC',          clubId: 14000 }, played: 10, won: 9, drawn: 1, lost:  0, goalsFor: 34, goalsAgainst: 10, goalDifference:  24, points: 28 },
-      { position: 2, team: { teamId: 87105, teamName: RVR_NAME,                       clubId: RVR_ID }, played: 10, won: 7, drawn: 2, lost:  1, goalsFor: 26, goalsAgainst: 12, goalDifference:  14, points: 23 },
+      { position: 2, team: { teamId: 87105, teamName: RVR_NAME_SHORT,                 clubId: RVR_ID }, played: 10, won: 7, drawn: 2, lost:  1, goalsFor: 26, goalsAgainst: 12, goalDifference:  14, points: 23 },
       { position: 3, team: { teamId: 16002, teamName: "St Kevin's Boys AFC",          clubId: 16000 }, played: 10, won: 6, drawn: 1, lost:  3, goalsFor: 22, goalsAgainst: 16, goalDifference:   6, points: 19 },
       { position: 4, team: { teamId: 15003, teamName: 'Swords Celtic AFC',            clubId: 15000 }, played: 10, won: 4, drawn: 1, lost:  5, goalsFor: 16, goalsAgainst: 22, goalDifference:  -6, points: 13 },
       { position: 5, team: { teamId: 17003, teamName: 'Donabate Portside United FC',  clubId: 17000 }, played: 10, won: 2, drawn: 1, lost:  7, goalsFor: 11, goalsAgainst: 28, goalDifference: -17, points:  7 },
@@ -138,7 +150,7 @@ const STANDINGS: SportLoMoStandingsTable[] = [
     competitionName: 'DDSL U10 Boys Saturday Blitz',
     season:          SEASON,
     standings: [
-      { position: 1, team: { teamId: 87106, teamName: RVR_NAME, clubId: RVR_ID }, played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, goalDifference: 0, points: 0 },
+      { position: 1, team: { teamId: 87106, teamName: RVR_NAME_SHORT, clubId: RVR_ID }, played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, goalDifference: 0, points: 0 },
     ],
   },
 
@@ -150,7 +162,7 @@ const STANDINGS: SportLoMoStandingsTable[] = [
     competitionName: 'DDSL U9 Girls Saturday Blitz',
     season:          SEASON,
     standings: [
-      { position: 1, team: { teamId: 87107, teamName: RVR_NAME, clubId: RVR_ID }, played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, goalDifference: 0, points: 0 },
+      { position: 1, team: { teamId: 87107, teamName: RVR_NAME_SHORT, clubId: RVR_ID }, played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, goalDifference: 0, points: 0 },
     ],
   },
 ];
@@ -263,8 +275,10 @@ const FIXTURES: SportLoMoFixture[] = [
 const RESULTS: SportLoMoFixture[] = [
 
   // -- U12 Boys Major Saturday (completed season sample) --------------------
+  // RVR finished P13: W5 D5 L16. Sample reflects predominantly losses with
+  // a few wins and draws consistent with the final 20-point tally.
 
-  // Home win vs Greystones — margin 3, no mercy cap
+  // Home win vs Greystones AFC (P14) — one of RVR's five wins
   {
     fixtureId:   8006,
     fixtureDate: '2026-05-24',
@@ -274,10 +288,10 @@ const RESULTS: SportLoMoFixture[] = [
     venue:       RVR_HOME_1,
     competition: { competitionId: 208581, competitionName: 'DDSL U12 Boys Major Saturday' },
     status:      'Result',
-    score:       { home: 4, away: 1 },
+    score:       { home: 2, away: 1 },
   },
 
-  // Away loss at Cherry Orchard
+  // Away loss at Cherry Orchard FC (P3)
   {
     fixtureId:   8001,
     fixtureDate: '2026-06-07',
@@ -287,23 +301,23 @@ const RESULTS: SportLoMoFixture[] = [
     venue:       { venueName: 'Cherry Orchard Park', venueAddress: 'Cherry Orchard, Dublin 10' },
     competition: { competitionId: 208581, competitionName: 'DDSL U12 Boys Major Saturday' },
     status:      'Result',
-    score:       { home: 3, away: 2 },
+    score:       { home: 3, away: 1 },
   },
 
-  // Home win vs Corduff
+  // Home win vs Corduff FC (P12) — one of RVR's five wins
   {
     fixtureId:   8007,
     fixtureDate: '2026-05-10',
     fixtureTime: '10:00',
-    homeTeam:  { teamId: 87101, teamName: RVR_NAME,      clubId: RVR_ID, clubName: RVR_NAME },
-    awayTeam:  { teamId: 32001, teamName: 'Corduff FC',  clubId: 32000,  clubName: 'Corduff FC' },
+    homeTeam:  { teamId: 87101, teamName: RVR_NAME,     clubId: RVR_ID, clubName: RVR_NAME },
+    awayTeam:  { teamId: 32001, teamName: 'Corduff FC', clubId: 32000,  clubName: 'Corduff FC' },
     venue:       RVR_HOME_1,
     competition: { competitionId: 208581, competitionName: 'DDSL U12 Boys Major Saturday' },
     status:      'Result',
-    score:       { home: 3, away: 0 },
+    score:       { home: 2, away: 0 },
   },
 
-  // Away draw vs Crumlin United
+  // Away draw at Crumlin United AFC (P8) — one of RVR's five draws
   {
     fixtureId:   8008,
     fixtureDate: '2026-04-26',
@@ -313,59 +327,59 @@ const RESULTS: SportLoMoFixture[] = [
     venue:       { venueName: 'Crumlin United Park', venueAddress: 'Crumlin, Dublin 12' },
     competition: { competitionId: 208581, competitionName: 'DDSL U12 Boys Major Saturday' },
     status:      'Result',
-    score:       { home: 2, away: 2 },
+    score:       { home: 1, away: 1 },
   },
 
-  // Home win vs Ballyoulster United
+  // Home loss to Belvedere FC (P4) — top-half side beats P13 RVR
   {
     fixtureId:   8009,
     fixtureDate: '2026-04-12',
     fixtureTime: '10:00',
-    homeTeam:  { teamId: 87101, teamName: RVR_NAME,                  clubId: RVR_ID, clubName: RVR_NAME },
-    awayTeam:  { teamId: 31001, teamName: 'Ballyoulster United FC',  clubId: 31000,  clubName: 'Ballyoulster United FC' },
+    homeTeam:  { teamId: 87101, teamName: RVR_NAME,        clubId: RVR_ID, clubName: RVR_NAME },
+    awayTeam:  { teamId: 12001, teamName: 'Belvedere FC',  clubId: 12000,  clubName: 'Belvedere FC' },
     venue:       RVR_HOME_1,
     competition: { competitionId: 208581, competitionName: 'DDSL U12 Boys Major Saturday' },
     status:      'Result',
-    score:       { home: 4, away: 0 },
+    score:       { home: 0, away: 2 },
   },
 
-  // Away win vs Leicester Celtic
+  // Away loss at Kilnamanagh AFC (P1 — league champions)
   {
     fixtureId:   8010,
     fixtureDate: '2026-03-28',
-    fixtureTime: '10:30',
-    homeTeam:  { teamId: 29001, teamName: 'Leicester Celtic FC', clubId: 29000, clubName: 'Leicester Celtic FC' },
-    awayTeam:  { teamId: 87101, teamName: RVR_NAME,              clubId: RVR_ID, clubName: RVR_NAME },
-    venue:       { venueName: 'Leicester Celtic Park', venueAddress: 'Clondalkin, Dublin 22' },
-    competition: { competitionId: 208581, competitionName: 'DDSL U12 Boys Major Saturday' },
-    status:      'Result',
-    score:       { home: 1, away: 3 },
-  },
-
-  // Away loss vs Kilnamanagh (league leaders)
-  {
-    fixtureId:   8011,
-    fixtureDate: '2026-03-14',
     fixtureTime: '10:00',
     homeTeam:  { teamId: 11001, teamName: 'Kilnamanagh AFC', clubId: 22000, clubName: 'Kilnamanagh AFC' },
     awayTeam:  { teamId: 87101, teamName: RVR_NAME,          clubId: RVR_ID, clubName: RVR_NAME },
     venue:       { venueName: 'Kilnamanagh Park', venueAddress: 'Kilnamanagh, Dublin 24' },
     competition: { competitionId: 208581, competitionName: 'DDSL U12 Boys Major Saturday' },
     status:      'Result',
+    score:       { home: 4, away: 0 },
+  },
+
+  // Away loss at Leixlip United AFC (P5)
+  {
+    fixtureId:   8011,
+    fixtureDate: '2026-03-14',
+    fixtureTime: '10:30',
+    homeTeam:  { teamId: 25001, teamName: 'Leixlip United AFC', clubId: 25000, clubName: 'Leixlip United AFC' },
+    awayTeam:  { teamId: 87101, teamName: RVR_NAME,             clubId: RVR_ID, clubName: RVR_NAME },
+    venue:       { venueName: 'Leixlip United Park', venueAddress: 'Leixlip, Co. Kildare' },
+    competition: { competitionId: 208581, competitionName: 'DDSL U12 Boys Major Saturday' },
+    status:      'Result',
     score:       { home: 3, away: 1 },
   },
 
-  // Home draw vs Leixlip United
+  // Home draw vs Bohemian FC (P10) — one of RVR's five draws
   {
     fixtureId:   8012,
     fixtureDate: '2026-02-28',
     fixtureTime: '10:00',
-    homeTeam:  { teamId: 87101, teamName: RVR_NAME,              clubId: RVR_ID, clubName: RVR_NAME },
-    awayTeam:  { teamId: 25001, teamName: 'Leixlip United AFC',  clubId: 25000,  clubName: 'Leixlip United AFC' },
+    homeTeam:  { teamId: 87101, teamName: RVR_NAME,        clubId: RVR_ID, clubName: RVR_NAME },
+    awayTeam:  { teamId: 30001, teamName: 'Bohemian FC',   clubId: 30000,  clubName: 'Bohemian FC' },
     venue:       RVR_HOME_1,
     competition: { competitionId: 208581, competitionName: 'DDSL U12 Boys Major Saturday' },
     status:      'Result',
-    score:       { home: 2, away: 2 },
+    score:       { home: 1, away: 1 },
   },
 
   // -- Other active divisions -----------------------------------------------

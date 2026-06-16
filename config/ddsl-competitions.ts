@@ -50,6 +50,7 @@ export const KNOWN_DIVISIONS: KnownDivision[] = [
     ageGroup: 'U12',
     knownMembers: [
       'Rivervalley Rangers',
+      'River Valley Rangers', // two-word SportLoMo export variant — normalizes to the same canonical form
       'Cherry Orchard FC',
       'Belvedere FC',
       'Greystones AFC',
