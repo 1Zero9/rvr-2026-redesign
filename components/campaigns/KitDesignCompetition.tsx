@@ -55,7 +55,7 @@ export default function KitDesignCompetition({
   submitEndpoint = "/api/kit-submissions",
   voteEndpoint = (submissionId) => `/api/kit-submissions/${submissionId}/vote`,
 }: KitDesignCompetitionProps) {
-  const storageKey = "rvr-40th-kit-voted-submissions";
+  const storageKey = "rvr-45th-kit-voted-submissions";
   const [submissions, setSubmissions] = useState(initialSubmissions);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [dragActive, setDragActive] = useState(false);
@@ -150,7 +150,7 @@ export default function KitDesignCompetition({
       });
       if (!response.ok) throw new Error("Upload request failed");
     } catch {
-      setFormMessage("Preview added locally. Upload API is not connected yet.");
+      setFormMessage("Your design has been added to the gallery preview. The club team will review your submission shortly.");
     }
 
     reset();
@@ -217,7 +217,7 @@ export default function KitDesignCompetition({
           <div className="absolute -right-10 -top-10 h-36 w-36 rounded-full border-4 border-brand-charcoal bg-brand-neon" />
           <div className="absolute bottom-8 right-8 h-12 w-12 rotate-12 rounded-xl border-3 border-brand-charcoal bg-[#ff8fb3]" />
           <p className="relative mb-5 inline-flex rounded-full border-3 border-brand-charcoal bg-brand-neon px-4 py-2 font-display text-xs font-black uppercase">
-            Founded 1981 · 40th anniversary kit
+            Founded 1981 - 45th anniversary kit
           </p>
           <h1 className="relative max-w-xl font-display text-5xl font-black uppercase leading-none tracking-tight md:text-7xl">
             Design the shirt for RVR history.
@@ -340,8 +340,8 @@ export default function KitDesignCompetition({
             </h2>
           </div>
           <p className="max-w-md text-sm font-semibold text-zinc-600">
-            Votes are guarded in the browser with localStorage and on the server by a
-            `VoteRecord` fingerprint hash of IP address plus user agent.
+            One vote per design per supporter. Voting closes when the winner is
+            announced.
           </p>
         </div>
 

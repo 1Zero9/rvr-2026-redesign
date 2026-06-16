@@ -89,7 +89,7 @@ const sections = [
     icon: Megaphone,
     links: [
       { href: "/campaigns/colour-fun-run", label: "Colour Fun Run" },
-      { href: "/club/anniversary", label: "40th Anniversary Kit" },
+      { href: "/club/anniversary", label: "45th Anniversary Kit" },
       { href: "/shop", label: "Shop" },
       { href: "/membership-calculator", label: "Fees Calculator" },
     ],
@@ -242,7 +242,6 @@ export default function Header() {
 
             <div className="grid gap-3">
               {sections.map((section, index) => {
-                const Icon = section.icon;
                 const expanded = activeSection === section.label;
                 return (
                   <div

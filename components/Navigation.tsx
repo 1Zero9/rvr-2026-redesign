@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import {
   Menu,
   X,
@@ -89,7 +90,7 @@ const sections: NavSection[] = [
     icon: <Megaphone className="w-5 h-5 text-brand-neon" />,
     links: [
       { label: 'Colour Fun Run', path: '/campaigns/colour-fun-run' },
-      { label: '40th Anniversary Kit', path: '/club/anniversary' },
+      { label: '45th Anniversary Kit', path: '/club/anniversary' },
       { label: 'Shop', path: '/shop' },
       { label: 'Fees Calculator', path: '/membership-calculator' },
     ],
@@ -116,7 +117,7 @@ export default function Navigation() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between gap-3">
 
           {/* Brand logo */}
-          <a href="/" className="flex items-center gap-2.5 group shrink-0">
+          <Link href="/" className="flex items-center gap-2.5 group shrink-0">
             <div className="w-10 h-10 rounded-xl bg-brand-green border-2 border-brand-sky/40 flex items-center justify-center shadow-[2px_2px_0px_0px_rgba(184,205,238,0.2)] group-hover:-translate-y-0.5 transition-all">
               <span className="font-display font-black text-brand-neon text-xs italic select-none leading-none">RVR</span>
             </div>
@@ -128,7 +129,7 @@ export default function Navigation() {
                 RANGERS AFC
               </span>
             </div>
-          </a>
+          </Link>
 
           {/* Desktop navigation — justify-between spreads all 7 sections evenly */}
           <nav

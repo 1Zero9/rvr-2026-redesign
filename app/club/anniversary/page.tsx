@@ -3,9 +3,9 @@ import Header from "@/components/Header";
 import KitCompetition from "@/components/KitCompetition";
 
 export const metadata: Metadata = {
-  title: "40th Anniversary Kit Design | Rivervalley Rangers AFC",
+  title: "45th Anniversary Kit Design | Rivervalley Rangers AFC",
   description:
-    "Design the official Rivervalley Rangers AFC 40th anniversary shirt. Download the template, submit your entry, and vote for your favourite.",
+    "Design the official Rivervalley Rangers AFC 45th anniversary shirt. Download the template, submit your entry, and vote for your favourite.",
 };
 
 export default function AnniversaryPage() {
