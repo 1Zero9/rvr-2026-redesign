@@ -29,7 +29,9 @@ export default function RootLayout({
       className={`${inter.variable} ${jakarta.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-brand-cream text-brand-charcoal">
-        {children}
+        <div className="flex-1 pb-28 md:pb-0">
+          {children}
+        </div>
         <MobileNavBar />
       </body>
     </html>
