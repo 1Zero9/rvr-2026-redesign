@@ -53,7 +53,16 @@ export const KNOWN_DIVISIONS: KnownDivision[] = [
       'Cherry Orchard FC',
       'Belvedere FC',
       'Greystones AFC',
-      // Add remaining division members from the DDSL admin panel here.
+      'Kilnamanagh AFC',
+      'Home Farm FC',
+      'Leixlip United AFC',
+      'Beechwood SC',
+      'St Francis FC',
+      'Corduff FC',
+      'Leicester Celtic FC',
+      'Ballyoulster United FC',
+      'Crumlin United AFC',
+      'Bohemian FC',
     ],
   },
 ];

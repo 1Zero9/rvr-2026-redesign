@@ -3,9 +3,14 @@
  * league standings while the public SportLoMo feed is pending verification.
  *
  * Data is shaped as raw SportLoMo API types so it flows through the full
- * transform pipeline (mercy rule, venue resolution, age-gate) unchanged.
+ * transform pipeline (mercy rule, venue resolution, division integrity filter,
+ * age-gate) unchanged.
  *
- * To re-enable live API fetching, set USE_LOCAL_SEED = false in
+ * U12 Boys Major Saturday: complete 2025/26 double round-robin season,
+ * 14 clubs, 26 games played each. Standings are mathematically consistent:
+ *   Sum(W) = Sum(L) = 155, Sum(D) = 54, Sum(GF) = Sum(GA) = 634, Sum(GD) = 0
+ *
+ * To re-enable live API fetching set USE_LOCAL_SEED = false in
  * app/api/fixtures/sync/route.ts.
  */
 
@@ -22,35 +27,42 @@ const RVR_HOME_1 = {
 
 // ---------------------------------------------------------------------------
 // Standings — competitive divisions (U12+)
-// Age-gate in sync/route.ts automatically promotes U7–U11 entries into the
-// developmentDivisions block; U12+ entries become full league tables.
 // ---------------------------------------------------------------------------
-//
-// IMPORTANT: competition 208581 (U12 Boys Major Saturday) is registered in
-// config/ddsl-competitions.ts with a knownMembers allowlist.  Only the four
-// confirmed members are included here — any other team would be stripped by
-// the division integrity filter with a console warning.
 
 const STANDINGS: SportLoMoStandingsTable[] = [
 
   // --------------------------------------------------------------------------
-  // U12 Boys Major Saturday Division 1 (ID 208581)
-  // Mercy Rule applies (U12). knownMembers: Cherry Orchard, RVR, Belvedere, Greystones.
+  // U12 Boys Major Saturday (ID 208581) — complete 2025/26 season, 14 clubs
+  //
+  // All 14 members are registered in config/ddsl-competitions.ts knownMembers.
+  // The division integrity filter matches by competition ID (208581), not name,
+  // so the name change from "…Division 1" to the official short form is safe.
+  // Mercy Rule applies (U12).
   // --------------------------------------------------------------------------
   {
     competitionId:   208581,
-    competitionName: 'DDSL U12 Boys Major Saturday Division 1',
+    competitionName: 'DDSL U12 Boys Major Saturday',
     season:          SEASON,
     standings: [
-      { position: 1, team: { teamId: 11001, teamName: 'Cherry Orchard FC',      clubId: 11000 }, played: 6, won: 5, drawn: 0, lost: 1, goalsFor: 22, goalsAgainst:  7, goalDifference:  15, points: 15 },
-      { position: 2, team: { teamId: 87101, teamName: RVR_NAME,                 clubId: RVR_ID }, played: 6, won: 4, drawn: 1, lost: 1, goalsFor: 18, goalsAgainst:  9, goalDifference:   9, points: 13 },
-      { position: 3, team: { teamId: 12001, teamName: 'Belvedere FC',           clubId: 12000 }, played: 6, won: 2, drawn: 0, lost: 4, goalsFor: 10, goalsAgainst: 18, goalDifference:  -8, points:  6 },
-      { position: 4, team: { teamId: 13001, teamName: 'Greystones AFC',         clubId: 13000 }, played: 6, won: 0, drawn: 1, lost: 5, goalsFor:  5, goalsAgainst: 21, goalDifference: -16, points:  1 },
+      { position:  1, team: { teamId: 11001, teamName: 'Kilnamanagh AFC',         clubId: 22000 }, played: 26, won: 21, drawn: 2, lost:  3, goalsFor: 72, goalsAgainst: 30, goalDifference:  42, points: 65 },
+      { position:  2, team: { teamId: 23001, teamName: 'Home Farm FC',            clubId: 23000 }, played: 26, won: 19, drawn: 3, lost:  4, goalsFor: 70, goalsAgainst: 34, goalDifference:  36, points: 60 },
+      { position:  3, team: { teamId: 24001, teamName: 'Cherry Orchard FC',       clubId: 24000 }, played: 26, won: 17, drawn: 3, lost:  6, goalsFor: 66, goalsAgainst: 38, goalDifference:  28, points: 54 },
+      { position:  4, team: { teamId: 87101, teamName: RVR_NAME,                  clubId: RVR_ID }, played: 26, won: 15, drawn: 4, lost:  7, goalsFor: 60, goalsAgainst: 38, goalDifference:  22, points: 49 },
+      { position:  5, team: { teamId: 25001, teamName: 'Leixlip United AFC',      clubId: 25000 }, played: 26, won: 14, drawn: 3, lost:  9, goalsFor: 54, goalsAgainst: 40, goalDifference:  14, points: 45 },
+      { position:  6, team: { teamId: 26001, teamName: 'Beechwood SC',            clubId: 26000 }, played: 26, won: 13, drawn: 3, lost: 10, goalsFor: 48, goalsAgainst: 42, goalDifference:   6, points: 42 },
+      { position:  7, team: { teamId: 27001, teamName: 'Crumlin United AFC',      clubId: 27000 }, played: 26, won: 11, drawn: 5, lost: 10, goalsFor: 46, goalsAgainst: 44, goalDifference:   2, points: 38 },
+      { position:  8, team: { teamId: 28001, teamName: 'St Francis FC',           clubId: 28000 }, played: 26, won: 10, drawn: 5, lost: 11, goalsFor: 42, goalsAgainst: 46, goalDifference:  -4, points: 35 },
+      { position:  9, team: { teamId: 12001, teamName: 'Belvedere FC',            clubId: 12000 }, played: 26, won:  9, drawn: 4, lost: 13, goalsFor: 38, goalsAgainst: 50, goalDifference: -12, points: 31 },
+      { position: 10, team: { teamId: 29001, teamName: 'Leicester Celtic FC',     clubId: 29000 }, played: 26, won:  8, drawn: 4, lost: 14, goalsFor: 34, goalsAgainst: 52, goalDifference: -18, points: 28 },
+      { position: 11, team: { teamId: 30001, teamName: 'Bohemian FC',             clubId: 30000 }, played: 26, won:  7, drawn: 5, lost: 14, goalsFor: 30, goalsAgainst: 54, goalDifference: -24, points: 26 },
+      { position: 12, team: { teamId: 31001, teamName: 'Ballyoulster United FC',  clubId: 31000 }, played: 26, won:  5, drawn: 5, lost: 16, goalsFor: 26, goalsAgainst: 56, goalDifference: -30, points: 20 },
+      { position: 13, team: { teamId: 32001, teamName: 'Corduff FC',              clubId: 32000 }, played: 26, won:  4, drawn: 3, lost: 19, goalsFor: 22, goalsAgainst: 60, goalDifference: -38, points: 15 },
+      { position: 14, team: { teamId: 13001, teamName: 'Greystones AFC',          clubId: 13000 }, played: 26, won:  2, drawn: 5, lost: 19, goalsFor: 26, goalsAgainst: 50, goalDifference: -24, points: 11 },
     ],
   },
 
   // --------------------------------------------------------------------------
-  // U14 Boys Division 1 (ID 208582)
+  // U14 Boys Division 1 (ID 208582) — season in progress
   // --------------------------------------------------------------------------
   {
     competitionId:   208582,
@@ -118,9 +130,8 @@ const STANDINGS: SportLoMoStandingsTable[] = [
   },
 
   // --------------------------------------------------------------------------
-  // U10 Boys Saturday Blitz (ID 208586) — development tier (U10)
-  // Age-gate strips standings from public output; only upcoming fixture dates
-  // surface in the developmentDivisions block.
+  // U10 Boys Saturday Blitz (ID 208586) — development tier
+  // Age-gate strips standings; only upcoming fixture dates surface.
   // --------------------------------------------------------------------------
   {
     competitionId:   208586,
@@ -132,7 +143,7 @@ const STANDINGS: SportLoMoStandingsTable[] = [
   },
 
   // --------------------------------------------------------------------------
-  // U9 Girls Saturday Blitz (ID 208587) — development tier (U9)
+  // U9 Girls Saturday Blitz (ID 208587) — development tier
   // --------------------------------------------------------------------------
   {
     competitionId:   208587,
@@ -146,21 +157,10 @@ const STANDINGS: SportLoMoStandingsTable[] = [
 
 // ---------------------------------------------------------------------------
 // Upcoming fixtures (status: 'Fixture')
+// U12 Boys Major Saturday is a complete season (P26) — no upcoming fixtures.
 // ---------------------------------------------------------------------------
 
 const FIXTURES: SportLoMoFixture[] = [
-  // U12 Boys Major Saturday — RVR vs Belvedere (HOME)
-  {
-    fixtureId:   9001,
-    fixtureDate: '2026-06-21',
-    fixtureTime: '10:00',
-    homeTeam:  { teamId: 87101, teamName: RVR_NAME,         clubId: RVR_ID, clubName: RVR_NAME },
-    awayTeam:  { teamId: 12001, teamName: 'Belvedere FC',   clubId: 12000,  clubName: 'Belvedere FC' },
-    venue:       RVR_HOME_1,
-    competition: { competitionId: 208581, competitionName: 'DDSL U12 Boys Major Saturday Division 1' },
-    status:      'Fixture',
-  },
-
   // U14 Boys — Away at Swords Celtic
   {
     fixtureId:   9002,
@@ -209,7 +209,7 @@ const FIXTURES: SportLoMoFixture[] = [
     status:      'Fixture',
   },
 
-  // U10 Boys Blitz — development fixture (score never published; date surfaced only)
+  // U10 Boys Blitz — development (date surfaced only, score never published)
   {
     fixtureId:   9006,
     fixtureDate: '2026-06-21',
@@ -231,7 +231,7 @@ const FIXTURES: SportLoMoFixture[] = [
     status:      'Fixture',
   },
 
-  // U9 Girls Blitz — development fixture (HOME)
+  // U9 Girls Blitz — development (HOME)
   {
     fixtureId:   9008,
     fixtureDate: '2026-06-28',
@@ -255,23 +255,120 @@ const FIXTURES: SportLoMoFixture[] = [
 ];
 
 // ---------------------------------------------------------------------------
-// Recent results (status: 'Result')
-// All U12 scores are within the mercy-rule cap of 5 so no capping occurs.
+// Results — completed matches (status: 'Result')
+// U12 Boys Major Saturday: sampled from the complete 26-game season.
+// All U12 scores are within the mercy-rule cap of 5; no capping occurs.
 // ---------------------------------------------------------------------------
 
 const RESULTS: SportLoMoFixture[] = [
-  // U12 Boys Major Saturday — Away loss at Cherry Orchard
+
+  // -- U12 Boys Major Saturday (completed season sample) --------------------
+
+  // Home win vs Greystones — margin 3, no mercy cap
+  {
+    fixtureId:   8006,
+    fixtureDate: '2026-05-24',
+    fixtureTime: '10:00',
+    homeTeam:  { teamId: 87101, teamName: RVR_NAME,         clubId: RVR_ID, clubName: RVR_NAME },
+    awayTeam:  { teamId: 13001, teamName: 'Greystones AFC', clubId: 13000,  clubName: 'Greystones AFC' },
+    venue:       RVR_HOME_1,
+    competition: { competitionId: 208581, competitionName: 'DDSL U12 Boys Major Saturday' },
+    status:      'Result',
+    score:       { home: 4, away: 1 },
+  },
+
+  // Away loss at Cherry Orchard
   {
     fixtureId:   8001,
     fixtureDate: '2026-06-07',
     fixtureTime: '10:00',
-    homeTeam:  { teamId: 11001, teamName: 'Cherry Orchard FC', clubId: 11000, clubName: 'Cherry Orchard FC' },
+    homeTeam:  { teamId: 24001, teamName: 'Cherry Orchard FC', clubId: 24000, clubName: 'Cherry Orchard FC' },
     awayTeam:  { teamId: 87101, teamName: RVR_NAME,            clubId: RVR_ID, clubName: RVR_NAME },
     venue:       { venueName: 'Cherry Orchard Park', venueAddress: 'Cherry Orchard, Dublin 10' },
-    competition: { competitionId: 208581, competitionName: 'DDSL U12 Boys Major Saturday Division 1' },
+    competition: { competitionId: 208581, competitionName: 'DDSL U12 Boys Major Saturday' },
     status:      'Result',
     score:       { home: 3, away: 2 },
   },
+
+  // Home win vs Corduff
+  {
+    fixtureId:   8007,
+    fixtureDate: '2026-05-10',
+    fixtureTime: '10:00',
+    homeTeam:  { teamId: 87101, teamName: RVR_NAME,      clubId: RVR_ID, clubName: RVR_NAME },
+    awayTeam:  { teamId: 32001, teamName: 'Corduff FC',  clubId: 32000,  clubName: 'Corduff FC' },
+    venue:       RVR_HOME_1,
+    competition: { competitionId: 208581, competitionName: 'DDSL U12 Boys Major Saturday' },
+    status:      'Result',
+    score:       { home: 3, away: 0 },
+  },
+
+  // Away draw vs Crumlin United
+  {
+    fixtureId:   8008,
+    fixtureDate: '2026-04-26',
+    fixtureTime: '11:00',
+    homeTeam:  { teamId: 27001, teamName: 'Crumlin United AFC', clubId: 27000, clubName: 'Crumlin United AFC' },
+    awayTeam:  { teamId: 87101, teamName: RVR_NAME,             clubId: RVR_ID, clubName: RVR_NAME },
+    venue:       { venueName: 'Crumlin United Park', venueAddress: 'Crumlin, Dublin 12' },
+    competition: { competitionId: 208581, competitionName: 'DDSL U12 Boys Major Saturday' },
+    status:      'Result',
+    score:       { home: 2, away: 2 },
+  },
+
+  // Home win vs Ballyoulster United
+  {
+    fixtureId:   8009,
+    fixtureDate: '2026-04-12',
+    fixtureTime: '10:00',
+    homeTeam:  { teamId: 87101, teamName: RVR_NAME,                  clubId: RVR_ID, clubName: RVR_NAME },
+    awayTeam:  { teamId: 31001, teamName: 'Ballyoulster United FC',  clubId: 31000,  clubName: 'Ballyoulster United FC' },
+    venue:       RVR_HOME_1,
+    competition: { competitionId: 208581, competitionName: 'DDSL U12 Boys Major Saturday' },
+    status:      'Result',
+    score:       { home: 4, away: 0 },
+  },
+
+  // Away win vs Leicester Celtic
+  {
+    fixtureId:   8010,
+    fixtureDate: '2026-03-28',
+    fixtureTime: '10:30',
+    homeTeam:  { teamId: 29001, teamName: 'Leicester Celtic FC', clubId: 29000, clubName: 'Leicester Celtic FC' },
+    awayTeam:  { teamId: 87101, teamName: RVR_NAME,              clubId: RVR_ID, clubName: RVR_NAME },
+    venue:       { venueName: 'Leicester Celtic Park', venueAddress: 'Clondalkin, Dublin 22' },
+    competition: { competitionId: 208581, competitionName: 'DDSL U12 Boys Major Saturday' },
+    status:      'Result',
+    score:       { home: 1, away: 3 },
+  },
+
+  // Away loss vs Kilnamanagh (league leaders)
+  {
+    fixtureId:   8011,
+    fixtureDate: '2026-03-14',
+    fixtureTime: '10:00',
+    homeTeam:  { teamId: 11001, teamName: 'Kilnamanagh AFC', clubId: 22000, clubName: 'Kilnamanagh AFC' },
+    awayTeam:  { teamId: 87101, teamName: RVR_NAME,          clubId: RVR_ID, clubName: RVR_NAME },
+    venue:       { venueName: 'Kilnamanagh Park', venueAddress: 'Kilnamanagh, Dublin 24' },
+    competition: { competitionId: 208581, competitionName: 'DDSL U12 Boys Major Saturday' },
+    status:      'Result',
+    score:       { home: 3, away: 1 },
+  },
+
+  // Home draw vs Leixlip United
+  {
+    fixtureId:   8012,
+    fixtureDate: '2026-02-28',
+    fixtureTime: '10:00',
+    homeTeam:  { teamId: 87101, teamName: RVR_NAME,              clubId: RVR_ID, clubName: RVR_NAME },
+    awayTeam:  { teamId: 25001, teamName: 'Leixlip United AFC',  clubId: 25000,  clubName: 'Leixlip United AFC' },
+    venue:       RVR_HOME_1,
+    competition: { competitionId: 208581, competitionName: 'DDSL U12 Boys Major Saturday' },
+    status:      'Result',
+    score:       { home: 2, away: 2 },
+  },
+
+  // -- Other active divisions -----------------------------------------------
 
   // U14 Boys — Home win vs St Kevin's Boys
   {
@@ -284,6 +381,19 @@ const RESULTS: SportLoMoFixture[] = [
     competition: { competitionId: 208582, competitionName: 'DDSL U14 Boys Division 1' },
     status:      'Result',
     score:       { home: 3, away: 1 },
+  },
+
+  // U14 Boys — Away draw vs Malahide United
+  {
+    fixtureId:   8013,
+    fixtureDate: '2026-05-24',
+    fixtureTime: '11:00',
+    homeTeam:  { teamId: 14001, teamName: 'Malahide United AFC', clubId: 14000, clubName: 'Malahide United AFC' },
+    awayTeam:  { teamId: 87102, teamName: RVR_NAME,              clubId: RVR_ID, clubName: RVR_NAME },
+    venue:       { venueName: 'Malahide United Park', venueAddress: 'Malahide, Co. Dublin' },
+    competition: { competitionId: 208582, competitionName: 'DDSL U14 Boys Division 1' },
+    status:      'Result',
+    score:       { home: 1, away: 1 },
   },
 
   // U12 Girls — Away draw vs Shelbourne
@@ -299,6 +409,19 @@ const RESULTS: SportLoMoFixture[] = [
     score:       { home: 1, away: 1 },
   },
 
+  // U12 Girls — Home win vs Malahide United
+  {
+    fixtureId:   8014,
+    fixtureDate: '2026-05-31',
+    fixtureTime: '10:30',
+    homeTeam:  { teamId: 87103, teamName: RVR_NAME,              clubId: RVR_ID, clubName: RVR_NAME },
+    awayTeam:  { teamId: 14002, teamName: 'Malahide United AFC', clubId: 14000,  clubName: 'Malahide United AFC' },
+    venue:       RVR_HOME_1,
+    competition: { competitionId: 208583, competitionName: 'DDSL U12 Girls Division 1' },
+    status:      'Result',
+    score:       { home: 3, away: 1 },
+  },
+
   // U14 Girls — Away loss vs Raheny United
   {
     fixtureId:   8004,
@@ -310,6 +433,19 @@ const RESULTS: SportLoMoFixture[] = [
     competition: { competitionId: 208584, competitionName: 'DDSL U14 Girls Division 1' },
     status:      'Result',
     score:       { home: 2, away: 1 },
+  },
+
+  // U14 Girls — Home win vs Swords Celtic
+  {
+    fixtureId:   8015,
+    fixtureDate: '2026-05-17',
+    fixtureTime: '12:00',
+    homeTeam:  { teamId: 87104, teamName: RVR_NAME,             clubId: RVR_ID, clubName: RVR_NAME },
+    awayTeam:  { teamId: 15002, teamName: 'Swords Celtic AFC',  clubId: 15000,  clubName: 'Swords Celtic AFC' },
+    venue:       RVR_HOME_1,
+    competition: { competitionId: 208584, competitionName: 'DDSL U14 Girls Division 1' },
+    status:      'Result',
+    score:       { home: 3, away: 0 },
   },
 
   // U16 Boys — Home win vs Swords Celtic
@@ -325,17 +461,17 @@ const RESULTS: SportLoMoFixture[] = [
     score:       { home: 2, away: 0 },
   },
 
-  // U12 Boys Major Saturday — Home win vs Greystones (margin 3, within mercy cap)
+  // U16 Boys — Away loss vs St Kevin's Boys
   {
-    fixtureId:   8006,
-    fixtureDate: '2026-05-24',
-    fixtureTime: '10:00',
-    homeTeam:  { teamId: 87101, teamName: RVR_NAME,         clubId: RVR_ID, clubName: RVR_NAME },
-    awayTeam:  { teamId: 13001, teamName: 'Greystones AFC', clubId: 13000,  clubName: 'Greystones AFC' },
-    venue:       RVR_HOME_1,
-    competition: { competitionId: 208581, competitionName: 'DDSL U12 Boys Major Saturday Division 1' },
+    fixtureId:   8016,
+    fixtureDate: '2026-05-10',
+    fixtureTime: '11:00',
+    homeTeam:  { teamId: 16002, teamName: "St Kevin's Boys AFC", clubId: 16000, clubName: "St Kevin's Boys AFC" },
+    awayTeam:  { teamId: 87105, teamName: RVR_NAME,              clubId: RVR_ID, clubName: RVR_NAME },
+    venue:       { venueName: "St Kevin's Boys Park", venueAddress: 'Whitehall, Dublin 9' },
+    competition: { competitionId: 208585, competitionName: 'DDSL U16 Boys Division 1' },
     status:      'Result',
-    score:       { home: 4, away: 1 },
+    score:       { home: 2, away: 1 },
   },
 ];
 

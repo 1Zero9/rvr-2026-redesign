@@ -242,7 +242,10 @@ export async function fetchStandings(): Promise<SportLoMoEnvelope<SportLoMoStand
  */
 export async function fetchAllFixtures(): Promise<SportLoMoFixture[]> {
   const { clubId } = getConfig();
-  return fetchAllPages<SportLoMoFixture>(`/clubs/${clubId}/fixtures`);
+  return fetchAllPages<SportLoMoFixture>(
+    `/clubs/${clubId}/fixtures`,
+    { include_past: 'true' },
+  );
 }
 
 /**
@@ -250,7 +253,10 @@ export async function fetchAllFixtures(): Promise<SportLoMoFixture[]> {
  */
 export async function fetchAllResults(): Promise<SportLoMoFixture[]> {
   const { clubId } = getConfig();
-  return fetchAllPages<SportLoMoFixture>(`/clubs/${clubId}/results`);
+  return fetchAllPages<SportLoMoFixture>(
+    `/clubs/${clubId}/results`,
+    { include_past: 'true' },
+  );
 }
 
 /**
@@ -259,5 +265,8 @@ export async function fetchAllResults(): Promise<SportLoMoFixture[]> {
  */
 export async function fetchAllStandings(): Promise<SportLoMoStandingsTable[]> {
   const { clubId } = getConfig();
-  return fetchAllPages<SportLoMoStandingsTable>(`/clubs/${clubId}/standings`);
+  return fetchAllPages<SportLoMoStandingsTable>(
+    `/clubs/${clubId}/standings`,
+    { include_past: 'true' },
+  );
 }
