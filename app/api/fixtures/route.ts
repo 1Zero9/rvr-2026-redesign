@@ -47,7 +47,8 @@ interface Fixture {
 }
 
 interface FixturesResponse {
-  source: "live" | "mock";
+  /** "live" — data fetched from SportLoMo. "empty" — API unavailable, no fixtures to show. */
+  source: "live" | "empty";
   fetchedAt: string;
   total: number;
   fixtures: Fixture[];
@@ -226,124 +227,27 @@ async function fetchFromSportLoMo(): Promise<Fixture[]> {
 }
 
 // ---------------------------------------------------------------------------
-// Mock dataset — used when SportLoMo env vars are absent
-// ---------------------------------------------------------------------------
-
-const MOCK_FIXTURES: Array<
-  Omit<Fixture, "score"> & { rawHome?: number; rawAway?: number }
-> = [
-  {
-    id: 1001,
-    date: "2026-06-21",
-    time: "10:30",
-    homeTeam: "Rivervalley Rangers AFC",
-    awayTeam: "St. Brendans FC",
-    competition: "DDSL U10 Boys Division 1",
-    ageGroup: "U10",
-    venue: "Rivervalley Park, Dublin 15",
-    status: "upcoming",
-  },
-  {
-    id: 1002,
-    date: "2026-06-21",
-    time: "12:00",
-    homeTeam: "Clongriffin FC",
-    awayTeam: "Rivervalley Rangers AFC",
-    competition: "DDSL U12 Girls Division 2",
-    ageGroup: "U12",
-    venue: "Oscar Traynor Road, Dublin 17",
-    status: "upcoming",
-  },
-  {
-    id: 1003,
-    date: "2026-06-22",
-    time: "11:00",
-    homeTeam: "Rivervalley Rangers AFC",
-    awayTeam: "Hartstown Huntstown FC",
-    competition: "DDSL U8 Mixed Blitz",
-    ageGroup: "U8",
-    venue: "Rivervalley Park, Dublin 15",
-    status: "upcoming",
-  },
-  {
-    id: 1004,
-    date: "2026-06-19",
-    time: "18:30",
-    homeTeam: "Rivervalley Rangers AFC",
-    awayTeam: "Lucan United FC",
-    competition: "DDSL U10 Boys Division 1",
-    ageGroup: "U10",
-    venue: "Rivervalley Park, Dublin 15",
-    status: "completed",
-    rawHome: 8,
-    rawAway: 1,
-  },
-  {
-    id: 1005,
-    date: "2026-06-18",
-    time: "19:00",
-    homeTeam: "Coolmine Athletic FC",
-    awayTeam: "Rivervalley Rangers AFC",
-    competition: "DDSL U12 Boys Division 1",
-    ageGroup: "U12",
-    venue: "Coolmine Sports Ground, Dublin 15",
-    status: "completed",
-    rawHome: 2,
-    rawAway: 3,
-  },
-  {
-    id: 1006,
-    date: "2026-06-28",
-    time: "10:00",
-    homeTeam: "Rivervalley Rangers AFC",
-    awayTeam: "Swords Celtic FC",
-    competition: "DDSL U15 Boys Division 2",
-    ageGroup: "U15",
-    venue: "Rivervalley Park, Dublin 15",
-    status: "upcoming",
-  },
-  {
-    id: 1007,
-    date: "2026-06-20",
-    time: "20:00",
-    homeTeam: "Rivervalley Rangers AFC",
-    awayTeam: "Blanchardstown AFC",
-    competition: "DDSL Senior Men Division 1",
-    ageGroup: "Senior",
-    venue: "Rivervalley Park, Dublin 15",
-    status: "completed",
-    rawHome: 4,
-    rawAway: 0,
-  },
-];
-
-function buildMockFixtures(): Fixture[] {
-  return MOCK_FIXTURES.map(({ rawHome, rawAway, ...f }) => ({
-    ...f,
-    score:
-      rawHome !== undefined && rawAway !== undefined
-        ? buildScore(rawHome, rawAway, f.ageGroup)
-        : null,
-  }));
-}
-
-// ---------------------------------------------------------------------------
 // Route handler
 // ---------------------------------------------------------------------------
 
 export async function GET(req: NextRequest): Promise<NextResponse<FixturesResponse>> {
   const teamSlug = req.nextUrl.searchParams.get("team");
+  const fetchedAt = new Date().toISOString();
 
+  // Fixtures are sourced exclusively from the live SportLoMo API feed.
+  // There is no database Fixture table — live match data is not persisted.
+  // When the API is unavailable the endpoint returns an empty array so the
+  // UI renders its "No fixtures found" state rather than stale hardcoded data.
   let fixtures: Fixture[];
-  let source: "live" | "mock";
 
   try {
     fixtures = await fetchFromSportLoMo();
-    source = "live";
   } catch (err) {
-    console.error("[api/fixtures] SportLoMo fetch failed, using mock data:", err);
-    fixtures = buildMockFixtures();
-    source = "mock";
+    console.error("[api/fixtures] SportLoMo fetch failed — returning empty fixture list:", err);
+    return NextResponse.json(
+      { source: "empty", fetchedAt, total: 0, fixtures: [] },
+      { headers: { "X-Data-Source": "empty" } },
+    );
   }
 
   const visible = teamSlug
@@ -354,12 +258,7 @@ export async function GET(req: NextRequest): Promise<NextResponse<FixturesRespon
     : fixtures;
 
   return NextResponse.json(
-    {
-      source,
-      fetchedAt: new Date().toISOString(),
-      total: visible.length,
-      fixtures: visible,
-    },
-    { headers: { "X-Data-Source": source } },
+    { source: "live", fetchedAt, total: visible.length, fixtures: visible },
+    { headers: { "X-Data-Source": "live" } },
   );
 }
