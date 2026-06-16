@@ -29,10 +29,18 @@ function requireEnv(key: string): string {
 }
 
 function getConfig() {
+  const clubId = requireEnv('SPORTLOMO_CLUB_ID');
+  if (clubId === '123') {
+    console.warn(
+      '[ddsl/client] WARNING: SPORTLOMO_CLUB_ID is set to the placeholder value "123".' +
+      ' Update .env.local with the real RVR club ID from the SportLoMo admin panel.' +
+      ' The API uses numeric club IDs — club name search is not supported by SportLoMo REST endpoints.',
+    );
+  }
   return {
     baseUrl: requireEnv('SPORTLOMO_BASE_URL').replace(/\/$/, ''),
     apiKey:  requireEnv('SPORTLOMO_API_KEY'),
-    clubId:  requireEnv('SPORTLOMO_CLUB_ID'),
+    clubId,
     season:  process.env.SPORTLOMO_SEASON ?? CLUB_SEASON.currentSeason,
   };
 }

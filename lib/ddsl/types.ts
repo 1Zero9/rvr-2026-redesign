@@ -211,7 +211,7 @@ export interface DevelopmentDivision {
 }
 
 export interface SyncResponse {
-  source: 'live' | 'mock';
+  source: 'live';
   syncedAt: string;
   cacheExpiresAt: string;
   divisions: DiscoveredDivision[];

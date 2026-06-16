@@ -70,180 +70,10 @@ function buildDivisionList(
 }
 
 // ---------------------------------------------------------------------------
-// Mock dataset — active when SportLoMo environment variables are absent
-// ---------------------------------------------------------------------------
-
-// Competition registry keeps IDs consistent across fixtures, results, and standings
-const COMPS = {
-  U10_BOYS_D1:    { competitionId: 3001, competitionName: 'DDSL U10 Boys Division 1'    },
-  U8_BLITZ:       { competitionId: 3002, competitionName: 'DDSL U8 Mixed Blitz'          },
-  U12_BOYS_D1:    { competitionId: 3003, competitionName: 'DDSL U12 Boys Major Saturday' },
-  U12_GIRLS_D2:   { competitionId: 3004, competitionName: 'DDSL U12 Girls Division 2'    },
-  U15_BOYS_D2:    { competitionId: 3005, competitionName: 'DDSL U15 Boys Division 2'     },
-  SENIOR_MEN_D1:  { competitionId: 3006, competitionName: 'DDSL Senior Men Division 1'   },
-} as const;
-
-const RVR_TEAM = { teamId: 11, teamName: 'Rivervalley Rangers AFC', clubId: 11, clubName: 'Rivervalley Rangers AFC' };
-const RVR_HOME_VENUE = { venueName: 'Ward Rivervalley All-Weather Pitch', venueAddress: 'Rivervalley, Swords, Co. Dublin' };
-
-function away(teamId: number, teamName: string, clubId: number): SportLoMoFixture['awayTeam'] {
-  return { teamId, teamName, clubId, clubName: teamName };
-}
-
-const MOCK_FIXTURES: SportLoMoFixture[] = [
-  {
-    fixtureId: 1001,
-    fixtureDate: '2026-06-21',
-    fixtureTime: '10:30',
-    homeTeam: RVR_TEAM,
-    awayTeam: away(103, 'St. Brendans FC', 12),
-    venue: RVR_HOME_VENUE,
-    competition: COMPS.U10_BOYS_D1,
-    status: 'Fixture',
-  },
-  {
-    fixtureId: 1002,
-    fixtureDate: '2026-06-22',
-    fixtureTime: '11:00',
-    homeTeam: RVR_TEAM,
-    awayTeam: away(201, 'Hartstown Huntstown FC', 20),
-    venue: RVR_HOME_VENUE,
-    competition: COMPS.U8_BLITZ,
-    status: 'Fixture',
-  },
-  {
-    fixtureId: 1003,
-    fixtureDate: '2026-06-24',
-    fixtureTime: '10:00',
-    homeTeam: RVR_TEAM,
-    awayTeam: away(301, 'Blanchardstown AFC', 30),
-    venue: RVR_HOME_VENUE,
-    competition: COMPS.U12_BOYS_D1,
-    status: 'Fixture',
-  },
-  {
-    fixtureId: 1004,
-    fixtureDate: '2026-06-21',
-    fixtureTime: '12:00',
-    homeTeam: { teamId: 401, teamName: 'Clongriffin FC', clubId: 40, clubName: 'Clongriffin FC' },
-    awayTeam: RVR_TEAM,
-    venue: { venueName: 'Oscar Traynor Road', venueAddress: 'Oscar Traynor Road, Dublin 17' },
-    competition: COMPS.U12_GIRLS_D2,
-    status: 'Fixture',
-  },
-  {
-    fixtureId: 1005,
-    fixtureDate: '2026-06-28',
-    fixtureTime: '10:00',
-    homeTeam: RVR_TEAM,
-    awayTeam: away(501, 'Swords Celtic FC', 50),
-    venue: RVR_HOME_VENUE,
-    competition: COMPS.U15_BOYS_D2,
-    status: 'Fixture',
-  },
-  {
-    fixtureId: 1006,
-    fixtureDate: '2026-06-25',
-    fixtureTime: '19:30',
-    homeTeam: { teamId: 601, teamName: 'Blanchardstown AFC', clubId: 60, clubName: 'Blanchardstown AFC' },
-    awayTeam: RVR_TEAM,
-    venue: { venueName: 'Blanchardstown Sports Ground', venueAddress: 'Blanchardstown, Dublin 15' },
-    competition: COMPS.SENIOR_MEN_D1,
-    status: 'Fixture',
-  },
-];
-
-const MOCK_RESULTS: SportLoMoFixture[] = [
-  {
-    fixtureId: 2001,
-    fixtureDate: '2026-06-19',
-    fixtureTime: '18:30',
-    homeTeam: RVR_TEAM,
-    awayTeam: away(104, 'Lucan United FC', 13),
-    venue: RVR_HOME_VENUE,
-    competition: COMPS.U10_BOYS_D1,
-    status: 'Result',
-    score: { home: 8, away: 1 }, // mercy rule reduces to 6–1 on output
-  },
-  {
-    fixtureId: 2003,
-    fixtureDate: '2026-06-20',
-    fixtureTime: '20:00',
-    homeTeam: RVR_TEAM,
-    awayTeam: away(602, 'Blanchardstown AFC', 60),
-    venue: RVR_HOME_VENUE,
-    competition: COMPS.SENIOR_MEN_D1,
-    status: 'Result',
-    score: { home: 4, away: 0 },
-  },
-];
-
-const MOCK_STANDINGS: SportLoMoStandingsTable[] = [
-  // ── Development tiers (U7–U11) — standings rows will be stripped ──────
-  {
-    ...COMPS.U10_BOYS_D1,
-    season: '2025-2026',
-    standings: [
-      { position: 1, team: { teamId: 101, teamName: 'Hartstown Huntstown FC', clubId: 10 }, played: 9, won: 7, drawn: 0, lost: 2, goalsFor: 30, goalsAgainst: 9,  goalDifference: 21, points: 21 },
-      { position: 2, team: { teamId: 11,  teamName: 'Rivervalley Rangers AFC', clubId: 11 }, played: 9, won: 6, drawn: 1, lost: 2, goalsFor: 24, goalsAgainst: 11, goalDifference: 13, points: 19 },
-      { position: 3, team: { teamId: 103, teamName: 'St. Brendans FC',         clubId: 12 }, played: 9, won: 4, drawn: 2, lost: 3, goalsFor: 16, goalsAgainst: 13, goalDifference:  3, points: 14 },
-      { position: 4, team: { teamId: 104, teamName: 'Lucan United FC',         clubId: 13 }, played: 9, won: 1, drawn: 1, lost: 7, goalsFor:  6, goalsAgainst: 29, goalDifference: -23, points:  4 },
-    ],
-  },
-  {
-    ...COMPS.U8_BLITZ,
-    season: '2025-2026',
-    standings: [
-      { position: 1, team: { teamId: 11,  teamName: 'Rivervalley Rangers AFC', clubId: 11 }, played: 4, won: 3, drawn: 0, lost: 1, goalsFor: 14, goalsAgainst: 5, goalDifference:  9, points: 9 },
-      { position: 2, team: { teamId: 201, teamName: 'Hartstown Huntstown FC',  clubId: 20 }, played: 4, won: 2, drawn: 1, lost: 1, goalsFor: 10, goalsAgainst: 7, goalDifference:  3, points: 7 },
-      { position: 3, team: { teamId: 202, teamName: 'Swords Celtic FC',        clubId: 21 }, played: 4, won: 1, drawn: 0, lost: 3, goalsFor:  5, goalsAgainst: 12, goalDifference: -7, points: 3 },
-    ],
-  },
-
-  // ── Competitive tiers (U12+) — full standings transmitted ─────────────
-  {
-    ...COMPS.U12_BOYS_D1,
-    season: '2025-2026',
-    standings: [
-      { position: 1, team: { teamId: 11,  teamName: 'Rivervalley Rangers AFC', clubId: 11 }, played: 10, won: 8, drawn: 1, lost: 1, goalsFor: 27, goalsAgainst: 10, goalDifference: 17, points: 25 },
-      { position: 2, team: { teamId: 301, teamName: 'Blanchardstown AFC',      clubId: 30 }, played: 10, won: 7, drawn: 1, lost: 2, goalsFor: 24, goalsAgainst: 12, goalDifference: 12, points: 22 },
-      { position: 3, team: { teamId: 303, teamName: 'Lucan United FC',         clubId: 32 }, played: 10, won: 2, drawn: 1, lost: 7, goalsFor:  9, goalsAgainst: 26, goalDifference: -17, points:  7 },
-    ],
-  },
-  {
-    ...COMPS.U12_GIRLS_D2,
-    season: '2025-2026',
-    standings: [
-      { position: 1, team: { teamId: 401, teamName: 'Clongriffin FC',          clubId: 40 }, played: 8, won: 6, drawn: 1, lost: 1, goalsFor: 22, goalsAgainst:  8, goalDifference: 14, points: 19 },
-      { position: 2, team: { teamId: 11,  teamName: 'Rivervalley Rangers AFC',  clubId: 11 }, played: 8, won: 5, drawn: 2, lost: 1, goalsFor: 18, goalsAgainst:  9, goalDifference:  9, points: 17 },
-      { position: 3, team: { teamId: 402, teamName: 'Swords Celtic FC',         clubId: 41 }, played: 8, won: 3, drawn: 0, lost: 5, goalsFor: 11, goalsAgainst: 18, goalDifference: -7, points:  9 },
-    ],
-  },
-  {
-    ...COMPS.U15_BOYS_D2,
-    season: '2025-2026',
-    standings: [
-      { position: 1, team: { teamId: 11,  teamName: 'Rivervalley Rangers AFC', clubId: 11 }, played: 11, won: 9, drawn: 1, lost: 1, goalsFor: 33, goalsAgainst: 11, goalDifference: 22, points: 28 },
-      { position: 2, team: { teamId: 501, teamName: 'Swords Celtic FC',         clubId: 50 }, played: 11, won: 7, drawn: 2, lost: 2, goalsFor: 26, goalsAgainst: 13, goalDifference: 13, points: 23 },
-      { position: 3, team: { teamId: 502, teamName: 'Lucan United FC',          clubId: 51 }, played: 11, won: 5, drawn: 1, lost: 5, goalsFor: 19, goalsAgainst: 19, goalDifference:  0, points: 16 },
-    ],
-  },
-  {
-    ...COMPS.SENIOR_MEN_D1,
-    season: '2025-2026',
-    standings: [
-      { position: 1, team: { teamId: 601, teamName: 'Blanchardstown AFC',      clubId: 60 }, played: 12, won: 10, drawn: 1, lost: 1, goalsFor: 38, goalsAgainst: 12, goalDifference: 26, points: 31 },
-      { position: 2, team: { teamId: 11,  teamName: 'Rivervalley Rangers AFC', clubId: 11 }, played: 12, won:  9, drawn: 2, lost: 1, goalsFor: 33, goalsAgainst: 14, goalDifference: 19, points: 29 },
-      { position: 3, team: { teamId: 602, teamName: 'Clongriffin FC',          clubId: 61 }, played: 12, won:  6, drawn: 2, lost: 4, goalsFor: 22, goalsAgainst: 20, goalDifference:  2, points: 20 },
-    ],
-  },
-];
-
-// ---------------------------------------------------------------------------
 // Route handler
 // ---------------------------------------------------------------------------
 
-export async function GET(_req: NextRequest): Promise<NextResponse<SyncResponse>> {
+export async function GET(_req: NextRequest): Promise<NextResponse> {
   const cached = cacheGet<SyncResponse>(CACHE_KEY);
   if (cached.hit) {
     return NextResponse.json(cached.data, {
@@ -255,10 +85,12 @@ export async function GET(_req: NextRequest): Promise<NextResponse<SyncResponse>
     });
   }
 
-  let source: 'live' | 'mock';
-  let rawFixtures: SportLoMoFixture[];
-  let rawResults:  SportLoMoFixture[];
-  let rawStandings: SportLoMoStandingsTable[];
+  // Explicit let declarations with empty initial values so TypeScript's
+  // definite-assignment analysis is satisfied. The catch block always returns
+  // early, so these placeholders are never used if the fetch fails.
+  let rawFixtures:  SportLoMoFixture[]       = [];
+  let rawResults:   SportLoMoFixture[]       = [];
+  let rawStandings: SportLoMoStandingsTable[] = [];
 
   try {
     console.log('[api/fixtures/sync] Initiating outbound DDSL connection call...');
@@ -273,22 +105,29 @@ export async function GET(_req: NextRequest): Promise<NextResponse<SyncResponse>
       `[api/fixtures/sync] Raw payload received — fixtures: ${rawFixtures.length},` +
       ` results: ${rawResults.length}, standings tables: ${rawStandings.length}`,
     );
-    source = 'live';
   } catch (err) {
     if (err instanceof SportLoMoConfigError) {
-      console.info('[api/fixtures/sync] SportLoMo not configured — using mock data');
-    } else if (err instanceof SportLoMoApiError) {
-      console.error(
-        `[api/fixtures/sync] SportLoMo API error ${err.status}:`,
-        err.message,
+      console.error('[api/fixtures/sync] DDSL environment not configured:', err.message);
+      return NextResponse.json(
+        {
+          error: 'DDSL connection not configured — set SPORTLOMO_BASE_URL, ' +
+                 'SPORTLOMO_API_KEY, and SPORTLOMO_CLUB_ID in environment variables',
+        },
+        { status: 503, headers: { 'Cache-Control': 'no-store, max-age=0, must-revalidate' } },
       );
-    } else {
-      console.error('[api/fixtures/sync] Fetch failed:', err);
     }
-    rawFixtures  = MOCK_FIXTURES;
-    rawResults   = MOCK_RESULTS;
-    rawStandings = MOCK_STANDINGS;
-    source = 'mock';
+    if (err instanceof SportLoMoApiError) {
+      console.error(`[api/fixtures/sync] DDSL feed error HTTP ${err.status}:`, err.message);
+      return NextResponse.json(
+        { error: `DDSL feed returned HTTP ${err.status}: ${err.message}` },
+        { status: 502, headers: { 'Cache-Control': 'no-store, max-age=0, must-revalidate' } },
+      );
+    }
+    console.error('[api/fixtures/sync] Unexpected error during DDSL fetch:', err);
+    return NextResponse.json(
+      { error: 'Unexpected error contacting the DDSL feed — check server logs for details' },
+      { status: 500, headers: { 'Cache-Control': 'no-store, max-age=0, must-revalidate' } },
+    );
   }
 
   // Transform raw fixtures and results through the shared pipeline.
@@ -298,8 +137,8 @@ export async function GET(_req: NextRequest): Promise<NextResponse<SyncResponse>
 
   // Strip any standings rows that are not in the registered member list for
   // their competition. This catches data contamination caused by incorrect
-  // competition IDs in the SportLoMo feed (e.g. Coolmine Athletic appearing
-  // in the U12 Major Saturday table due to a mismatched ID at source).
+  // competition IDs in the SportLoMo feed (e.g. a club appearing in a division
+  // table due to a mismatched competition ID at source).
   const preFilterCount = rawStandings.length;
   rawStandings = applyDivisionFilter(rawStandings);
   console.log(
@@ -368,7 +207,7 @@ export async function GET(_req: NextRequest): Promise<NextResponse<SyncResponse>
 
   const now = Date.now();
   const body: SyncResponse = {
-    source,
+    source:          'live',
     syncedAt:        new Date(now).toISOString(),
     cacheExpiresAt:  new Date(now + TTL_MS).toISOString(),
     divisions,
@@ -383,7 +222,7 @@ export async function GET(_req: NextRequest): Promise<NextResponse<SyncResponse>
   return NextResponse.json(body, {
     headers: {
       'X-Cache':       'MISS',
-      'X-Data-Source': source,
+      'X-Data-Source': 'live',
       'Cache-Control': 'no-store, max-age=0, must-revalidate',
     },
   });
