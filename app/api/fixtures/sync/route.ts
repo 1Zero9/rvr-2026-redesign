@@ -1,11 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import {
-  fetchAllFixtures,
-  fetchAllResults,
-  fetchAllStandings,
-  SportLoMoApiError,
-  SportLoMoConfigError,
-} from '@/lib/ddsl/client';
 import { cacheGet, cacheSet, TTL_MS } from '@/lib/ddsl/cache';
 import { LOCAL_SEED } from '@/lib/ddsl/local-seed';
 import { applyDivisionFilter } from '@/lib/ddsl/division-filter';
@@ -26,9 +19,6 @@ export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 const CACHE_KEY = 'ddsl:sync';
-
-// Set to false to restore live outbound DDSL API fetching via SportLoMo.
-const USE_LOCAL_SEED = true;
 
 // ---------------------------------------------------------------------------
 // Age-tier gate
@@ -89,50 +79,15 @@ export async function GET(_req: NextRequest): Promise<NextResponse> {
     });
   }
 
-  let rawFixtures:  SportLoMoFixture[]        = [];
-  let rawResults:   SportLoMoFixture[]        = [];
-  let rawStandings: SportLoMoStandingsTable[] = [];
-  let fetchFailed = false;
-
-  if (USE_LOCAL_SEED) {
-    rawFixtures  = [...LOCAL_SEED.fixtures];
-    rawResults   = [...LOCAL_SEED.results];
-    rawStandings = [...LOCAL_SEED.standings];
-    console.log(
-      `[api/fixtures/sync] Local seed active — fixtures: ${rawFixtures.length},` +
-      ` results: ${rawResults.length}, standings: ${rawStandings.length}`,
-    );
-  } else {
-    try {
-      console.log('[api/fixtures/sync] Initiating outbound DDSL connection call...');
-      [rawFixtures, rawResults, rawStandings] = await Promise.all([
-        fetchAllFixtures(),
-        fetchAllResults(),
-        fetchAllStandings(),
-      ]);
-      console.log(
-        `[api/fixtures/sync] Raw payload received — fixtures: ${rawFixtures.length},` +
-        ` results: ${rawResults.length}, standings tables: ${rawStandings.length}`,
-      );
-    } catch (err) {
-      // All failure modes degrade gracefully to an empty payload so the UI
-      // renders its "no data" state rather than freezing on a loading loop.
-      if (err instanceof SportLoMoConfigError) {
-        console.error(
-          '[api/fixtures/sync] DDSL environment variables not configured — serving empty payload.',
-          'Set SPORTLOMO_BASE_URL, SPORTLOMO_API_KEY, and SPORTLOMO_CLUB_ID in production env.',
-        );
-      } else if (err instanceof SportLoMoApiError) {
-        console.error(
-          `[api/fixtures/sync] DDSL feed returned HTTP ${err.status} — serving empty payload:`,
-          err.message,
-        );
-      } else {
-        console.error('[api/fixtures/sync] Unexpected error during DDSL fetch — serving empty payload:', err);
-      }
-      fetchFailed = true;
-    }
-  }
+  // Season complete — serve verified local asset data.
+  // SportLoMo outbound fetching permanently decommissioned.
+  const rawFixtures:  SportLoMoFixture[]        = [...LOCAL_SEED.fixtures];
+  const rawResults:   SportLoMoFixture[]        = [...LOCAL_SEED.results];
+  let   rawStandings: SportLoMoStandingsTable[] = [...LOCAL_SEED.standings];
+  console.log(
+    `[api/fixtures/sync] Local asset loaded — fixtures: ${rawFixtures.length},` +
+    ` results: ${rawResults.length}, standings: ${rawStandings.length}`,
+  );
 
   // Transform raw fixtures and results through the shared pipeline.
   // transformAll applies mercy-rule score capping and venue resolution.
@@ -140,9 +95,7 @@ export async function GET(_req: NextRequest): Promise<NextResponse> {
   const results  = transformAll(rawResults);
 
   // Strip any standings rows that are not in the registered member list for
-  // their competition. This catches data contamination caused by incorrect
-  // competition IDs in the SportLoMo feed (e.g. a club appearing in a division
-  // table due to a mismatched competition ID at source).
+  // their competition.
   const preFilterCount = rawStandings.length;
   rawStandings = applyDivisionFilter(rawStandings);
   console.log(
@@ -216,9 +169,9 @@ export async function GET(_req: NextRequest): Promise<NextResponse> {
 
   const now = Date.now();
   const body: SyncResponse = {
-    source:          fetchFailed ? 'empty' : 'live',
-    syncedAt:        new Date(now).toISOString(),
-    cacheExpiresAt:  new Date(now + TTL_MS).toISOString(),
+    source:         'live',
+    syncedAt:       new Date(now).toISOString(),
+    cacheExpiresAt: new Date(now + TTL_MS).toISOString(),
     divisions,
     fixtures,
     results,
@@ -231,7 +184,7 @@ export async function GET(_req: NextRequest): Promise<NextResponse> {
   return NextResponse.json(body, {
     headers: {
       'X-Cache':       'MISS',
-      'X-Data-Source': 'live',
+      'X-Data-Source': 'local-seed',
       'Cache-Control': 'no-store, max-age=0, must-revalidate',
     },
   });

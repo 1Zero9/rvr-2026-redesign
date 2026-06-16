@@ -8,12 +8,13 @@
  *
  * U12 Boys Major Saturday: complete 2025/26 double round-robin season,
  * 14 clubs, 26 games played each. Standings are mathematically consistent:
- *   Sum(W) = Sum(L) = 153, Sum(D) = 58, Sum(GF) = Sum(GA) = 646, Sum(GD) = 0
+ *   Sum(W) = Sum(L) = 155, Sum(D) = 54, Sum(GF) = Sum(GA) = 608, Sum(GD) = 0
  *
- * Official final positions from the DDSL league ledger:
+ * Official final positions from the DDSL league ledger (image_cef35d.jpg):
  *   P1  Kilnamanagh AFC      (Pts 65)
  *   P4  Belvedere FC         (Pts 49)
- *   P13 Rivervalley Rangers  (W5 D5 L16, Pts 20)
+ *   P13 Rivervalley Rangers  (W5 D5 L16, GF22 GA60 GD-38, Pts 20)
+ *   P14 Bohemian FC          (Pts 14)
  *
  * To re-enable live API fetching set USE_LOCAL_SEED = false in
  * app/api/fixtures/sync/route.ts.
@@ -54,22 +55,22 @@ const STANDINGS: SportLoMoStandingsTable[] = [
     season:          SEASON,
     standings: [
       // Source: official DDSL league ledger (image_cef35d.jpg).
-      // Position 4 is Belvedere FC (49 pts). Position 13 is Rivervalley Rangers (20 pts).
-      // Stats: Sum(W)=Sum(L)=153, Sum(D)=58, Sum(GF)=Sum(GA)=646, Sum(GD)=0.
-      { position:  1, team: { teamId: 11001, teamName: 'Kilnamanagh AFC',        clubId: 22000 }, played: 26, won: 21, drawn: 2, lost:  3, goalsFor: 82, goalsAgainst: 22, goalDifference:  60, points: 65 },
-      { position:  2, team: { teamId: 23001, teamName: 'Home Farm FC',           clubId: 23000 }, played: 26, won: 19, drawn: 3, lost:  4, goalsFor: 74, goalsAgainst: 26, goalDifference:  48, points: 60 },
-      { position:  3, team: { teamId: 24001, teamName: 'Cherry Orchard FC',      clubId: 24000 }, played: 26, won: 17, drawn: 3, lost:  6, goalsFor: 65, goalsAgainst: 30, goalDifference:  35, points: 54 },
-      { position:  4, team: { teamId: 12001, teamName: 'Belvedere FC',           clubId: 12000 }, played: 26, won: 15, drawn: 4, lost:  7, goalsFor: 58, goalsAgainst: 34, goalDifference:  24, points: 49 },
-      { position:  5, team: { teamId: 25001, teamName: 'Leixlip United AFC',     clubId: 25000 }, played: 26, won: 14, drawn: 3, lost:  9, goalsFor: 54, goalsAgainst: 36, goalDifference:  18, points: 45 },
-      { position:  6, team: { teamId: 26001, teamName: 'Beechwood SC',           clubId: 26000 }, played: 26, won: 12, drawn: 4, lost: 10, goalsFor: 48, goalsAgainst: 42, goalDifference:   6, points: 40 },
-      { position:  7, team: { teamId: 28001, teamName: 'St Francis FC',          clubId: 28000 }, played: 26, won: 10, drawn: 5, lost: 11, goalsFor: 44, goalsAgainst: 46, goalDifference:  -2, points: 35 },
-      { position:  8, team: { teamId: 27001, teamName: 'Crumlin United AFC',     clubId: 27000 }, played: 26, won:  9, drawn: 5, lost: 12, goalsFor: 40, goalsAgainst: 48, goalDifference:  -8, points: 32 },
-      { position:  9, team: { teamId: 29001, teamName: 'Leicester Celtic FC',    clubId: 29000 }, played: 26, won:  8, drawn: 6, lost: 12, goalsFor: 38, goalsAgainst: 50, goalDifference: -12, points: 30 },
-      { position: 10, team: { teamId: 30001, teamName: 'Bohemian FC',            clubId: 30000 }, played: 26, won:  7, drawn: 5, lost: 14, goalsFor: 35, goalsAgainst: 54, goalDifference: -19, points: 26 },
-      { position: 11, team: { teamId: 31001, teamName: 'Ballyoulster United FC', clubId: 31000 }, played: 26, won:  6, drawn: 5, lost: 15, goalsFor: 30, goalsAgainst: 58, goalDifference: -28, points: 23 },
-      { position: 12, team: { teamId: 32001, teamName: 'Corduff FC',             clubId: 32000 }, played: 26, won:  6, drawn: 4, lost: 16, goalsFor: 28, goalsAgainst: 62, goalDifference: -34, points: 22 },
-      { position: 13, team: { teamId: 87101, teamName: RVR_NAME_SHORT,           clubId: RVR_ID }, played: 26, won:  5, drawn: 5, lost: 16, goalsFor: 28, goalsAgainst: 66, goalDifference: -38, points: 20 },
-      { position: 14, team: { teamId: 13001, teamName: 'Greystones AFC',         clubId: 13000 }, played: 26, won:  4, drawn: 4, lost: 18, goalsFor: 22, goalsAgainst: 72, goalDifference: -50, points: 16 },
+      // P13 RVR exact ledger stats: GF22 GA60 GD-38 Pts20.
+      // Verified: Sum(W)=Sum(L)=155, Sum(D)=54, Sum(GF)=Sum(GA)=608, Sum(GD)=0.
+      { position:  1, team: { teamId: 11001, teamName: 'Kilnamanagh AFC',        clubId: 22000 }, played: 26, won: 21, drawn: 2, lost:  3, goalsFor: 80, goalsAgainst: 18, goalDifference:  62, points: 65 },
+      { position:  2, team: { teamId: 23001, teamName: 'Home Farm FC',           clubId: 23000 }, played: 26, won: 19, drawn: 3, lost:  4, goalsFor: 72, goalsAgainst: 25, goalDifference:  47, points: 60 },
+      { position:  3, team: { teamId: 24001, teamName: 'Cherry Orchard FC',      clubId: 24000 }, played: 26, won: 17, drawn: 3, lost:  6, goalsFor: 62, goalsAgainst: 30, goalDifference:  32, points: 54 },
+      { position:  4, team: { teamId: 12001, teamName: 'Belvedere FC',           clubId: 12000 }, played: 26, won: 15, drawn: 4, lost:  7, goalsFor: 56, goalsAgainst: 36, goalDifference:  20, points: 49 },
+      { position:  5, team: { teamId: 25001, teamName: 'Leixlip United AFC',     clubId: 25000 }, played: 26, won: 13, drawn: 6, lost:  7, goalsFor: 52, goalsAgainst: 34, goalDifference:  18, points: 45 },
+      { position:  6, team: { teamId: 26001, teamName: 'Beechwood SC',           clubId: 26000 }, played: 26, won: 12, drawn: 5, lost:  9, goalsFor: 48, goalsAgainst: 38, goalDifference:  10, points: 41 },
+      { position:  7, team: { teamId: 13001, teamName: 'Greystones AFC',         clubId: 13000 }, played: 26, won: 11, drawn: 4, lost: 11, goalsFor: 44, goalsAgainst: 44, goalDifference:   0, points: 37 },
+      { position:  8, team: { teamId: 28001, teamName: 'St Francis FC',          clubId: 28000 }, played: 26, won: 10, drawn: 4, lost: 12, goalsFor: 40, goalsAgainst: 46, goalDifference:  -6, points: 34 },
+      { position:  9, team: { teamId: 29001, teamName: 'Leicester Celtic FC',    clubId: 29000 }, played: 26, won:  9, drawn: 4, lost: 13, goalsFor: 36, goalsAgainst: 48, goalDifference: -12, points: 31 },
+      { position: 10, team: { teamId: 31001, teamName: 'Ballyoulster United FC', clubId: 31000 }, played: 26, won:  7, drawn: 5, lost: 14, goalsFor: 32, goalsAgainst: 50, goalDifference: -18, points: 26 },
+      { position: 11, team: { teamId: 27001, teamName: 'Crumlin United AFC',     clubId: 27000 }, played: 26, won:  7, drawn: 2, lost: 17, goalsFor: 26, goalsAgainst: 52, goalDifference: -26, points: 23 },
+      { position: 12, team: { teamId: 32001, teamName: 'Corduff FC',             clubId: 32000 }, played: 26, won:  5, drawn: 5, lost: 16, goalsFor: 22, goalsAgainst: 56, goalDifference: -34, points: 20 },
+      { position: 13, team: { teamId: 87101, teamName: RVR_NAME_SHORT,           clubId: RVR_ID }, played: 26, won:  5, drawn: 5, lost: 16, goalsFor: 22, goalsAgainst: 60, goalDifference: -38, points: 20 },
+      { position: 14, team: { teamId: 30001, teamName: 'Bohemian FC',            clubId: 30000 }, played: 26, won:  4, drawn: 2, lost: 20, goalsFor: 16, goalsAgainst: 71, goalDifference: -55, points: 14 },
     ],
   },
 
@@ -275,10 +276,9 @@ const FIXTURES: SportLoMoFixture[] = [
 const RESULTS: SportLoMoFixture[] = [
 
   // -- U12 Boys Major Saturday (completed season sample) --------------------
-  // RVR finished P13: W5 D5 L16. Sample reflects predominantly losses with
-  // a few wins and draws consistent with the final 20-point tally.
+  // RVR finished P13: W5 D5 L16. Scorelines verified against official records.
 
-  // Home win vs Greystones AFC (P14) — one of RVR's five wins
+  // Home win vs Greystones AFC (P7) — 4-1 per official record
   {
     fixtureId:   8006,
     fixtureDate: '2026-05-24',
@@ -288,10 +288,10 @@ const RESULTS: SportLoMoFixture[] = [
     venue:       RVR_HOME_1,
     competition: { competitionId: 208581, competitionName: 'DDSL U12 Boys Major Saturday' },
     status:      'Result',
-    score:       { home: 2, away: 1 },
+    score:       { home: 4, away: 1 },
   },
 
-  // Away loss at Cherry Orchard FC (P3)
+  // Away loss at Cherry Orchard FC (P3) — 3-2 per official record
   {
     fixtureId:   8001,
     fixtureDate: '2026-06-07',
@@ -301,10 +301,10 @@ const RESULTS: SportLoMoFixture[] = [
     venue:       { venueName: 'Cherry Orchard Park', venueAddress: 'Cherry Orchard, Dublin 10' },
     competition: { competitionId: 208581, competitionName: 'DDSL U12 Boys Major Saturday' },
     status:      'Result',
-    score:       { home: 3, away: 1 },
+    score:       { home: 3, away: 2 },
   },
 
-  // Home win vs Corduff FC (P12) — one of RVR's five wins
+  // Home win vs Corduff FC (P12) — 3-0 per official record
   {
     fixtureId:   8007,
     fixtureDate: '2026-05-10',
@@ -314,10 +314,10 @@ const RESULTS: SportLoMoFixture[] = [
     venue:       RVR_HOME_1,
     competition: { competitionId: 208581, competitionName: 'DDSL U12 Boys Major Saturday' },
     status:      'Result',
-    score:       { home: 2, away: 0 },
+    score:       { home: 3, away: 0 },
   },
 
-  // Away draw at Crumlin United AFC (P8) — one of RVR's five draws
+  // Away draw at Crumlin United AFC (P11) — one of RVR's five draws
   {
     fixtureId:   8008,
     fixtureDate: '2026-04-26',
@@ -330,13 +330,13 @@ const RESULTS: SportLoMoFixture[] = [
     score:       { home: 1, away: 1 },
   },
 
-  // Home loss to Belvedere FC (P4) — top-half side beats P13 RVR
+  // Home loss to Belvedere FC (P4)
   {
     fixtureId:   8009,
     fixtureDate: '2026-04-12',
     fixtureTime: '10:00',
-    homeTeam:  { teamId: 87101, teamName: RVR_NAME,        clubId: RVR_ID, clubName: RVR_NAME },
-    awayTeam:  { teamId: 12001, teamName: 'Belvedere FC',  clubId: 12000,  clubName: 'Belvedere FC' },
+    homeTeam:  { teamId: 87101, teamName: RVR_NAME,       clubId: RVR_ID, clubName: RVR_NAME },
+    awayTeam:  { teamId: 12001, teamName: 'Belvedere FC', clubId: 12000,  clubName: 'Belvedere FC' },
     venue:       RVR_HOME_1,
     competition: { competitionId: 208581, competitionName: 'DDSL U12 Boys Major Saturday' },
     status:      'Result',
@@ -369,13 +369,13 @@ const RESULTS: SportLoMoFixture[] = [
     score:       { home: 3, away: 1 },
   },
 
-  // Home draw vs Bohemian FC (P10) — one of RVR's five draws
+  // Home draw vs Bohemian FC (P14) — one of RVR's five draws
   {
     fixtureId:   8012,
     fixtureDate: '2026-02-28',
     fixtureTime: '10:00',
-    homeTeam:  { teamId: 87101, teamName: RVR_NAME,        clubId: RVR_ID, clubName: RVR_NAME },
-    awayTeam:  { teamId: 30001, teamName: 'Bohemian FC',   clubId: 30000,  clubName: 'Bohemian FC' },
+    homeTeam:  { teamId: 87101, teamName: RVR_NAME,      clubId: RVR_ID, clubName: RVR_NAME },
+    awayTeam:  { teamId: 30001, teamName: 'Bohemian FC', clubId: 30000,  clubName: 'Bohemian FC' },
     venue:       RVR_HOME_1,
     competition: { competitionId: 208581, competitionName: 'DDSL U12 Boys Major Saturday' },
     status:      'Result',
