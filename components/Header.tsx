@@ -329,6 +329,8 @@ export default function Header() {
                 Book Astro Pitch
               </Link>
             </div>
+
+            <div className="h-32 w-full clear-both block" aria-hidden="true" />
           </nav>
         </div>
       )}
