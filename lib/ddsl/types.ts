@@ -25,7 +25,8 @@ export interface SportLoMoScore {
 
 export interface SportLoMoVenue {
   venueId?: number;
-  venueName: string;
+  /** May be absent from some DDSL feed exports — normalizeVenueName() provides the fallback. */
+  venueName?: string;
   venueAddress?: string;
   venuePostcode?: string;
 }
@@ -38,12 +39,14 @@ export type SportLoMoStatus =
   | 'Postponed'
   | 'Cancelled'
   | 'Abandoned'
+  | 'Walkover'
   | string;
 
 export interface SportLoMoFixture {
   fixtureId: number;
-  fixtureDate: string;     // "YYYY-MM-DD"
-  fixtureTime: string;     // "HH:MM"
+  fixtureDate: string;       // "YYYY-MM-DD"
+  /** May be absent from some DDSL feed exports — normalizeKickoffTime() provides the fallback. */
+  fixtureTime?: string;      // "HH:MM"
   homeTeam: SportLoMoTeam;
   awayTeam: SportLoMoTeam;
   venue: SportLoMoVenue;
@@ -92,7 +95,7 @@ export interface SportLoMoStandingsTable {
 // Normalised / enriched output types (what the API routes return to clients)
 // ---------------------------------------------------------------------------
 
-export type MatchStatus = 'upcoming' | 'live' | 'completed' | 'postponed' | 'cancelled';
+export type MatchStatus = 'upcoming' | 'live' | 'completed' | 'postponed' | 'cancelled' | 'walkover';
 
 export type AgeGroup =
   | 'U7' | 'U8' | 'U9' | 'U10' | 'U11' | 'U12'

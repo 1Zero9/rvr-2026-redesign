@@ -109,10 +109,11 @@ function formatDate(value: string) {
 }
 
 function formatStatus(status: NormalisedMatch["status"]) {
-  if (status === "completed") return "FT";
-  if (status === "live") return "Live";
-  if (status === "postponed") return "Postponed";
-  if (status === "cancelled") return "Cancelled";
+  if (status === "completed")  return "FT";
+  if (status === "live")       return "Live";
+  if (status === "postponed")  return "Postponed";
+  if (status === "cancelled")  return "Cancelled";
+  if (status === "walkover")   return "Walkover";
   return "Scheduled";
 }
 

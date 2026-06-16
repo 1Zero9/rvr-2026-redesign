@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { parseTeamSlug, matchesSlug } from "@/lib/ddsl/team-slug";
 import { resolveActiveSeason } from "@/lib/db/active-season";
+import {
+  normalizeKickoffTime,
+  normalizeTeamName,
+  normalizeVenueName,
+} from "@/lib/ddsl/normalize";
 
 export const dynamic = "force-dynamic";
 
@@ -18,7 +23,7 @@ const MERCY_RULE_AGE_GROUPS = new Set(["U7", "U8", "U9", "U10", "U11"]);
 // Types
 // ---------------------------------------------------------------------------
 
-type MatchStatus = "upcoming" | "live" | "completed" | "postponed";
+type MatchStatus = "upcoming" | "live" | "completed" | "postponed" | "walkover";
 
 interface Score {
   home: number;
@@ -137,10 +142,11 @@ interface SportLoMoRawFixture {
 }
 
 function mapStatus(raw: string): MatchStatus {
-  const s = raw.toLowerCase();
-  if (s === "live") return "live";
-  if (s === "result" || s === "completed") return "completed";
-  if (s === "postponed") return "postponed";
+  const s = raw.toLowerCase().trim();
+  if (s === "live")                            return "live";
+  if (s === "result" || s === "completed")     return "completed";
+  if (s === "postponed")                       return "postponed";
+  if (s === "walkover" || s === "w/o")         return "walkover";
   return "upcoming";
 }
 
@@ -153,20 +159,22 @@ function mapRawFixture(raw: SportLoMoRawFixture): Fixture {
   });
 
   const status = mapStatus(raw.status);
+
+  // Walkovers carry no scoreline in the feed — avoid rendering a false 0–0.
   const score =
-    raw.score != null
+    status !== "walkover" && raw.score != null
       ? buildScore(raw.score.home, raw.score.away, ageGroup)
       : null;
 
   return {
     id: raw.fixtureId,
     date: raw.fixtureDate,
-    time: raw.fixtureTime,
-    homeTeam: raw.homeTeam.teamName,
-    awayTeam: raw.awayTeam.teamName,
+    time: normalizeKickoffTime(raw.fixtureTime),
+    homeTeam: normalizeTeamName(raw.homeTeam.teamName),
+    awayTeam: normalizeTeamName(raw.awayTeam.teamName),
     competition: raw.competition.competitionName,
     ageGroup,
-    venue: raw.venue.venueName,
+    venue: normalizeVenueName(raw.venue.venueName),
     status,
     score,
   };

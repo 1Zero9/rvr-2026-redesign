@@ -1,4 +1,5 @@
 import { applyMercyRule, parseAgeGroup } from './mercy-rule';
+import { normalizeKickoffTime, normalizeTeamName, normalizeVenueName } from './normalize';
 import { resolveVenue } from './venue';
 import type {
   AgeGroup,
@@ -11,11 +12,12 @@ import type {
 } from './types';
 
 function mapStatus(raw: SportLoMoStatus): MatchStatus {
-  const s = raw.toLowerCase();
-  if (s === 'live')                          return 'live';
-  if (s === 'result' || s === 'completed')   return 'completed';
-  if (s === 'postponed')                     return 'postponed';
+  const s = raw.toLowerCase().trim();
+  if (s === 'live')                           return 'live';
+  if (s === 'result' || s === 'completed')    return 'completed';
+  if (s === 'postponed')                      return 'postponed';
   if (s === 'cancelled' || s === 'abandoned') return 'cancelled';
+  if (s === 'walkover' || s === 'w/o')        return 'walkover';
   return 'upcoming';
 }
 
@@ -23,22 +25,35 @@ export function transformFixture(raw: SportLoMoFixture): NormalisedMatch {
   const competitionName = raw.competition.competitionName;
   const ageGroup = parseAgeGroup(competitionName);
   const status = mapStatus(raw.status);
-  const venue = resolveVenue(raw.venue.venueName, raw.venue.venueAddress ?? null);
 
+  // Sanitize team names — collapses spacing variants and maps RVR aliases to
+  // the single canonical form before anything else reads the name.
+  const homeTeam = normalizeTeamName(raw.homeTeam.teamName);
+  const awayTeam = normalizeTeamName(raw.awayTeam.teamName);
+
+  // Apply structural fallbacks for fields that may be absent from the feed.
+  const time  = normalizeKickoffTime(raw.fixtureTime);
+  const venue = resolveVenue(
+    normalizeVenueName(raw.venue.venueName),
+    raw.venue.venueAddress ?? null,
+  );
+
+  // Walkovers are recorded in the feed without a scoreline — suppress the score
+  // entirely so the UI renders the explicit "Walkover" status rather than "0–0".
   let score = null;
-  if (raw.score !== undefined && raw.score !== null) {
+  if (status !== 'walkover' && raw.score != null) {
     score = applyMercyRule(raw.score, ageGroup);
   }
 
   return {
     id: raw.fixtureId,
     date: raw.fixtureDate,
-    time: raw.fixtureTime,
+    time,
     status,
     ageGroup,
     competition: competitionName,
-    homeTeam: raw.homeTeam.teamName,
-    awayTeam: raw.awayTeam.teamName,
+    homeTeam,
+    awayTeam,
     isRvrHome: venue.isRvrHome,
     venue,
     score,
