@@ -73,6 +73,8 @@ async function fetchJson<T>(path: string, extra: Record<string, string> = {}): P
     url.searchParams.set(k, v);
   }
 
+  console.log('[ddsl/client] Outbound request URL:', url.toString());
+
   let res: Response;
   try {
     res = await fetch(url.toString(), {
@@ -89,6 +91,8 @@ async function fetchJson<T>(path: string, extra: Record<string, string> = {}): P
       `Network error reaching SportLoMo: ${err instanceof Error ? err.message : String(err)}`,
     );
   }
+
+  console.log('[ddsl/client] DDSL Server Status Response:', res.status);
 
   if (res.status === 401 || res.status === 403) {
     throw new SportLoMoApiError(res.status, 'SportLoMo authentication failed — check SPORTLOMO_API_KEY');
@@ -139,10 +143,15 @@ async function fetchAllPages<T>(
       pageSize: String(pageSize),
     });
     all.push(...envelope.data);
+    console.log(
+      `[ddsl/client] Page ${page}: received ${envelope.data.length} rows` +
+      ` (declared total: ${envelope.total ?? 'unknown'}, accumulated: ${all.length})`,
+    );
     if (all.length >= (envelope.total ?? 0) || envelope.data.length < pageSize) break;
     page++;
   }
 
+  console.log(`[ddsl/client] Pagination complete — ${all.length} total rows across ${page} page(s) from ${endpoint}`);
   return all;
 }
 

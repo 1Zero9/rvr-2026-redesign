@@ -261,6 +261,7 @@ export async function GET(_req: NextRequest): Promise<NextResponse<SyncResponse>
   let rawStandings: SportLoMoStandingsTable[];
 
   try {
+    console.log('[api/fixtures/sync] Initiating outbound DDSL connection call...');
     // Fetch all pages in parallel — covers all 29 active RVR squads across
     // every division without being truncated by a single-page size cap.
     [rawFixtures, rawResults, rawStandings] = await Promise.all([
@@ -268,6 +269,10 @@ export async function GET(_req: NextRequest): Promise<NextResponse<SyncResponse>
       fetchAllResults(),
       fetchAllStandings(),
     ]);
+    console.log(
+      `[api/fixtures/sync] Raw payload received — fixtures: ${rawFixtures.length},` +
+      ` results: ${rawResults.length}, standings tables: ${rawStandings.length}`,
+    );
     source = 'live';
   } catch (err) {
     if (err instanceof SportLoMoConfigError) {
@@ -295,7 +300,12 @@ export async function GET(_req: NextRequest): Promise<NextResponse<SyncResponse>
   // their competition. This catches data contamination caused by incorrect
   // competition IDs in the SportLoMo feed (e.g. Coolmine Athletic appearing
   // in the U12 Major Saturday table due to a mismatched ID at source).
+  const preFilterCount = rawStandings.length;
   rawStandings = applyDivisionFilter(rawStandings);
+  console.log(
+    `[api/fixtures/sync] Division integrity filter — tables before: ${preFilterCount},` +
+    ` tables after: ${rawStandings.length}`,
+  );
 
   // Build a deduplicated competition map seeded from standings (authoritative
   // source for competitionId) then supplemented by any fixture-only divisions.
@@ -347,6 +357,12 @@ export async function GET(_req: NextRequest): Promise<NextResponse<SyncResponse>
       tables.push(transformStandingsTable(raw, ageGroup));
     }
   }
+
+  console.log(
+    `[api/fixtures/sync] Age-gate complete — competitive tables: ${tables.length},` +
+    ` development brackets: ${developmentDivisions.length},` +
+    ` discovered divisions: ${competitionMap.size}`,
+  );
 
   const divisions = buildDivisionList(competitionMap, fixtures, results);
 
