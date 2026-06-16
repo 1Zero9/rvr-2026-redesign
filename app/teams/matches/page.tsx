@@ -1,8 +1,5 @@
 "use client";
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
-
 import { useEffect, useMemo, useState } from "react";
 import Header from "@/components/Header";
 import DDSLTableWidget from "@/components/DDSLTableWidget";

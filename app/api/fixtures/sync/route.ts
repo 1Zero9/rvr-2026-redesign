@@ -85,12 +85,10 @@ export async function GET(_req: NextRequest): Promise<NextResponse> {
     });
   }
 
-  // Explicit let declarations with empty initial values so TypeScript's
-  // definite-assignment analysis is satisfied. The catch block always returns
-  // early, so these placeholders are never used if the fetch fails.
-  let rawFixtures:  SportLoMoFixture[]       = [];
-  let rawResults:   SportLoMoFixture[]       = [];
+  let rawFixtures:  SportLoMoFixture[]        = [];
+  let rawResults:   SportLoMoFixture[]        = [];
   let rawStandings: SportLoMoStandingsTable[] = [];
+  let fetchFailed = false;
 
   try {
     console.log('[api/fixtures/sync] Initiating outbound DDSL connection call...');
@@ -106,6 +104,7 @@ export async function GET(_req: NextRequest): Promise<NextResponse> {
       ` results: ${rawResults.length}, standings tables: ${rawStandings.length}`,
     );
   } catch (err) {
+    // Missing env vars is a hard server config error — surface it immediately.
     if (err instanceof SportLoMoConfigError) {
       console.error('[api/fixtures/sync] DDSL environment not configured:', err.message);
       return NextResponse.json(
@@ -116,18 +115,18 @@ export async function GET(_req: NextRequest): Promise<NextResponse> {
         { status: 503, headers: { 'Cache-Control': 'no-store, max-age=0, must-revalidate' } },
       );
     }
+    // For all API errors (including 404) and network failures, log and continue
+    // with empty arrays so the frontend renders its "no data" state gracefully
+    // instead of an error page.
     if (err instanceof SportLoMoApiError) {
-      console.error(`[api/fixtures/sync] DDSL feed error HTTP ${err.status}:`, err.message);
-      return NextResponse.json(
-        { error: `DDSL feed returned HTTP ${err.status}: ${err.message}` },
-        { status: 502, headers: { 'Cache-Control': 'no-store, max-age=0, must-revalidate' } },
+      console.error(
+        `[api/fixtures/sync] DDSL feed returned HTTP ${err.status} — serving empty payload:`,
+        err.message,
       );
+    } else {
+      console.error('[api/fixtures/sync] Unexpected error during DDSL fetch — serving empty payload:', err);
     }
-    console.error('[api/fixtures/sync] Unexpected error during DDSL fetch:', err);
-    return NextResponse.json(
-      { error: 'Unexpected error contacting the DDSL feed — check server logs for details' },
-      { status: 500, headers: { 'Cache-Control': 'no-store, max-age=0, must-revalidate' } },
-    );
+    fetchFailed = true;
   }
 
   // Transform raw fixtures and results through the shared pipeline.
@@ -207,7 +206,7 @@ export async function GET(_req: NextRequest): Promise<NextResponse> {
 
   const now = Date.now();
   const body: SyncResponse = {
-    source:          'live',
+    source:          fetchFailed ? 'empty' : 'live',
     syncedAt:        new Date(now).toISOString(),
     cacheExpiresAt:  new Date(now + TTL_MS).toISOString(),
     divisions,
