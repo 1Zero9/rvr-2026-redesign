@@ -8,6 +8,7 @@ import {
 } from "@/lib/ddsl/normalize";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -246,7 +247,12 @@ export async function GET(req: NextRequest): Promise<NextResponse<FixturesRespon
     console.error("[api/fixtures] SportLoMo fetch failed — returning empty fixture list:", err);
     return NextResponse.json(
       { source: "empty", fetchedAt, total: 0, fixtures: [] },
-      { headers: { "X-Data-Source": "empty" } },
+      {
+        headers: {
+          "X-Data-Source": "empty",
+          "Cache-Control": "no-store, max-age=0, must-revalidate",
+        },
+      },
     );
   }
 
@@ -259,6 +265,11 @@ export async function GET(req: NextRequest): Promise<NextResponse<FixturesRespon
 
   return NextResponse.json(
     { source: "live", fetchedAt, total: visible.length, fixtures: visible },
-    { headers: { "X-Data-Source": "live" } },
+    {
+      headers: {
+        "X-Data-Source": "live",
+        "Cache-Control": "no-store, max-age=0, must-revalidate",
+      },
+    },
   );
 }
