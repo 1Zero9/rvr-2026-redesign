@@ -18,6 +18,7 @@ import type {
 } from "@/lib/ddsl/types";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 const CACHE_KEY = "ddsl:standings";
 
@@ -183,6 +184,7 @@ export async function GET(req: NextRequest): Promise<NextResponse<TablesResponse
       headers: {
         "X-Cache": "HIT",
         "X-Cache-Expires": cached.expiresAt.toString(),
+        "Cache-Control": "no-store, max-age=0, must-revalidate",
       },
     });
   }
@@ -252,6 +254,7 @@ export async function GET(req: NextRequest): Promise<NextResponse<TablesResponse
     headers: {
       "X-Cache": "MISS",
       "X-Data-Source": source,
+      "Cache-Control": "no-store, max-age=0, must-revalidate",
     },
   });
 }
