@@ -1,20 +1,16 @@
-/**
- * GET /api/fixtures
- *
- * Returns upcoming RVR fixtures sourced from the SportLoMo API.
- * When SPORTLOMO_BASE_URL / SPORTLOMO_API_KEY / SPORTLOMO_CLUB_ID are not
- * set the handler falls back to a mock dataset so the endpoint remains usable
- * during local development and CI.
- *
- * Mercy Rule (DDSL policy, U7–U11):
- *   The publicly visible score margin is capped at 5 goals.
- *   Formula: displayMargin = Math.min(winningScore − losingScore, 5)
- *   The losing score is held constant; only the winning total is adjusted.
- */
-
 import { NextRequest, NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
+
+// ---------------------------------------------------------------------------
+// Constants
+// ---------------------------------------------------------------------------
+
+const MERCY_CAP = 5;
+
+// DDSL policy: mercy rule applies to U7 through U11 only.
+// U12, youth competitive (U13–U18), and senior matches transmit exact scores.
+const MERCY_RULE_AGE_GROUPS = new Set(["U7", "U8", "U9", "U10", "U11"]);
 
 // ---------------------------------------------------------------------------
 // Types
@@ -51,21 +47,62 @@ interface FixturesResponse {
 }
 
 // ---------------------------------------------------------------------------
-// Mercy Rule
+// Age group resolution
 // ---------------------------------------------------------------------------
 
-const MERCY_RULE_AGE_GROUPS = new Set(["U7", "U8", "U9", "U10", "U11"]);
+interface AgeGroupSource {
+  ageCategory?: string;
+  groupName?: string;
+  division?: string;
+  competitionName: string;
+}
+
+function extractAgeGroup(source: AgeGroupSource): string {
+  // Check dedicated age fields in priority order before falling back to
+  // regex on the competition name string.
+  const candidate =
+    source.ageCategory ??
+    source.groupName ??
+    source.division ??
+    source.competitionName;
+
+  const match = candidate.match(/[Uu](?:nder[-\s]?)?(\d{1,2})/);
+  if (!match) return "Senior";
+
+  const age = parseInt(match[1], 10);
+  return age >= 7 && age <= 18 ? `U${age}` : "Senior";
+}
+
+function requiresMercyRule(ageGroup: string): boolean {
+  return MERCY_RULE_AGE_GROUPS.has(ageGroup);
+}
+
+// ---------------------------------------------------------------------------
+// Score builder
+//
+// For mercy-rule age groups (U7–U11) the public display is capped so the
+// winning margin never exceeds MERCY_CAP goals. The losing score is held
+// constant; only the winning total is reduced.
+//
+// For all other age groups the raw scoreline is returned unchanged.
+// ---------------------------------------------------------------------------
 
 function buildScore(home: number, away: number, ageGroup: string): Score {
-  const eligible = MERCY_RULE_AGE_GROUPS.has(ageGroup);
+  const applyMercy = requiresMercyRule(ageGroup);
   const winningScore = Math.max(home, away);
   const losingScore = Math.min(home, away);
   const actualMargin = winningScore - losingScore;
-  const displayMargin = eligible ? Math.min(actualMargin, 5) : actualMargin;
-  const capped = eligible && displayMargin < actualMargin;
+  const displayMargin = applyMercy ? Math.min(actualMargin, MERCY_CAP) : actualMargin;
+  const capped = applyMercy && displayMargin < actualMargin;
 
   if (!capped) {
-    return { home, away, mercyRuleApplied: false, displayMargin, actualMargin: null };
+    return {
+      home,
+      away,
+      mercyRuleApplied: false,
+      displayMargin,
+      actualMargin: null,
+    };
   }
 
   const cappedWinning = losingScore + displayMargin;
@@ -79,7 +116,7 @@ function buildScore(home: number, away: number, ageGroup: string): Score {
 }
 
 // ---------------------------------------------------------------------------
-// SportLoMo live fetch
+// SportLoMo integration
 // ---------------------------------------------------------------------------
 
 interface SportLoMoRawFixture {
@@ -91,14 +128,10 @@ interface SportLoMoRawFixture {
   competition: { competitionName: string };
   venue: { venueName: string };
   status: string;
+  ageCategory?: string;
+  groupName?: string;
+  division?: string;
   score?: { home: number; away: number };
-}
-
-function parseAgeGroup(competitionName: string): string {
-  const match = competitionName.match(/[Uu](?:nder[-\s]?)?(\d{1,2})/);
-  if (!match) return "Senior";
-  const age = parseInt(match[1], 10);
-  return age >= 7 && age <= 18 ? `U${age}` : "Unknown";
 }
 
 function mapStatus(raw: string): MatchStatus {
@@ -109,11 +142,40 @@ function mapStatus(raw: string): MatchStatus {
   return "upcoming";
 }
 
+function mapRawFixture(raw: SportLoMoRawFixture): Fixture {
+  const ageGroup = extractAgeGroup({
+    ageCategory: raw.ageCategory,
+    groupName: raw.groupName,
+    division: raw.division,
+    competitionName: raw.competition.competitionName,
+  });
+
+  const status = mapStatus(raw.status);
+  const score =
+    raw.score != null
+      ? buildScore(raw.score.home, raw.score.away, ageGroup)
+      : null;
+
+  return {
+    id: raw.fixtureId,
+    date: raw.fixtureDate,
+    time: raw.fixtureTime,
+    homeTeam: raw.homeTeam.teamName,
+    awayTeam: raw.awayTeam.teamName,
+    competition: raw.competition.competitionName,
+    ageGroup,
+    venue: raw.venue.venueName,
+    status,
+    score,
+  };
+}
+
 async function fetchFromSportLoMo(): Promise<Fixture[]> {
   const baseUrl = process.env.SPORTLOMO_BASE_URL?.replace(/\/$/, "");
   const apiKey = process.env.SPORTLOMO_API_KEY;
   const clubId = process.env.SPORTLOMO_CLUB_ID;
-  const season = process.env.SPORTLOMO_SEASON ?? new Date().getFullYear().toString();
+  const season =
+    process.env.SPORTLOMO_SEASON ?? new Date().getFullYear().toString();
 
   if (!baseUrl || !apiKey || !clubId) {
     throw new Error("SportLoMo environment variables not configured");
@@ -133,30 +195,11 @@ async function fetchFromSportLoMo(): Promise<Fixture[]> {
   }
 
   const envelope = (await res.json()) as { data: SportLoMoRawFixture[] };
-
-  return envelope.data.map((raw) => {
-    const ageGroup = parseAgeGroup(raw.competition.competitionName);
-    const status = mapStatus(raw.status);
-    const score =
-      raw.score != null ? buildScore(raw.score.home, raw.score.away, ageGroup) : null;
-
-    return {
-      id: raw.fixtureId,
-      date: raw.fixtureDate,
-      time: raw.fixtureTime,
-      homeTeam: raw.homeTeam.teamName,
-      awayTeam: raw.awayTeam.teamName,
-      competition: raw.competition.competitionName,
-      ageGroup,
-      venue: raw.venue.venueName,
-      status,
-      score,
-    };
-  });
+  return envelope.data.map(mapRawFixture);
 }
 
 // ---------------------------------------------------------------------------
-// Mock dataset (active when SportLoMo env vars are absent)
+// Mock dataset — used when SportLoMo env vars are absent
 // ---------------------------------------------------------------------------
 
 const MOCK_FIXTURES: Array<
@@ -232,6 +275,19 @@ const MOCK_FIXTURES: Array<
     venue: "Rivervalley Park, Dublin 15",
     status: "upcoming",
   },
+  {
+    id: 1007,
+    date: "2026-06-20",
+    time: "20:00",
+    homeTeam: "Rivervalley Rangers AFC",
+    awayTeam: "Blanchardstown AFC",
+    competition: "DDSL Senior Men Division 1",
+    ageGroup: "Senior",
+    venue: "Rivervalley Park, Dublin 15",
+    status: "completed",
+    rawHome: 4,
+    rawAway: 0,
+  },
 ];
 
 function buildMockFixtures(): Fixture[] {
@@ -255,19 +311,19 @@ export async function GET(_req: NextRequest): Promise<NextResponse<FixturesRespo
   try {
     fixtures = await fetchFromSportLoMo();
     source = "live";
-  } catch {
+  } catch (err) {
+    console.error("[api/fixtures] SportLoMo fetch failed, using mock data:", err);
     fixtures = buildMockFixtures();
     source = "mock";
   }
 
-  const body: FixturesResponse = {
-    source,
-    fetchedAt: new Date().toISOString(),
-    total: fixtures.length,
-    fixtures,
-  };
-
-  return NextResponse.json(body, {
-    headers: { "X-Data-Source": source },
-  });
+  return NextResponse.json(
+    {
+      source,
+      fetchedAt: new Date().toISOString(),
+      total: fixtures.length,
+      fixtures,
+    },
+    { headers: { "X-Data-Source": source } },
+  );
 }
