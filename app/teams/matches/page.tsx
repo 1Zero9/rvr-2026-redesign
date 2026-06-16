@@ -1,90 +1,118 @@
 import type { Metadata } from "next";
 import Header from "@/components/Header";
 import {
-  BellRing,
   CalendarDays,
   Clock3,
-  Download,
   MapPin,
+  Radio,
   ShieldCheck,
-  Smartphone,
+  Trophy,
 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Matchday Hub | Rivervalley Rangers AFC",
+  title: "Live Match Results | Rivervalley Rangers AFC",
   description:
-    "Mobile-first fixture and result hub for Rivervalley Rangers AFC teams.",
+    "Public live match results dashboard for Rivervalley Rangers AFC DDSL league fixtures.",
 };
 
-interface ProcessedScore {
-  home: number;
-  away: number;
-  mercyRuleApplied: boolean;
+type MatchStatus = "FT" | "Live" | "Scheduled";
+type AgeGroup = `U${number}` | "Senior";
+
+interface TeamDisplay {
+  name: string;
+  crestLabel: string;
 }
 
-interface MatchFixture {
+interface MatchResult {
   id: string;
-  divisionLevel: string;
-  homeSquad: string;
-  awaySquad: string;
+  divisionTag: string;
+  ageGroup: AgeGroup;
+  status: MatchStatus;
+  homeTeam: TeamDisplay;
+  awayTeam: TeamDisplay;
+  homeScore: number | null;
+  awayScore: number | null;
   matchDate: string;
   kickoffTime: string;
-  pitchLocation: string;
-  processedScore: ProcessedScore | null;
+  venue: string;
 }
 
-const fixtures: MatchFixture[] = [
+const matches: MatchResult[] = [
   {
-    id: "fixture-u8-green",
-    divisionLevel: "U8 Small Sided Game",
-    homeSquad: "Rivervalley Rangers U8 Green",
-    awaySquad: "Malahide United U8",
+    id: "rvr-u8-green-live",
+    divisionTag: "DDSL U8 Mixed Blitz",
+    ageGroup: "U8",
+    status: "Live",
+    homeTeam: {
+      name: "Rivervalley Rangers U8 Green",
+      crestLabel: "RVR",
+    },
+    awayTeam: {
+      name: "Swords Celtic U8",
+      crestLabel: "SC",
+    },
+    homeScore: 2,
+    awayScore: 1,
     matchDate: "2026-06-20",
     kickoffTime: "09:30",
-    pitchLocation: "Ward Astro",
-    processedScore: {
-      home: 5,
-      away: 0,
-      mercyRuleApplied: true,
-    },
+    venue: "Ward Astro",
   },
   {
-    id: "fixture-u10-hoops",
-    divisionLevel: "U10 7v7 League",
-    homeSquad: "Rivervalley Rangers U10 Hoops",
-    awaySquad: "Swords Celtic U10",
+    id: "rvr-u10-hoops-ft",
+    divisionTag: "DDSL U10 Boys Division 1",
+    ageGroup: "U10",
+    status: "FT",
+    homeTeam: {
+      name: "Malahide United U10",
+      crestLabel: "MU",
+    },
+    awayTeam: {
+      name: "Rivervalley Rangers U10 Hoops",
+      crestLabel: "RVR",
+    },
+    homeScore: 3,
+    awayScore: 3,
     matchDate: "2026-06-20",
     kickoffTime: "10:45",
-    pitchLocation: "Ridgewood Park",
-    processedScore: null,
+    venue: "Ridgewood Park",
   },
   {
-    id: "fixture-u11-girls",
-    divisionLevel: "U11 Girls League",
-    homeSquad: "Portmarnock AFC U11 Girls",
-    awaySquad: "Rivervalley Rangers U11 Girls",
+    id: "rvr-u12-girls-ft",
+    divisionTag: "DDSL U12 Girls Division 2",
+    ageGroup: "U12",
+    status: "FT",
+    homeTeam: {
+      name: "Rivervalley Rangers U12 Girls",
+      crestLabel: "RVR",
+    },
+    awayTeam: {
+      name: "Portmarnock AFC U12 Girls",
+      crestLabel: "PA",
+    },
+    homeScore: 4,
+    awayScore: 2,
+    matchDate: "2026-06-21",
+    kickoffTime: "11:15",
+    venue: "Rathingle",
+  },
+  {
+    id: "rvr-u15-premier-ft",
+    divisionTag: "DDSL U15 Premier",
+    ageGroup: "U15",
+    status: "FT",
+    homeTeam: {
+      name: "Rivervalley Rangers U15",
+      crestLabel: "RVR",
+    },
+    awayTeam: {
+      name: "Baldoyle United U15",
+      crestLabel: "BU",
+    },
+    homeScore: 3,
+    awayScore: 1,
     matchDate: "2026-06-22",
-    kickoffTime: "18:30",
-    pitchLocation: "Rathingle",
-    processedScore: {
-      home: 2,
-      away: 4,
-      mercyRuleApplied: false,
-    },
-  },
-  {
-    id: "fixture-u15-premier",
-    divisionLevel: "U15 Premier",
-    homeSquad: "Rivervalley Rangers U15",
-    awaySquad: "Baldoyle United U15",
-    matchDate: "2026-06-23",
     kickoffTime: "19:15",
-    pitchLocation: "Ward Astro",
-    processedScore: {
-      home: 3,
-      away: 1,
-      mercyRuleApplied: false,
-    },
+    venue: "Ward Astro",
   },
 ];
 
@@ -96,152 +124,202 @@ function formatDate(value: string) {
   }).format(new Date(`${value}T00:00:00`));
 }
 
-function MatchCard({ fixture }: { fixture: MatchFixture }) {
+function getAgeNumber(ageGroup: AgeGroup) {
+  if (ageGroup === "Senior") return 99;
+  return Number(ageGroup.replace("U", ""));
+}
+
+function isDevelopmentBracket(ageGroup: AgeGroup) {
+  const age = getAgeNumber(ageGroup);
+  return age >= 7 && age <= 11;
+}
+
+function TeamIdentity({
+  team,
+  align = "left",
+}: {
+  team: TeamDisplay;
+  align?: "left" | "right";
+}) {
   return (
-    <article className="rounded-2xl border-4 border-brand-charcoal bg-white p-5 shadow-[6px_6px_0_#121212]">
-      <div className="flex items-start justify-between gap-4">
+    <div
+      className={`flex min-w-0 items-center gap-3 ${
+        align === "right" ? "justify-end text-right" : ""
+      }`}
+    >
+      {align === "right" && (
+        <p className="min-w-0 flex-1 truncate font-display text-sm font-black uppercase text-white sm:text-base">
+          {team.name}
+        </p>
+      )}
+      <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border-3 border-white bg-brand-neon font-display text-xs font-black text-brand-charcoal shadow-[3px_3px_0_#FFFFFF]">
+        {team.crestLabel}
+      </span>
+      {align === "left" && (
+        <p className="min-w-0 flex-1 truncate font-display text-sm font-black uppercase text-white sm:text-base">
+          {team.name}
+        </p>
+      )}
+    </div>
+  );
+}
+
+function ResultBadge({ match }: { match: MatchResult }) {
+  const development = isDevelopmentBracket(match.ageGroup);
+
+  return (
+    <span
+      className={`inline-flex items-center justify-center rounded-full border-2 px-3 py-1 font-display text-[10px] font-black uppercase ${
+        development
+          ? "border-white bg-brand-navy text-white"
+          : "border-brand-charcoal bg-brand-neon text-brand-charcoal"
+      }`}
+    >
+      {development ? "Development Bracket" : "Official DDSL Result"}
+    </span>
+  );
+}
+
+function MatchCard({ match }: { match: MatchResult }) {
+  const hasScore = match.homeScore !== null && match.awayScore !== null;
+
+  return (
+    <article className="rounded-[2rem] border-4 border-white bg-brand-navy p-5 text-white shadow-[6px_6px_0_#85E320] sm:p-6">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <p className="font-display text-xs font-black uppercase tracking-wide text-brand-green">
-            {fixture.divisionLevel}
+          <p className="font-display text-xs font-black uppercase text-brand-neon">
+            {match.divisionTag}
           </p>
-          <h2 className="mt-3 font-display text-xl font-black uppercase leading-tight text-brand-charcoal">
-            {fixture.homeSquad}
-          </h2>
-          <p className="mt-1 font-display text-sm font-black uppercase text-zinc-400">
-            versus
-          </p>
-          <h3 className="mt-1 font-display text-xl font-black uppercase leading-tight text-brand-charcoal">
-            {fixture.awaySquad}
-          </h3>
+          <div className="mt-3 flex flex-wrap items-center gap-2">
+            <span
+              className={`inline-flex items-center gap-2 rounded-full border-2 px-3 py-1 font-display text-[10px] font-black uppercase ${
+                match.status === "Live"
+                  ? "border-brand-neon bg-brand-neon text-brand-charcoal"
+                  : "border-white bg-white text-brand-navy"
+              }`}
+            >
+              {match.status === "Live" && (
+                <Radio className="h-3.5 w-3.5" aria-hidden="true" />
+              )}
+              {match.status}
+            </span>
+            <ResultBadge match={match} />
+          </div>
         </div>
 
-        <div className="shrink-0 rounded-2xl border-3 border-brand-charcoal bg-brand-cream px-4 py-3 text-center">
-          {fixture.processedScore ? (
-            <>
-              <div className="flex items-center justify-center gap-2 font-display text-4xl font-black tabular-nums leading-none tracking-tight text-brand-charcoal">
-                <span>{fixture.processedScore.home}</span>
-                <span className="text-zinc-300">-</span>
-                <span>{fixture.processedScore.away}</span>
-              </div>
-              {fixture.processedScore.mercyRuleApplied && (
-                <p className="mt-2 rounded-full border-2 border-brand-charcoal bg-brand-neon px-2 py-1 font-display text-[10px] font-black uppercase">
-                  Mercy Rule
-                </p>
-              )}
-            </>
-          ) : (
-            <p className="font-display text-3xl font-black uppercase text-zinc-300">
-              vs
-            </p>
-          )}
+        <div className="grid gap-2 text-sm font-bold text-white/80 sm:text-right">
+          <span className="inline-flex items-center gap-2 sm:justify-end">
+            <CalendarDays className="h-4 w-4 text-brand-neon" aria-hidden="true" />
+            {formatDate(match.matchDate)}
+          </span>
+          <span className="inline-flex items-center gap-2 sm:justify-end">
+            <Clock3 className="h-4 w-4 text-brand-neon" aria-hidden="true" />
+            {match.kickoffTime}
+          </span>
+          <span className="inline-flex items-center gap-2 sm:justify-end">
+            <MapPin className="h-4 w-4 text-brand-neon" aria-hidden="true" />
+            {match.venue}
+          </span>
         </div>
       </div>
 
-      <div className="mt-5 grid gap-3 border-t-2 border-dashed border-zinc-200 pt-4 text-sm font-bold text-zinc-700">
-        <span className="flex items-center gap-2">
-          <CalendarDays className="h-4 w-4 text-brand-green" aria-hidden="true" />
-          {formatDate(fixture.matchDate)}
-        </span>
-        <span className="flex items-center gap-2">
-          <Clock3 className="h-4 w-4 text-brand-green" aria-hidden="true" />
-          {fixture.kickoffTime}
-        </span>
-        <span className="flex items-center gap-2">
-          <MapPin className="h-4 w-4 text-brand-green" aria-hidden="true" />
-          {fixture.pitchLocation}
-        </span>
+      <div className="mt-6 grid items-center gap-4 sm:grid-cols-[1fr_auto_1fr]">
+        <TeamIdentity team={match.homeTeam} />
+
+        <div className="rounded-2xl border-4 border-white bg-white px-5 py-4 text-center text-brand-navy shadow-[5px_5px_0_#85E320]">
+          {hasScore ? (
+            <div className="font-display text-5xl font-black leading-none tabular-nums tracking-tight">
+              {match.homeScore}
+              <span className="mx-2 text-zinc-300">-</span>
+              {match.awayScore}
+            </div>
+          ) : (
+            <div className="font-display text-3xl font-black uppercase text-zinc-400">
+              vs
+            </div>
+          )}
+        </div>
+
+        <TeamIdentity team={match.awayTeam} align="right" />
       </div>
     </article>
   );
 }
 
 export default function MatchesPage() {
+  const liveCount = matches.filter((match) => match.status === "Live").length;
+  const completedCount = matches.filter((match) => match.status === "FT").length;
+
   return (
-    <div className="min-h-screen bg-brand-cream text-brand-charcoal">
+    <div className="min-h-screen bg-brand-navy text-white">
       <Header />
 
       <main>
-        <section className="border-b-4 border-brand-charcoal bg-white">
-          <div className="mx-auto max-w-6xl px-6 py-14 lg:py-20">
-            <div className="max-w-3xl">
-              <span className="mb-4 inline-flex items-center gap-2 rounded-full border-3 border-brand-charcoal bg-brand-neon px-4 py-2 font-display text-xs font-black uppercase tracking-wide">
-                <ShieldCheck className="h-4 w-4" aria-hidden="true" />
-                Matchday Hub
-              </span>
-              <h1 className="font-display text-4xl font-black uppercase italic leading-none tracking-tight md:text-6xl">
-                Fixtures and processed scores
-              </h1>
-              <p className="mt-6 max-w-2xl text-base font-semibold leading-relaxed text-zinc-700 md:text-lg">
-                Compact match cards for parents, players, and supporters on the
-                move. Youth scores display the processed result supplied by the
-                data layer.
-              </p>
+        <section className="border-b-4 border-white bg-brand-navy">
+          <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:py-20">
+            <div className="grid gap-8 lg:grid-cols-[1fr_360px] lg:items-end">
+              <div>
+                <span className="mb-5 inline-flex items-center gap-2 rounded-full border-3 border-white bg-brand-neon px-4 py-2 font-display text-xs font-black uppercase text-brand-charcoal shadow-[4px_4px_0_#FFFFFF]">
+                  <Trophy className="h-4 w-4" aria-hidden="true" />
+                  Live DDSL league fixtures
+                </span>
+                <h1 className="font-display text-4xl font-black uppercase leading-none tracking-tight sm:text-5xl lg:text-7xl">
+                  Match results dashboard.
+                </h1>
+                <p className="mt-5 max-w-3xl text-base font-semibold leading-relaxed text-white/85 sm:text-lg">
+                  Follow active fixtures, completed scores, and age-band result
+                  indicators for Rivervalley Rangers AFC teams.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div className="rounded-2xl border-4 border-white bg-white p-4 text-brand-navy shadow-[5px_5px_0_#85E320]">
+                  <p className="font-display text-xs font-black uppercase text-brand-green">
+                    Live
+                  </p>
+                  <p className="mt-2 font-display text-4xl font-black leading-none">
+                    {liveCount}
+                  </p>
+                </div>
+                <div className="rounded-2xl border-4 border-white bg-brand-neon p-4 text-brand-charcoal shadow-[5px_5px_0_#FFFFFF]">
+                  <p className="font-display text-xs font-black uppercase">
+                    Final
+                  </p>
+                  <p className="mt-2 font-display text-4xl font-black leading-none">
+                    {completedCount}
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </section>
 
-        <section className="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:py-14">
-          <div className="grid gap-5">
-            {fixtures.map((fixture) => (
-              <MatchCard key={fixture.id} fixture={fixture} />
+        <section className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:py-14">
+          <div className="grid gap-6">
+            {matches.map((match) => (
+              <MatchCard key={match.id} match={match} />
             ))}
           </div>
         </section>
 
-        <section className="border-y-4 border-brand-charcoal bg-brand-charcoal">
-          <div className="mx-auto max-w-6xl px-6 py-12 text-white lg:py-16">
-            <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
-              <div>
-                <span className="mb-5 inline-flex h-14 w-14 items-center justify-center rounded-2xl border-3 border-brand-neon bg-brand-neon">
-                  <Smartphone className="h-7 w-7 text-brand-charcoal" aria-hidden="true" />
-                </span>
-                <p className="font-display text-sm font-black uppercase text-brand-neon">
-                  Live away-match notifications
-                </p>
-                <h2 className="mt-2 font-display text-3xl font-black uppercase tracking-tight md:text-5xl">
-                  Install the official DDSL Scoreboard App.
-                </h2>
-                <p className="mt-4 max-w-2xl text-sm font-semibold leading-relaxed text-zinc-300 md:text-base">
-                  Get live away-match updates, fixture changes, and result alerts
-                  directly on your phone.
-                </p>
-              </div>
-
-              <div className="rounded-2xl border-4 border-brand-neon bg-white p-5 text-brand-charcoal shadow-[6px_6px_0_#85E320] md:p-6">
-                <div className="mb-5 flex items-start gap-3">
-                  <BellRing className="mt-1 h-6 w-6 shrink-0 text-brand-green" aria-hidden="true" />
-                  <div>
-                    <h3 className="font-display text-2xl font-black uppercase">
-                      Follow every fixture
-                    </h3>
-                    <p className="mt-2 text-sm font-semibold leading-relaxed text-zinc-700">
-                      Parents and supporters should install the app before away
-                      fixtures so match notifications arrive on time.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="grid gap-3 sm:grid-cols-2">
-                  <a
-                    href="https://apps.apple.com/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="btn-brutalist-green inline-flex items-center justify-center gap-2 px-5 py-3 text-sm"
-                  >
-                    <Download className="h-4 w-4" aria-hidden="true" />
-                    Apple App Store
-                  </a>
-                  <a
-                    href="https://play.google.com/store"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="btn-brutalist-neon inline-flex items-center justify-center gap-2 px-5 py-3 text-sm"
-                  >
-                    <Download className="h-4 w-4" aria-hidden="true" />
-                    Google Play
-                  </a>
+        <section className="border-t-4 border-white bg-brand-navy px-4 pb-12 sm:px-6 lg:pb-16">
+          <div className="mx-auto max-w-6xl rounded-[2rem] border-4 border-white bg-white p-5 text-brand-navy shadow-[6px_6px_0_#85E320] sm:p-6">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-start gap-3">
+                <ShieldCheck className="mt-1 h-6 w-6 shrink-0 text-brand-green" aria-hidden="true" />
+                <div>
+                  <h2 className="font-display text-xl font-black uppercase">
+                    Result labels
+                  </h2>
+                  <p className="mt-1 text-sm font-semibold leading-6 text-zinc-700">
+                    U7 to U11 fixtures show Development Bracket. U12 and older
+                    competitive fixtures show Official DDSL Result.
+                  </p>
                 </div>
               </div>
+              <span className="inline-flex items-center justify-center rounded-full border-3 border-brand-charcoal bg-brand-neon px-5 py-3 font-display text-xs font-black uppercase text-brand-charcoal shadow-[4px_4px_0_#121212]">
+                Updated match feed
+              </span>
             </div>
           </div>
         </section>
