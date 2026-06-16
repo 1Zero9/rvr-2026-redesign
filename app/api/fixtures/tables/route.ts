@@ -6,6 +6,7 @@ import {
 } from "@/lib/ddsl/client";
 import { cacheGet, cacheSet, TTL_MS } from "@/lib/ddsl/cache";
 import { parseAgeGroup } from "@/lib/ddsl/mercy-rule";
+import { parseTeamSlug, matchesSlug } from "@/lib/ddsl/team-slug";
 import type {
   AgeGroup,
   BlockedDivision,
@@ -165,13 +166,33 @@ const MOCK_STANDINGS: SportLoMoStandingsTable[] = [
 ];
 
 // ---------------------------------------------------------------------------
+// Team slug filtering
+// ---------------------------------------------------------------------------
+
+// The cache always stores the full unfiltered TablesResponse. Slug filtering
+// is applied after retrieval so a single cache entry serves all ?team= values.
+function applyTeamFilter(body: TablesResponse, teamSlug: string | null): TablesResponse {
+  if (!teamSlug) return body;
+  const filter = parseTeamSlug(teamSlug);
+  const tables = body.tables.filter((t) =>
+    matchesSlug(t.ageGroup, t.competitionName, filter),
+  );
+  const blockedDivisions = body.blockedDivisions.filter((d) =>
+    matchesSlug(d.ageGroup, d.competitionName, filter),
+  );
+  return { ...body, tables, blockedDivisions, total: tables.length };
+}
+
+// ---------------------------------------------------------------------------
 // Route handler
 // ---------------------------------------------------------------------------
 
-export async function GET(_req: NextRequest): Promise<NextResponse<TablesResponse>> {
+export async function GET(req: NextRequest): Promise<NextResponse<TablesResponse>> {
+  const teamSlug = req.nextUrl.searchParams.get("team");
+
   const cached = cacheGet<TablesResponse>(CACHE_KEY);
   if (cached.hit) {
-    return NextResponse.json(cached.data, {
+    return NextResponse.json(applyTeamFilter(cached.data, teamSlug), {
       headers: {
         "X-Cache": "HIT",
         "X-Cache-Expires": cached.expiresAt.toString(),
@@ -236,7 +257,7 @@ export async function GET(_req: NextRequest): Promise<NextResponse<TablesRespons
 
   cacheSet(CACHE_KEY, body);
 
-  return NextResponse.json(body, {
+  return NextResponse.json(applyTeamFilter(body, teamSlug), {
     headers: {
       "X-Cache": "MISS",
       "X-Data-Source": source,

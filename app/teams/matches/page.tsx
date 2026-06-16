@@ -3,6 +3,7 @@
 import Header from "@/components/Header";
 import {
   CalendarDays,
+  ChevronDown,
   Clock3,
   ListOrdered,
   MapPin,
@@ -16,6 +17,21 @@ import { useState } from "react";
 type ActiveTab = "results" | "standings";
 type MatchStatus = "FT" | "Live" | "Scheduled";
 type AgeGroup = `U${number}` | "Senior";
+type SquadKey =
+  | "all"
+  | "girls-women-senior"
+  | "junior-academy-u8"
+  | "junior-academy-u10"
+  | "junior-academy-u12"
+  | "youth-competitive-u14"
+  | "youth-competitive-u15";
+
+interface SquadOption {
+  key: SquadKey;
+  label: string;
+  ageGroup?: AgeGroup;
+  isDevelopmentTrack?: boolean;
+}
 
 interface TeamDisplay {
   name: string;
@@ -24,6 +40,7 @@ interface TeamDisplay {
 
 interface MatchResult {
   id: string;
+  squadKey: SquadKey;
   divisionTag: string;
   ageGroup: AgeGroup;
   status: MatchStatus;
@@ -46,14 +63,55 @@ interface StandingRow {
 
 interface DivisionStandings {
   id: string;
+  squadKey: SquadKey;
   title: string;
   ageGroup: AgeGroup;
   rows: StandingRow[];
 }
 
+const squadOptions: SquadOption[] = [
+  {
+    key: "all",
+    label: "All Teams",
+  },
+  {
+    key: "girls-women-senior",
+    label: "Girls & Women Senior",
+    ageGroup: "Senior",
+  },
+  {
+    key: "junior-academy-u8",
+    label: "Junior Academy U8",
+    ageGroup: "U8",
+    isDevelopmentTrack: true,
+  },
+  {
+    key: "junior-academy-u10",
+    label: "Junior Academy U10",
+    ageGroup: "U10",
+    isDevelopmentTrack: true,
+  },
+  {
+    key: "junior-academy-u12",
+    label: "Junior Academy U12",
+    ageGroup: "U12",
+  },
+  {
+    key: "youth-competitive-u14",
+    label: "Youth Competitive U14",
+    ageGroup: "U14",
+  },
+  {
+    key: "youth-competitive-u15",
+    label: "Youth Competitive U15",
+    ageGroup: "U15",
+  },
+];
+
 const matches: MatchResult[] = [
   {
     id: "rvr-u8-green-live",
+    squadKey: "junior-academy-u8",
     divisionTag: "DDSL U8 Mixed Blitz",
     ageGroup: "U8",
     status: "Live",
@@ -73,6 +131,7 @@ const matches: MatchResult[] = [
   },
   {
     id: "rvr-u10-hoops-ft",
+    squadKey: "junior-academy-u10",
     divisionTag: "DDSL U10 Boys Division 1",
     ageGroup: "U10",
     status: "FT",
@@ -92,6 +151,7 @@ const matches: MatchResult[] = [
   },
   {
     id: "rvr-u12-girls-ft",
+    squadKey: "junior-academy-u12",
     divisionTag: "DDSL U12 Girls Division 2",
     ageGroup: "U12",
     status: "FT",
@@ -111,6 +171,7 @@ const matches: MatchResult[] = [
   },
   {
     id: "rvr-u15-premier-ft",
+    squadKey: "youth-competitive-u15",
     divisionTag: "DDSL U15 Premier",
     ageGroup: "U15",
     status: "FT",
@@ -133,6 +194,7 @@ const matches: MatchResult[] = [
 const standings: DivisionStandings[] = [
   {
     id: "u12-girls-division-2",
+    squadKey: "junior-academy-u12",
     title: "U12 DDSL Girls Division 2",
     ageGroup: "U12",
     rows: [
@@ -168,6 +230,7 @@ const standings: DivisionStandings[] = [
   },
   {
     id: "u15-premier",
+    squadKey: "youth-competitive-u15",
     title: "Youth Competitive U15 Premier",
     ageGroup: "U15",
     rows: [
@@ -231,6 +294,12 @@ function isDevelopmentBracket(ageGroup: AgeGroup) {
 
 function isRvrTeam(teamName: string) {
   return teamName.toLowerCase().includes("rivervalley rangers");
+}
+
+function getSelectedSquad(squadKey: SquadKey) {
+  return (
+    squadOptions.find((option) => option.key === squadKey) ?? squadOptions[0]
+  );
 }
 
 function TeamIdentity({
@@ -345,7 +414,18 @@ function MatchCard({ match }: { match: MatchResult }) {
   );
 }
 
-function StandingsTable({ division }: { division: DivisionStandings }) {
+function StandingsTable({
+  division,
+  selectedSquad,
+}: {
+  division: DivisionStandings;
+  selectedSquad: SquadKey;
+}) {
+  const rows =
+    selectedSquad === "all"
+      ? division.rows
+      : division.rows.filter((row) => isRvrTeam(row.teamName));
+
   return (
     <article className="overflow-hidden rounded-[2rem] border-4 border-white bg-brand-navy text-white shadow-[6px_6px_0_#85E320]">
       <div className="border-b-4 border-white p-5 sm:p-6">
@@ -379,7 +459,7 @@ function StandingsTable({ division }: { division: DivisionStandings }) {
             </tr>
           </thead>
           <tbody>
-            {division.rows.map((row) => {
+            {rows.map((row) => {
               const highlighted = isRvrTeam(row.teamName);
 
               return (
@@ -418,7 +498,7 @@ function StandingsTable({ division }: { division: DivisionStandings }) {
   );
 }
 
-function DevelopmentNotice() {
+function DevelopmentNotice({ selectedLabel }: { selectedLabel: string }) {
   return (
     <aside className="rounded-[2rem] border-4 border-white bg-white p-5 text-brand-navy shadow-[6px_6px_0_#85E320] sm:p-6">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
@@ -429,8 +509,9 @@ function DevelopmentNotice() {
               Development brackets
             </h2>
             <p className="mt-2 max-w-3xl text-sm font-semibold leading-6 text-zinc-700">
-              U7 to U11 tracks focus on player development and participation, so
-              competitive league tables are not published for these age groups.
+              {selectedLabel === "All Teams"
+                ? "U7 to U11 tracks focus on player development and participation, so competitive league tables are not published for these age groups."
+                : `${selectedLabel} focuses on player development and participation, so a competitive league table is not published for this age group.`}
             </p>
           </div>
         </div>
@@ -449,10 +530,30 @@ function DevelopmentNotice() {
   );
 }
 
+function EmptyState({ message }: { message: string }) {
+  return (
+    <div className="rounded-[2rem] border-4 border-white bg-white p-6 text-brand-navy shadow-[6px_6px_0_#85E320]">
+      <p className="font-display text-xl font-black uppercase">{message}</p>
+    </div>
+  );
+}
+
 export default function MatchesPage() {
   const [activeTab, setActiveTab] = useState<ActiveTab>("results");
-  const liveCount = matches.filter((match) => match.status === "Live").length;
-  const completedCount = matches.filter((match) => match.status === "FT").length;
+  const [selectedSquadKey, setSelectedSquadKey] = useState<SquadKey>("all");
+  const selectedSquad = getSelectedSquad(selectedSquadKey);
+  const filteredMatches =
+    selectedSquadKey === "all"
+      ? matches
+      : matches.filter((match) => match.squadKey === selectedSquadKey);
+  const filteredStandings =
+    selectedSquadKey === "all"
+      ? standings
+      : standings.filter((division) => division.squadKey === selectedSquadKey);
+  const showDevelopmentNotice =
+    selectedSquadKey === "all" || Boolean(selectedSquad.isDevelopmentTrack);
+  const liveCount = filteredMatches.filter((match) => match.status === "Live").length;
+  const completedCount = filteredMatches.filter((match) => match.status === "FT").length;
 
   return (
     <div className="min-h-screen bg-brand-navy text-white">
@@ -499,6 +600,34 @@ export default function MatchesPage() {
         </section>
 
         <section className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
+          <div className="mb-5 rounded-[2rem] border-4 border-white bg-brand-navy p-4 shadow-[6px_6px_0_#85E320]">
+            <label className="grid gap-3">
+              <span className="font-display text-xs font-black uppercase text-brand-neon">
+                Squad filter
+              </span>
+              <span className="relative">
+                <select
+                  value={selectedSquadKey}
+                  onChange={(event) =>
+                    setSelectedSquadKey(event.target.value as SquadKey)
+                  }
+                  className="min-h-14 w-full appearance-none rounded-2xl border-3 border-brand-neon bg-brand-navy px-4 py-3 pr-12 font-display text-sm font-black uppercase text-white outline-none shadow-[4px_4px_0_#85E320] focus:ring-4 focus:ring-brand-neon"
+                  aria-label="Filter matchday hub by squad"
+                >
+                  {squadOptions.map((option) => (
+                    <option key={option.key} value={option.key}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown
+                  className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-brand-neon"
+                  aria-hidden="true"
+                />
+              </span>
+            </label>
+          </div>
+
           <div className="grid gap-3 rounded-[2rem] border-4 border-white bg-white p-3 text-brand-navy shadow-[6px_6px_0_#85E320] sm:grid-cols-2">
             <button
               type="button"
@@ -532,18 +661,34 @@ export default function MatchesPage() {
         <section className="mx-auto max-w-6xl px-4 pb-12 sm:px-6 lg:pb-16">
           {activeTab === "results" ? (
             <div className="grid gap-6">
-              {matches.map((match) => (
-                <MatchCard key={match.id} match={match} />
-              ))}
+              {filteredMatches.length > 0 ? (
+                filteredMatches.map((match) => (
+                  <MatchCard key={match.id} match={match} />
+                ))
+              ) : (
+                <EmptyState message="No match records are available for this squad." />
+              )}
             </div>
           ) : (
             <div className="grid gap-8">
-              <DevelopmentNotice />
-              <div className="grid gap-6">
-                {standings.map((division) => (
-                  <StandingsTable key={division.id} division={division} />
-                ))}
-              </div>
+              {showDevelopmentNotice && (
+                <DevelopmentNotice selectedLabel={selectedSquad.label} />
+              )}
+              {filteredStandings.length > 0 ? (
+                <div className="grid gap-6">
+                  {filteredStandings.map((division) => (
+                    <StandingsTable
+                      key={division.id}
+                      division={division}
+                      selectedSquad={selectedSquadKey}
+                    />
+                  ))}
+                </div>
+              ) : (
+                !selectedSquad.isDevelopmentTrack && (
+                  <EmptyState message="No league table is available for this squad." />
+                )
+              )}
             </div>
           )}
         </section>

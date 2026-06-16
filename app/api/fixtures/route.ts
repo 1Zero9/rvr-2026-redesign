@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { parseTeamSlug, matchesSlug } from "@/lib/ddsl/team-slug";
 
 export const dynamic = "force-dynamic";
 
@@ -304,7 +305,9 @@ function buildMockFixtures(): Fixture[] {
 // Route handler
 // ---------------------------------------------------------------------------
 
-export async function GET(_req: NextRequest): Promise<NextResponse<FixturesResponse>> {
+export async function GET(req: NextRequest): Promise<NextResponse<FixturesResponse>> {
+  const teamSlug = req.nextUrl.searchParams.get("team");
+
   let fixtures: Fixture[];
   let source: "live" | "mock";
 
@@ -317,12 +320,19 @@ export async function GET(_req: NextRequest): Promise<NextResponse<FixturesRespo
     source = "mock";
   }
 
+  const visible = teamSlug
+    ? (() => {
+        const filter = parseTeamSlug(teamSlug);
+        return fixtures.filter((f) => matchesSlug(f.ageGroup, f.competition, filter));
+      })()
+    : fixtures;
+
   return NextResponse.json(
     {
       source,
       fetchedAt: new Date().toISOString(),
-      total: fixtures.length,
-      fixtures,
+      total: visible.length,
+      fixtures: visible,
     },
     { headers: { "X-Data-Source": source } },
   );
