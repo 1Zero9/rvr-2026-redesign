@@ -2,7 +2,7 @@
  * SportLoMo API client for the DDSL (Dublin & District Schoolboys/girls League).
  *
  * Required environment variables:
- *   SPORTLOMO_BASE_URL   – e.g. https://api.sportlomo.com/ddsl/v2
+ *   SPORTLOMO_BASE_URL   – e.g. https://ddsl.ie/wp-json/sportlomo/v1
  *   SPORTLOMO_API_KEY    – Bearer token issued by DDSL / SportLoMo
  *   SPORTLOMO_CLUB_ID    – RVR's numeric club ID in the SportLoMo system
  *   SPORTLOMO_SEASON     – Active season identifier, e.g. "2025-2026"
@@ -30,11 +30,12 @@ function requireEnv(key: string): string {
 
 function getConfig() {
   const clubId = requireEnv('SPORTLOMO_CLUB_ID');
-  if (clubId === '123') {
+  const KNOWN_PLACEHOLDERS = new Set(['123', '0', 'YOUR_CLUB_ID']);
+  if (KNOWN_PLACEHOLDERS.has(clubId)) {
     console.warn(
-      '[ddsl/client] WARNING: SPORTLOMO_CLUB_ID is set to the placeholder value "123".' +
-      ' Update .env.local with the real RVR club ID from the SportLoMo admin panel.' +
-      ' The API uses numeric club IDs — club name search is not supported by SportLoMo REST endpoints.',
+      `[ddsl/client] WARNING: SPORTLOMO_CLUB_ID is set to a placeholder value ("${clubId}").` +
+      ' Update .env.local with the real numeric club ID from the SportLoMo admin panel.' +
+      ' The API is scoped by club ID — querying by club name is not supported.',
     );
   }
   return {
