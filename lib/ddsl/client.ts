@@ -11,6 +11,7 @@
  * paths below follow the SportLoMo v2 convention but may differ per instance.
  */
 
+import { CLUB_SEASON } from '@/config/club-season';
 import type {
   SportLoMoEnvelope,
   SportLoMoFixture,
@@ -32,7 +33,7 @@ function getConfig() {
     baseUrl: requireEnv('SPORTLOMO_BASE_URL').replace(/\/$/, ''),
     apiKey:  requireEnv('SPORTLOMO_API_KEY'),
     clubId:  requireEnv('SPORTLOMO_CLUB_ID'),
-    season:  process.env.SPORTLOMO_SEASON ?? new Date().getFullYear().toString(),
+    season:  process.env.SPORTLOMO_SEASON ?? CLUB_SEASON.currentSeason,
   };
 }
 

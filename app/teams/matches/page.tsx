@@ -13,6 +13,7 @@ import {
   Table2,
   Trophy,
 } from "lucide-react";
+import { CLUB_SEASON } from "@/config/club-season";
 import type {
   AgeGroup,
   DevelopmentDivision,
@@ -52,9 +53,29 @@ interface SeasonOption {
   apiPath: string;
 }
 
+// Derive the previous season label automatically from the master config so
+// this block never needs touching manually on an August season flip.
+// "2025/26" → prevStart=2024, prevEndShort="25" → "2024/25"
+function previousSeasonLabel(current: string): string {
+  const [startStr] = current.split('/');
+  const startYear = parseInt(startStr, 10);
+  return `${startYear - 1}/${String(startYear).slice(-2)}`;
+}
+
+const CURRENT_SEASON = CLUB_SEASON.currentSeason;
+const PREV_SEASON    = previousSeasonLabel(CURRENT_SEASON);
+
 const SEASON_OPTIONS: SeasonOption[] = [
-  { key: "current",  label: "2026/27 (Current)",  apiPath: "/api/fixtures/sync" },
-  { key: "archived", label: "2025/26 (Archived)", apiPath: "/api/historical/standings?season=2025%2F26" },
+  {
+    key: "current",
+    label: `${CURRENT_SEASON} (Current)`,
+    apiPath: "/api/fixtures/sync",
+  },
+  {
+    key: "archived",
+    label: `${PREV_SEASON} (Archived)`,
+    apiPath: `/api/historical/standings?season=${encodeURIComponent(PREV_SEASON)}`,
+  },
 ];
 
 // ---------------------------------------------------------------------------

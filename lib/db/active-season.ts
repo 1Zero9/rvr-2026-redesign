@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/prisma';
+import { CLUB_SEASON } from '@/config/club-season';
 
 /**
  * Prisma `where` fragment for HistoricalStanding queries.
@@ -39,7 +40,7 @@ export async function resolveActiveSeason(): Promise<string> {
   } catch {
     // Database unavailable or not yet configured — fall through to env var.
   }
-  return process.env.SPORTLOMO_SEASON ?? String(new Date().getFullYear());
+  return process.env.SPORTLOMO_SEASON ?? CLUB_SEASON.currentSeason;
 }
 
 /**
