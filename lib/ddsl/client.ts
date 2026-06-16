@@ -171,7 +171,7 @@ async function fetchAllPages<T>(
 /**
  * Upcoming fixtures for RVR.
  *
- * SportLoMo endpoint: GET /Club/{clubId}/Fixtures
+ * SportLoMo endpoint: GET /club/{clubId}/fixtures
  * Query params: season, page, pageSize
  */
 export async function fetchFixtures(opts: { page?: number; pageSize?: number } = {})
@@ -179,7 +179,7 @@ export async function fetchFixtures(opts: { page?: number; pageSize?: number } =
 {
   const { clubId } = getConfig();
   return fetchJson<SportLoMoEnvelope<SportLoMoFixture>>(
-    `/Club/${clubId}/Fixtures`,
+    `/club/${clubId}/fixtures`,
     {
       page:     String(opts.page     ?? 1),
       pageSize: String(opts.pageSize ?? 50),
@@ -190,14 +190,14 @@ export async function fetchFixtures(opts: { page?: number; pageSize?: number } =
 /**
  * Recent results for RVR.
  *
- * SportLoMo endpoint: GET /Club/{clubId}/Results
+ * SportLoMo endpoint: GET /club/{clubId}/results
  */
 export async function fetchResults(opts: { page?: number; pageSize?: number } = {})
   : Promise<SportLoMoEnvelope<SportLoMoFixture>>
 {
   const { clubId } = getConfig();
   return fetchJson<SportLoMoEnvelope<SportLoMoFixture>>(
-    `/Club/${clubId}/Results`,
+    `/club/${clubId}/results`,
     {
       page:     String(opts.page     ?? 1),
       pageSize: String(opts.pageSize ?? 50),
@@ -208,26 +208,26 @@ export async function fetchResults(opts: { page?: number; pageSize?: number } = 
 /**
  * Currently live matches for RVR.
  *
- * SportLoMo endpoint: GET /Club/{clubId}/Live
- * (Some SportLoMo instances expose this as a status filter on /Fixtures)
+ * SportLoMo endpoint: GET /club/{clubId}/live
+ * (Some SportLoMo instances expose this as a status filter on /fixtures)
  */
 export async function fetchLive(): Promise<SportLoMoEnvelope<SportLoMoFixture>> {
   const { clubId } = getConfig();
   return fetchJson<SportLoMoEnvelope<SportLoMoFixture>>(
-    `/Club/${clubId}/Live`,
+    `/club/${clubId}/live`,
   );
 }
 
 /**
  * League standings for all divisions in which RVR is registered.
  *
- * SportLoMo endpoint: GET /Club/{clubId}/Standings
+ * SportLoMo endpoint: GET /club/{clubId}/standings
  * Returns every competition table the club appears in for the active season.
  */
 export async function fetchStandings(): Promise<SportLoMoEnvelope<SportLoMoStandingsTable>> {
   const { clubId } = getConfig();
   return fetchJson<SportLoMoEnvelope<SportLoMoStandingsTable>>(
-    `/Club/${clubId}/Standings`,
+    `/club/${clubId}/standings`,
   );
 }
 
@@ -242,7 +242,7 @@ export async function fetchStandings(): Promise<SportLoMoEnvelope<SportLoMoStand
  */
 export async function fetchAllFixtures(): Promise<SportLoMoFixture[]> {
   const { clubId } = getConfig();
-  return fetchAllPages<SportLoMoFixture>(`/Club/${clubId}/Fixtures`);
+  return fetchAllPages<SportLoMoFixture>(`/club/${clubId}/fixtures`);
 }
 
 /**
@@ -250,7 +250,7 @@ export async function fetchAllFixtures(): Promise<SportLoMoFixture[]> {
  */
 export async function fetchAllResults(): Promise<SportLoMoFixture[]> {
   const { clubId } = getConfig();
-  return fetchAllPages<SportLoMoFixture>(`/Club/${clubId}/Results`);
+  return fetchAllPages<SportLoMoFixture>(`/club/${clubId}/results`);
 }
 
 /**
@@ -259,5 +259,5 @@ export async function fetchAllResults(): Promise<SportLoMoFixture[]> {
  */
 export async function fetchAllStandings(): Promise<SportLoMoStandingsTable[]> {
   const { clubId } = getConfig();
-  return fetchAllPages<SportLoMoStandingsTable>(`/Club/${clubId}/Standings`);
+  return fetchAllPages<SportLoMoStandingsTable>(`/club/${clubId}/standings`);
 }

@@ -203,7 +203,7 @@ async function fetchFromSportLoMo(): Promise<Fixture[]> {
   let page = 1;
 
   for (;;) {
-    const url = new URL(`${baseUrl}/Club/${clubId}/Fixtures`);
+    const url = new URL(`${baseUrl}/club/${clubId}/fixtures`);
     url.searchParams.set("season", season);
     url.searchParams.set("page", String(page));
     url.searchParams.set("pageSize", String(PAGE_SIZE));
