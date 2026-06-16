@@ -1,278 +1,37 @@
 "use client";
 
+import { useEffect, useMemo, useState } from "react";
 import Header from "@/components/Header";
+import DDSLTableWidget from "@/components/DDSLTableWidget";
 import {
   CalendarDays,
   ChevronDown,
   Clock3,
-  ListOrdered,
   MapPin,
   Radio,
   ShieldCheck,
   Table2,
   Trophy,
 } from "lucide-react";
-import { useState } from "react";
+import type {
+  AgeGroup,
+  DevelopmentDivision,
+  DiscoveredDivision,
+  LeagueTable,
+  NormalisedMatch,
+  SyncResponse,
+} from "@/lib/ddsl/types";
 
-type ActiveTab = "results" | "standings";
-type MatchStatus = "FT" | "Live" | "Scheduled";
-type AgeGroup = `U${number}` | "Senior";
-type SquadKey =
-  | "all"
-  | "girls-women-senior"
-  | "junior-academy-u8"
-  | "junior-academy-u10"
-  | "junior-academy-u12"
-  | "youth-competitive-u14"
-  | "youth-competitive-u15";
+type SelectedDivisionKey = "all" | string;
 
-interface SquadOption {
-  key: SquadKey;
+interface DivisionOption {
+  key: SelectedDivisionKey;
   label: string;
-  ageGroup?: AgeGroup;
-  isDevelopmentTrack?: boolean;
+  competitionId: number | null;
+  competitionName: string | null;
+  ageGroup: AgeGroup | null;
+  tier: "all" | "competitive" | "development";
 }
-
-interface TeamDisplay {
-  name: string;
-  crestLabel: string;
-}
-
-interface MatchResult {
-  id: string;
-  squadKey: SquadKey;
-  divisionTag: string;
-  ageGroup: AgeGroup;
-  status: MatchStatus;
-  homeTeam: TeamDisplay;
-  awayTeam: TeamDisplay;
-  homeScore: number | null;
-  awayScore: number | null;
-  matchDate: string;
-  kickoffTime: string;
-  venue: string;
-}
-
-interface StandingRow {
-  position: number;
-  teamName: string;
-  played: number;
-  goalDifference: number;
-  points: number;
-}
-
-interface DivisionStandings {
-  id: string;
-  squadKey: SquadKey;
-  title: string;
-  ageGroup: AgeGroup;
-  rows: StandingRow[];
-}
-
-const squadOptions: SquadOption[] = [
-  {
-    key: "all",
-    label: "All Teams",
-  },
-  {
-    key: "girls-women-senior",
-    label: "Girls & Women Senior",
-    ageGroup: "Senior",
-  },
-  {
-    key: "junior-academy-u8",
-    label: "Junior Academy U8",
-    ageGroup: "U8",
-    isDevelopmentTrack: true,
-  },
-  {
-    key: "junior-academy-u10",
-    label: "Junior Academy U10",
-    ageGroup: "U10",
-    isDevelopmentTrack: true,
-  },
-  {
-    key: "junior-academy-u12",
-    label: "Junior Academy U12",
-    ageGroup: "U12",
-  },
-  {
-    key: "youth-competitive-u14",
-    label: "Youth Competitive U14",
-    ageGroup: "U14",
-  },
-  {
-    key: "youth-competitive-u15",
-    label: "Youth Competitive U15",
-    ageGroup: "U15",
-  },
-];
-
-const matches: MatchResult[] = [
-  {
-    id: "rvr-u8-green-live",
-    squadKey: "junior-academy-u8",
-    divisionTag: "DDSL U8 Mixed Blitz",
-    ageGroup: "U8",
-    status: "Live",
-    homeTeam: {
-      name: "Rivervalley Rangers U8 Green",
-      crestLabel: "RVR",
-    },
-    awayTeam: {
-      name: "Swords Celtic U8",
-      crestLabel: "SC",
-    },
-    homeScore: 2,
-    awayScore: 1,
-    matchDate: "2026-06-20",
-    kickoffTime: "09:30",
-    venue: "Ward Astro",
-  },
-  {
-    id: "rvr-u10-hoops-ft",
-    squadKey: "junior-academy-u10",
-    divisionTag: "DDSL U10 Boys Division 1",
-    ageGroup: "U10",
-    status: "FT",
-    homeTeam: {
-      name: "Malahide United U10",
-      crestLabel: "MU",
-    },
-    awayTeam: {
-      name: "Rivervalley Rangers U10 Hoops",
-      crestLabel: "RVR",
-    },
-    homeScore: 3,
-    awayScore: 3,
-    matchDate: "2026-06-20",
-    kickoffTime: "10:45",
-    venue: "Ridgewood Park",
-  },
-  {
-    id: "rvr-u12-girls-ft",
-    squadKey: "junior-academy-u12",
-    divisionTag: "DDSL U12 Girls Division 2",
-    ageGroup: "U12",
-    status: "FT",
-    homeTeam: {
-      name: "Rivervalley Rangers U12 Girls",
-      crestLabel: "RVR",
-    },
-    awayTeam: {
-      name: "Portmarnock AFC U12 Girls",
-      crestLabel: "PA",
-    },
-    homeScore: 4,
-    awayScore: 2,
-    matchDate: "2026-06-21",
-    kickoffTime: "11:15",
-    venue: "Rathingle",
-  },
-  {
-    id: "rvr-u15-premier-ft",
-    squadKey: "youth-competitive-u15",
-    divisionTag: "DDSL U15 Premier",
-    ageGroup: "U15",
-    status: "FT",
-    homeTeam: {
-      name: "Rivervalley Rangers U15",
-      crestLabel: "RVR",
-    },
-    awayTeam: {
-      name: "Baldoyle United U15",
-      crestLabel: "BU",
-    },
-    homeScore: 3,
-    awayScore: 1,
-    matchDate: "2026-06-22",
-    kickoffTime: "19:15",
-    venue: "Ward Astro",
-  },
-];
-
-const standings: DivisionStandings[] = [
-  {
-    id: "u12-girls-division-2",
-    squadKey: "junior-academy-u12",
-    title: "U12 DDSL Girls Division 2",
-    ageGroup: "U12",
-    rows: [
-      {
-        position: 1,
-        teamName: "Rivervalley Rangers U12 Girls",
-        played: 9,
-        goalDifference: 17,
-        points: 22,
-      },
-      {
-        position: 2,
-        teamName: "Portmarnock AFC U12 Girls",
-        played: 9,
-        goalDifference: 13,
-        points: 19,
-      },
-      {
-        position: 3,
-        teamName: "Malahide United U12 Girls",
-        played: 8,
-        goalDifference: 6,
-        points: 15,
-      },
-      {
-        position: 4,
-        teamName: "Swords Celtic U12 Girls",
-        played: 8,
-        goalDifference: -2,
-        points: 10,
-      },
-    ],
-  },
-  {
-    id: "u15-premier",
-    squadKey: "youth-competitive-u15",
-    title: "Youth Competitive U15 Premier",
-    ageGroup: "U15",
-    rows: [
-      {
-        position: 1,
-        teamName: "Baldoyle United U15",
-        played: 11,
-        goalDifference: 21,
-        points: 27,
-      },
-      {
-        position: 2,
-        teamName: "Rivervalley Rangers U15",
-        played: 11,
-        goalDifference: 18,
-        points: 25,
-      },
-      {
-        position: 3,
-        teamName: "Howth Celtic U15",
-        played: 10,
-        goalDifference: 9,
-        points: 19,
-      },
-      {
-        position: 4,
-        teamName: "Skerries Town U15",
-        played: 10,
-        goalDifference: 2,
-        points: 14,
-      },
-    ],
-  },
-];
-
-const developmentTracks = [
-  "U7 Academy",
-  "U8 Mixed Blitz",
-  "U9 Small Sided Games",
-  "U10 Seven-a-Side",
-  "U11 Development League",
-];
 
 function formatDate(value: string) {
   return new Intl.DateTimeFormat("en-IE", {
@@ -282,31 +41,80 @@ function formatDate(value: string) {
   }).format(new Date(`${value}T00:00:00`));
 }
 
-function getAgeNumber(ageGroup: AgeGroup) {
-  if (ageGroup === "Senior") return 99;
-  return Number(ageGroup.replace("U", ""));
+function formatStatus(status: NormalisedMatch["status"]) {
+  if (status === "completed") return "FT";
+  if (status === "live") return "Live";
+  if (status === "postponed") return "Postponed";
+  if (status === "cancelled") return "Cancelled";
+  return "Scheduled";
 }
 
-function isDevelopmentBracket(ageGroup: AgeGroup) {
-  const age = getAgeNumber(ageGroup);
-  return age >= 7 && age <= 11;
+function getCrestLabel(teamName: string) {
+  if (/rivervalley\s+rangers|(?<![a-z])rvr(?![a-z])/i.test(teamName)) {
+    return "RVR";
+  }
+
+  return teamName
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase())
+    .join("");
 }
 
-function isRvrTeam(teamName: string) {
-  return teamName.toLowerCase().includes("rivervalley rangers");
+function isDevelopmentAge(ageGroup: AgeGroup) {
+  return ["U7", "U8", "U9", "U10", "U11"].includes(ageGroup);
 }
 
-function getSelectedSquad(squadKey: SquadKey) {
+function buildDivisionOptions(divisions: DiscoveredDivision[]): DivisionOption[] {
+  return [
+    {
+      key: "all",
+      label: "All Teams",
+      competitionId: null,
+      competitionName: null,
+      ageGroup: null,
+      tier: "all",
+    },
+    ...divisions.map((division) => ({
+      key: String(division.competitionId),
+      label: division.competitionName,
+      competitionId: division.competitionId,
+      competitionName: division.competitionName,
+      ageGroup: division.ageGroup,
+      tier: division.tier,
+    })),
+  ];
+}
+
+function teamMatchesCompetition(match: NormalisedMatch, option: DivisionOption) {
+  return option.competitionName === null || match.competition === option.competitionName;
+}
+
+function tableMatchesCompetition(table: LeagueTable, option: DivisionOption) {
   return (
-    squadOptions.find((option) => option.key === squadKey) ?? squadOptions[0]
+    option.competitionId === null ||
+    table.competitionId === option.competitionId ||
+    table.competitionName === option.competitionName
+  );
+}
+
+function developmentMatchesCompetition(
+  division: DevelopmentDivision,
+  option: DivisionOption,
+) {
+  return (
+    option.competitionId === null ||
+    division.competitionId === option.competitionId ||
+    division.competitionName === option.competitionName
   );
 }
 
 function TeamIdentity({
-  team,
+  teamName,
   align = "left",
 }: {
-  team: TeamDisplay;
+  teamName: string;
   align?: "left" | "right";
 }) {
   return (
@@ -317,23 +125,23 @@ function TeamIdentity({
     >
       {align === "right" && (
         <p className="min-w-0 flex-1 truncate font-display text-sm font-black uppercase text-white sm:text-base">
-          {team.name}
+          {teamName}
         </p>
       )}
       <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border-3 border-white bg-brand-neon font-display text-xs font-black text-brand-charcoal shadow-[3px_3px_0_#FFFFFF]">
-        {team.crestLabel}
+        {getCrestLabel(teamName)}
       </span>
       {align === "left" && (
         <p className="min-w-0 flex-1 truncate font-display text-sm font-black uppercase text-white sm:text-base">
-          {team.name}
+          {teamName}
         </p>
       )}
     </div>
   );
 }
 
-function ResultBadge({ match }: { match: MatchResult }) {
-  const development = isDevelopmentBracket(match.ageGroup);
+function ResultBadge({ ageGroup }: { ageGroup: AgeGroup }) {
+  const development = isDevelopmentAge(ageGroup);
 
   return (
     <span
@@ -348,58 +156,57 @@ function ResultBadge({ match }: { match: MatchResult }) {
   );
 }
 
-function MatchCard({ match }: { match: MatchResult }) {
-  const hasScore = match.homeScore !== null && match.awayScore !== null;
+function MatchCard({ match }: { match: NormalisedMatch }) {
+  const status = formatStatus(match.status);
+  const live = match.status === "live";
 
   return (
     <article className="rounded-[2rem] border-4 border-white bg-brand-navy p-5 text-white shadow-[6px_6px_0_#85E320] sm:p-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <p className="font-display text-xs font-black uppercase text-brand-neon">
-            {match.divisionTag}
+            {match.competition}
           </p>
           <div className="mt-3 flex flex-wrap items-center gap-2">
             <span
               className={`inline-flex items-center gap-2 rounded-full border-2 px-3 py-1 font-display text-[10px] font-black uppercase ${
-                match.status === "Live"
+                live
                   ? "border-brand-neon bg-brand-neon text-brand-charcoal"
                   : "border-white bg-white text-brand-navy"
               }`}
             >
-              {match.status === "Live" && (
-                <Radio className="h-3.5 w-3.5" aria-hidden="true" />
-              )}
-              {match.status}
+              {live && <Radio className="h-3.5 w-3.5" aria-hidden="true" />}
+              {status}
             </span>
-            <ResultBadge match={match} />
+            <ResultBadge ageGroup={match.ageGroup} />
           </div>
         </div>
 
         <div className="grid gap-2 text-sm font-bold text-white/80 sm:text-right">
           <span className="inline-flex items-center gap-2 sm:justify-end">
             <CalendarDays className="h-4 w-4 text-brand-neon" aria-hidden="true" />
-            {formatDate(match.matchDate)}
+            {formatDate(match.date)}
           </span>
           <span className="inline-flex items-center gap-2 sm:justify-end">
             <Clock3 className="h-4 w-4 text-brand-neon" aria-hidden="true" />
-            {match.kickoffTime}
+            {match.time}
           </span>
           <span className="inline-flex items-center gap-2 sm:justify-end">
             <MapPin className="h-4 w-4 text-brand-neon" aria-hidden="true" />
-            {match.venue}
+            {match.venue.name}
           </span>
         </div>
       </div>
 
       <div className="mt-6 grid items-center gap-4 sm:grid-cols-[1fr_auto_1fr]">
-        <TeamIdentity team={match.homeTeam} />
+        <TeamIdentity teamName={match.homeTeam} />
 
         <div className="rounded-2xl border-4 border-white bg-white px-5 py-4 text-center text-brand-navy shadow-[5px_5px_0_#85E320]">
-          {hasScore ? (
+          {match.score ? (
             <div className="font-display text-5xl font-black leading-none tabular-nums tracking-tight">
-              {match.homeScore}
+              {match.score.home}
               <span className="mx-2 text-zinc-300">-</span>
-              {match.awayScore}
+              {match.score.away}
             </div>
           ) : (
             <div className="font-display text-3xl font-black uppercase text-zinc-400">
@@ -408,125 +215,29 @@ function MatchCard({ match }: { match: MatchResult }) {
           )}
         </div>
 
-        <TeamIdentity team={match.awayTeam} align="right" />
+        <TeamIdentity teamName={match.awayTeam} align="right" />
       </div>
     </article>
   );
 }
 
-function StandingsTable({
-  division,
-  selectedSquad,
-}: {
-  division: DivisionStandings;
-  selectedSquad: SquadKey;
-}) {
-  const rows =
-    selectedSquad === "all"
-      ? division.rows
-      : division.rows.filter((row) => isRvrTeam(row.teamName));
-
+function SyncSkeleton() {
   return (
-    <article className="overflow-hidden rounded-[2rem] border-4 border-white bg-brand-navy text-white shadow-[6px_6px_0_#85E320]">
-      <div className="border-b-4 border-white p-5 sm:p-6">
-        <p className="font-display text-xs font-black uppercase text-brand-neon">
-          {division.ageGroup} competitive table
-        </p>
-        <h2 className="mt-2 font-display text-2xl font-black uppercase leading-tight sm:text-3xl">
-          {division.title}
-        </h2>
-      </div>
-
-      <div className="overflow-x-auto">
-        <table className="w-full min-w-[560px] border-collapse text-left">
-          <thead>
-            <tr className="border-b-4 border-white bg-white text-brand-navy">
-              <th className="px-4 py-3 font-display text-xs font-black uppercase">
-                #
-              </th>
-              <th className="px-4 py-3 font-display text-xs font-black uppercase">
-                Team Name
-              </th>
-              <th className="px-4 py-3 text-center font-display text-xs font-black uppercase">
-                P
-              </th>
-              <th className="px-4 py-3 text-center font-display text-xs font-black uppercase">
-                GD
-              </th>
-              <th className="px-4 py-3 text-center font-display text-xs font-black uppercase">
-                PTS
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((row) => {
-              const highlighted = isRvrTeam(row.teamName);
-
-              return (
-                <tr
-                  key={`${division.id}-${row.position}`}
-                  className={`border-b-2 border-white/15 ${
-                    highlighted
-                      ? "bg-brand-neon text-brand-charcoal"
-                      : "bg-brand-navy text-white"
-                  }`}
-                >
-                  <td className="px-4 py-4 font-display text-sm font-black">
-                    {row.position}
-                  </td>
-                  <td className="px-4 py-4 font-display text-sm font-black uppercase">
-                    {row.teamName}
-                  </td>
-                  <td className="px-4 py-4 text-center font-display text-sm font-black">
-                    {row.played}
-                  </td>
-                  <td className="px-4 py-4 text-center font-display text-sm font-black">
-                    {row.goalDifference > 0
-                      ? `+${row.goalDifference}`
-                      : row.goalDifference}
-                  </td>
-                  <td className="px-4 py-4 text-center font-display text-sm font-black">
-                    {row.points}
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
-    </article>
-  );
-}
-
-function DevelopmentNotice({ selectedLabel }: { selectedLabel: string }) {
-  return (
-    <aside className="rounded-[2rem] border-4 border-white bg-white p-5 text-brand-navy shadow-[6px_6px_0_#85E320] sm:p-6">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-        <div className="flex items-start gap-3">
-          <ShieldCheck className="mt-1 h-6 w-6 shrink-0 text-brand-green" aria-hidden="true" />
-          <div>
-            <h2 className="font-display text-xl font-black uppercase">
-              Development brackets
-            </h2>
-            <p className="mt-2 max-w-3xl text-sm font-semibold leading-6 text-zinc-700">
-              {selectedLabel === "All Teams"
-                ? "U7 to U11 tracks focus on player development and participation, so competitive league tables are not published for these age groups."
-                : `${selectedLabel} focuses on player development and participation, so a competitive league table is not published for this age group.`}
-            </p>
+    <div className="grid gap-5">
+      {[0, 1, 2].map((item) => (
+        <div
+          key={item}
+          className="rounded-[2rem] border-4 border-white bg-brand-navy p-5 shadow-[6px_6px_0_#85E320]"
+        >
+          <div className="h-4 w-40 rounded-full bg-white/20" />
+          <div className="mt-5 grid gap-4 sm:grid-cols-[1fr_160px_1fr]">
+            <div className="h-12 rounded-2xl bg-white/15" />
+            <div className="h-16 rounded-2xl bg-white" />
+            <div className="h-12 rounded-2xl bg-white/15" />
           </div>
         </div>
-        <div className="flex flex-wrap gap-2">
-          {developmentTracks.map((track) => (
-            <span
-              key={track}
-              className="rounded-full border-2 border-brand-charcoal bg-brand-neon px-3 py-2 font-display text-[10px] font-black uppercase text-brand-charcoal"
-            >
-              {track}
-            </span>
-          ))}
-        </div>
-      </div>
-    </aside>
+      ))}
+    </div>
   );
 }
 
@@ -538,22 +249,111 @@ function EmptyState({ message }: { message: string }) {
   );
 }
 
+function DevelopmentNotice({
+  divisions,
+}: {
+  divisions: DevelopmentDivision[];
+}) {
+  if (divisions.length === 0) return null;
+
+  return (
+    <aside className="rounded-[2rem] border-4 border-white bg-white p-5 text-brand-navy shadow-[6px_6px_0_#85E320] sm:p-6">
+      <div className="flex items-start gap-3">
+        <ShieldCheck className="mt-1 h-6 w-6 shrink-0 text-brand-green" aria-hidden="true" />
+        <div>
+          <h2 className="font-display text-xl font-black uppercase">
+            Development brackets
+          </h2>
+          <p className="mt-2 text-sm font-semibold leading-6 text-zinc-700">
+            U7 to U11 tracks focus on player development and participation, so
+            competitive league tables are not published for these age groups.
+          </p>
+          <div className="mt-4 flex flex-wrap gap-2">
+            {divisions.map((division) => (
+              <span
+                key={division.competitionId}
+                className="rounded-full border-2 border-brand-charcoal bg-brand-neon px-3 py-2 font-display text-[10px] font-black uppercase text-brand-charcoal"
+              >
+                {division.competitionName}
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+    </aside>
+  );
+}
+
 export default function MatchesPage() {
-  const [activeTab, setActiveTab] = useState<ActiveTab>("results");
-  const [selectedSquadKey, setSelectedSquadKey] = useState<SquadKey>("all");
-  const selectedSquad = getSelectedSquad(selectedSquadKey);
-  const filteredMatches =
-    selectedSquadKey === "all"
-      ? matches
-      : matches.filter((match) => match.squadKey === selectedSquadKey);
-  const filteredStandings =
-    selectedSquadKey === "all"
-      ? standings
-      : standings.filter((division) => division.squadKey === selectedSquadKey);
-  const showDevelopmentNotice =
-    selectedSquadKey === "all" || Boolean(selectedSquad.isDevelopmentTrack);
-  const liveCount = filteredMatches.filter((match) => match.status === "Live").length;
-  const completedCount = filteredMatches.filter((match) => match.status === "FT").length;
+  const [syncData, setSyncData] = useState<SyncResponse | null>(null);
+  const [selectedDivisionKey, setSelectedDivisionKey] =
+    useState<SelectedDivisionKey>("all");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    let active = true;
+
+    async function loadFixtureSync() {
+      setLoading(true);
+      setError("");
+
+      try {
+        const response = await fetch("/api/fixtures/sync", {
+          cache: "no-store",
+        });
+        if (!response.ok) throw new Error("Fixture sync failed");
+        const payload = (await response.json()) as SyncResponse;
+
+        if (active) {
+          setSyncData(payload);
+          setSelectedDivisionKey("all");
+        }
+      } catch {
+        if (active) {
+          setError("Live match data is not available right now.");
+        }
+      } finally {
+        if (active) setLoading(false);
+      }
+    }
+
+    loadFixtureSync();
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const divisionOptions = useMemo(
+    () => buildDivisionOptions(syncData?.divisions ?? []),
+    [syncData],
+  );
+
+  const selectedDivision =
+    divisionOptions.find((option) => option.key === selectedDivisionKey) ??
+    divisionOptions[0];
+
+  const liveMatches = useMemo(() => {
+    if (!syncData) return [];
+    return [...syncData.results, ...syncData.fixtures]
+      .filter((match) => teamMatchesCompetition(match, selectedDivision))
+      .sort((a, b) => `${b.date} ${b.time}`.localeCompare(`${a.date} ${a.time}`));
+  }, [selectedDivision, syncData]);
+
+  const visibleTables = useMemo(() => {
+    if (!syncData) return [];
+    return syncData.tables.filter((table) =>
+      tableMatchesCompetition(table, selectedDivision),
+    );
+  }, [selectedDivision, syncData]);
+
+  const visibleDevelopmentDivisions = useMemo(() => {
+    if (!syncData) return [];
+    return syncData.developmentDivisions.filter((division) =>
+      developmentMatchesCompetition(division, selectedDivision),
+    );
+  }, [selectedDivision, syncData]);
 
   return (
     <div className="min-h-screen bg-brand-navy text-white">
@@ -572,123 +372,90 @@ export default function MatchesPage() {
                   Matchday Hub.
                 </h1>
                 <p className="mt-5 max-w-3xl text-base font-semibold leading-relaxed text-white/85 sm:text-lg">
-                  Review filtered match results, active league tables, and
-                  age-band result guidance for Rivervalley Rangers AFC squads.
+                  Select a discovered RVR division to view live fixtures,
+                  results, and league standings from the club feed.
                 </p>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
-                <div className="rounded-2xl border-4 border-white bg-white p-4 text-brand-navy shadow-[5px_5px_0_#85E320]">
-                  <p className="font-display text-xs font-black uppercase text-brand-green">
-                    Live
-                  </p>
-                  <p className="mt-2 font-display text-4xl font-black leading-none">
-                    {liveCount}
-                  </p>
-                </div>
-                <div className="rounded-2xl border-4 border-white bg-brand-neon p-4 text-brand-charcoal shadow-[5px_5px_0_#FFFFFF]">
-                  <p className="font-display text-xs font-black uppercase">
-                    Final
-                  </p>
-                  <p className="mt-2 font-display text-4xl font-black leading-none">
-                    {completedCount}
-                  </p>
-                </div>
+              <div className="rounded-[2rem] border-4 border-white bg-white p-5 text-brand-navy shadow-[6px_6px_0_#85E320]">
+                <p className="font-display text-xs font-black uppercase text-brand-green">
+                  Sync status
+                </p>
+                <p className="mt-2 font-display text-3xl font-black uppercase leading-none">
+                  {loading ? "Loading" : syncData?.source === "live" ? "Live" : "Ready"}
+                </p>
+                <p className="mt-3 text-sm font-bold leading-6 text-zinc-700">
+                  {syncData
+                    ? `Updated ${formatDate(syncData.syncedAt.slice(0, 10))}`
+                    : "Connecting to the league feed."}
+                </p>
               </div>
             </div>
           </div>
         </section>
 
         <section className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-          <div className="mb-5 rounded-[2rem] border-4 border-white bg-brand-navy p-4 shadow-[6px_6px_0_#85E320]">
-            <label className="grid gap-3">
-              <span className="font-display text-xs font-black uppercase text-brand-neon">
-                Squad filter
-              </span>
-              <span className="relative">
-                <select
-                  value={selectedSquadKey}
-                  onChange={(event) =>
-                    setSelectedSquadKey(event.target.value as SquadKey)
-                  }
-                  className="min-h-14 w-full appearance-none rounded-2xl border-3 border-brand-neon bg-brand-navy px-4 py-3 pr-12 font-display text-sm font-black uppercase text-white outline-none shadow-[4px_4px_0_#85E320] focus:ring-4 focus:ring-brand-neon"
-                  aria-label="Filter matchday hub by squad"
-                >
-                  {squadOptions.map((option) => (
-                    <option key={option.key} value={option.key}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-                <ChevronDown
-                  className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-brand-neon"
-                  aria-hidden="true"
-                />
-              </span>
-            </label>
-          </div>
-
-          <div className="grid gap-3 rounded-[2rem] border-4 border-white bg-white p-3 text-brand-navy shadow-[6px_6px_0_#85E320] sm:grid-cols-2">
-            <button
-              type="button"
-              onClick={() => setActiveTab("results")}
-              className={`inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl border-3 border-brand-charcoal px-4 py-3 font-display text-xs font-black uppercase shadow-[3px_3px_0_#121212] transition ${
-                activeTab === "results"
-                  ? "bg-brand-neon text-brand-charcoal"
-                  : "bg-brand-navy text-white hover:bg-brand-neon hover:text-brand-charcoal"
-              }`}
-              aria-pressed={activeTab === "results"}
-            >
-              <ListOrdered className="h-4 w-4" aria-hidden="true" />
-              Matchday Results
-            </button>
-            <button
-              type="button"
-              onClick={() => setActiveTab("standings")}
-              className={`inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl border-3 border-brand-charcoal px-4 py-3 font-display text-xs font-black uppercase shadow-[3px_3px_0_#121212] transition ${
-                activeTab === "standings"
-                  ? "bg-brand-neon text-brand-charcoal"
-                  : "bg-brand-navy text-white hover:bg-brand-neon hover:text-brand-charcoal"
-              }`}
-              aria-pressed={activeTab === "standings"}
-            >
-              <Table2 className="h-4 w-4" aria-hidden="true" />
-              League Standings
-            </button>
-          </div>
+          <label className="grid gap-3 rounded-[2rem] border-4 border-white bg-brand-navy p-4 shadow-[6px_6px_0_#85E320]">
+            <span className="font-display text-xs font-black uppercase text-brand-neon">
+              Squad filter
+            </span>
+            <span className="relative">
+              <select
+                value={selectedDivisionKey}
+                onChange={(event) => setSelectedDivisionKey(event.target.value)}
+                disabled={loading || divisionOptions.length <= 1}
+                className="min-h-14 w-full appearance-none rounded-2xl border-3 border-brand-neon bg-brand-navy px-4 py-3 pr-12 font-display text-sm font-black uppercase text-white outline-none shadow-[4px_4px_0_#85E320] focus:ring-4 focus:ring-brand-neon disabled:cursor-wait disabled:opacity-70"
+                aria-label="Filter matchday hub by RVR division"
+              >
+                {divisionOptions.map((option) => (
+                  <option key={option.key} value={option.key}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown
+                className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-brand-neon"
+                aria-hidden="true"
+              />
+            </span>
+          </label>
         </section>
 
         <section className="mx-auto max-w-6xl px-4 pb-12 sm:px-6 lg:pb-16">
-          {activeTab === "results" ? (
-            <div className="grid gap-6">
-              {filteredMatches.length > 0 ? (
-                filteredMatches.map((match) => (
-                  <MatchCard key={match.id} match={match} />
-                ))
-              ) : (
-                <EmptyState message="No match records are available for this squad." />
-              )}
-            </div>
+          {loading ? (
+            <SyncSkeleton />
+          ) : error ? (
+            <EmptyState message={error} />
           ) : (
             <div className="grid gap-8">
-              {showDevelopmentNotice && (
-                <DevelopmentNotice selectedLabel={selectedSquad.label} />
-              )}
-              {filteredStandings.length > 0 ? (
-                <div className="grid gap-6">
-                  {filteredStandings.map((division) => (
-                    <StandingsTable
-                      key={division.id}
-                      division={division}
-                      selectedSquad={selectedSquadKey}
-                    />
-                  ))}
+              <div className="grid gap-6">
+                {liveMatches.length > 0 ? (
+                  liveMatches.map((match) => (
+                    <MatchCard key={match.id} match={match} />
+                  ))
+                ) : (
+                  <EmptyState message="No fixtures or results are available for this division." />
+                )}
+              </div>
+
+              <div className="grid gap-6">
+                <div className="flex items-center gap-2">
+                  <Table2 className="h-5 w-5 text-brand-neon" aria-hidden="true" />
+                  <h2 className="font-display text-2xl font-black uppercase">
+                    League standings
+                  </h2>
                 </div>
-              ) : (
-                !selectedSquad.isDevelopmentTrack && (
-                  <EmptyState message="No league table is available for this squad." />
-                )
-              )}
+
+                <DevelopmentNotice divisions={visibleDevelopmentDivisions} />
+
+                {visibleTables.length > 0 ? (
+                  visibleTables.map((table) => (
+                    <DDSLTableWidget key={table.competitionId} table={table} />
+                  ))
+                ) : visibleDevelopmentDivisions.length === 0 ? (
+                  <EmptyState message="No league table is available for this division." />
+                ) : null}
+              </div>
             </div>
           )}
         </section>

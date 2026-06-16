@@ -183,3 +183,37 @@ export interface TablesResponse {
   tables: LeagueTable[];
   blockedDivisions: BlockedDivision[];
 }
+
+// ---------------------------------------------------------------------------
+// Sync endpoint output types (returned by /api/fixtures/sync)
+// ---------------------------------------------------------------------------
+
+export interface DiscoveredDivision {
+  competitionId: number;
+  competitionName: string;
+  ageGroup: AgeGroup;
+  /** 'development' = U7–U11; 'competitive' = U12 and above */
+  tier: 'competitive' | 'development';
+  fixtureCount: number;
+  resultCount: number;
+}
+
+export interface DevelopmentDivision {
+  competitionId: number;
+  competitionName: string;
+  ageGroup: AgeGroup;
+  reason: string;
+  /** Sorted ISO date strings for upcoming fixtures in this division */
+  upcomingDates: string[];
+}
+
+export interface SyncResponse {
+  source: 'live' | 'mock';
+  syncedAt: string;
+  cacheExpiresAt: string;
+  divisions: DiscoveredDivision[];
+  fixtures: NormalisedMatch[];
+  results: NormalisedMatch[];
+  tables: LeagueTable[];
+  developmentDivisions: DevelopmentDivision[];
+}

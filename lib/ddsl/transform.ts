@@ -1,9 +1,12 @@
 import { applyMercyRule, parseAgeGroup } from './mercy-rule';
 import { resolveVenue } from './venue';
 import type {
+  AgeGroup,
+  LeagueTable,
   MatchStatus,
   NormalisedMatch,
   SportLoMoFixture,
+  SportLoMoStandingsTable,
   SportLoMoStatus,
 } from './types';
 
@@ -46,4 +49,42 @@ export function transformFixture(raw: SportLoMoFixture): NormalisedMatch {
 
 export function transformAll(fixtures: SportLoMoFixture[]): NormalisedMatch[] {
   return fixtures.map(transformFixture);
+}
+
+// ---------------------------------------------------------------------------
+// Standings transform — shared with tables and sync routes
+// ---------------------------------------------------------------------------
+
+// Matches "Rivervalley Rangers" (with or without "AFC") and the standalone
+// acronym "RVR". Lookbehind/lookahead instead of \b because word boundaries
+// behave inconsistently around all-caps tokens.
+const RVR_NAME_RE = /rivervalley\s+rangers|(?<![a-z])rvr(?![a-z])/i;
+
+export function isRvrTeam(teamName: string): boolean {
+  return RVR_NAME_RE.test(teamName);
+}
+
+export function transformStandingsTable(
+  raw: SportLoMoStandingsTable,
+  ageGroup: AgeGroup,
+): LeagueTable {
+  return {
+    competitionId: raw.competitionId,
+    competitionName: raw.competitionName,
+    ageGroup,
+    season: raw.season,
+    rows: raw.standings.map((row) => ({
+      position:       row.position,
+      teamName:       row.team.teamName,
+      played:         row.played,
+      won:            row.won,
+      drawn:          row.drawn,
+      lost:           row.lost,
+      goalsFor:       row.goalsFor,
+      goalsAgainst:   row.goalsAgainst,
+      goalDifference: row.goalDifference,
+      points:         row.points,
+      isRvr:          isRvrTeam(row.team.teamName),
+    })),
+  };
 }
