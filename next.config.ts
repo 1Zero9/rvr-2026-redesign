@@ -26,7 +26,7 @@ const securityHeaders = [
       "style-src 'self' 'unsafe-inline'",
       "img-src 'self' data: https:",
       "font-src 'self' data:",
-      "connect-src 'self' https://api.stripe.com https://hooks.stripe.com https://widgets.sportlomo.com https://ddsl.ie",
+      "connect-src 'self' https://api.stripe.com https://hooks.stripe.com https://api.sportlomo.com https://widgets.sportlomo.com https://ddsl.ie",
       "frame-src https://js.stripe.com https://hooks.stripe.com",
       "form-action 'self'",
       "base-uri 'self'",
