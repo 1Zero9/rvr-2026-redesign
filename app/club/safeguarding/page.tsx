@@ -14,76 +14,91 @@ import Header from "@/components/Header";
 export const metadata: Metadata = {
   title: "Safeguarding and Child Welfare | Rivervalley Rangers AFC",
   description:
-    "Public child welfare page for Rivervalley Rangers AFC, including safeguarding contacts, policy downloads, and Garda Vetting guidance.",
+    "Public child welfare page for Rivervalley Rangers AFC with officer contacts, compliance documents, and online Garda Vetting guidance.",
 };
 
-const welfareContacts = [
+const welfareOfficers = [
   {
     role: "Club Children's Officer",
     name: "Sarah Kelly",
     email: "childrensofficer@rvrafc.ie",
-    detail:
-      "First contact for child welfare queries, parent concerns, and support for young players.",
+    summary:
+      "First contact for child welfare questions, parent concerns, and support for young players.",
   },
   {
     role: "Designated Liaison Person",
     name: "Michael Byrne",
     email: "dlp@rvrafc.ie",
-    detail:
-      "Lead contact for reporting pathways, formal concerns, and liaison with statutory services.",
+    summary:
+      "Lead contact for formal reporting pathways, safeguarding concerns, and statutory liaison.",
   },
 ];
 
-const documentDownloads = [
+const complianceDocuments = [
   {
     title: "Child Safeguarding Statement",
     description:
-      "Official club child safeguarding statement for parents, guardians, coaches, and volunteers.",
+      "Mandatory public statement covering child safeguarding responsibilities and club procedures.",
     href: "/documents/child-safeguarding-statement.pdf",
   },
   {
-    title: "FAI Respect Code of Conduct",
+    title: "Club Code of Conduct",
     description:
-      "Expected standards for players, coaches, parents, guardians, and matchday volunteers.",
+      "Expected standards for players, parents, guardians, coaches, and matchday volunteers.",
     href: "/documents/code-of-conduct.pdf",
   },
   {
-    title: "Safety Handbook",
+    title: "Safeguarding Reporting Procedure",
     description:
-      "Reporting guidance and practical safety steps for welfare concerns at club activities.",
+      "Step-by-step guidance for raising a concern and contacting the correct welfare officer.",
     href: "/documents/safeguarding-reporting-procedure.pdf",
   },
 ];
 
 const vettingSteps = [
-  "Confirm your full legal name, date of birth, email address, phone number, and current club role.",
+  "Confirm your legal name, date of birth, email address, phone number, and current club role.",
   "Open the FAI Connect COMET portal and start the online Garda Vetting application.",
-  "Complete each online form field and upload the requested identification documents.",
+  "Complete every required field and upload the requested identification documents.",
   "Submit the application through COMET and monitor your email for confirmation requests.",
   "Wait for club approval before coaching, supervising, or assisting with youth players.",
 ];
 
 export default function SafeguardingPage() {
   return (
-    <div className="min-h-screen bg-brand-cream text-brand-charcoal">
+    <div className="min-h-screen bg-brand-navy text-white">
       <Header />
 
       <main>
-        <section className="border-b-4 border-brand-navy bg-brand-navy text-white">
+        <section className="border-b-4 border-white bg-brand-navy">
           <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:py-20">
-            <div className="max-w-4xl">
-              <span className="mb-5 inline-flex items-center gap-2 rounded-full border-3 border-brand-navy bg-brand-neon px-4 py-2 font-display text-xs font-black uppercase text-brand-charcoal shadow-[4px_4px_0_#FFFFFF]">
-                <ShieldCheck className="h-4 w-4" aria-hidden="true" />
-                Entry-Level FAI Club Mark Awardee
-              </span>
-              <h1 className="font-display text-4xl font-black uppercase leading-none tracking-tight sm:text-5xl lg:text-7xl">
-                Safeguarding and child welfare at Rivervalley Rangers AFC.
-              </h1>
-              <p className="mt-6 max-w-3xl text-base font-semibold leading-relaxed text-white/85 sm:text-lg">
-                This public hub gives families, volunteers, and coaches direct
-                access to named child welfare contacts, official policy
-                downloads, and clear online Garda Vetting steps.
-              </p>
+            <div className="grid gap-8 lg:grid-cols-[1fr_360px] lg:items-end">
+              <div>
+                <span className="mb-5 inline-flex items-center gap-2 rounded-full border-3 border-white bg-brand-neon px-4 py-2 font-display text-xs font-black uppercase text-brand-charcoal shadow-[4px_4px_0_#FFFFFF]">
+                  <ShieldCheck className="h-4 w-4" aria-hidden="true" />
+                  Entry-Level FAI Club Mark Charter
+                </span>
+                <h1 className="font-display text-4xl font-black uppercase leading-none tracking-tight sm:text-5xl lg:text-7xl">
+                  Safeguarding and child welfare.
+                </h1>
+                <p className="mt-5 max-w-3xl text-base font-semibold leading-relaxed text-white/85 sm:text-lg">
+                  Rivervalley Rangers AFC provides named welfare contacts,
+                  mandatory compliance documents, and clear online vetting steps
+                  for every coach and volunteer.
+                </p>
+              </div>
+
+              <aside className="rounded-[2rem] border-4 border-white bg-white p-5 text-brand-navy shadow-[6px_6px_0_#85E320]">
+                <p className="font-display text-xs font-black uppercase text-brand-green">
+                  Charter status
+                </p>
+                <p className="mt-2 font-display text-3xl font-black uppercase leading-none">
+                  FAI Club Mark
+                </p>
+                <p className="mt-3 text-sm font-bold leading-6 text-zinc-700">
+                  Entry-level awardee with active child welfare and volunteer
+                  compliance processes.
+                </p>
+              </aside>
             </div>
           </div>
         </section>
@@ -91,73 +106,73 @@ export default function SafeguardingPage() {
         <section className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:py-16">
           <div className="mb-7 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <p className="font-display text-xs font-black uppercase text-brand-green">
-                Child welfare contacts
+              <p className="font-display text-xs font-black uppercase text-brand-neon">
+                Child welfare officers
               </p>
               <h2 className="mt-2 font-display text-3xl font-black uppercase leading-tight sm:text-5xl">
-                Speak to the right officer.
+                Direct safeguarding contacts.
               </h2>
             </div>
-            <p className="max-w-md text-sm font-semibold leading-6 text-zinc-700">
-              Use these direct contacts for child welfare questions, concerns,
-              and safeguarding support.
+            <p className="max-w-md text-sm font-semibold leading-6 text-white/80">
+              Use these officer contact details for child welfare questions,
+              formal concerns, and safeguarding support.
             </p>
           </div>
 
           <div className="grid gap-6 md:grid-cols-2">
-            {welfareContacts.map((contact) => (
+            {welfareOfficers.map((officer) => (
               <article
-                key={contact.role}
-                className="rounded-2xl border-4 border-brand-navy bg-white p-6 shadow-[6px_6px_0_#0B1F3B] sm:p-7"
+                key={officer.role}
+                className="rounded-[2rem] border-4 border-white bg-brand-navy p-6 shadow-[6px_6px_0_#85E320] sm:p-7"
               >
-                <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl border-3 border-brand-navy bg-brand-neon shadow-[3px_3px_0_#0B1F3B]">
+                <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl border-3 border-white bg-brand-neon shadow-[3px_3px_0_#FFFFFF]">
                   <UserRoundCheck
                     className="h-7 w-7 text-brand-charcoal"
                     aria-hidden="true"
                   />
                 </div>
-                <p className="font-display text-xs font-black uppercase text-brand-green">
-                  {contact.role}
+                <p className="font-display text-xs font-black uppercase text-brand-neon">
+                  {officer.role}
                 </p>
-                <h3 className="mt-2 font-display text-3xl font-black uppercase leading-none text-brand-navy">
-                  {contact.name}
+                <h3 className="mt-2 font-display text-3xl font-black uppercase leading-none text-white">
+                  {officer.name}
                 </h3>
-                <p className="mt-4 text-sm font-semibold leading-6 text-zinc-700">
-                  {contact.detail}
+                <p className="mt-4 text-sm font-semibold leading-6 text-white/80">
+                  {officer.summary}
                 </p>
                 <a
-                  href={`mailto:${contact.email}`}
-                  className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-xl border-3 border-brand-navy bg-brand-cream px-4 py-3 text-sm font-black text-brand-navy shadow-[3px_3px_0_#0B1F3B] transition hover:-translate-y-0.5 hover:bg-white"
+                  href={`mailto:${officer.email}`}
+                  className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-xl border-3 border-white bg-white px-4 py-3 text-sm font-black text-brand-navy shadow-[3px_3px_0_#85E320] transition hover:-translate-y-0.5 hover:bg-brand-neon"
                 >
                   <Mail className="h-4 w-4 text-brand-green" aria-hidden="true" />
-                  {contact.email}
+                  {officer.email}
                 </a>
               </article>
             ))}
           </div>
         </section>
 
-        <section className="border-y-4 border-brand-navy bg-white">
+        <section className="border-y-4 border-white bg-white text-brand-navy">
           <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:py-16">
             <div className="mb-7 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
               <div>
                 <p className="font-display text-xs font-black uppercase text-brand-green">
-                  Document downloads
+                  Document download matrix
                 </p>
                 <h2 className="mt-2 font-display text-3xl font-black uppercase leading-tight sm:text-5xl">
-                  Official welfare documents.
+                  Mandatory compliance PDFs.
                 </h2>
               </div>
               <p className="max-w-md text-sm font-semibold leading-6 text-zinc-700">
-                Download the current safeguarding statement, conduct code, and
-                safety guidance for club activity.
+                Download the current public documents for child safeguarding,
+                conduct standards, and reporting procedure.
               </p>
             </div>
 
             <div className="grid gap-6 lg:grid-cols-3">
-              {documentDownloads.map((item) => (
+              {complianceDocuments.map((document) => (
                 <article
-                  key={item.title}
+                  key={document.title}
                   className="flex min-h-72 flex-col justify-between rounded-2xl border-4 border-brand-navy bg-brand-cream p-6 shadow-[6px_6px_0_#0B1F3B]"
                 >
                   <div>
@@ -167,16 +182,16 @@ export default function SafeguardingPage() {
                         aria-hidden="true"
                       />
                     </div>
-                    <h3 className="font-display text-2xl font-black uppercase leading-tight text-brand-navy">
-                      {item.title}
+                    <h3 className="font-display text-2xl font-black uppercase leading-tight">
+                      {document.title}
                     </h3>
                     <p className="mt-4 text-sm font-semibold leading-6 text-zinc-700">
-                      {item.description}
+                      {document.description}
                     </p>
                   </div>
 
                   <a
-                    href={item.href}
+                    href={document.href}
                     className="btn-brutalist-neon mt-6 inline-flex min-h-12 w-full items-center justify-center gap-2 px-5 py-3 text-sm"
                   >
                     <Download className="h-4 w-4" aria-hidden="true" />
@@ -189,24 +204,24 @@ export default function SafeguardingPage() {
         </section>
 
         <section className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:py-16">
-          <div className="rounded-[2rem] border-4 border-brand-navy bg-brand-navy p-6 text-white shadow-[6px_6px_0_#85E320] sm:p-8">
-            <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr]">
+          <div className="rounded-[2rem] border-4 border-white bg-brand-navy p-6 shadow-[6px_6px_0_#85E320] sm:p-8">
+            <div className="grid gap-8 lg:grid-cols-[0.78fr_1.22fr]">
               <div>
-                <span className="mb-5 inline-flex h-14 w-14 items-center justify-center rounded-2xl border-3 border-brand-neon bg-brand-neon shadow-[3px_3px_0_#FFFFFF]">
+                <span className="mb-5 inline-flex h-14 w-14 items-center justify-center rounded-2xl border-3 border-white bg-brand-neon shadow-[3px_3px_0_#FFFFFF]">
                   <ClipboardCheck
                     className="h-7 w-7 text-brand-charcoal"
                     aria-hidden="true"
                   />
                 </span>
                 <p className="font-display text-xs font-black uppercase text-brand-neon">
-                  Garda Vetting guide
+                  Online vetting guide
                 </p>
                 <h2 className="mt-2 font-display text-3xl font-black uppercase leading-tight sm:text-5xl">
-                  Process every application online through COMET.
+                  Apply through FAI Connect COMET.
                 </h2>
                 <p className="mt-4 text-sm font-semibold leading-6 text-white/80">
-                  Volunteers must complete Garda Vetting through the FAI Connect
-                  COMET portal before working with youth players.
+                  Volunteers must complete Garda Vetting online before working
+                  with youth players.
                 </p>
               </div>
 
@@ -227,7 +242,7 @@ export default function SafeguardingPage() {
               </ol>
             </div>
 
-            <div className="mt-8 rounded-2xl border-3 border-brand-neon bg-white p-5 text-brand-charcoal">
+            <div className="mt-8 rounded-2xl border-4 border-white bg-white p-5 text-brand-navy shadow-[5px_5px_0_#85E320]">
               <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                 <div className="flex items-start gap-3">
                   <CheckCircle2
@@ -235,7 +250,7 @@ export default function SafeguardingPage() {
                     aria-hidden="true"
                   />
                   <div>
-                    <h3 className="font-display text-xl font-black uppercase text-brand-navy">
+                    <h3 className="font-display text-xl font-black uppercase">
                       Approval must be confirmed before youth activity starts.
                     </h3>
                     <p className="mt-1 text-sm font-semibold leading-6 text-zinc-700">
