@@ -9,8 +9,8 @@ export default function Home() {
       <Header />
       <main className="flex-grow">
         <Hero />
-        <LottoWidget jackpotCents={420000} nextDrawDate="2026-06-21" />
         <Stats />
+        <LottoWidget jackpotCents={420000} nextDrawDate="2026-06-21" />
       </main>
 
       <footer className="bg-brand-navy text-white border-t border-brand-sky/20 py-12">
