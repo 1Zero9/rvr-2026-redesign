@@ -42,7 +42,7 @@ export const FALLBACK_AJAX_COMPETITION_ID = 211017;
 // ---------------------------------------------------------------------------
 
 const DDSL_HEADERS: Record<string, string> = {
-  'User-Agent':      'Mozilla/5.0 (compatible; RVRBot/1.0; +https://rivervalleyrangers.ie)',
+  'User-Agent':      'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36',
   'Accept':          'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
   'Accept-Language': 'en-IE,en;q=0.9',
   'Cache-Control':   'no-cache',
@@ -147,86 +147,6 @@ function stableFixtureId(leagueId: number, date: string, home: string, away: str
   return Math.abs(h % 8_000_000) + 1_000_000;
 }
 
-// Extract text content from HTML cells in order. Tries <td> first, then <div>.
-function extractOrderedCells(html: string, max = 6): string[] {
-  const cells: string[] = [];
-
-  for (const pattern of [
-    /<td[^>]*>([\s\S]*?)<\/td>/gi,
-    /<li[^>]*>([\s\S]*?)<\/li>/gi,
-    /<div[^>]*>([\s\S]*?)<\/div>/gi,
-    /<span[^>]*>([\s\S]*?)<\/span>/gi,
-  ]) {
-    const re = new RegExp(pattern.source, pattern.flags);
-    let m;
-    while ((m = re.exec(html)) !== null) {
-      const t = innerText(m[1]);
-      if (t && t.length >= 2 && t.length < 120) cells.push(t);
-      if (cells.length >= max) break;
-    }
-    if (cells.length >= 3) break;
-  }
-
-  return cells;
-}
-
-// Identifies the score/time cell among ordered cells. Returns its index or -1.
-function findScoreOrTimeIndex(cells: string[]): number {
-  return cells.findIndex((c) => /^\d{1,2}:\d{2}$/.test(c) || /^\d+\s*[-–]\s*\d+$/.test(c));
-}
-
-function parseScoreOrTime(cell: string): {
-  fixtureTime?: string;
-  score?: { home: number; away: number };
-} {
-  const timeM = cell.match(/^(\d{1,2}:\d{2})$/);
-  if (timeM) return { fixtureTime: timeM[1] };
-  const scoreM = cell.match(/^(\d+)\s*[-–]\s*(\d+)$/);
-  if (scoreM) return { score: { home: parseInt(scoreM[1]), away: parseInt(scoreM[2]) } };
-  return {};
-}
-
-/**
- * Parses the HTML fragment immediately following a league link in the AJAX
- * response. Expected cell order: homeTeam | score/time | awayTeam | venue.
- */
-function parseMatchBlock(
-  blockHtml: string,
-  date: string,
-  leagueId: number,
-  competitionName: string,
-  isResult: boolean,
-): SportLoMoFixture | null {
-  const cells = extractOrderedCells(blockHtml);
-  if (cells.length < 3) return null;
-
-  // Locate the score/time cell — it anchors the home/away positions.
-  let stIdx = findScoreOrTimeIndex(cells);
-  if (stIdx < 0) stIdx = 1; // fall back to positional centre
-
-  const homeTeam = cells[stIdx - 1] ?? cells[0];
-  const awayTeam = cells[stIdx + 1] ?? cells[2];
-  const venue    = cells[stIdx + 2] ?? cells[3] ?? 'Venue TBC';
-
-  if (!homeTeam || !awayTeam || homeTeam === awayTeam) return null;
-
-  const { fixtureTime, score } = parseScoreOrTime(cells[stIdx] ?? '');
-
-  return {
-    fixtureId:   stableFixtureId(leagueId, date, homeTeam, awayTeam),
-    fixtureDate: date,
-    fixtureTime,
-    homeTeam: { teamId: 0, teamName: homeTeam, clubId: 0, clubName: homeTeam },
-    awayTeam: { teamId: 0, teamName: awayTeam, clubId: 0, clubName: awayTeam },
-    venue:    { venueName: venue },
-    competition: { competitionId: leagueId, competitionName },
-    status: isResult ? 'Result' : 'Fixture',
-    score,
-  };
-}
-
-// Match date headers like "Saturday, 20 June 2026" / "Monday 15 June 2026"
-const DATE_HEADER_RE = /(?:Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)[,]?\s+\d{1,2}\s+\w+\s+\d{4}/gi;
 const LEAGUE_LINK_RE = /href="https?:\/\/ddsl\.ie\/league\/(\d+)"[^>]*>([^<]+)<\/a>/gi;
 
 export interface ClubAjaxData {
@@ -267,12 +187,13 @@ export async function scrapeClubAjax(
     }
 
     const html = await res.text();
-    if (!html || html.length < 50) {
-      console.warn(`[ddsl/scraper] Empty AJAX response for ${action}`);
+    if (!html || html.length < 100 || html.startsWith('Access denied')) {
+      console.warn(`[ddsl/scraper] Empty or denied AJAX response for ${action}`);
       return EMPTY_AJAX;
     }
 
     // --- Extract all league links from the full HTML ---
+    // DDSL uses http:// hrefs (not https://) for these internal links.
     const leagueMap = new Map<number, string>(); // id → short name
     const leagueRe = new RegExp(LEAGUE_LINK_RE.source, LEAGUE_LINK_RE.flags);
     let lm;
@@ -280,44 +201,64 @@ export async function scrapeClubAjax(
       leagueMap.set(parseInt(lm[1], 10), lm[2].trim());
     }
 
-    // --- Find date-section boundaries ---
-    const dateRe = new RegExp(DATE_HEADER_RE.source, DATE_HEADER_RE.flags);
-    const sections: { date: string; idx: number }[] = [];
-    let dm;
-    while ((dm = dateRe.exec(html)) !== null) {
-      const date = parseDDSLDate(dm[0]);
-      if (date) sections.push({ date, idx: dm.index });
-    }
-
-    // --- Parse matches within each date section ---
+    // --- Parse match rows via data-* attributes on desktop-view <tr> tags ---
+    // Each fixture/result appears twice (desktop-view + mobile-view); parse
+    // desktop only to avoid duplicates. All match data lives in data attributes.
     const fixtures: SportLoMoFixture[] = [];
     const isResult = action === 'results';
+    const TR_ROW_RE = /<tr\b[^>]*\bdesktop-view\b[^>]*>/gi;
+    const ATTR_RE   = /\bdata-(\w+)="([^"]*)"/g;
 
-    for (let i = 0; i < sections.length; i++) {
-      const { date, idx } = sections[i];
-      const end = i + 1 < sections.length ? sections[i + 1].idx : html.length;
-      const sectionHtml = html.slice(idx, end);
+    let trm;
+    while ((trm = TR_ROW_RE.exec(html)) !== null) {
+      const trTag = trm[0];
 
-      const sectionLeagueRe = new RegExp(LEAGUE_LINK_RE.source, LEAGUE_LINK_RE.flags);
-      let slm;
-      while ((slm = sectionLeagueRe.exec(sectionHtml)) !== null) {
-        const leagueId   = parseInt(slm[1], 10);
-        const shortName  = slm[2].trim();
-        const compName   = ddslShortToCanonical(shortName);
-        const afterLeague = sectionHtml.slice(
-          slm.index + slm[0].length,
-          slm.index + slm[0].length + 800,
-        );
+      const attrs: Record<string, string> = {};
+      const attrRe = new RegExp(ATTR_RE.source, ATTR_RE.flags);
+      let am;
+      while ((am = attrRe.exec(trTag)) !== null) attrs[am[1]] = am[2];
 
-        const match = parseMatchBlock(afterLeague, date, leagueId, compName, isResult);
-        if (match) {
-          fixtures.push(match);
-        } else {
-          console.warn(
-            `[ddsl/scraper] Could not parse match block — league ${leagueId} ("${shortName}") on ${date}`,
-          );
-        }
+      const homeTeam = attrs['hometeam']?.trim();
+      const awayTeam = attrs['awayteam']?.trim();
+      const rawDate  = attrs['date']?.trim();
+      const time     = attrs['time']?.trim();
+      const venue    = attrs['venue']?.trim() || 'Venue TBC';
+      const compShort = attrs['compname']?.trim();
+      const rawHome  = attrs['homescore']?.trim();
+      const rawAway  = attrs['awayscore']?.trim();
+
+      if (!homeTeam || !awayTeam || !rawDate || !compShort) continue;
+
+      const date = parseDDSLDate(rawDate);
+      if (!date) continue;
+
+      // Resolve leagueId from the short name found in league links
+      let leagueId = 0;
+      for (const [id, shortName] of leagueMap) {
+        if (shortName === compShort) { leagueId = id; break; }
       }
+      if (leagueId === 0) continue;
+
+      const canonicalName = ddslShortToCanonical(compShort);
+
+      let score: { home: number; away: number } | undefined;
+      if (rawHome && rawAway) {
+        const h = parseInt(rawHome, 10);
+        const a = parseInt(rawAway, 10);
+        if (!isNaN(h) && !isNaN(a)) score = { home: h, away: a };
+      }
+
+      fixtures.push({
+        fixtureId:   stableFixtureId(leagueId, date, homeTeam, awayTeam),
+        fixtureDate: date,
+        fixtureTime: time || undefined,
+        homeTeam: { teamId: 0, teamName: homeTeam, clubId: 0, clubName: homeTeam },
+        awayTeam: { teamId: 0, teamName: awayTeam, clubId: 0, clubName: awayTeam },
+        venue:    { venueName: venue },
+        competition: { competitionId: leagueId, competitionName: canonicalName },
+        status: isResult ? 'Result' : 'Fixture',
+        score,
+      });
     }
 
     console.log(
@@ -325,7 +266,6 @@ export async function scrapeClubAjax(
       `${leagueMap.size} leagues discovered`,
     );
 
-    // Build canonical-name map for use in standings naming
     const leagueNames = new Map<number, string>(
       [...leagueMap.entries()].map(([id, shortName]) => [id, ddslShortToCanonical(shortName)]),
     );
