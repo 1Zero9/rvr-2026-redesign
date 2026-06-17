@@ -1,15 +1,13 @@
 /**
- * Local DDSL seed data — authoritative fallback for divisions that cannot be
- * or have not yet been scraped live.
+ * Local DDSL seed data — fallback for scrape failures and development-tier stubs.
  *
- * U12 Boys Major Saturday (208581): the DDSL public page IS scraped live, but
- * this seed entry provides a fallback if the scrape fails. Standings are from
- * the official 2025/26 season final ledger verified against ddsl.ie/league/208581/.
+ * U12 Boys Major Saturday (208581): real standings from ddsl.ie/league/208581/
+ * verified 17 Jun 2026. Used as fallback if the live scrape fails.
  *
- * U10 Boys Sunday divisions (209292, 209297, 209299, 209303): development tier.
- * DDSL does not publish standings for U10, so these stubs exist solely to
- * register the competition IDs and trigger the development-tier age gate.
- * Upcoming fixture dates are surfaced from the live AJAX response.
+ * Development tier stubs (U8-U11): DDSL does not publish standings for these
+ * age groups. Single-row stubs register each competition ID so the sync route
+ * can categorise them as development, surface upcoming fixture dates from the
+ * live AJAX response, and display them correctly without a standings table.
  */
 
 import type { SportLoMoFixture, SportLoMoStandingsTable } from './types';
@@ -25,18 +23,23 @@ const RVR_HOME_1 = {
 };
 
 // ---------------------------------------------------------------------------
-// Standings — competitive and development fallbacks
+// Standings
 // ---------------------------------------------------------------------------
+
+const stub = (competitionId: number, competitionName: string, teamId: number): SportLoMoStandingsTable => ({
+  competitionId,
+  competitionName,
+  season: SEASON,
+  standings: [
+    { position: 1, team: { teamId, teamName: RVR_NAME_SHORT, clubId: RVR_ID }, played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, goalDifference: 0, points: 0 },
+  ],
+});
 
 const STANDINGS: SportLoMoStandingsTable[] = [
 
-  // --------------------------------------------------------------------------
-  // U12 Boys Major Saturday (ID 208581) — 2025/26 complete season, 14 clubs
-  //
-  // Source: live ddsl.ie/league/208581/ verified 17 Jun 2026.
-  // GF/GA/GD are 0 — the DDSL public page does not publish goal data.
-  // P13 RVR record: W5 D5 L16 Pts20.
-  // --------------------------------------------------------------------------
+  // ── U12 Boys Major Saturday — real 2025/26 season standings ────────────
+  // Source: ddsl.ie/league/208581/ scraped 17 Jun 2026.
+  // GF/GA/GD = 0 (DDSL public page does not publish goal data).
   {
     competitionId:   208581,
     competitionName: 'DDSL U12 Boys Major Saturday',
@@ -59,65 +62,39 @@ const STANDINGS: SportLoMoStandingsTable[] = [
     ],
   },
 
-  // --------------------------------------------------------------------------
-  // U10 Boys Sunday — development tier stubs (IDs confirmed from DDSL AJAX)
-  //
-  // DDSL does not publish standings for development age groups.
-  // These stubs register the competition IDs so the age gate can surface
-  // upcoming fixture dates from the live AJAX response.
-  // --------------------------------------------------------------------------
-  {
-    competitionId:   209292,
-    competitionName: 'DDSL U10 Boys Sunday Division 4',
-    season:          SEASON,
-    standings: [
-      { position: 1, team: { teamId: 87106, teamName: RVR_NAME_SHORT, clubId: RVR_ID }, played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, goalDifference: 0, points: 0 },
-    ],
-  },
-  {
-    competitionId:   209297,
-    competitionName: 'DDSL U10 Boys Sunday Division 8',
-    season:          SEASON,
-    standings: [
-      { position: 1, team: { teamId: 87107, teamName: RVR_NAME_SHORT, clubId: RVR_ID }, played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, goalDifference: 0, points: 0 },
-    ],
-  },
-  {
-    competitionId:   209299,
-    competitionName: 'DDSL U10 Boys Sunday Division 10',
-    season:          SEASON,
-    standings: [
-      { position: 1, team: { teamId: 87108, teamName: RVR_NAME_SHORT, clubId: RVR_ID }, played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, goalDifference: 0, points: 0 },
-    ],
-  },
-  {
-    competitionId:   209303,
-    competitionName: 'DDSL U10 Boys Sunday Division 13',
-    season:          SEASON,
-    standings: [
-      { position: 1, team: { teamId: 87109, teamName: RVR_NAME_SHORT, clubId: RVR_ID }, played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, goalDifference: 0, points: 0 },
-    ],
-  },
+  // ── U8 development stubs ─────────────────────────────────────────────────
+  stub(208624, 'DDSL U8 Boys Sunday Division 6',  87110),
+  stub(209250, 'DDSL U8 Boys Sunday Division 9',  87111),
+  stub(209376, 'DDSL U8 Girls Sunday Division 3', 87112),
+
+  // ── U9 development stubs ─────────────────────────────────────────────────
+  stub(209261, 'DDSL U9 Boys Sunday Division 7',  87113),
+  stub(209267, 'DDSL U9 Boys Sunday Division 11', 87114),
+  stub(209336, 'DDSL U9 Girls Sunday Division 3', 87115),
+
+  // ── U10 development stubs ────────────────────────────────────────────────
+  stub(209292, 'DDSL U10 Boys Sunday Division 4',  87116),
+  stub(209297, 'DDSL U10 Boys Sunday Division 8',  87117),
+  stub(209299, 'DDSL U10 Boys Sunday Division 10', 87118),
+  stub(209303, 'DDSL U10 Boys Sunday Division 13', 87119),
+  stub(209347, 'DDSL U10 Girls Sunday Division 8', 87120),
+
+  // ── U11 development stubs ────────────────────────────────────────────────
+  stub(208986, 'DDSL U11 Boys Sunday Division 2', 87121),
+  stub(208993, 'DDSL U11 Boys Sunday Division 9', 87122),
 ];
 
 // ---------------------------------------------------------------------------
-// Upcoming fixtures (status: 'Fixture')
-// U12 Boys Major Saturday is a complete season (P26) — no upcoming fixtures.
+// Fixtures — empty; live AJAX supplies upcoming matches
 // ---------------------------------------------------------------------------
 
 const FIXTURES: SportLoMoFixture[] = [];
 
 // ---------------------------------------------------------------------------
-// Results — completed matches (status: 'Result')
-// U12 Boys Major Saturday: sampled from the complete 26-game season.
-// All U12 scores are within the mercy-rule cap of 5; no capping occurs.
+// Results — U12 Boys Major Saturday sample (season complete, no AJAX data)
 // ---------------------------------------------------------------------------
 
 const RESULTS: SportLoMoFixture[] = [
-
-  // -- U12 Boys Major Saturday (completed season sample) --------------------
-  // RVR finished P13: W5 D5 L16. Scorelines verified against official records.
-
   {
     fixtureId:   8006,
     fixtureDate: '2026-05-24',

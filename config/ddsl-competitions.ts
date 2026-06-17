@@ -1,23 +1,12 @@
 /**
- * Hard-locked DDSL competition registry.
+ * Hard-locked DDSL competition registry — all RVR teams, 2025/26 season.
  *
- * Each entry pins an official SportLoMo competition ID to its canonical name
- * and, optionally, the complete set of member team names for that division.
+ * IDs confirmed by scanning ddsl.ie/league/{id}/ and cross-referencing
+ * with the DDSL tables page team membership (17 Jun 2026).
  *
- * When `knownMembers` is populated the division filter in
- * `lib/ddsl/division-filter.ts` will strip any row whose normalised team name
- * is not on the list. This prevents incorrectly associated clubs (caused by
- * stale or mismatched competition IDs in the SportLoMo feed) from appearing
- * in our public-facing tables.
- *
- * MAINTENANCE
- * ───────────
- * - Names in `knownMembers` must match the canonical form produced by
- *   `normalizeTeamName()` (see lib/ddsl/normalize.ts). Comparison is
- *   case-insensitive at runtime so exact casing does not matter here.
- * - Complete the `knownMembers` list for each entry from the DDSL admin panel
- *   before enabling the filter in production.
- * - Update `sportlomoId` if the DDSL reissues competition IDs between seasons.
+ * Entries without `knownMembers` pass through the division filter unchanged.
+ * Only add knownMembers where you have verified the complete team list from
+ * the DDSL admin panel or public standings page.
  */
 
 export interface KnownDivision {
@@ -31,54 +20,87 @@ export interface KnownDivision {
   ageGroup: string;
   /**
    * Complete roster of team names permitted in this division.
-   *
-   * When set, any standings row whose normalised team name is not in this list
-   * is silently removed and logged as a data integrity warning. Leave undefined
-   * to disable filtering for this division.
+   * When set, any row not on this list is stripped by the division filter.
+   * Leave undefined to disable filtering.
    */
   knownMembers?: string[];
-  /**
-   * Public DDSL league page URL (ddsl.ie/league/{id}/).
-   *
-   * When set, the sync route attempts to scrape live standings from this URL
-   * before falling back to the local seed. Confirmed by inspecting the public
-   * DDSL website — no authentication required.
-   */
+  /** Public DDSL league page URL. The sync route scrapes live standings here. */
   leagueUrl?: string;
 }
 
 export const KNOWN_DIVISIONS: KnownDivision[] = [
+
+  // ── U8 (development — no standings published) ───────────────────────────
+  { sportlomoId: 208624, officialName: '8.6 Boys Sun',  competitionName: 'DDSL U8 Boys Sunday Division 6',  ageGroup: 'U8',  leagueUrl: 'https://ddsl.ie/league/208624/' },
+  { sportlomoId: 209250, officialName: '8.9 Boys Sun',  competitionName: 'DDSL U8 Boys Sunday Division 9',  ageGroup: 'U8',  leagueUrl: 'https://ddsl.ie/league/209250/' },
+  { sportlomoId: 209376, officialName: '8.3 Girls Sun', competitionName: 'DDSL U8 Girls Sunday Division 3', ageGroup: 'U8',  leagueUrl: 'https://ddsl.ie/league/209376/' },
+
+  // ── U9 (development) ─────────────────────────────────────────────────────
+  { sportlomoId: 209261, officialName: '9.7 Boys Sun',  competitionName: 'DDSL U9 Boys Sunday Division 7',  ageGroup: 'U9',  leagueUrl: 'https://ddsl.ie/league/209261/' },
+  { sportlomoId: 209267, officialName: '9.11 Boys Sun', competitionName: 'DDSL U9 Boys Sunday Division 11', ageGroup: 'U9',  leagueUrl: 'https://ddsl.ie/league/209267/' },
+  { sportlomoId: 209336, officialName: '9.3 Girls Sun', competitionName: 'DDSL U9 Girls Sunday Division 3', ageGroup: 'U9',  leagueUrl: 'https://ddsl.ie/league/209336/' },
+
+  // ── U10 (development) ────────────────────────────────────────────────────
+  { sportlomoId: 209292, officialName: '10.4 Boys Sun',  competitionName: 'DDSL U10 Boys Sunday Division 4',  ageGroup: 'U10', leagueUrl: 'https://ddsl.ie/league/209292/' },
+  { sportlomoId: 209297, officialName: '10.8 Boys Sun',  competitionName: 'DDSL U10 Boys Sunday Division 8',  ageGroup: 'U10', leagueUrl: 'https://ddsl.ie/league/209297/' },
+  { sportlomoId: 209299, officialName: '10.10 Boys Sun', competitionName: 'DDSL U10 Boys Sunday Division 10', ageGroup: 'U10', leagueUrl: 'https://ddsl.ie/league/209299/' },
+  { sportlomoId: 209303, officialName: '10.13 Boys Sun', competitionName: 'DDSL U10 Boys Sunday Division 13', ageGroup: 'U10', leagueUrl: 'https://ddsl.ie/league/209303/' },
+  { sportlomoId: 209347, officialName: '10.8 Girls Sun', competitionName: 'DDSL U10 Girls Sunday Division 8', ageGroup: 'U10', leagueUrl: 'https://ddsl.ie/league/209347/' },
+
+  // ── U11 (development) ────────────────────────────────────────────────────
+  { sportlomoId: 208986, officialName: '11.2 Boys Sun', competitionName: 'DDSL U11 Boys Sunday Division 2', ageGroup: 'U11', leagueUrl: 'https://ddsl.ie/league/208986/' },
+  { sportlomoId: 208993, officialName: '11.9 Boys Sun', competitionName: 'DDSL U11 Boys Sunday Division 9', ageGroup: 'U11', leagueUrl: 'https://ddsl.ie/league/208993/' },
+
+  // ── U12 (competitive — mercy rule applies) ───────────────────────────────
   {
-    // Confirmed competition ID from DDSL admin panel (image_ed0a65.jpg).
-    // Coolmine Athletic FC must NOT appear in this division — their presence
-    // in the SportLoMo feed indicates a mismatched competition ID at source.
     sportlomoId: 208581,
     officialName: '12 MAJOR BOYS SAT',
     competitionName: 'DDSL U12 Boys Major Saturday',
     ageGroup: 'U12',
-    // Team names verified against the live DDSL public page (17 Jun 2026).
-    // 'River Valley Rangers FC' is the two-word form the DDSL site uses; it
-    // normalizes to 'Rivervalley Rangers' via normalizeTeamName().
+    leagueUrl: 'https://ddsl.ie/league/208581/',
+    // Team names verified against ddsl.ie/league/208581/ (17 Jun 2026).
     knownMembers: [
       'Rivervalley Rangers',
-      'River Valley Rangers',     // legacy two-word variant
-      'River Valley Rangers FC',  // form used on ddsl.ie standings page
+      'River Valley Rangers',
+      'River Valley Rangers FC',
       'Cherry Orchard FC',
       'Kilnamanagh AFC',
-      'Greystones United AFC',    // confirmed name on ddsl.ie (was wrong: 'Greystones AFC')
+      'Greystones United AFC',
       'Belvedere FC',
       'Leixlip United AFC',
-      'Beechwood FC',             // confirmed name on ddsl.ie (was wrong: 'Beechwood SC')
+      'Beechwood FC',
       'St Francis FC',
       'Corduff FC',
       'Home Farm FC',
       'Leicester Celtic FC',
       'Ballyoulster United FC',
-      'Crumlin United FC',        // confirmed name on ddsl.ie (was wrong: 'Crumlin United AFC')
+      'Crumlin United FC',
       'Bohemian FC',
     ],
-    leagueUrl: 'https://ddsl.ie/league/208581/',
   },
+  { sportlomoId: 208714, officialName: '12.8 Boys Sat',  competitionName: 'DDSL U12 Boys Saturday Division 8', ageGroup: 'U12', leagueUrl: 'https://ddsl.ie/league/208714/' },
+  { sportlomoId: 208699, officialName: '12.5 Boys Sun',  competitionName: 'DDSL U12 Boys Sunday Division 5',  ageGroup: 'U12', leagueUrl: 'https://ddsl.ie/league/208699/' },
+  { sportlomoId: 208703, officialName: '12.9 Boys Sun',  competitionName: 'DDSL U12 Boys Sunday Division 9',  ageGroup: 'U12', leagueUrl: 'https://ddsl.ie/league/208703/' },
+  { sportlomoId: 208749, officialName: '12.1 Girls Sun', competitionName: 'DDSL U12 Girls Sunday Division 1', ageGroup: 'U12', leagueUrl: 'https://ddsl.ie/league/208749/' },
+  { sportlomoId: 208753, officialName: '12.5 Girls Sun', competitionName: 'DDSL U12 Girls Sunday Division 5', ageGroup: 'U12', leagueUrl: 'https://ddsl.ie/league/208753/' },
+
+  // ── U13 (competitive) ────────────────────────────────────────────────────
+  { sportlomoId: 208857, officialName: '13.8 Boys Sat', competitionName: 'DDSL U13 Boys Saturday Division 8', ageGroup: 'U13', leagueUrl: 'https://ddsl.ie/league/208857/' },
+  { sportlomoId: 208862, officialName: '13.5 Boys Sun', competitionName: 'DDSL U13 Boys Sunday Division 5',  ageGroup: 'U13', leagueUrl: 'https://ddsl.ie/league/208862/' },
+  { sportlomoId: 208867, officialName: '13.9 Boys Sun', competitionName: 'DDSL U13 Boys Sunday Division 9',  ageGroup: 'U13', leagueUrl: 'https://ddsl.ie/league/208867/' },
+
+  // ── U14 (competitive) ────────────────────────────────────────────────────
+  { sportlomoId: 208783, officialName: '14.4 Boys Sat',  competitionName: 'DDSL U14 Boys Saturday Division 4',  ageGroup: 'U14', leagueUrl: 'https://ddsl.ie/league/208783/' },
+  { sportlomoId: 208871, officialName: '14.3 Boys Sun',  competitionName: 'DDSL U14 Boys Sunday Division 3',  ageGroup: 'U14', leagueUrl: 'https://ddsl.ie/league/208871/' },
+  { sportlomoId: 208875, officialName: '14.7 Boys Sun',  competitionName: 'DDSL U14 Boys Sunday Division 7',  ageGroup: 'U14', leagueUrl: 'https://ddsl.ie/league/208875/' },
+  { sportlomoId: 208877, officialName: '14.9 Boys Sun',  competitionName: 'DDSL U14 Boys Sunday Division 9',  ageGroup: 'U14', leagueUrl: 'https://ddsl.ie/league/208877/' },
+  { sportlomoId: 208720, officialName: '14.3 Girls Sun', competitionName: 'DDSL U14 Girls Sunday Division 3', ageGroup: 'U14', leagueUrl: 'https://ddsl.ie/league/208720/' },
+
+  // ── U15 (competitive) ────────────────────────────────────────────────────
+  { sportlomoId: 208885, officialName: '15.5 Boys Sat', competitionName: 'DDSL U15 Boys Saturday Division 5', ageGroup: 'U15', leagueUrl: 'https://ddsl.ie/league/208885/' },
+
+  // ── U17 (competitive) — league ID TBC (not found in 207000-210200 scan)
+  // { sportlomoId: ???, officialName: '17.4 Boys Sun', competitionName: 'DDSL U17 Boys Sunday Division 4', ageGroup: 'U17', leagueUrl: 'https://ddsl.ie/league/???/' },
 ];
 
 /**

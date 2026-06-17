@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { cacheGet, cacheSet, TTL_MS } from '@/lib/ddsl/cache';
 import { LOCAL_SEED } from '@/lib/ddsl/local-seed';
 import { applyDivisionFilter } from '@/lib/ddsl/division-filter';
-import { findKnownDivision } from '@/config/ddsl-competitions';
+import { findKnownDivision, KNOWN_DIVISIONS } from '@/config/ddsl-competitions';
 import { parseAgeGroup } from '@/lib/ddsl/mercy-rule';
 import {
   RVR_CLUB_ID,
@@ -104,9 +104,12 @@ export async function GET(_req: NextRequest): Promise<NextResponse> {
   // ── Step 3: Build the union of discovered league IDs ─────────────────────
   // Include seed IDs so that known divisions always get standings even if they
   // have no current fixtures or results in the AJAX window.
-  const discoveredIds = new Set([...fixturesData.leagueIds, ...resultsData.leagueIds]);
-  const seedIds       = new Set(LOCAL_SEED.standings.map((s) => s.competitionId));
-  const allLeagueIds  = new Set([...discoveredIds, ...seedIds]);
+  const discoveredIds  = new Set([...fixturesData.leagueIds, ...resultsData.leagueIds]);
+  const seedIds        = new Set(LOCAL_SEED.standings.map((s) => s.competitionId));
+  const registeredIds  = new Set(KNOWN_DIVISIONS.map((d) => d.sportlomoId));
+  // Union all sources so every registered RVR division is always scraped,
+  // regardless of whether it has upcoming fixtures in the current AJAX window.
+  const allLeagueIds   = new Set([...discoveredIds, ...seedIds, ...registeredIds]);
 
   // Build a name map from both AJAX responses (discovered) and KNOWN_DIVISIONS
   // (registered). Registered names take precedence.
