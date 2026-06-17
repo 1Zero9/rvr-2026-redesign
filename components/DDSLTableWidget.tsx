@@ -32,11 +32,11 @@ function hexToRgba(hex: string, alpha: number): string {
 
 const DEFAULT_ACCENT = '#85E320';
 
-// Total number of <th>/<td> columns in the table (including mobile-only chevron
-// and desktop-only stat columns). The accordion <td> uses this as its colSpan
-// so it always stretches the full row width regardless of which columns are
-// currently visible.
-const TOTAL_COLS = 11;
+// Accordion colSpan values depending on whether goal columns are visible.
+// Full layout: # | Team | P | W | D | L | GF | GA | GD | PTS | chevron = 11
+// No-goals:    # | Team | P | W | D | L | PTS | chevron = 8
+const TOTAL_COLS_FULL = 11;
+const TOTAL_COLS_NO_GOALS = 8;
 
 // ---------------------------------------------------------------------------
 // Sub-components
@@ -87,6 +87,12 @@ function GDCell({ value }: { value: number }) {
 
 export default function DDSLTableWidget({ table, form, accent = DEFAULT_ACCENT }: DDSLTableWidgetProps) {
   const [expanded, setExpanded] = useState<Set<number>>(new Set());
+
+  // Hide GF / GA / GD columns when the public data source does not provide goal data.
+  const showGoalCols = table.rows.some(
+    (r) => r.goalsFor !== 0 || r.goalsAgainst !== 0,
+  );
+  const TOTAL_COLS = showGoalCols ? TOTAL_COLS_FULL : TOTAL_COLS_NO_GOALS;
 
   function toggleRow(position: number) {
     setExpanded((prev) => {
@@ -219,32 +225,32 @@ export default function DDSLTableWidget({ table, form, accent = DEFAULT_ACCENT }
                 L
               </th>
 
-              {/* GF — desktop only */}
-              <th
-                scope="col"
-                className="hidden w-10 px-2 py-3 text-center font-display text-xs font-black uppercase text-brand-navy md:table-cell"
-                title="Goals scored"
-              >
-                GF
-              </th>
-
-              {/* GA — desktop only */}
-              <th
-                scope="col"
-                className="hidden w-10 px-2 py-3 text-center font-display text-xs font-black uppercase text-brand-navy md:table-cell"
-                title="Goals conceded"
-              >
-                GA
-              </th>
-
-              {/* GD — desktop only */}
-              <th
-                scope="col"
-                className="hidden w-12 px-2 py-3 text-center font-display text-xs font-black uppercase text-brand-navy md:table-cell"
-                title="Goal difference"
-              >
-                GD
-              </th>
+              {/* GF / GA / GD — desktop only, hidden when source has no goal data */}
+              {showGoalCols && (
+                <>
+                  <th
+                    scope="col"
+                    className="hidden w-10 px-2 py-3 text-center font-display text-xs font-black uppercase text-brand-navy md:table-cell"
+                    title="Goals scored"
+                  >
+                    GF
+                  </th>
+                  <th
+                    scope="col"
+                    className="hidden w-10 px-2 py-3 text-center font-display text-xs font-black uppercase text-brand-navy md:table-cell"
+                    title="Goals conceded"
+                  >
+                    GA
+                  </th>
+                  <th
+                    scope="col"
+                    className="hidden w-12 px-2 py-3 text-center font-display text-xs font-black uppercase text-brand-navy md:table-cell"
+                    title="Goal difference"
+                  >
+                    GD
+                  </th>
+                </>
+              )}
 
               {/* PTS — always visible */}
               <th
@@ -354,20 +360,19 @@ export default function DDSLTableWidget({ table, form, accent = DEFAULT_ACCENT }
                       {row.lost}
                     </td>
 
-                    {/* GF — desktop only */}
-                    <td className="hidden px-2 py-3 text-center font-semibold text-brand-navy md:table-cell">
-                      {row.goalsFor}
-                    </td>
-
-                    {/* GA — desktop only */}
-                    <td className="hidden px-2 py-3 text-center font-semibold text-brand-navy md:table-cell">
-                      {row.goalsAgainst}
-                    </td>
-
-                    {/* GD — desktop only */}
-                    <td className="hidden px-2 py-3 text-center md:table-cell">
-                      <GDCell value={row.goalDifference} />
-                    </td>
+                    {showGoalCols && (
+                      <>
+                        <td className="hidden px-2 py-3 text-center font-semibold text-brand-navy md:table-cell">
+                          {row.goalsFor}
+                        </td>
+                        <td className="hidden px-2 py-3 text-center font-semibold text-brand-navy md:table-cell">
+                          {row.goalsAgainst}
+                        </td>
+                        <td className="hidden px-2 py-3 text-center md:table-cell">
+                          <GDCell value={row.goalDifference} />
+                        </td>
+                      </>
+                    )}
 
                     {/* PTS */}
                     <td className="py-3 pl-2 pr-4 text-center sm:pr-6">
@@ -403,14 +408,14 @@ export default function DDSLTableWidget({ table, form, accent = DEFAULT_ACCENT }
                           style={row.isRvr ? { backgroundColor: hexToRgba(accent, 0.08) } : { backgroundColor: 'rgba(11,31,59,0.05)' }}
                         >
 
-                          {/* Expanded stat tiles: W / D / L / GD */}
-                          <div className="mb-4 grid grid-cols-4 gap-2">
+                          {/* Expanded stat tiles: W / D / L / GD (GD hidden when no goal data) */}
+                          <div className={`mb-4 grid gap-2 ${showGoalCols ? 'grid-cols-4' : 'grid-cols-3'}`}>
                             {[
-                              { label: 'Won',   value: row.won,            isGd: false },
-                              { label: 'Drawn', value: row.drawn,          isGd: false },
-                              { label: 'Lost',  value: row.lost,           isGd: false },
-                              { label: 'GD',    value: row.goalDifference, isGd: true  },
-                            ].map(({ label, value, isGd }) => (
+                              { label: 'Won',   value: row.won,            isGd: false, show: true           },
+                              { label: 'Drawn', value: row.drawn,          isGd: false, show: true           },
+                              { label: 'Lost',  value: row.lost,           isGd: false, show: true           },
+                              { label: 'GD',    value: row.goalDifference, isGd: true,  show: showGoalCols   },
+                            ].filter(t => t.show).map(({ label, value, isGd }) => (
                               <div
                                 key={label}
                                 className="rounded-xl border-2 border-brand-navy/10 bg-white px-2 py-2 text-center"

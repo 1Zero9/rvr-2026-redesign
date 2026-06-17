@@ -2,15 +2,23 @@ import { NextRequest, NextResponse } from 'next/server';
 import { cacheGet, cacheSet, TTL_MS } from '@/lib/ddsl/cache';
 import { LOCAL_SEED } from '@/lib/ddsl/local-seed';
 import { applyDivisionFilter } from '@/lib/ddsl/division-filter';
+import { findKnownDivision } from '@/config/ddsl-competitions';
 import { parseAgeGroup } from '@/lib/ddsl/mercy-rule';
+import {
+  RVR_CLUB_ID,
+  FALLBACK_AJAX_COMPETITION_ID,
+  discoverCompetitionId,
+  scrapeClubAjax,
+  scrapeDDSLStandings,
+} from '@/lib/ddsl/scraper';
 import { transformAll, transformStandingsTable } from '@/lib/ddsl/transform';
+import { CLUB_SEASON } from '@/config/club-season';
 import type {
   AgeGroup,
   DiscoveredDivision,
   DevelopmentDivision,
   LeagueTable,
   NormalisedMatch,
-  SportLoMoFixture,
   SportLoMoStandingsTable,
   SyncResponse,
 } from '@/lib/ddsl/types';
@@ -19,14 +27,12 @@ export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 const CACHE_KEY = 'ddsl:sync';
+const CURRENT_SEASON = CLUB_SEASON.currentSeason;
 
 // ---------------------------------------------------------------------------
 // Age-tier gate
 // ---------------------------------------------------------------------------
 
-// DDSL and FAI policy: league standings must not be published for non-competitive
-// development age groups. Fixtures in these divisions are transmitted (dates only
-// in the developmentDivisions block); point totals and standings rows are stripped.
 const DEVELOPMENT_AGE_GROUPS = new Set<AgeGroup>([
   'U7', 'U8', 'U9', 'U10', 'U11',
 ]);
@@ -40,7 +46,7 @@ function isDevelopmentTier(ageGroup: AgeGroup): boolean {
 }
 
 // ---------------------------------------------------------------------------
-// Division discovery
+// Division list builder
 // ---------------------------------------------------------------------------
 
 function buildDivisionList(
@@ -79,32 +85,89 @@ export async function GET(_req: NextRequest): Promise<NextResponse> {
     });
   }
 
-  // Season complete — serve verified local asset data.
-  // SportLoMo outbound fetching permanently decommissioned.
-  const rawFixtures:  SportLoMoFixture[]        = [...LOCAL_SEED.fixtures];
-  const rawResults:   SportLoMoFixture[]        = [...LOCAL_SEED.results];
-  let   rawStandings: SportLoMoStandingsTable[] = [...LOCAL_SEED.standings];
-  console.log(
-    `[api/fixtures/sync] Local asset loaded — fixtures: ${rawFixtures.length},` +
-    ` results: ${rawResults.length}, standings: ${rawStandings.length}`,
+  // ── Step 1: Discover the current season's AJAX competition ID ──────────────
+  // The club profile page embeds this in its wp-admin/admin-ajax.php URLs.
+  // Falls back to the hardcoded 2025/26 value if the scrape fails.
+  const competitionId =
+    (await discoverCompetitionId(RVR_CLUB_ID)) ?? FALLBACK_AJAX_COMPETITION_ID;
+  console.log(`[api/fixtures/sync] Season competition_id: ${competitionId}`);
+
+  // ── Step 2: Fetch all RVR fixtures and results in parallel ────────────────
+  // One AJAX call per action returns data for ALL of RVR's teams this season.
+  // Each league section header is an <a href="/league/{id}"> — those IDs drive
+  // the standings scrapes below without any manual competition ID config.
+  const [fixturesData, resultsData] = await Promise.all([
+    scrapeClubAjax(RVR_CLUB_ID, competitionId, 'fixtures'),
+    scrapeClubAjax(RVR_CLUB_ID, competitionId, 'results'),
+  ]);
+
+  // ── Step 3: Build the union of discovered league IDs ─────────────────────
+  // Include seed IDs so that known divisions always get standings even if they
+  // have no current fixtures or results in the AJAX window.
+  const discoveredIds = new Set([...fixturesData.leagueIds, ...resultsData.leagueIds]);
+  const seedIds       = new Set(LOCAL_SEED.standings.map((s) => s.competitionId));
+  const allLeagueIds  = new Set([...discoveredIds, ...seedIds]);
+
+  // Build a name map from both AJAX responses (discovered) and KNOWN_DIVISIONS
+  // (registered). Registered names take precedence.
+  const leagueNames = new Map([
+    ...fixturesData.leagueNames,
+    ...resultsData.leagueNames,
+  ]);
+
+  // ── Step 4: Resolve raw fixtures and results ──────────────────────────────
+  // Use live AJAX data when successfully parsed; fall back to seed otherwise.
+  const rawFixturesSrc = fixturesData.fixtures.length > 0
+    ? fixturesData.fixtures
+    : LOCAL_SEED.fixtures;
+  const rawResultsSrc = resultsData.fixtures.length > 0
+    ? resultsData.fixtures
+    : LOCAL_SEED.results;
+
+  // ── Step 5: Scrape standings for every league in parallel ─────────────────
+  const standingsList = await Promise.all(
+    [...allLeagueIds].map(async (leagueId): Promise<SportLoMoStandingsTable | null> => {
+      const knownDiv = findKnownDivision(leagueId);
+
+      // Canonical name: registered name > AJAX-discovered name > generic fallback
+      const compName =
+        knownDiv?.competitionName ??
+        leagueNames.get(leagueId) ??
+        `League ${leagueId}`;
+
+      const leagueUrl =
+        knownDiv?.leagueUrl ?? `https://ddsl.ie/league/${leagueId}/`;
+
+      const live = await scrapeDDSLStandings(leagueId, compName, CURRENT_SEASON, leagueUrl);
+
+      // Fall back to the local seed row for this league if the live scrape fails.
+      return live ?? LOCAL_SEED.standings.find((s) => s.competitionId === leagueId) ?? null;
+    }),
   );
 
-  // Transform raw fixtures and results through the shared pipeline.
-  // transformAll applies mercy-rule score capping and venue resolution.
-  const fixtures = transformAll(rawFixtures);
-  const results  = transformAll(rawResults);
-
-  // Strip any standings rows that are not in the registered member list for
-  // their competition.
-  const preFilterCount = rawStandings.length;
-  rawStandings = applyDivisionFilter(rawStandings);
-  console.log(
-    `[api/fixtures/sync] Division integrity filter — tables before: ${preFilterCount},` +
-    ` tables after: ${rawStandings.length}`,
+  const rawStandingsPre = standingsList.filter(
+    (s): s is SportLoMoStandingsTable => s !== null,
   );
 
-  // Build a deduplicated competition map seeded from standings (authoritative
-  // source for competitionId) then supplemented by any fixture-only divisions.
+  console.log(
+    `[api/fixtures/sync] Raw data — fixtures: ${rawFixturesSrc.length},` +
+    ` results: ${rawResultsSrc.length}, standings tables: ${rawStandingsPre.length}`,
+  );
+
+  // ── Step 6: Transform fixtures and results through the shared pipeline ────
+  const fixtures = transformAll(rawFixturesSrc);
+  const results  = transformAll(rawResultsSrc);
+
+  // ── Step 7: Division integrity filter (strips unregistered teams) ─────────
+  const rawStandings = applyDivisionFilter(rawStandingsPre);
+  console.log(
+    `[api/fixtures/sync] Division integrity filter — tables in: ${rawStandingsPre.length},` +
+    ` out: ${rawStandings.length}`,
+  );
+
+  // ── Step 8: Build competition map ─────────────────────────────────────────
+  // Seeded from standings (authoritative competitionId source) then
+  // supplemented by fixture-only divisions.
   const competitionMap = new Map<string, { id: number; name: string }>();
   for (const table of rawStandings) {
     competitionMap.set(table.competitionName, {
@@ -112,17 +175,16 @@ export async function GET(_req: NextRequest): Promise<NextResponse> {
       name: table.competitionName,
     });
   }
-  for (const f of [...rawFixtures, ...rawResults]) {
+  for (const f of [...rawFixturesSrc, ...rawResultsSrc]) {
     const cn = f.competition.competitionName;
     if (!competitionMap.has(cn)) {
       competitionMap.set(cn, { id: f.competition.competitionId, name: cn });
     }
   }
 
-  // Apply the age-group safety gate.
-  // U7–U11 (development): strip all point/standings rows; surface only upcoming
-  // fixture dates so the front-end can display schedules without league tables.
-  // U12 and above (competitive): pass the full standings matrix.
+  // ── Step 9: Age-group safety gate ────────────────────────────────────────
+  // U7–U11 (development): no standings published. Upcoming dates surfaced only.
+  // U12+  (competitive):  full standings matrix passed through.
   const tables: LeagueTable[] = [];
   const developmentDivisions: DevelopmentDivision[] = [];
 
@@ -159,15 +221,15 @@ export async function GET(_req: NextRequest): Promise<NextResponse> {
     }
   }
 
+  const divisions = buildDivisionList(competitionMap, fixtures, results);
+
   console.log(
-    `[api/fixtures/sync] Age-gate complete — competitive tables: ${tables.length},` +
+    `[api/fixtures/sync] Complete — competitive tables: ${tables.length},` +
     ` development brackets: ${developmentDivisions.length},` +
     ` discovered divisions: ${competitionMap.size}`,
   );
 
-  const divisions = buildDivisionList(competitionMap, fixtures, results);
-
-  const now = Date.now();
+  const now  = Date.now();
   const body: SyncResponse = {
     source:         'live',
     syncedAt:       new Date(now).toISOString(),
@@ -184,7 +246,7 @@ export async function GET(_req: NextRequest): Promise<NextResponse> {
   return NextResponse.json(body, {
     headers: {
       'X-Cache':       'MISS',
-      'X-Data-Source': 'local-seed',
+      'X-Data-Source': discoveredIds.size > 0 ? 'ddsl-live' : 'local-seed',
       'Cache-Control': 'no-store, max-age=0, must-revalidate',
     },
   });

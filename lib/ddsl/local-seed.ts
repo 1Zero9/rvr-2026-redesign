@@ -54,23 +54,24 @@ const STANDINGS: SportLoMoStandingsTable[] = [
     competitionName: 'DDSL U12 Boys Major Saturday',
     season:          SEASON,
     standings: [
-      // Source: official DDSL league ledger (image_cef35d.jpg).
-      // P13 RVR exact ledger stats: GF22 GA60 GD-38 Pts20.
-      // Verified: Sum(W)=Sum(L)=155, Sum(D)=54, Sum(GF)=Sum(GA)=608, Sum(GD)=0.
-      { position:  1, team: { teamId: 11001, teamName: 'Kilnamanagh AFC',        clubId: 22000 }, played: 26, won: 21, drawn: 2, lost:  3, goalsFor: 80, goalsAgainst: 18, goalDifference:  62, points: 65 },
-      { position:  2, team: { teamId: 23001, teamName: 'Home Farm FC',           clubId: 23000 }, played: 26, won: 19, drawn: 3, lost:  4, goalsFor: 72, goalsAgainst: 25, goalDifference:  47, points: 60 },
-      { position:  3, team: { teamId: 24001, teamName: 'Cherry Orchard FC',      clubId: 24000 }, played: 26, won: 17, drawn: 3, lost:  6, goalsFor: 62, goalsAgainst: 30, goalDifference:  32, points: 54 },
-      { position:  4, team: { teamId: 12001, teamName: 'Belvedere FC',           clubId: 12000 }, played: 26, won: 15, drawn: 4, lost:  7, goalsFor: 56, goalsAgainst: 36, goalDifference:  20, points: 49 },
-      { position:  5, team: { teamId: 25001, teamName: 'Leixlip United AFC',     clubId: 25000 }, played: 26, won: 13, drawn: 6, lost:  7, goalsFor: 52, goalsAgainst: 34, goalDifference:  18, points: 45 },
-      { position:  6, team: { teamId: 26001, teamName: 'Beechwood SC',           clubId: 26000 }, played: 26, won: 12, drawn: 5, lost:  9, goalsFor: 48, goalsAgainst: 38, goalDifference:  10, points: 41 },
-      { position:  7, team: { teamId: 13001, teamName: 'Greystones AFC',         clubId: 13000 }, played: 26, won: 11, drawn: 4, lost: 11, goalsFor: 44, goalsAgainst: 44, goalDifference:   0, points: 37 },
-      { position:  8, team: { teamId: 28001, teamName: 'St Francis FC',          clubId: 28000 }, played: 26, won: 10, drawn: 4, lost: 12, goalsFor: 40, goalsAgainst: 46, goalDifference:  -6, points: 34 },
-      { position:  9, team: { teamId: 29001, teamName: 'Leicester Celtic FC',    clubId: 29000 }, played: 26, won:  9, drawn: 4, lost: 13, goalsFor: 36, goalsAgainst: 48, goalDifference: -12, points: 31 },
-      { position: 10, team: { teamId: 31001, teamName: 'Ballyoulster United FC', clubId: 31000 }, played: 26, won:  7, drawn: 5, lost: 14, goalsFor: 32, goalsAgainst: 50, goalDifference: -18, points: 26 },
-      { position: 11, team: { teamId: 27001, teamName: 'Crumlin United AFC',     clubId: 27000 }, played: 26, won:  7, drawn: 2, lost: 17, goalsFor: 26, goalsAgainst: 52, goalDifference: -26, points: 23 },
-      { position: 12, team: { teamId: 32001, teamName: 'Corduff FC',             clubId: 32000 }, played: 26, won:  5, drawn: 5, lost: 16, goalsFor: 22, goalsAgainst: 56, goalDifference: -34, points: 20 },
-      { position: 13, team: { teamId: 87101, teamName: RVR_NAME_SHORT,           clubId: RVR_ID }, played: 26, won:  5, drawn: 5, lost: 16, goalsFor: 22, goalsAgainst: 60, goalDifference: -38, points: 20 },
-      { position: 14, team: { teamId: 30001, teamName: 'Bohemian FC',            clubId: 30000 }, played: 26, won:  4, drawn: 2, lost: 20, goalsFor: 16, goalsAgainst: 71, goalDifference: -55, points: 14 },
+      // Source: live DDSL public website (ddsl.ie/league/208581/) scraped 17 Jun 2026.
+      // GF/GA/GD are set to 0 — the DDSL public page does not publish goal data.
+      // P13 RVR record confirmed: W5 D5 L16 Pts20.
+      // Points formula verified: 3W + 1D. Sum(W)=Sum(L)=150, Sum(D)=64, Sum(GD)=0.
+      { position:  1, team: { teamId: 24001, teamName: 'Cherry Orchard FC',       clubId: 24000 }, played: 26, won: 17, drawn:  3, lost:  6, goalsFor: 0, goalsAgainst: 0, goalDifference: 0, points: 54 },
+      { position:  2, team: { teamId: 11001, teamName: 'Kilnamanagh AFC',          clubId: 22000 }, played: 26, won: 15, drawn:  6, lost:  5, goalsFor: 0, goalsAgainst: 0, goalDifference: 0, points: 51 },
+      { position:  3, team: { teamId: 13001, teamName: 'Greystones United AFC',    clubId: 13000 }, played: 26, won: 16, drawn:  2, lost:  8, goalsFor: 0, goalsAgainst: 0, goalDifference: 0, points: 50 },
+      { position:  4, team: { teamId: 12001, teamName: 'Belvedere FC',             clubId: 12000 }, played: 26, won: 14, drawn:  7, lost:  5, goalsFor: 0, goalsAgainst: 0, goalDifference: 0, points: 49 },
+      { position:  5, team: { teamId: 25001, teamName: 'Leixlip United AFC',       clubId: 25000 }, played: 26, won: 14, drawn:  6, lost:  6, goalsFor: 0, goalsAgainst: 0, goalDifference: 0, points: 48 },
+      { position:  6, team: { teamId: 26001, teamName: 'Beechwood FC',             clubId: 26000 }, played: 26, won: 13, drawn:  3, lost: 10, goalsFor: 0, goalsAgainst: 0, goalDifference: 0, points: 42 },
+      { position:  7, team: { teamId: 28001, teamName: 'St Francis FC',            clubId: 28000 }, played: 26, won: 12, drawn:  4, lost: 10, goalsFor: 0, goalsAgainst: 0, goalDifference: 0, points: 40 },
+      { position:  8, team: { teamId: 32001, teamName: 'Corduff FC',               clubId: 32000 }, played: 26, won: 10, drawn:  6, lost: 10, goalsFor: 0, goalsAgainst: 0, goalDifference: 0, points: 36 },
+      { position:  9, team: { teamId: 23001, teamName: 'Home Farm FC',             clubId: 23000 }, played: 26, won:  9, drawn:  5, lost: 12, goalsFor: 0, goalsAgainst: 0, goalDifference: 0, points: 32 },
+      { position: 10, team: { teamId: 29001, teamName: 'Leicester Celtic FC',      clubId: 29000 }, played: 26, won:  7, drawn:  6, lost: 13, goalsFor: 0, goalsAgainst: 0, goalDifference: 0, points: 27 },
+      { position: 11, team: { teamId: 31001, teamName: 'Ballyoulster United FC',   clubId: 31000 }, played: 26, won:  8, drawn:  2, lost: 16, goalsFor: 0, goalsAgainst: 0, goalDifference: 0, points: 26 },
+      { position: 12, team: { teamId: 27001, teamName: 'Crumlin United FC',        clubId: 27000 }, played: 26, won:  7, drawn:  4, lost: 15, goalsFor: 0, goalsAgainst: 0, goalDifference: 0, points: 25 },
+      { position: 13, team: { teamId: 87101, teamName: RVR_NAME_SHORT,             clubId: RVR_ID }, played: 26, won:  5, drawn:  5, lost: 16, goalsFor: 0, goalsAgainst: 0, goalDifference: 0, points: 20 },
+      { position: 14, team: { teamId: 30001, teamName: 'Bohemian FC',              clubId: 30000 }, played: 26, won:  3, drawn:  5, lost: 18, goalsFor: 0, goalsAgainst: 0, goalDifference: 0, points: 14 },
     ],
   },
 

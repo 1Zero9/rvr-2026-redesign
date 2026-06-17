@@ -37,6 +37,14 @@ export interface KnownDivision {
    * to disable filtering for this division.
    */
   knownMembers?: string[];
+  /**
+   * Public DDSL league page URL (ddsl.ie/league/{id}/).
+   *
+   * When set, the sync route attempts to scrape live standings from this URL
+   * before falling back to the local seed. Confirmed by inspecting the public
+   * DDSL website — no authentication required.
+   */
+  leagueUrl?: string;
 }
 
 export const KNOWN_DIVISIONS: KnownDivision[] = [
@@ -48,23 +56,28 @@ export const KNOWN_DIVISIONS: KnownDivision[] = [
     officialName: '12 MAJOR BOYS SAT',
     competitionName: 'DDSL U12 Boys Major Saturday',
     ageGroup: 'U12',
+    // Team names verified against the live DDSL public page (17 Jun 2026).
+    // 'River Valley Rangers FC' is the two-word form the DDSL site uses; it
+    // normalizes to 'Rivervalley Rangers' via normalizeTeamName().
     knownMembers: [
       'Rivervalley Rangers',
-      'River Valley Rangers', // two-word SportLoMo export variant — normalizes to the same canonical form
+      'River Valley Rangers',     // legacy two-word variant
+      'River Valley Rangers FC',  // form used on ddsl.ie standings page
       'Cherry Orchard FC',
-      'Belvedere FC',
-      'Greystones AFC',
       'Kilnamanagh AFC',
-      'Home Farm FC',
+      'Greystones United AFC',    // confirmed name on ddsl.ie (was wrong: 'Greystones AFC')
+      'Belvedere FC',
       'Leixlip United AFC',
-      'Beechwood SC',
+      'Beechwood FC',             // confirmed name on ddsl.ie (was wrong: 'Beechwood SC')
       'St Francis FC',
       'Corduff FC',
+      'Home Farm FC',
       'Leicester Celtic FC',
       'Ballyoulster United FC',
-      'Crumlin United AFC',
+      'Crumlin United FC',        // confirmed name on ddsl.ie (was wrong: 'Crumlin United AFC')
       'Bohemian FC',
     ],
+    leagueUrl: 'https://ddsl.ie/league/208581/',
   },
 ];
 
