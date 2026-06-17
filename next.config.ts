@@ -31,7 +31,7 @@ const securityHeaders = [
       "form-action 'self'",
       "base-uri 'self'",
       "object-src 'none'",
-      "media-src 'self' https://assets.mixkit.co",
+      "media-src 'self'",
       "upgrade-insecure-requests",
     ].join("; "),
   },
