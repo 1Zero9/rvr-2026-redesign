@@ -3,6 +3,22 @@
 import React from 'react';
 import { CLUB_SEASON } from '@/config/club-season';
 
+const heroStats = [
+  { value: `${CLUB_SEASON.anniversaryYears} Yrs`, label: 'Strong legacy' },
+  { value: '18+', label: 'Active teams' },
+  { value: '350+', label: 'Local players' },
+  { value: '25+', label: 'Qualified coaches' },
+  { value: 'Vetted', label: 'Garda vetted' },
+];
+
+const explodeProps = [
+  { x: '-60px', y: '-40px', r: '-8deg', delay: '0.1s' },
+  { x: '40px',  y: '-60px', r: '6deg',  delay: '0.25s' },
+  { x: '80px',  y: '20px',  r: '-5deg', delay: '0.4s' },
+  { x: '-40px', y: '60px',  r: '10deg', delay: '0.55s' },
+  { x: '0px',   y: '-80px', r: '-12deg', delay: '0.7s' },
+];
+
 export default function Hero() {
   return (
     <section className="relative min-h-[80vh] w-full overflow-hidden flex items-center justify-center bg-brand-navy text-white border-b border-brand-sky/20">
@@ -16,22 +32,31 @@ export default function Hero() {
         >
           <source src="/videos/hero.mp4" type="video/mp4" />
         </video>
-        <div className="absolute inset-0 bg-gradient-to-b from-brand-navy/80 via-transparent to-brand-navy/95" />
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]" />
+        {/* Strengthened gradient overlay for text legibility */}
+        <div className="absolute inset-0 z-10 bg-gradient-to-b from-brand-navy/70 via-brand-navy/50 to-brand-navy/80" />
+        {/* Neon hairline grid — visible on dark video */}
+        <div
+          className="absolute inset-0 pointer-events-none z-10"
+          style={{
+            backgroundImage: `linear-gradient(rgba(133,227,32,0.12) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(133,227,32,0.12) 1px, transparent 1px)`,
+            backgroundSize: '40px 40px',
+          }}
+        />
       </div>
 
-      <div className="absolute top-12 left-10 hidden lg:block rotate-12 scale-90 animate-pulse">
+      <div className="absolute top-12 left-10 hidden lg:block rotate-12 scale-90 animate-pulse z-20">
         <div className="bg-brand-neon text-brand-charcoal font-display font-black text-xs px-4 py-2 border-3 border-brand-charcoal rounded-xl shadow-brutalist">
           EST. {CLUB_SEASON.foundingYear}
         </div>
       </div>
-      <div className="absolute bottom-16 right-12 hidden lg:block -rotate-6 scale-95 hover:rotate-2 transition-transform duration-300">
+      <div className="absolute bottom-16 right-12 hidden lg:block -rotate-6 scale-95 hover:rotate-2 transition-transform duration-300 z-20">
         <div className="bg-white text-brand-green font-display font-black text-sm px-5 py-3 border-3 border-brand-charcoal rounded-2xl shadow-brutalist-green">
           DUBLIN&apos;S BEST Astro Pitch
         </div>
       </div>
 
-      <div className="relative z-10 max-w-5xl mx-auto px-6 text-center py-20 flex flex-col items-center">
+      <div className="relative z-20 max-w-5xl mx-auto px-6 text-center py-20 flex flex-col items-center">
         <span className="inline-block bg-brand-neon text-brand-charcoal font-display font-black text-xs md:text-sm px-5 py-2 rounded-full uppercase tracking-wider mb-8 border-3 border-brand-charcoal shadow-brutalist rotate-[-2deg] hover:rotate-0 transition-transform cursor-default">
           Dublin, Ireland &bull; Rivervalley Rangers AFC
         </span>
@@ -44,7 +69,7 @@ export default function Hero() {
           Rivervalley Rangers AFC is Swords&apos; premier soccer club. Empowering local athletes across all ages, formats, and levels.
         </p>
 
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-6 w-full max-w-lg">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-6 w-full max-w-lg mb-16">
           <a
             href="/register"
             className="btn-brutalist-neon px-8 py-4.5 text-lg w-full sm:w-auto text-center inline-flex items-center justify-center gap-2 group"
@@ -84,6 +109,33 @@ export default function Hero() {
               />
             </svg>
           </a>
+        </div>
+
+        {/* Stat cards — scatter-then-snap entrance */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 w-full">
+          {heroStats.map((stat, i) => {
+            const ep = explodeProps[i];
+            return (
+              <div
+                key={i}
+                className="animate-explode-in bg-white text-brand-charcoal border-3 border-brand-charcoal rounded-2xl shadow-brutalist p-4 flex flex-col gap-1 text-left"
+                style={{
+                  '--explode-x': ep.x,
+                  '--explode-y': ep.y,
+                  '--explode-r': ep.r,
+                  animationDelay: ep.delay,
+                  animationFillMode: 'both',
+                } as React.CSSProperties}
+              >
+                <span className="font-display font-black text-2xl md:text-3xl uppercase tracking-tighter italic leading-none">
+                  {stat.value}
+                </span>
+                <span className="font-sans text-[11px] font-semibold uppercase tracking-wide text-zinc-500">
+                  {stat.label}
+                </span>
+              </div>
+            );
+          })}
         </div>
       </div>
     </section>

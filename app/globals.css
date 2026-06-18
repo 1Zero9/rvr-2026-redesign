@@ -30,11 +30,27 @@
   --shadow-hover-brutalist: 2px 2px 0px 0px #0B1F3B;
   
   --animate-bounce-spring: bounceSpring 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+  --animate-explode-in: explode-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 @keyframes bounceSpring {
   0% { transform: scale(0.95); }
   100% { transform: scale(1); }
+}
+
+@keyframes explode-in {
+  0% {
+    opacity: 0;
+    transform: translate(var(--explode-x, 0px), var(--explode-y, 0px)) rotate(var(--explode-r, 0deg)) scale(0.6);
+  }
+  70% {
+    opacity: 1;
+    transform: translate(0, 0) rotate(0deg) scale(1.04);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(0, 0) rotate(0deg) scale(1);
+  }
 }
 
 /* Accessibility & performance helper styles */
