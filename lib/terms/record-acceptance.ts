@@ -1,4 +1,5 @@
-import type { Prisma } from '@prisma/client';
+import { prisma } from '@/lib/prisma';
+import type { PrismaPromise } from '@prisma/client';
 import { TERMS_VERSIONS } from './versions';
 import type { SubmissionType } from './submission-types';
 
@@ -12,13 +13,19 @@ interface AcceptanceParams {
 }
 
 /**
- * Returns a Prisma create operation for use inside prisma.$transaction([]).
- * Do NOT call prisma.$transaction inside this function — the caller owns the transaction.
+ * Returns a PrismaPromise for use inside prisma.$transaction([...]).
+ * The caller owns the transaction — do not await this directly.
+ *
+ * Usage:
+ *   await prisma.$transaction([
+ *     prisma.shirtSubmission.create({ data: submissionData }),
+ *     buildTermsAcceptanceCreate({ submissionType, submissionId: newId, ... }),
+ *   ]);
  */
 export function buildTermsAcceptanceCreate(
   params: AcceptanceParams,
-): Prisma.TermsAcceptanceCreateArgs {
-  return {
+): PrismaPromise<unknown> {
+  return prisma.termsAcceptance.create({
     data: {
       submissionType:  params.submissionType,
       submissionId:    params.submissionId,
@@ -28,5 +35,5 @@ export function buildTermsAcceptanceCreate(
       ipAddress:       params.ipAddress ?? null,
       userAgent:       params.userAgent ?? null,
     },
-  };
+  });
 }
