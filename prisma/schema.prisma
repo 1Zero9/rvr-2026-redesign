@@ -557,3 +557,39 @@ model TermsAcceptance {
   @@index([submitterEmail])
   @@index([acceptedAt])
 }
+
+/// Anniversary shirt design submission. Requires moderation approval before
+/// fulfilment is triggered. TermsAcceptance is recorded separately via
+/// buildTermsAcceptanceCreate using the same id generated at submission time.
+model ShirtSubmission {
+  id               String           @id @default(cuid())
+  /// Name of the person placing the order.
+  submitterName    String
+  submitterEmail   String
+  /// Optional: name to print on the shirt.
+  playerName       String?
+  teamName         String?
+  /// Free-text description or special instructions from the submitter.
+  designNotes      String?
+  /// URL of the uploaded design file (Vercel Blob or equivalent).
+  designFileUrl    String
+  thumbnailUrl     String?
+  size             ClothingSize
+  quantity         Int              @default(1)
+  /// Starts PENDING. Admin must APPROVE before fulfilment is triggered.
+  moderationStatus ModerationStatus @default(PENDING)
+  /// Internal reviewer note — visible only in the admin queue.
+  moderationNotes  String?
+  reviewedAt       DateTime?
+  /// Email or identifier of the admin who reviewed this submission.
+  reviewedBy       String?
+  paymentStatus    PaymentStatus    @default(PENDING)
+  paymentReference String?          @unique
+  totalAmountCents Int
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+
+  @@index([moderationStatus])
+  @@index([submitterEmail])
+  @@index([moderationStatus, createdAt])
+}
