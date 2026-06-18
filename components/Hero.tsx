@@ -61,7 +61,7 @@ export default function Hero() {
           Dublin, Ireland &bull; Rivervalley Rangers AFC
         </span>
 
-        <h1 className="font-display font-black text-5xl sm:text-7xl md:text-8xl tracking-tighter uppercase leading-none italic mb-8 select-none skew-x-[-4deg] max-w-4xl text-center">
+        <h1 className="font-display font-black text-5xl md:text-7xl lg:text-8xl tracking-tighter uppercase leading-none italic mb-8 select-none skew-x-[-4deg] max-w-4xl text-center">
           FEEL THE <span className="text-brand-neon underline decoration-brand-neon decoration-wavy underline-offset-4">RVR</span> ENERGY
         </h1>
 
@@ -69,10 +69,10 @@ export default function Hero() {
           Rivervalley Rangers AFC is Swords&apos; premier soccer club. Empowering local athletes across all ages, formats, and levels.
         </p>
 
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-6 w-full max-w-lg mb-16">
+        <div className="flex flex-col md:flex-row items-center justify-center gap-4 w-full max-w-lg mb-16">
           <a
             href="/register"
-            className="btn-brutalist-neon px-8 py-4.5 text-lg w-full sm:w-auto text-center inline-flex items-center justify-center gap-2 group"
+            className="btn-brutalist-neon px-8 py-4.5 text-lg w-full md:w-auto text-center inline-flex items-center justify-center gap-2 group"
           >
             Join RVR Academy
             <svg
@@ -90,7 +90,7 @@ export default function Hero() {
 
           <a
             href="/astro-booking"
-            className="btn-brutalist-green px-8 py-4.5 text-lg w-full sm:w-auto text-center inline-flex items-center justify-center gap-2 group"
+            className="btn-brutalist-green px-8 py-4.5 text-lg w-full md:w-auto text-center inline-flex items-center justify-center gap-2 group"
           >
             Book Astro Pitch
             <svg
@@ -112,7 +112,7 @@ export default function Hero() {
         </div>
 
         {/* Stat cards — scatter-then-snap entrance */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 w-full">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 w-full">
           {heroStats.map((stat, i) => {
             const ep = explodeProps[i];
             return (

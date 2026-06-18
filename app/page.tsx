@@ -1,20 +1,416 @@
-import Header from "@/components/Header";
-import Hero from "@/components/Hero";
-import LottoWidget from "@/components/LottoWidget";
-import Stats from "@/components/Stats";
-import { CLUB_SEASON } from "@/config/club-season";
-import { APP_VERSION, APP_VERSION_DATE } from "@/config/version";
+import Header from '@/components/Header';
+import Hero from '@/components/Hero';
+import Link from 'next/link';
+import { CLUB_SEASON } from '@/config/club-season';
+import { APP_VERSION, APP_VERSION_DATE } from '@/config/version';
+import { KNOWN_DIVISIONS } from '@/config/ddsl-competitions';
+import { cacheGet } from '@/lib/ddsl/cache';
+import type { NormalisedMatch, SyncResponse } from '@/lib/ddsl/types';
+
+const COMMUNITY_CATEGORIES = [
+  {
+    badge: '⭐',
+    label: 'Academy',
+    copy: 'Little Rangers to U-age groups — where players develop from day one.',
+  },
+  {
+    badge: '🏆',
+    label: 'Adult',
+    copy: 'Seniors and Over 35s competing in North Dublin leagues.',
+  },
+  {
+    badge: '⚽',
+    label: 'Community',
+    copy: "Walking Football and Mams' Football, open to all.",
+  },
+  {
+    badge: '💚',
+    label: 'Inclusive',
+    copy: 'A welcoming programme for players of every ability.',
+  },
+] as const;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Helpers (called at render time — no HTTP round-trip)
+// ─────────────────────────────────────────────────────────────────────────────
+
+function getUpcomingFixtures(): NormalisedMatch[] {
+  const cached = cacheGet<SyncResponse>('ddsl:sync');
+  if (!cached.hit) return [];
+  return cached.data.fixtures
+    .filter((f) => f.status === 'upcoming')
+    .sort((a, b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time))
+    .slice(0, 5);
+}
+
+function formatFixtureDate(iso: string): string {
+  return new Date(iso).toLocaleDateString('en-IE', {
+    weekday: 'short',
+    day: 'numeric',
+    month: 'short',
+  });
+}
+
+interface AgeGroupSummary {
+  ageGroup: string;
+  hasGirls: boolean;
+  hasBoys: boolean;
+  divisionCount: number;
+}
+
+function getAgeGroupSummaries(): AgeGroupSummary[] {
+  const seen = new Set<string>();
+  const order: string[] = [];
+  for (const d of KNOWN_DIVISIONS) {
+    if (!seen.has(d.ageGroup)) {
+      seen.add(d.ageGroup);
+      order.push(d.ageGroup);
+    }
+  }
+  return order.map((ag) => ({
+    ageGroup: ag,
+    hasGirls: KNOWN_DIVISIONS.some(
+      (d) => d.ageGroup === ag && d.competitionName.includes('Girls'),
+    ),
+    hasBoys: KNOWN_DIVISIONS.some(
+      (d) => d.ageGroup === ag && d.competitionName.includes('Boys'),
+    ),
+    divisionCount: KNOWN_DIVISIONS.filter((d) => d.ageGroup === ag).length,
+  }));
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Page
+// ─────────────────────────────────────────────────────────────────────────────
 
 export default function Home() {
+  const fixtures = getUpcomingFixtures();
+  const ageGroups = getAgeGroupSummaries();
+
+  const [startStr] = CLUB_SEASON.currentSeason.split('/');
+  const nextStartYear = +startStr + 1;
+  const nextSeason = `${nextStartYear}/${String(nextStartYear + 1).slice(-2)}`;
+
   return (
     <div className="flex flex-col min-h-screen bg-brand-cream text-brand-charcoal">
       <Header />
+
       <main className="flex-grow">
+
+        {/* ── 1. Hero ──────────────────────────────────────────────────────── */}
         <Hero />
-        <Stats />
-        <LottoWidget jackpotCents={420000} nextDrawDate="2026-06-21" />
+
+        {/* ── 2. Upcoming Fixtures ─────────────────────────────────────────── */}
+        <section className="bg-brand-navy py-14 border-b border-brand-sky/20">
+          <div className="max-w-6xl mx-auto px-6">
+            <div className="flex items-center justify-between mb-8">
+              <h2 className="font-display font-black text-3xl md:text-4xl uppercase tracking-tight italic text-brand-cream">
+                Next Up
+                <span className="text-brand-neon ml-2">⚽</span>
+              </h2>
+              <Link
+                href="/teams/matches"
+                className="min-h-[44px] inline-flex items-center px-2 -mr-2 text-xs font-display font-black uppercase tracking-wide text-brand-sky hover:text-brand-neon transition-colors"
+              >
+                All fixtures →
+              </Link>
+            </div>
+
+            {fixtures.length === 0 ? (
+              <div className="border border-brand-sky/20 rounded-2xl p-10 text-center">
+                <p className="font-display font-bold text-brand-sky uppercase text-lg">
+                  Fixtures Loading
+                </p>
+                <p className="text-brand-sky/50 text-sm mt-2">
+                  Live data syncs daily at 07:00 UTC — check back soon.
+                </p>
+              </div>
+            ) : (
+              <div className="flex gap-4 overflow-x-auto pb-2 -mx-2 px-2 snap-x snap-mandatory">
+                {fixtures.map((f) => {
+                  const rvrSide = f.isRvrHome ? 'H' : 'A';
+                  const opponent = f.isRvrHome ? f.awayTeam : f.homeTeam;
+                  return (
+                    <div
+                      key={f.id}
+                      className="snap-start flex-shrink-0 w-52 bg-brand-charcoal border-2 border-brand-sky/20 rounded-2xl p-4 flex flex-col gap-3"
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="inline-block bg-brand-neon text-brand-charcoal font-display font-black text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full">
+                          {f.ageGroup}
+                        </span>
+                        <span
+                          className={`font-display font-black text-xs px-2 py-0.5 rounded-full border ${
+                            rvrSide === 'H'
+                              ? 'border-brand-green text-brand-neon'
+                              : 'border-brand-sky/40 text-brand-sky'
+                          }`}
+                        >
+                          {rvrSide === 'H' ? 'Home' : 'Away'}
+                        </span>
+                      </div>
+
+                      <div>
+                        <p className="text-[11px] text-brand-sky/60 uppercase tracking-wider font-semibold">
+                          vs
+                        </p>
+                        <p className="font-display font-black text-sm text-brand-cream leading-tight mt-0.5">
+                          {opponent}
+                        </p>
+                      </div>
+
+                      <div className="mt-auto pt-2 border-t border-brand-sky/20">
+                        <p className="font-mono text-xs text-brand-sky">
+                          {formatFixtureDate(f.date)}
+                        </p>
+                        <p className="font-mono text-xs text-brand-sky/60">{f.time}</p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </section>
+
+        {/* ── 3. Club in Numbers ───────────────────────────────────────────── */}
+        <section className="bg-brand-cream py-20">
+          <div className="max-w-6xl mx-auto px-6">
+            <div className="text-center mb-14">
+              <h2 className="font-display font-black text-4xl md:text-6xl uppercase tracking-tight leading-none text-brand-charcoal italic">
+                The Numbers
+              </h2>
+              <div className="h-3 w-40 bg-brand-neon mx-auto border-3 border-brand-charcoal -rotate-1 shadow-sm mt-4" />
+            </div>
+
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+              {[
+                {
+                  value: `${CLUB_SEASON.anniversaryYears}`,
+                  unit: 'Years',
+                  label: 'Serving Swords',
+                  badge: `Est. ${CLUB_SEASON.foundingYear}`,
+                  bg: 'bg-white',
+                  badgeBg: 'bg-brand-green text-white',
+                },
+                {
+                  value: `${KNOWN_DIVISIONS.length}`,
+                  unit: 'Teams',
+                  label: 'Active divisions',
+                  badge: `${CLUB_SEASON.currentSeason} Season`,
+                  bg: 'bg-brand-neon',
+                  badgeBg: 'bg-brand-charcoal text-white',
+                },
+                {
+                  value: 'U7',
+                  unit: '– U17',
+                  label: 'All age groups',
+                  badge: 'Boys & Girls',
+                  bg: 'bg-white',
+                  badgeBg: 'bg-brand-navy text-white',
+                },
+                {
+                  value: `${CLUB_SEASON.foundingYear}`,
+                  unit: '',
+                  label: 'Founded in Swords',
+                  badge: `${CLUB_SEASON.anniversaryEdition} Anniversary`,
+                  bg: 'bg-white',
+                  badgeBg: 'bg-brand-maroon text-white',
+                },
+              ].map((stat) => (
+                <div
+                  key={stat.label}
+                  className={`brutalist-card p-6 flex flex-col gap-3 ${stat.bg}`}
+                >
+                  <span
+                    className={`inline-block font-display font-black text-[10px] uppercase tracking-wider px-3 py-1 rounded-full border-2 border-brand-charcoal ${stat.badgeBg}`}
+                  >
+                    {stat.badge}
+                  </span>
+                  <div className="mt-auto">
+                    <p className="font-display font-black text-4xl md:text-5xl lg:text-6xl tracking-tighter italic leading-none">
+                      {stat.value}
+                      {stat.unit && (
+                        <span className="text-2xl ml-1 not-italic font-bold text-zinc-500">
+                          {stat.unit}
+                        </span>
+                      )}
+                    </p>
+                    <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500 mt-2">
+                      {stat.label}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── 4. Teams Grid ────────────────────────────────────────────────── */}
+        <section className="bg-brand-charcoal py-20 border-t border-b border-brand-sky/10">
+          <div className="max-w-6xl mx-auto px-6">
+            <div className="flex items-center justify-between mb-10">
+              <h2 className="font-display font-black text-4xl md:text-5xl uppercase tracking-tight italic text-brand-cream">
+                Our Teams
+              </h2>
+              <Link
+                href="/teams"
+                className="min-h-[44px] inline-flex items-center px-2 -mr-2 text-xs font-display font-black uppercase tracking-wide text-brand-sky hover:text-brand-neon transition-colors"
+              >
+                Full directory →
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {ageGroups.map((ag) => (
+                <Link
+                  key={ag.ageGroup}
+                  href="/teams"
+                  className="group relative border-2 border-brand-sky/20 hover:border-brand-neon rounded-2xl p-5 flex flex-col gap-2 bg-brand-navy/60 hover:bg-brand-navy transition-all"
+                >
+                  <span className="font-display font-black text-5xl tracking-tighter italic leading-none text-brand-cream group-hover:text-brand-neon transition-colors">
+                    {ag.ageGroup}
+                  </span>
+                  <div className="flex gap-1.5 mt-1 flex-wrap">
+                    {ag.hasBoys && (
+                      <span className="text-[10px] font-display font-black uppercase tracking-wider bg-brand-sky/20 text-brand-sky px-2 py-0.5 rounded-full">
+                        Boys
+                      </span>
+                    )}
+                    {ag.hasGirls && (
+                      <span className="text-[10px] font-display font-black uppercase tracking-wider bg-brand-maroon/30 text-brand-cream px-2 py-0.5 rounded-full">
+                        Girls
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-xs text-brand-sky/50 mt-auto">
+                    {ag.divisionCount} division{ag.divisionCount !== 1 ? 's' : ''}
+                  </p>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── 5. More Than A Football Club ─────────────────────────────────── */}
+        <section className="bg-brand-navy py-20 border-t border-brand-sky/10">
+          <div className="max-w-6xl mx-auto px-4 md:px-6">
+            <div className="mb-12">
+              <h2 className="font-display font-black italic text-4xl md:text-6xl uppercase tracking-tight leading-none text-brand-cream mb-3">
+                More Than A Football Club
+              </h2>
+              <p className="text-brand-neon text-lg font-semibold">
+                Academy · Adult · Community · Inclusive
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {COMMUNITY_CATEGORIES.map((cat) => (
+                <Link
+                  key={cat.label}
+                  href="/club-teams"
+                  className="group block bg-brand-charcoal border-2 border-brand-neon hover:border-brand-maroon rounded-2xl p-6 transition-colors min-h-[44px]"
+                >
+                  <div className="flex items-center gap-3 mb-3">
+                    <span className="text-3xl" aria-hidden="true">{cat.badge}</span>
+                    <span className="font-display font-black text-lg uppercase text-brand-cream group-hover:text-brand-neon transition-colors">
+                      {cat.label}
+                    </span>
+                  </div>
+                  <p className="text-brand-sky text-sm leading-relaxed mb-4">
+                    {cat.copy}
+                  </p>
+                  <span className="text-xs font-display font-black uppercase tracking-wide text-brand-neon group-hover:underline">
+                    Find Out More →
+                  </span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── 6. Registration Banner ───────────────────────────────────────── */}
+        <section className="bg-brand-neon border-b-4 border-brand-charcoal">
+          <div className="max-w-6xl mx-auto px-6 py-14 flex flex-col md:flex-row items-center justify-between gap-8">
+            <div>
+              <p className="font-display font-black text-sm uppercase tracking-widest text-brand-charcoal/60 mb-1">
+                Registration Open
+              </p>
+              <h2 className="font-display font-black text-4xl md:text-6xl uppercase tracking-tight italic leading-none text-brand-charcoal">
+                {nextSeason} Season
+              </h2>
+              <p className="text-brand-charcoal/70 font-semibold mt-3 max-w-sm">
+                Secure your place in Swords&apos; largest community football club.
+                All ages, all abilities welcome.
+              </p>
+            </div>
+            <div className="flex flex-col md:flex-row gap-4 shrink-0 w-full md:w-auto">
+              <Link
+                href="/register"
+                className="btn-brutalist-green px-8 py-4 text-base text-center"
+              >
+                Register Now
+              </Link>
+              <Link
+                href="/membership-calculator"
+                className="border-3 border-brand-charcoal bg-transparent text-brand-charcoal font-display font-black uppercase tracking-wide text-sm px-8 py-4 rounded-2xl shadow-brutalist hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all text-center"
+              >
+                Check Fees
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        {/* ── 7. Instagram ─────────────────────────────────────────────────── */}
+        <section className="bg-brand-navy py-16 border-b border-brand-sky/20">
+          <div className="max-w-6xl mx-auto px-6">
+            <div className="text-center mb-10">
+              <h2 className="font-display font-black text-3xl md:text-4xl uppercase tracking-tight italic text-brand-cream mb-2">
+                Follow the Journey
+              </h2>
+              <p className="text-brand-sky/60 text-sm">
+                Match day moments, training highlights, and club news.
+              </p>
+            </div>
+
+            <a
+              href="https://www.instagram.com/rvrfc1981"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group flex flex-col md:flex-row items-center justify-between gap-6 border-2 border-brand-sky/20 hover:border-brand-neon rounded-2xl p-6 md:p-8 bg-brand-charcoal/40 hover:bg-brand-charcoal/60 transition-all max-w-2xl mx-auto"
+            >
+              <div className="flex items-center gap-5">
+                {/* Instagram wordmark icon */}
+                <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl border-2 border-brand-sky/20 bg-gradient-to-br from-[#833ab4] via-[#fd1d1d] to-[#fcb045]">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="white"
+                    className="w-8 h-8"
+                    aria-hidden="true"
+                  >
+                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="font-display font-black text-xl text-brand-cream group-hover:text-brand-neon transition-colors">
+                    @rvrfc1981
+                  </p>
+                  <p className="text-brand-sky/60 text-sm mt-1">
+                    See our latest from the pitches of Swords
+                  </p>
+                </div>
+              </div>
+              <span className="w-full md:w-auto min-h-[44px] inline-flex items-center justify-center font-display font-black text-xs uppercase tracking-wider text-brand-neon border border-brand-neon/40 rounded-full px-6 group-hover:bg-brand-neon group-hover:text-brand-charcoal transition-all">
+                Follow us →
+              </span>
+            </a>
+          </div>
+        </section>
+
       </main>
 
+      {/* ── 7. Footer ──────────────────────────────────────────────────────── */}
       <footer className="bg-brand-navy text-white border-t border-brand-sky/20 py-12">
         <div className="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
@@ -22,8 +418,9 @@ export default function Home() {
               RIVERVALLEY RANGERS AFC
             </h4>
             <p className="text-zinc-400 text-sm leading-relaxed max-w-xs">
-              Swords&apos; leading community football club, established in {CLUB_SEASON.foundingYear}.
-              Dedicated to equality, youth development, and inclusive sports.
+              Swords&apos; leading community football club, established in{' '}
+              {CLUB_SEASON.foundingYear}. Dedicated to equality, youth development,
+              and inclusive sports.
             </p>
           </div>
           <div>
@@ -49,7 +446,7 @@ export default function Home() {
         <div className="max-w-6xl mx-auto px-6 mt-12 pt-8 border-t border-zinc-800 flex flex-col md:flex-row items-center justify-between text-xs text-zinc-500">
           <p>&copy; {new Date().getFullYear()} Rivervalley Rangers AFC. All rights reserved.</p>
           <p>Dublin Football Pride Since {CLUB_SEASON.foundingYear}</p>
-          <p className="text-xs text-brand-sky/50 mt-2">
+          <p className="text-xs text-brand-sky/50 mt-2 md:mt-0">
             RVR2026 v{APP_VERSION} · {APP_VERSION_DATE}
           </p>
         </div>

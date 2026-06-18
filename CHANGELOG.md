@@ -4,6 +4,29 @@ All notable changes to RVR2026 are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 Versioning follows [Semantic Versioning](https://semver.org/).
 
+## [1.0.1] - 2026-06-18
+
+### Added
+
+#### Club teams registry and dedicated pages
+- `config/club-teams.ts` — typed registry of 8 non-DDSL club teams across 5 categories
+  (academy, adult, community, inclusive, events) with `ClubTeam` interface,
+  `findClubTeam()` and `getClubTeamsByCategory()` helpers
+- `/club-teams` — index page grouping all teams by category with card grid
+  (1 col mobile, 2 col md, 3 col lg); each card links to its dedicated page
+- `/club-teams/[slug]` — static team page per `generateStaticParams()`; sections:
+  hero, description + marketing copy, training info, contact, CTA, back link;
+  all touch targets ≥ 44px; mobile-first layout throughout
+- Homepage "More Than A Football Club" section — 4 category cards
+  (Academy · Adult · Community · Inclusive) between teams grid and registration banner
+- "All Teams" nav link — added to "Girls & Women" desktop dropdown and mobile
+  utility drawer; links to `/club-teams`
+
+### Changed
+- `app/page.tsx` — inserted community categories section; section numbering updated
+- `components/Header.tsx` — "All Teams → /club-teams" added to Girls & Women links
+  and utilityLinks (mobile Club Essentials drawer)
+
 ## [1.0.0] - 2026-06-18
 
 ### Added

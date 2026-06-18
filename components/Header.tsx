@@ -26,6 +26,7 @@ const sections = [
     description: "Girls teams and women pathway",
     icon: Users,
     links: [
+      { href: "/club-teams", label: "All Teams" },
       { href: "/teams", label: "Squad Directory" },
       { href: "/football-for-all", label: "Girls Football For All" },
       { href: "/teams/matches", label: "Fixtures & Results" },
@@ -98,6 +99,7 @@ const sections = [
 ] as const;
 
 const utilityLinks = [
+  { href: "/club-teams", label: "All Teams" },
   { href: "/membership-calculator", label: "Fees" },
   { href: "/shop", label: "Shop" },
 ] as const;
