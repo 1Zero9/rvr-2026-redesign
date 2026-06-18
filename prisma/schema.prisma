@@ -533,3 +533,27 @@ model HistoricalStanding {
   @@index([seasonId, divisionName, position])
   @@index([teamName])
 }
+
+/// Timestamped record of a user explicitly accepting terms/disclaimer at the point of
+/// any public form submission. Linked to the parent record via submissionType + submissionId.
+/// Never delete these rows — they are the legal audit trail.
+model TermsAcceptance {
+  id             String   @id @default(cuid())
+  /// Identifies the form. Use snake_case constants defined in lib/terms/submission-types.ts.
+  /// e.g. "anniversary_shirt", "kit_design", "fun_run", "membership"
+  submissionType String
+  /// The cuid() of the related record (ShirtSubmission.id, FunRunRegistration.id, etc.)
+  submissionId   String
+  submitterName  String
+  submitterEmail String
+  /// Increment this string constant whenever the terms wording changes.
+  termsVersion   String
+  /// x-forwarded-for from the Vercel edge request — may be null in local dev.
+  ipAddress      String?
+  userAgent      String?
+  acceptedAt     DateTime @default(now())
+
+  @@index([submissionType, submissionId])
+  @@index([submitterEmail])
+  @@index([acceptedAt])
+}
