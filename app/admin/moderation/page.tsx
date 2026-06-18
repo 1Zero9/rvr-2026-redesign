@@ -1,4 +1,5 @@
 import { getPendingShirts } from '@/lib/moderation/get-pending-shirts';
+import { APP_VERSION } from '@/config/version';
 import ModerationActions from './ModerationActions';
 
 export default async function ModerationPage() {
@@ -16,6 +17,9 @@ export default async function ModerationPage() {
           </h1>
           <p className="text-brand-sky text-sm mt-2">
             {submissions.length} submission{submissions.length !== 1 ? 's' : ''} awaiting moderation
+          </p>
+          <p className="text-xs text-brand-sky/50 mb-4">
+            RVR2026 Admin · v{APP_VERSION}
           </p>
         </div>
 

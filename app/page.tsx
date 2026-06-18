@@ -3,6 +3,7 @@ import Hero from "@/components/Hero";
 import LottoWidget from "@/components/LottoWidget";
 import Stats from "@/components/Stats";
 import { CLUB_SEASON } from "@/config/club-season";
+import { APP_VERSION, APP_VERSION_DATE } from "@/config/version";
 
 export default function Home() {
   return (
@@ -48,6 +49,9 @@ export default function Home() {
         <div className="max-w-6xl mx-auto px-6 mt-12 pt-8 border-t border-zinc-800 flex flex-col md:flex-row items-center justify-between text-xs text-zinc-500">
           <p>&copy; {new Date().getFullYear()} Rivervalley Rangers AFC. All rights reserved.</p>
           <p>Dublin Football Pride Since {CLUB_SEASON.foundingYear}</p>
+          <p className="text-xs text-brand-sky/50 mt-2">
+            RVR2026 v{APP_VERSION} · {APP_VERSION_DATE}
+          </p>
         </div>
       </footer>
     </div>
