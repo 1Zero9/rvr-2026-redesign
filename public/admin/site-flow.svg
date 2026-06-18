@@ -1,0 +1,344 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800">
+  <defs>
+    <marker id="arr" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#B8CDEE"/>
+    </marker>
+    <marker id="arr-dash" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#B8CDEE" opacity="0.5"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="800" fill="#0B1F3B"/>
+
+  <!-- Title bar -->
+  <rect width="1200" height="46" fill="#121212"/>
+  <text x="600" y="28" text-anchor="middle" fill="#85E320" font-family="monospace" font-size="17" font-weight="bold">RVR2026 — Site Data Flow</text>
+  <text x="600" y="41" text-anchor="middle" fill="#B8CDEE" font-family="monospace" font-size="9" opacity="0.7">config/version.ts · prisma/schema.prisma · app/api · lib/</text>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       LANE: PUBLIC  y=46–260
+       ═══════════════════════════════════════════════════════════ -->
+  <rect x="0" y="46" width="1200" height="214" fill="rgba(184,205,238,0.03)"/>
+  <rect x="0" y="46" width="1200" height="22" fill="rgba(184,205,238,0.09)"/>
+  <line x1="0" y1="46"  x2="1200" y2="46"  stroke="#B8CDEE" stroke-width="0.5" opacity="0.25"/>
+  <line x1="0" y1="260" x2="1200" y2="260" stroke="#B8CDEE" stroke-width="0.5" opacity="0.25"/>
+  <text x="10" y="62" fill="#B8CDEE" font-family="monospace" font-size="11" font-weight="bold">PUBLIC</text>
+  <text x="82" y="62" fill="#B8CDEE" font-family="monospace" font-size="9" opacity="0.6">User-facing flows</text>
+
+  <!-- PUBLIC row 1 — fixtures sync  (center y=102) ─────────── -->
+  <text x="90" y="84" fill="#B8CDEE" font-family="monospace" font-size="8" opacity="0.55">① fixtures sync</text>
+
+  <rect x="90"  y="88" width="130" height="28" rx="3" fill="#1a3050" stroke="#B8CDEE" stroke-width="1.5"/>
+  <text x="155" y="106" text-anchor="middle" fill="#FAF8F5" font-family="monospace" font-size="10">Browser</text>
+
+  <line x1="220" y1="102" x2="245" y2="102" stroke="#B8CDEE" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <rect x="245" y="88" width="130" height="28" rx="3" fill="#121212" stroke="#85E320" stroke-width="1.5"/>
+  <text x="310" y="106" text-anchor="middle" fill="#FAF8F5" font-family="monospace" font-size="10">/teams page</text>
+
+  <line x1="375" y1="102" x2="400" y2="102" stroke="#B8CDEE" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <rect x="400" y="88" width="130" height="28" rx="3" fill="#121212" stroke="#85E320" stroke-width="1.5"/>
+  <text x="465" y="99" text-anchor="middle" fill="#FAF8F5" font-family="monospace" font-size="10">GET fixtures</text>
+  <text x="465" y="111" text-anchor="middle" fill="#FAF8F5" font-family="monospace" font-size="10">/sync API</text>
+
+  <line x1="530" y1="102" x2="555" y2="102" stroke="#B8CDEE" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <rect x="555" y="88" width="130" height="28" rx="3" fill="#121212" stroke="#85E320" stroke-width="1.5"/>
+  <text x="620" y="106" text-anchor="middle" fill="#FAF8F5" font-family="monospace" font-size="10">DDSL Scraper</text>
+
+  <line x1="685" y1="102" x2="710" y2="102" stroke="#B8CDEE" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <rect x="710" y="88" width="130" height="28" rx="3" fill="#121212" stroke="#85E320" stroke-width="1.5"/>
+  <text x="775" y="106" text-anchor="middle" fill="#FAF8F5" font-family="monospace" font-size="10">15-min Cache</text>
+
+  <line x1="840" y1="102" x2="865" y2="102" stroke="#B8CDEE" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <rect x="865" y="88" width="130" height="28" rx="3" fill="#1A2C4A" stroke="#85E320" stroke-width="1.5"/>
+  <text x="930" y="106" text-anchor="middle" fill="#FAF8F5" font-family="monospace" font-size="10">League Table</text>
+
+  <!-- PUBLIC row 2 — shirt submission  (center y=162) ─────────── -->
+  <text x="90" y="146" fill="#B8CDEE" font-family="monospace" font-size="8" opacity="0.55">② shirt submission</text>
+
+  <rect x="90"  y="150" width="130" height="28" rx="3" fill="#1a3050" stroke="#B8CDEE" stroke-width="1.5"/>
+  <text x="155" y="168" text-anchor="middle" fill="#FAF8F5" font-family="monospace" font-size="10">Browser</text>
+
+  <line x1="220" y1="164" x2="245" y2="164" stroke="#B8CDEE" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <rect x="245" y="150" width="130" height="28" rx="3" fill="#121212" stroke="#85E320" stroke-width="1.5"/>
+  <text x="310" y="168" text-anchor="middle" fill="#FAF8F5" font-family="monospace" font-size="10">/shirts page</text>
+
+  <line x1="375" y1="164" x2="400" y2="164" stroke="#B8CDEE" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <rect x="400" y="150" width="130" height="28" rx="3" fill="#121212" stroke="#85E320" stroke-width="1.5"/>
+  <text x="465" y="162" text-anchor="middle" fill="#FAF8F5" font-family="monospace" font-size="10">POST</text>
+  <text x="465" y="174" text-anchor="middle" fill="#FAF8F5" font-family="monospace" font-size="10">shirts/submit</text>
+
+  <line x1="530" y1="164" x2="555" y2="164" stroke="#B8CDEE" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <rect x="555" y="150" width="130" height="28" rx="3" fill="#0d1f0d" stroke="#85E320" stroke-width="1.5"/>
+  <text x="620" y="162" text-anchor="middle" fill="#FAF8F5" font-family="monospace" font-size="10">ShirtSubmission</text>
+  <text x="620" y="174" text-anchor="middle" fill="#85E320" font-family="monospace" font-size="8">PENDING · DB</text>
+
+  <line x1="685" y1="164" x2="710" y2="164" stroke="#B8CDEE" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <rect x="710" y="150" width="130" height="28" rx="3" fill="#0d1f0d" stroke="#85E320" stroke-width="1.5"/>
+  <text x="775" y="162" text-anchor="middle" fill="#FAF8F5" font-family="monospace" font-size="10">TermsAcceptance</text>
+  <text x="775" y="174" text-anchor="middle" fill="#85E320" font-family="monospace" font-size="8">audit trail · DB</text>
+
+  <!-- PUBLIC row 3 — membership checkout  (center y=222) ─────────── -->
+  <text x="90" y="207" fill="#B8CDEE" font-family="monospace" font-size="8" opacity="0.55">③ membership checkout</text>
+
+  <rect x="90"  y="210" width="130" height="28" rx="3" fill="#1a3050" stroke="#B8CDEE" stroke-width="1.5"/>
+  <text x="155" y="228" text-anchor="middle" fill="#FAF8F5" font-family="monospace" font-size="10">Browser</text>
+
+  <line x1="220" y1="224" x2="245" y2="224" stroke="#B8CDEE" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <rect x="245" y="210" width="130" height="28" rx="3" fill="#121212" stroke="#85E320" stroke-width="1.5"/>
+  <text x="310" y="228" text-anchor="middle" fill="#FAF8F5" font-family="monospace" font-size="10">/membership-calc</text>
+
+  <line x1="375" y1="224" x2="400" y2="224" stroke="#B8CDEE" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <rect x="400" y="210" width="130" height="28" rx="3" fill="#121212" stroke="#85E320" stroke-width="1.5"/>
+  <text x="465" y="222" text-anchor="middle" fill="#FAF8F5" font-family="monospace" font-size="10">POST</text>
+  <text x="465" y="234" text-anchor="middle" fill="#FAF8F5" font-family="monospace" font-size="10">membership/checkout</text>
+
+  <line x1="530" y1="224" x2="555" y2="224" stroke="#B8CDEE" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <rect x="555" y="210" width="130" height="28" rx="3" fill="#1a1400" stroke="#85E320" stroke-width="1.5"/>
+  <text x="620" y="228" text-anchor="middle" fill="#FAF8F5" font-family="monospace" font-size="10">Stripe</text>
+
+  <line x1="685" y1="224" x2="710" y2="224" stroke="#B8CDEE" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <rect x="710" y="210" width="130" height="28" rx="3" fill="#0d1f0d" stroke="#85E320" stroke-width="1.5"/>
+  <text x="775" y="222" text-anchor="middle" fill="#FAF8F5" font-family="monospace" font-size="10">MembershipOrder</text>
+  <text x="775" y="234" text-anchor="middle" fill="#85E320" font-family="monospace" font-size="8">DB</text>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       LANE: CRON  y=260–450
+       ═══════════════════════════════════════════════════════════ -->
+  <rect x="0" y="260" width="1200" height="190" fill="rgba(0,92,57,0.08)"/>
+  <rect x="0" y="260" width="1200" height="22" fill="rgba(0,92,57,0.38)"/>
+  <line x1="0" y1="260" x2="1200" y2="260" stroke="#B8CDEE" stroke-width="0.5" opacity="0.25"/>
+  <line x1="0" y1="450" x2="1200" y2="450" stroke="#B8CDEE" stroke-width="0.5" opacity="0.25"/>
+  <text x="10" y="276" fill="#FAF8F5" font-family="monospace" font-size="11" font-weight="bold">CRON</text>
+  <text x="66" y="276" fill="#85E320" font-family="monospace" font-size="9" opacity="0.8">Vercel Cron scheduled jobs · Auth: Authorization: Bearer $CRON_SECRET</text>
+
+  <!-- CRON row 1 — DDSL sync  (center y=316) ─────────── -->
+  <text x="90" y="296" fill="#85E320" font-family="monospace" font-size="8" opacity="0.65">daily 07:00 UTC</text>
+
+  <rect x="90"  y="302" width="130" height="28" rx="3" fill="#005C39" stroke="#85E320" stroke-width="1.5"/>
+  <text x="155" y="314" text-anchor="middle" fill="#FAF8F5" font-family="monospace" font-size="10">Vercel Cron</text>
+  <text x="155" y="326" text-anchor="middle" fill="#85E320" font-family="monospace" font-size="8">07:00 UTC daily</text>
+
+  <line x1="220" y1="316" x2="245" y2="316" stroke="#B8CDEE" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <rect x="245" y="302" width="130" height="28" rx="3" fill="#121212" stroke="#85E320" stroke-width="1.5"/>
+  <text x="310" y="314" text-anchor="middle" fill="#FAF8F5" font-family="monospace" font-size="10">POST cron</text>
+  <text x="310" y="326" text-anchor="middle" fill="#FAF8F5" font-family="monospace" font-size="10">/ddsl-sync</text>
+
+  <line x1="375" y1="316" x2="400" y2="316" stroke="#B8CDEE" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <rect x="400" y="302" width="130" height="28" rx="3" fill="#121212" stroke="#85E320" stroke-width="1.5"/>
+  <text x="465" y="320" text-anchor="middle" fill="#FAF8F5" font-family="monospace" font-size="10">DDSL Scraper</text>
+
+  <line x1="530" y1="316" x2="555" y2="316" stroke="#B8CDEE" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <rect x="555" y="302" width="130" height="28" rx="3" fill="#121212" stroke="#85E320" stroke-width="1.5"/>
+  <text x="620" y="314" text-anchor="middle" fill="#FAF8F5" font-family="monospace" font-size="10">Transform +</text>
+  <text x="620" y="326" text-anchor="middle" fill="#FAF8F5" font-family="monospace" font-size="10">Normalize</text>
+
+  <line x1="685" y1="316" x2="710" y2="316" stroke="#B8CDEE" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <rect x="710" y="302" width="130" height="28" rx="3" fill="#0d1f0d" stroke="#85E320" stroke-width="1.5"/>
+  <text x="775" y="314" text-anchor="middle" fill="#FAF8F5" font-family="monospace" font-size="10">HistoricalStanding</text>
+  <text x="775" y="326" text-anchor="middle" fill="#85E320" font-family="monospace" font-size="8">Postgres</text>
+
+  <!-- CRON row 2 — safeguarding  (center y=400) ─────────── -->
+  <text x="90" y="382" fill="#85E320" font-family="monospace" font-size="8" opacity="0.65">Mon 08:00 UTC</text>
+
+  <rect x="90"  y="386" width="130" height="28" rx="3" fill="#005C39" stroke="#85E320" stroke-width="1.5"/>
+  <text x="155" y="398" text-anchor="middle" fill="#FAF8F5" font-family="monospace" font-size="10">Vercel Cron</text>
+  <text x="155" y="410" text-anchor="middle" fill="#85E320" font-family="monospace" font-size="8">Mon 08:00 UTC</text>
+
+  <line x1="220" y1="400" x2="245" y2="400" stroke="#B8CDEE" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <rect x="245" y="386" width="130" height="28" rx="3" fill="#121212" stroke="#85E320" stroke-width="1.5"/>
+  <text x="310" y="398" text-anchor="middle" fill="#FAF8F5" font-family="monospace" font-size="10">POST cron</text>
+  <text x="310" y="410" text-anchor="middle" fill="#FAF8F5" font-family="monospace" font-size="10">/safeguarding</text>
+
+  <line x1="375" y1="400" x2="400" y2="400" stroke="#B8CDEE" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <rect x="400" y="386" width="130" height="28" rx="3" fill="#121212" stroke="#85E320" stroke-width="1.5"/>
+  <text x="465" y="398" text-anchor="middle" fill="#FAF8F5" font-family="monospace" font-size="10">Compliance</text>
+  <text x="465" y="410" text-anchor="middle" fill="#FAF8F5" font-family="monospace" font-size="10">Checker</text>
+
+  <line x1="530" y1="400" x2="555" y2="400" stroke="#B8CDEE" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <rect x="555" y="386" width="130" height="28" rx="3" fill="#0d1f0d" stroke="#85E320" stroke-width="1.5"/>
+  <text x="620" y="398" text-anchor="middle" fill="#FAF8F5" font-family="monospace" font-size="10">StaffMember</text>
+  <text x="620" y="410" text-anchor="middle" fill="#85E320" font-family="monospace" font-size="8">DB lookup</text>
+
+  <line x1="685" y1="400" x2="710" y2="400" stroke="#B8CDEE" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <rect x="710" y="386" width="130" height="28" rx="3" fill="#1a1400" stroke="#85E320" stroke-width="1.5"/>
+  <text x="775" y="398" text-anchor="middle" fill="#FAF8F5" font-family="monospace" font-size="10">Nodemailer</text>
+  <text x="775" y="410" text-anchor="middle" fill="#B8CDEE" font-family="monospace" font-size="8">SMTP alert email</text>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       LANE: API  y=450–630
+       ═══════════════════════════════════════════════════════════ -->
+  <rect x="0" y="450" width="1200" height="180" fill="rgba(18,18,18,0.25)"/>
+  <rect x="0" y="450" width="1200" height="22" fill="rgba(40,40,40,0.55)"/>
+  <line x1="0" y1="450" x2="1200" y2="450" stroke="#B8CDEE" stroke-width="0.5" opacity="0.25"/>
+  <line x1="0" y1="630" x2="1200" y2="630" stroke="#B8CDEE" stroke-width="0.5" opacity="0.25"/>
+  <text x="10" y="466" fill="#FAF8F5" font-family="monospace" font-size="11" font-weight="bold">API</text>
+  <text x="44" y="466" fill="#B8CDEE" font-family="monospace" font-size="9" opacity="0.6">Internal API layer — transaction patterns and moderation</text>
+
+  <!-- API row 1 — atomic transaction  (center y=507) ─────────── -->
+  <text x="90" y="488" fill="#B8CDEE" font-family="monospace" font-size="8" opacity="0.55">atomic write</text>
+
+  <rect x="90"  y="493" width="130" height="28" rx="3" fill="#121212" stroke="#85E320" stroke-width="1.5"/>
+  <text x="155" y="505" text-anchor="middle" fill="#FAF8F5" font-family="monospace" font-size="10">POST</text>
+  <text x="155" y="517" text-anchor="middle" fill="#FAF8F5" font-family="monospace" font-size="10">shirts/submit</text>
+
+  <line x1="220" y1="507" x2="245" y2="507" stroke="#B8CDEE" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <rect x="245" y="493" width="130" height="28" rx="3" fill="#121212" stroke="#85E320" stroke-width="1.5"/>
+  <text x="310" y="505" text-anchor="middle" fill="#FAF8F5" font-family="monospace" font-size="10">prisma</text>
+  <text x="310" y="517" text-anchor="middle" fill="#85E320" font-family="monospace" font-size="10">.$transaction([])</text>
+
+  <line x1="375" y1="507" x2="400" y2="507" stroke="#B8CDEE" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="387" y="502" text-anchor="middle" fill="#85E320" font-family="monospace" font-size="7">atomic</text>
+
+  <rect x="400" y="493" width="130" height="28" rx="3" fill="#0d1f0d" stroke="#85E320" stroke-width="1.5"/>
+  <text x="465" y="505" text-anchor="middle" fill="#FAF8F5" font-family="monospace" font-size="10">ShirtSubmission</text>
+  <text x="465" y="517" text-anchor="middle" fill="#FAF8F5" font-family="monospace" font-size="9">+ TermsAcceptance</text>
+
+  <!-- API row 2 — moderation  (center y=579) ─────────── -->
+  <text x="90" y="562" fill="#B8CDEE" font-family="monospace" font-size="8" opacity="0.55">moderation action</text>
+
+  <rect x="90"  y="565" width="130" height="28" rx="3" fill="#8B1E4D" stroke="#FAF8F5" stroke-width="1.5"/>
+  <text x="155" y="577" text-anchor="middle" fill="#FAF8F5" font-family="monospace" font-size="10">Admin API call</text>
+  <text x="155" y="589" text-anchor="middle" fill="#FAF8F5" font-family="monospace" font-size="8">ADMIN_SECRET</text>
+
+  <line x1="220" y1="579" x2="245" y2="579" stroke="#B8CDEE" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <rect x="245" y="565" width="130" height="28" rx="3" fill="#121212" stroke="#85E320" stroke-width="1.5"/>
+  <text x="310" y="577" text-anchor="middle" fill="#FAF8F5" font-family="monospace" font-size="10">shirts/[id]</text>
+  <text x="310" y="589" text-anchor="middle" fill="#FAF8F5" font-family="monospace" font-size="10">/approve | /reject</text>
+
+  <line x1="375" y1="579" x2="400" y2="579" stroke="#B8CDEE" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <rect x="400" y="565" width="130" height="28" rx="3" fill="#0d1f0d" stroke="#85E320" stroke-width="1.5"/>
+  <text x="465" y="577" text-anchor="middle" fill="#FAF8F5" font-family="monospace" font-size="10">Moderation</text>
+  <text x="465" y="589" text-anchor="middle" fill="#FAF8F5" font-family="monospace" font-size="10">Status → DB</text>
+
+  <line x1="530" y1="579" x2="555" y2="579" stroke="#B8CDEE" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- Dashed border = planned -->
+  <rect x="555" y="565" width="130" height="28" rx="3" fill="#1a1400" stroke="#85E320" stroke-width="1" stroke-dasharray="5,3"/>
+  <text x="620" y="577" text-anchor="middle" fill="#FAF8F5" font-family="monospace" font-size="10">Email notify</text>
+  <text x="620" y="589" text-anchor="middle" fill="#B8CDEE" font-family="monospace" font-size="8">(planned)</text>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       LANE: ADMIN  y=630–800
+       ═══════════════════════════════════════════════════════════ -->
+  <rect x="0" y="630" width="1200" height="170" fill="rgba(139,30,77,0.07)"/>
+  <rect x="0" y="630" width="1200" height="22" fill="rgba(139,30,77,0.38)"/>
+  <line x1="0" y1="630" x2="1200" y2="630" stroke="#B8CDEE" stroke-width="0.5" opacity="0.25"/>
+  <text x="10" y="646" fill="#FAF8F5" font-family="monospace" font-size="11" font-weight="bold">ADMIN</text>
+  <text x="80" y="646" fill="#B8CDEE" font-family="monospace" font-size="9" opacity="0.6">Protected · middleware.ts enforces Authorization: Bearer $ADMIN_SECRET on all /admin/* routes</text>
+
+  <!-- ADMIN row 1 — moderation queue  (center y=676) ─────────── -->
+  <text x="90" y="658" fill="#B8CDEE" font-family="monospace" font-size="8" opacity="0.55">moderation queue</text>
+
+  <rect x="90"  y="662" width="130" height="28" rx="3" fill="#8B1E4D" stroke="#FAF8F5" stroke-width="1.5"/>
+  <text x="155" y="680" text-anchor="middle" fill="#FAF8F5" font-family="monospace" font-size="10">/admin/moderation</text>
+
+  <line x1="220" y1="676" x2="245" y2="676" stroke="#B8CDEE" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <rect x="245" y="662" width="130" height="28" rx="3" fill="#121212" stroke="#85E320" stroke-width="1.5"/>
+  <text x="310" y="674" text-anchor="middle" fill="#FAF8F5" font-family="monospace" font-size="10">getPendingShirts</text>
+  <text x="310" y="686" text-anchor="middle" fill="#B8CDEE" font-family="monospace" font-size="8">Server Component</text>
+
+  <line x1="375" y1="676" x2="400" y2="676" stroke="#B8CDEE" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <rect x="400" y="662" width="130" height="28" rx="3" fill="#0d1f0d" stroke="#85E320" stroke-width="1.5"/>
+  <text x="465" y="674" text-anchor="middle" fill="#FAF8F5" font-family="monospace" font-size="10">PENDING queue</text>
+  <text x="465" y="686" text-anchor="middle" fill="#85E320" font-family="monospace" font-size="8">ShirtSubmission rows</text>
+
+  <line x1="530" y1="676" x2="555" y2="676" stroke="#B8CDEE" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <rect x="555" y="662" width="130" height="28" rx="3" fill="#8B1E4D" stroke="#FAF8F5" stroke-width="1.5"/>
+  <text x="620" y="674" text-anchor="middle" fill="#FAF8F5" font-family="monospace" font-size="10">ModerationActions</text>
+  <text x="620" y="686" text-anchor="middle" fill="#FAF8F5" font-family="monospace" font-size="8">client component</text>
+
+  <line x1="685" y1="676" x2="710" y2="676" stroke="#B8CDEE" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <rect x="710" y="662" width="130" height="28" rx="3" fill="#121212" stroke="#85E320" stroke-width="1.5"/>
+  <text x="775" y="674" text-anchor="middle" fill="#FAF8F5" font-family="monospace" font-size="10">approve / reject</text>
+  <text x="775" y="686" text-anchor="middle" fill="#B8CDEE" font-family="monospace" font-size="8">POST to API</text>
+
+  <line x1="840" y1="676" x2="865" y2="676" stroke="#B8CDEE" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <rect x="865" y="662" width="130" height="28" rx="3" fill="#121212" stroke="#85E320" stroke-width="1.5"/>
+  <text x="930" y="674" text-anchor="middle" fill="#FAF8F5" font-family="monospace" font-size="10">router.refresh()</text>
+  <text x="930" y="686" text-anchor="middle" fill="#B8CDEE" font-family="monospace" font-size="8">reload queue</text>
+
+  <!-- ADMIN row 2 — docs  (center y=754) ─────────── -->
+  <text x="90" y="736" fill="#B8CDEE" font-family="monospace" font-size="8" opacity="0.55">docs page</text>
+
+  <rect x="90"  y="740" width="130" height="28" rx="3" fill="#8B1E4D" stroke="#FAF8F5" stroke-width="1.5"/>
+  <text x="155" y="758" text-anchor="middle" fill="#FAF8F5" font-family="monospace" font-size="10">/admin/docs</text>
+
+  <line x1="220" y1="754" x2="245" y2="754" stroke="#B8CDEE" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <rect x="245" y="740" width="130" height="28" rx="3" fill="#121212" stroke="#85E320" stroke-width="1.5"/>
+  <text x="310" y="752" text-anchor="middle" fill="#FAF8F5" font-family="monospace" font-size="10">loadDoc()</text>
+  <text x="310" y="764" text-anchor="middle" fill="#B8CDEE" font-family="monospace" font-size="8">fs.readFile</text>
+
+  <line x1="375" y1="754" x2="400" y2="754" stroke="#B8CDEE" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <rect x="400" y="740" width="130" height="28" rx="3" fill="#121212" stroke="#85E320" stroke-width="1.5"/>
+  <text x="465" y="758" text-anchor="middle" fill="#FAF8F5" font-family="monospace" font-size="10">CHANGELOG.md</text>
+
+  <line x1="530" y1="754" x2="555" y2="754" stroke="#B8CDEE" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <rect x="555" y="740" width="130" height="28" rx="3" fill="#121212" stroke="#85E320" stroke-width="1.5"/>
+  <text x="620" y="758" text-anchor="middle" fill="#FAF8F5" font-family="monospace" font-size="10">SETUP.md</text>
+
+  <line x1="685" y1="754" x2="710" y2="754" stroke="#B8CDEE" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <rect x="710" y="740" width="130" height="28" rx="3" fill="#8B1E4D" stroke="#FAF8F5" stroke-width="1.5"/>
+  <text x="775" y="752" text-anchor="middle" fill="#FAF8F5" font-family="monospace" font-size="10">site-flow.svg</text>
+  <text x="775" y="764" text-anchor="middle" fill="#FAF8F5" font-family="monospace" font-size="8">this diagram</text>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       LEGEND  — top right, PUBLIC lane
+       ═══════════════════════════════════════════════════════════ -->
+  <rect x="1008" y="56" width="184" height="162" rx="4" fill="#0B1F3B" stroke="#B8CDEE" stroke-width="1" opacity="0.95"/>
+  <text x="1100" y="74" text-anchor="middle" fill="#B8CDEE" font-family="monospace" font-size="10" font-weight="bold" letter-spacing="1">LEGEND</text>
+
+  <rect x="1018" y="82" width="16" height="13" rx="2" fill="#1a3050" stroke="#B8CDEE" stroke-width="1"/>
+  <text x="1040" y="93" fill="#FAF8F5" font-family="monospace" font-size="9">Browser / user</text>
+
+  <rect x="1018" y="101" width="16" height="13" rx="2" fill="#121212" stroke="#85E320" stroke-width="1"/>
+  <text x="1040" y="112" fill="#FAF8F5" font-family="monospace" font-size="9">API route / service</text>
+
+  <rect x="1018" y="120" width="16" height="13" rx="2" fill="#0d1f0d" stroke="#85E320" stroke-width="1"/>
+  <text x="1040" y="131" fill="#FAF8F5" font-family="monospace" font-size="9">Database (Postgres)</text>
+
+  <rect x="1018" y="139" width="16" height="13" rx="2" fill="#005C39" stroke="#85E320" stroke-width="1"/>
+  <text x="1040" y="150" fill="#FAF8F5" font-family="monospace" font-size="9">Cron trigger</text>
+
+  <rect x="1018" y="158" width="16" height="13" rx="2" fill="#8B1E4D" stroke="#FAF8F5" stroke-width="1"/>
+  <text x="1040" y="169" fill="#FAF8F5" font-family="monospace" font-size="9">Admin protected</text>
+
+  <rect x="1018" y="177" width="16" height="13" rx="2" fill="#1a1400" stroke="#85E320" stroke-width="1" stroke-dasharray="4,2"/>
+  <text x="1040" y="188" fill="#FAF8F5" font-family="monospace" font-size="9">External / planned</text>
+
+  <text x="1100" y="212" text-anchor="middle" fill="#B8CDEE" font-family="monospace" font-size="8" opacity="0.45">config/version.ts v1.0.0</text>
+</svg>
