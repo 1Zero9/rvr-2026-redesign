@@ -285,7 +285,25 @@ export default function TeletextFixtures() {
 
       {/* Footer bar */}
       <div className="bg-brand-navy/60 px-3 flex items-center justify-between text-[10px] font-mono min-h-11">
-        <span className="text-brand-sky/50">LIVE DATA · DDSL 2025/26</span>
+        <span className="flex items-center gap-3">
+          <a
+            href="https://ddsl.ie"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-brand-sky/40 hover:text-brand-sky text-[10px] font-mono uppercase tracking-wide transition-colors"
+          >
+            Powered by DDSL.ie
+          </a>
+          <span className="text-brand-sky/20">·</span>
+          <a
+            href="https://www.finalwhistle.ie/soccer/team/rivervalley-rangers-afc/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-brand-sky/40 hover:text-brand-sky text-[10px] font-mono uppercase tracking-wide transition-colors"
+          >
+            FinalWhistle.ie
+          </a>
+        </span>
         <Link
           href="/fixtures"
           className="text-brand-neon hover:underline inline-flex items-center min-h-11"
