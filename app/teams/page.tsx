@@ -121,14 +121,9 @@ export default function TeamsPage() {
                           {stripDdsl(div.competitionName)}
                         </p>
 
-                        {/* Age group pill */}
-                        <span className="inline-block px-2 py-0.5 text-[10px] font-display font-black uppercase tracking-wide border border-brand-sky/40 text-brand-sky mb-4">
-                          {div.ageGroup}
-                        </span>
-
                         {/* CTA */}
-                        <p className={`text-xs font-display font-black uppercase tracking-wide ${competitive ? 'text-brand-neon' : 'text-brand-sky'}`}>
-                          {competitive ? 'View Table →' : 'Fixtures →'}
+                        <p className={`text-sm ${competitive ? 'text-brand-neon' : 'text-brand-sky'}`}>
+                          {competitive ? 'View Table & Fixtures →' : 'View Fixtures →'}
                         </p>
                       </div>
                     </Link>
