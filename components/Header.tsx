@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { ChevronDown, ChevronRight, Menu, X } from 'lucide-react';
 import { ASSET_PATHS } from '@/config/assets';
 
@@ -169,30 +169,16 @@ function isNavActive(label: string, pathname: string): boolean {
 export default function Header() {
   const [open,        setOpen]        = useState(false);
   const [openSection, setOpenSection] = useState<string | null>(null);
+  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pathname = usePathname();
 
-  const close    = () => setOpen(false);
-  const toggleSection = (label: string) =>
-    setOpenSection((prev) => (prev === label ? null : label));
+  const close = () => setOpen(false);
 
   // Body scroll lock for mobile overlay
   useEffect(() => {
     document.body.style.overflow = open ? 'hidden' : '';
     return () => { document.body.style.overflow = ''; };
   }, [open]);
-
-  // Close mega menu on outside click
-  useEffect(() => {
-    if (!openSection) return;
-    const handler = (e: MouseEvent) => {
-      const header = document.getElementById('site-header');
-      if (header && !header.contains(e.target as Node)) {
-        setOpenSection(null);
-      }
-    };
-    document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
-  }, [openSection]);
 
   // Close mega menu on Escape
   useEffect(() => {
@@ -201,6 +187,12 @@ export default function Header() {
     };
     document.addEventListener('keydown', handler);
     return () => document.removeEventListener('keydown', handler);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (closeTimer.current) clearTimeout(closeTimer.current);
+    };
   }, []);
 
   return (
@@ -234,42 +226,88 @@ export default function Header() {
             </span>
           </Link>
 
-          {/* Desktop mega-menu trigger buttons */}
-          <nav className="hidden lg:flex items-center gap-1" aria-label="Main navigation">
-            {NAV_SECTIONS.map((section) => {
-              const isOpen   = openSection === section.label;
-              const isActive = isNavActive(section.label, pathname);
-              return (
-                <button
-                  key={section.label}
-                  type="button"
-                  onClick={() => toggleSection(section.label)}
-                  aria-expanded={isOpen}
-                  aria-haspopup="true"
-                  className={`min-h-[44px] px-4 flex items-center gap-1.5 font-display font-black uppercase text-sm tracking-wide rounded-lg transition-all ${
-                    isOpen
-                      ? 'text-brand-neon bg-white/10'
-                      : isActive
-                      ? 'text-brand-neon hover:bg-white/5'
-                      : 'text-white/80 hover:text-brand-neon hover:bg-white/5'
-                  }`}
-                >
-                  {section.label}
-                  <ChevronDown
-                    className={`h-3.5 w-3.5 transition-transform duration-200 ${
-                      isOpen ? 'rotate-180' : ''
-                    }`}
-                  />
-                </button>
-              );
-            })}
-          </nav>
+          <div className="hidden lg:flex flex-1 items-center justify-between">
+            {/* Desktop mega-menu trigger buttons */}
+            <nav
+              className="flex items-center gap-1"
+              aria-label="Main navigation"
+              onMouseLeave={() => {
+                closeTimer.current = setTimeout(() => setOpenSection(null), 150);
+              }}
+              onMouseEnter={() => {
+                if (closeTimer.current) clearTimeout(closeTimer.current);
+              }}
+            >
+              {NAV_SECTIONS.map((section) => {
+                const isOpen   = openSection === section.label;
+                const isActive = isNavActive(section.label, pathname);
+                return (
+                  <div key={section.label} className="relative">
+                    <button
+                      type="button"
+                      onMouseEnter={() => {
+                        if (closeTimer.current) clearTimeout(closeTimer.current);
+                        setOpenSection(section.label);
+                      }}
+                      aria-expanded={isOpen}
+                      className={`min-h-[44px] px-4 flex items-center gap-1.5 font-display font-black uppercase text-sm tracking-wide rounded-lg transition-all ${
+                        isOpen
+                          ? 'text-brand-neon bg-white/10'
+                          : isActive
+                          ? 'text-brand-neon hover:bg-white/5'
+                          : 'text-white/80 hover:text-brand-neon hover:bg-white/5'
+                      }`}
+                    >
+                      {section.label}
+                      <ChevronDown
+                        className={`h-3.5 w-3.5 transition-transform duration-200 ${
+                          isOpen ? 'rotate-180' : ''
+                        }`}
+                      />
+                    </button>
 
-          {/* Desktop CTA */}
-          <div className="hidden lg:flex shrink-0">
-            <Link href="/register" className="btn-brutalist-neon px-5 py-2.5 text-xs whitespace-nowrap">
-              Join the Team
-            </Link>
+                    {isOpen && (
+                      <div className="absolute top-full left-1/2 z-40 mt-1 -translate-x-1/2 border border-brand-sky/20 border-t-2 border-t-brand-neon bg-brand-charcoal shadow-2xl">
+                        <div className="flex gap-10 px-6 py-6">
+                          {section.columns.map((col) => (
+                            <div
+                              key={col.heading}
+                              className="min-w-[140px] border-l border-brand-sky/20 pl-4"
+                            >
+                              <p className="mb-3 whitespace-nowrap font-display text-xs font-black uppercase tracking-widest text-brand-neon">
+                                {col.heading}
+                              </p>
+                              <ul className="space-y-0.5">
+                                {col.links.map((link) => (
+                                  <li key={link.label}>
+                                    <Link
+                                      href={link.href}
+                                      onClick={() => setOpenSection(null)}
+                                      className="group flex min-h-[44px] items-center gap-2 whitespace-nowrap py-2 text-sm font-semibold text-zinc-300 transition-colors hover:text-white"
+                                    >
+                                      <ChevronRight className="h-3.5 w-3.5 shrink-0 text-brand-neon opacity-0 transition-opacity group-hover:opacity-100" />
+                                      {link.label}
+                                    </Link>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </nav>
+
+            {/* Desktop CTA */}
+            <div className="shrink-0">
+              <Link href="/register" className="btn-brutalist-neon px-5 py-2.5 text-xs whitespace-nowrap">
+                Join the Team
+              </Link>
+            </div>
+
           </div>
 
           {/* Mobile hamburger */}
@@ -288,39 +326,6 @@ export default function Header() {
           </button>
 
         </div>
-
-        {/* Desktop mega menu panel */}
-        {openSection && (
-          <div className="hidden lg:block absolute left-0 right-0 top-full z-40 bg-brand-navy border-b-2 border-brand-neon shadow-2xl">
-            <div className="max-w-6xl mx-auto px-6 py-8">
-              {NAV_SECTIONS.filter((s) => s.label === openSection).map((section) => (
-                <div key={section.label} className="grid grid-cols-4 gap-8">
-                  {section.columns.map((col) => (
-                    <div key={col.heading}>
-                      <p className="font-display font-black uppercase text-xs tracking-widest text-brand-neon mb-3">
-                        {col.heading}
-                      </p>
-                      <ul>
-                        {col.links.map((link, i) => (
-                          <li key={i}>
-                            <Link
-                              href={link.href}
-                              onClick={() => setOpenSection(null)}
-                              className="flex items-center gap-2 py-2 min-h-[44px] text-sm font-semibold text-white/70 hover:text-white transition-colors group"
-                            >
-                              <ChevronRight className="h-3.5 w-3.5 shrink-0 opacity-0 group-hover:opacity-100 text-brand-neon transition-opacity" />
-                              {link.label}
-                            </Link>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
 
       </header>
 

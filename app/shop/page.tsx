@@ -1,115 +1,165 @@
-import type { Metadata } from "next";
 import Header from "@/components/Header";
-import { ShoppingBag } from "lucide-react";
-import { clubZapPaymentMap } from "@/config/payments";
+import { Backpack, Dumbbell, Footprints, Shirt } from "lucide-react";
 
-export const metadata: Metadata = {
-  title: "Shop | Rivervalley Rangers AFC",
+export const metadata = {
+  title: "Club Shop | Rivervalley Rangers AFC",
   description:
-    "Official Rivervalley Rangers AFC kit, training wear, and accessories.",
+    "Official Rivervalley Rangers AFC kit and merchandise, available now through our partner Balon Sports.",
 };
 
-const categories = [
+const productCategories = [
   {
+    icon: Shirt,
     label: "Match Kit",
-    description: "Official home and away kits for all age groups.",
-    items: "Home strip, away strip, goalkeeping kit.",
+    description: "Home and away shirts, shorts, socks and combo packs",
   },
   {
+    icon: Dumbbell,
     label: "Training Wear",
-    description: "Performance tops, tracksuit bottoms, and training bibs.",
-    items: "Training tops, base layers, jackets.",
+    description: "Windbreakers, quarter-zips, full-zip jackets and tops",
   },
   {
-    label: "Accessories",
-    description: "Bags, bottles, socks, and club branded accessories.",
-    items: "Kit bags, water bottles, shin guards, socks.",
+    icon: Footprints,
+    label: "Bottoms",
+    description: "Training shorts, skinny pants and pride pants",
   },
   {
-    label: "Supporter Wear",
-    description: "Casual club wear for supporters of all ages.",
-    items: "Hoodies, caps, scarves, leisure wear.",
+    icon: Backpack,
+    label: "Bags & Extras",
+    description: "Holdall bags, backpacks, socks and accessories",
   },
 ];
 
+const balonStoreUrl =
+  "https://www.balondirect.com/product-category/rivervalley-rangers";
+
+const neonGridStyle = {
+  backgroundImage:
+    "linear-gradient(rgba(133,227,32,0.12) 1px, transparent 1px), linear-gradient(90deg, rgba(133,227,32,0.12) 1px, transparent 1px)",
+  backgroundSize: "40px 40px",
+};
+
 export default function ShopPage() {
   return (
-    <div className="min-h-screen bg-brand-cream text-brand-charcoal">
+    <div className="min-h-screen bg-brand-cream">
       <Header />
 
       <main>
-        {/* Page header */}
-        <section className="border-b-4 border-brand-charcoal bg-white">
-          <div className="mx-auto max-w-6xl px-6 py-14 lg:py-20">
-            <div className="max-w-2xl">
-              <span className="mb-4 inline-flex items-center gap-2 rounded-full border-3 border-brand-charcoal bg-brand-neon px-4 py-2 font-display text-xs font-black uppercase tracking-wider">
-                <ShoppingBag className="h-4 w-4" aria-hidden="true" />
-                Official Store
-              </span>
-              <h1 className="font-display text-4xl font-black uppercase italic leading-none tracking-tighter md:text-6xl">
-                RVR Shop
-              </h1>
-              <p className="mt-5 text-base font-semibold leading-relaxed text-zinc-600 md:text-lg">
-                Official club kit, training wear, and accessories — all
-                processed securely through the club portal.
+        <section className="relative w-full overflow-hidden bg-brand-navy py-12 md:py-16">
+          <div
+            className="pointer-events-none absolute inset-0"
+            style={neonGridStyle}
+            aria-hidden="true"
+          />
+          <div className="relative mx-auto max-w-4xl px-4 text-center">
+            <span className="mb-6 inline-block border-2 border-brand-charcoal bg-brand-neon px-4 py-2 font-display text-xs font-black uppercase tracking-widest text-brand-charcoal">
+              Official Club Shop
+            </span>
+
+            <h1 className="mb-4 font-display text-4xl font-black uppercase italic leading-none tracking-tight text-brand-cream md:text-6xl">
+              KIT UP,
+              <br />
+              VALLEY
+            </h1>
+
+            <p className="mx-auto mb-8 max-w-xl text-lg font-semibold text-brand-sky md:text-xl">
+              Official Rivervalley Rangers AFC kit and merchandise, exclusively
+              through our partner Balon Sports.
+            </p>
+
+            <a
+              href={balonStoreUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-brutalist-neon mb-0 inline-flex min-h-11 items-center gap-2 px-8 py-4 text-base"
+            >
+              Shop Now on Balon →
+            </a>
+          </div>
+
+        </section>
+
+        <section className="bg-brand-cream py-16">
+          <div className="mx-auto max-w-4xl px-4">
+            <h2 className="mb-2 font-display text-3xl font-black uppercase italic text-brand-charcoal md:text-4xl">
+              What&apos;s In The Shop
+            </h2>
+            <p className="mb-10 text-sm text-zinc-500">
+              25 official RVR products available. New season stock added each
+              August.
+            </p>
+
+            <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+              {productCategories.map((category) => {
+                const Icon = category.icon;
+
+                return (
+                  <article
+                    key={category.label}
+                    className="flex flex-col gap-2 border-2 border-brand-charcoal bg-white p-5 shadow-brutalist"
+                  >
+                    <Icon
+                      className="mb-1 h-10 w-10 text-brand-navy"
+                      strokeWidth={2.5}
+                      aria-hidden="true"
+                    />
+                    <h3 className="font-display text-sm font-black uppercase text-brand-charcoal">
+                      {category.label}
+                    </h3>
+                    <p className="text-xs leading-relaxed text-zinc-500">
+                      {category.description}
+                    </p>
+                  </article>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
+        <section className="relative overflow-hidden border-t-4 border-brand-neon bg-brand-navy py-14">
+          <div
+            className="pointer-events-none absolute inset-0"
+            style={neonGridStyle}
+            aria-hidden="true"
+          />
+          <div className="relative mx-auto max-w-4xl px-4 md:flex md:items-center md:justify-between md:gap-12">
+            <div>
+              <p className="mb-2 font-mono text-xs uppercase tracking-widest text-brand-neon">
+                Our Kit Partner
+              </p>
+              <h2 className="mb-4 font-display text-3xl font-black italic text-brand-cream md:text-4xl">
+                Powered by Balon Sports
+              </h2>
+              <p className="mb-6 max-w-md text-sm leading-relaxed text-brand-sky/80 md:mb-0">
+                Balon Sports are our official kit supplier, providing
+                high-quality teamwear for every RVR squad from U7 right through
+                to our senior teams. All orders are handled directly through
+                Balon&apos;s secure online store.
+              </p>
+            </div>
+
+            <div className="shrink-0">
+              <a
+                href={balonStoreUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-brutalist-neon block min-h-11 items-center gap-2 whitespace-nowrap px-8 py-4 text-center text-sm md:inline-flex"
+              >
+                Visit the RVR Store on Balon →
+              </a>
+              <p className="mt-3 text-center font-mono text-xs text-brand-sky/40 md:text-right">
+                balondirect.com
               </p>
             </div>
           </div>
         </section>
 
-        {/* Category grid */}
-        <section className="mx-auto max-w-6xl px-6 py-12 lg:py-16">
-          <h2 className="sr-only">Product categories</h2>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {categories.map((category) => (
-              <article
-                key={category.label}
-                className="brutalist-card relative overflow-hidden bg-white p-6"
-              >
-                {/* Season launch overlay */}
-                <div className="absolute inset-0 z-10 flex items-center justify-center rounded-2xl bg-brand-cream/80 backdrop-blur-[2px]">
-                  <span className="rounded-full border-3 border-brand-charcoal bg-brand-neon px-4 py-1.5 font-display text-[10px] font-black uppercase tracking-wider shadow-[2px_2px_0_#121212]">
-                    Season 2026/27
-                  </span>
-                </div>
-
-                {/* Category content shown beneath the overlay */}
-                <div aria-hidden="true" className="space-y-3">
-                  <div className="h-32 rounded-xl border-2 border-zinc-200 bg-zinc-50" />
-                  <h3 className="font-display text-lg font-black uppercase tracking-tight">
-                    {category.label}
-                  </h3>
-                  <p className="text-xs font-semibold leading-relaxed text-zinc-500">
-                    {category.description}
-                  </p>
-                  <p className="text-[10px] font-medium text-zinc-400">
-                    {category.items}
-                  </p>
-                </div>
-              </article>
-            ))}
-          </div>
-
-          {/* ClubZap shop CTA */}
-          <div className="mt-10 rounded-2xl border-4 border-brand-charcoal bg-brand-charcoal p-6 text-white shadow-brutalist md:p-8">
-            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-              <div>
-                <p className="font-display text-sm font-black uppercase tracking-wide text-brand-neon">
-                  Order Kit Through the Club Portal
-                </p>
-                <p className="mt-2 max-w-xl text-sm font-semibold leading-relaxed text-zinc-300">
-                  All kit orders are processed securely through the RVR club
-                  portal. Orders open alongside season registration.
-                </p>
-              </div>
-              <a
-                href={clubZapPaymentMap.shop.targetUrl}
-                aria-label={clubZapPaymentMap.shop.title}
-                className="btn-brutalist-neon shrink-0 px-6 py-3 text-sm"
-              >
-                Order Kit
-              </a>
-            </div>
+        <section className="border-t border-zinc-200 bg-brand-cream py-10">
+          <div className="mx-auto max-w-4xl px-4 text-center">
+            <p className="font-mono text-xs uppercase tracking-wide text-zinc-400">
+              New season kit available each August · All sizes · Delivery
+              across Ireland
+            </p>
           </div>
         </section>
       </main>
