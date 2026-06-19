@@ -4,39 +4,211 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import { Menu, X } from 'lucide-react';
+import { ChevronDown, ChevronRight, Menu, X } from 'lucide-react';
 import { ASSET_PATHS } from '@/config/assets';
 
-const NAV_LINKS = [
-  { href: '/teams',                        label: 'Teams'     },
-  { href: '/fixtures',                     label: 'Fixtures'  },
-  { href: '/register',                     label: 'Join'      },
-  { href: '/club/safeguarding',            label: 'Club'      },
-  { href: '/campaigns/colour-fun-run',     label: 'Campaigns' },
-] as const;
+// ─── Types ────────────────────────────────────────────────────────────────────
+
+type NavLink   = { href: string; label: string };
+type NavColumn = { heading: string; links: NavLink[] };
+type NavSection = { label: string; columns: NavColumn[] };
+
+// ─── Desktop mega-menu data ───────────────────────────────────────────────────
+
+const NAV_SECTIONS: NavSection[] = [
+  {
+    label: 'Teams',
+    columns: [
+      {
+        heading: 'Youth Academy',
+        links: [
+          { href: '/teams',           label: 'All Teams'          },
+          { href: '/football-for-all', label: 'Football For All'  },
+          { href: '/register',        label: 'Register Now'       },
+        ],
+      },
+      {
+        heading: 'Youth Competitive',
+        links: [
+          { href: '/teams',    label: 'Squad Directory'    },
+          { href: '/fixtures', label: 'Fixtures & Results' },
+          { href: '/ddsl-jmo', label: 'DDSL JMO'          },
+        ],
+      },
+      {
+        heading: 'Senior & Adult',
+        links: [
+          { href: '/teams',          label: 'Senior Squads'   },
+          { href: '/fixtures',       label: 'Senior Fixtures' },
+          { href: '/astro-booking',  label: 'Book Astro Pitch'},
+        ],
+      },
+      {
+        heading: 'Girls & Women',
+        links: [
+          { href: '/teams',            label: 'Girls Teams'           },
+          { href: '/football-for-all', label: 'Girls Football For All'},
+          { href: '/register',         label: 'Register'              },
+        ],
+      },
+    ],
+  },
+  {
+    label: 'Fixtures',
+    columns: [
+      {
+        heading: 'Live Data',
+        links: [
+          { href: '/fixtures', label: 'All Fixtures & Results' },
+          { href: '/fixtures', label: 'Youth Teams'            },
+          { href: '/fixtures', label: 'Senior Teams'           },
+        ],
+      },
+      {
+        heading: 'Competitions',
+        links: [
+          { href: '/fixtures', label: 'DDSL 2025/26' },
+          { href: '/fixtures', label: 'LSL Senior'   },
+          { href: '/fixtures', label: 'AFL'           },
+          { href: '/fixtures', label: 'FAI Cups'      },
+        ],
+      },
+      {
+        heading: 'Officials',
+        links: [
+          { href: '/ddsl-jmo', label: 'Junior Match Officials' },
+        ],
+      },
+    ],
+  },
+  {
+    label: 'Join',
+    columns: [
+      {
+        heading: 'Membership',
+        links: [
+          { href: '/register',               label: 'Register a Player' },
+          { href: '/membership-calculator',  label: 'Calculate Fees'    },
+          { href: '/astro-booking',          label: 'Book Astro Pitch'  },
+        ],
+      },
+      {
+        heading: 'Programmes',
+        links: [
+          { href: '/football-for-all', label: 'Football For All'  },
+          { href: '/football-for-all', label: 'Walking Football'  },
+          { href: '/football-for-all', label: 'Sensory Sessions'  },
+        ],
+      },
+    ],
+  },
+  {
+    label: 'Club',
+    columns: [
+      {
+        heading: 'About RVR',
+        links: [
+          { href: '/contact', label: 'Contact Us' },
+          { href: '/shop',    label: 'Club Shop'  },
+        ],
+      },
+      {
+        heading: 'Safeguarding',
+        links: [
+          { href: '/club/safeguarding', label: 'Safeguarding Statement' },
+          { href: '/club/safeguarding', label: 'Garda Vetting'         },
+          { href: '/club/safeguarding', label: 'Child Welfare'         },
+        ],
+      },
+    ],
+  },
+  {
+    label: 'Campaigns',
+    columns: [
+      {
+        heading: 'Active',
+        links: [
+          { href: '/campaigns/colour-fun-run',       label: 'Colour Fun Run'        },
+          { href: '/campaigns/45th-anniversary-kit', label: '45th Anniversary Kit'  },
+        ],
+      },
+      {
+        heading: 'Support the Club',
+        links: [
+          { href: '/membership-calculator', label: 'Membership Fees' },
+          { href: '/shop',                  label: 'Club Shop'        },
+        ],
+      },
+    ],
+  },
+];
+
+// ─── Mobile overlay links ─────────────────────────────────────────────────────
 
 const MOBILE_NAV_LINKS = [
-  { href: '/teams',                        label: 'Teams'     },
-  { href: '/fixtures',                     label: 'Fixtures'  },
-  { href: '/register',                     label: 'Join Us'   },
-  { href: '/club/safeguarding',            label: 'Club'      },
-  { href: '/campaigns/colour-fun-run',     label: 'Campaigns' },
+  { href: '/teams',                    label: 'Teams'     },
+  { href: '/fixtures',                 label: 'Fixtures'  },
+  { href: '/register',                 label: 'Join Us'   },
+  { href: '/club/safeguarding',        label: 'Club'      },
+  { href: '/campaigns/colour-fun-run', label: 'Campaigns' },
 ] as const;
 
+// ─── Active-section helper ────────────────────────────────────────────────────
+
+function isNavActive(label: string, pathname: string): boolean {
+  if (label === 'Teams')     return pathname === '/teams';
+  if (label === 'Fixtures')  return pathname === '/fixtures';
+  if (label === 'Join')      return pathname === '/register';
+  if (label === 'Club')      return pathname.startsWith('/club');
+  if (label === 'Campaigns') return pathname.startsWith('/campaigns');
+  return false;
+}
+
+// ─── Component ───────────────────────────────────────────────────────────────
+
 export default function Header() {
-  const [open, setOpen] = useState(false);
+  const [open,        setOpen]        = useState(false);
+  const [openSection, setOpenSection] = useState<string | null>(null);
   const pathname = usePathname();
 
-  const close = () => setOpen(false);
+  const close    = () => setOpen(false);
+  const toggleSection = (label: string) =>
+    setOpenSection((prev) => (prev === label ? null : label));
 
+  // Body scroll lock for mobile overlay
   useEffect(() => {
     document.body.style.overflow = open ? 'hidden' : '';
     return () => { document.body.style.overflow = ''; };
   }, [open]);
 
+  // Close mega menu on outside click
+  useEffect(() => {
+    if (!openSection) return;
+    const handler = (e: MouseEvent) => {
+      const header = document.getElementById('site-header');
+      if (header && !header.contains(e.target as Node)) {
+        setOpenSection(null);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [openSection]);
+
+  // Close mega menu on Escape
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpenSection(null);
+    };
+    document.addEventListener('keydown', handler);
+    return () => document.removeEventListener('keydown', handler);
+  }, []);
+
   return (
     <>
-      <header className="sticky top-0 z-50 glass-dark border-b border-brand-sky/20">
+      <header
+        id="site-header"
+        className="relative sticky top-0 z-50 glass-dark border-b border-brand-sky/20"
+      >
         <div className="max-w-6xl mx-auto flex items-center justify-between h-16 px-4 md:px-6">
 
           {/* Logo */}
@@ -62,20 +234,33 @@ export default function Header() {
             </span>
           </Link>
 
-          {/* Desktop nav */}
+          {/* Desktop mega-menu trigger buttons */}
           <nav className="hidden lg:flex items-center gap-1" aria-label="Main navigation">
-            {NAV_LINKS.map(({ href, label }) => {
-              const active = pathname === href || pathname.startsWith(`${href}/`);
+            {NAV_SECTIONS.map((section) => {
+              const isOpen   = openSection === section.label;
+              const isActive = isNavActive(section.label, pathname);
               return (
-                <Link
-                  key={href}
-                  href={href}
-                  className={`font-display font-black uppercase text-xs xl:text-sm tracking-wide transition-colors px-3 py-2 min-h-[44px] inline-flex items-center rounded-lg hover:bg-white/5 ${
-                    active ? 'text-brand-neon' : 'text-white/80 hover:text-brand-neon'
+                <button
+                  key={section.label}
+                  type="button"
+                  onClick={() => toggleSection(section.label)}
+                  aria-expanded={isOpen}
+                  aria-haspopup="true"
+                  className={`min-h-[44px] px-4 flex items-center gap-1.5 font-display font-black uppercase text-sm tracking-wide rounded-lg transition-all ${
+                    isOpen
+                      ? 'text-brand-neon bg-white/10'
+                      : isActive
+                      ? 'text-brand-neon hover:bg-white/5'
+                      : 'text-white/80 hover:text-brand-neon hover:bg-white/5'
                   }`}
                 >
-                  {label}
-                </Link>
+                  {section.label}
+                  <ChevronDown
+                    className={`h-3.5 w-3.5 transition-transform duration-200 ${
+                      isOpen ? 'rotate-180' : ''
+                    }`}
+                  />
+                </button>
               );
             })}
           </nav>
@@ -103,6 +288,40 @@ export default function Header() {
           </button>
 
         </div>
+
+        {/* Desktop mega menu panel */}
+        {openSection && (
+          <div className="hidden lg:block absolute left-0 right-0 top-full z-40 bg-brand-navy border-b-2 border-brand-neon shadow-2xl">
+            <div className="max-w-6xl mx-auto px-6 py-8">
+              {NAV_SECTIONS.filter((s) => s.label === openSection).map((section) => (
+                <div key={section.label} className="grid grid-cols-4 gap-8">
+                  {section.columns.map((col) => (
+                    <div key={col.heading}>
+                      <p className="font-display font-black uppercase text-xs tracking-widest text-brand-neon mb-3">
+                        {col.heading}
+                      </p>
+                      <ul>
+                        {col.links.map((link, i) => (
+                          <li key={i}>
+                            <Link
+                              href={link.href}
+                              onClick={() => setOpenSection(null)}
+                              className="flex items-center gap-2 py-2 min-h-[44px] text-sm font-semibold text-white/70 hover:text-white transition-colors group"
+                            >
+                              <ChevronRight className="h-3.5 w-3.5 shrink-0 opacity-0 group-hover:opacity-100 text-brand-neon transition-opacity" />
+                              {link.label}
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
       </header>
 
       {/* Mobile full-screen overlay */}
