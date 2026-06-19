@@ -173,3 +173,12 @@ body {
 .input-brutalist:focus {
   box-shadow: 0 0 0 4px #85E320;
 }
+
+@keyframes ticker {
+  from { transform: translateX(100%); }
+  to   { transform: translateX(-100%); }
+}
+
+.animate-ticker {
+  animation: ticker 30s linear infinite;
+}

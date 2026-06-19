@@ -71,7 +71,7 @@ export default function TeamsPage() {
     <div className="flex flex-col min-h-screen bg-brand-navy text-brand-cream">
       <Header />
 
-      <main className="flex-grow">
+      <main className="grow">
 
         {/* ── Hero ─────────────────────────────────────────────────────────── */}
         <section className="px-4 md:px-8 pt-14 pb-12 border-b border-brand-sky/20">
@@ -88,7 +88,7 @@ export default function TeamsPage() {
             </p>
             <Link
               href="/teams/matches"
-              className="inline-flex items-center gap-2 min-h-[44px] px-6 py-3 bg-brand-neon text-brand-charcoal font-display font-black uppercase text-sm rounded-2xl border-3 border-brand-charcoal shadow-brutalist hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 transition-all"
+              className="inline-flex items-center gap-2 min-h-11 px-6 py-3 bg-brand-neon text-brand-charcoal font-display font-black uppercase text-sm rounded-2xl border-3 border-brand-charcoal shadow-brutalist hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 transition-all"
             >
               Live Fixtures &amp; Tables
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4" aria-hidden="true">
@@ -120,7 +120,7 @@ export default function TeamsPage() {
                 <Link
                   key={ag.ageGroup}
                   href="/teams/matches"
-                  className="group block bg-brand-charcoal border-2 border-brand-sky/30 hover:border-brand-neon rounded-2xl p-5 transition-colors min-h-[44px]"
+                  className="group block bg-brand-charcoal border-2 border-brand-sky/30 hover:border-brand-neon rounded-2xl p-5 transition-colors min-h-11"
                 >
                   {/* Tier badge */}
                   <span
@@ -200,7 +200,7 @@ export default function TeamsPage() {
                 <Link
                   key={team.slug}
                   href={`/club-teams/${team.slug}`}
-                  className="group block bg-brand-charcoal border-2 border-brand-neon hover:border-brand-maroon rounded-2xl p-6 transition-colors min-h-[44px]"
+                  className="group block bg-brand-charcoal border-2 border-brand-neon hover:border-brand-maroon rounded-2xl p-6 transition-colors min-h-11"
                 >
                   <div className="flex items-center gap-3 mb-2">
                     <span className="text-2xl" aria-hidden="true">{team.badge}</span>
@@ -244,7 +244,7 @@ export default function TeamsPage() {
                 <Link
                   key={team.slug}
                   href={`/club-teams/${team.slug}`}
-                  className="group block bg-brand-charcoal border-2 border-brand-neon hover:border-brand-maroon rounded-2xl p-6 transition-colors min-h-[44px]"
+                  className="group block bg-brand-charcoal border-2 border-brand-neon hover:border-brand-maroon rounded-2xl p-6 transition-colors min-h-11"
                 >
                   <div className="flex items-center gap-3 mb-2">
                     <span className="text-2xl" aria-hidden="true">{team.badge}</span>
@@ -288,7 +288,7 @@ export default function TeamsPage() {
                 <Link
                   key={team.slug}
                   href={`/club-teams/${team.slug}`}
-                  className="group block bg-brand-charcoal border-2 border-brand-neon hover:border-brand-maroon rounded-2xl p-6 transition-colors min-h-[44px]"
+                  className="group block bg-brand-charcoal border-2 border-brand-neon hover:border-brand-maroon rounded-2xl p-6 transition-colors min-h-11"
                 >
                   <div className="flex items-center gap-3 mb-2">
                     <span className="text-2xl" aria-hidden="true">{team.badge}</span>
@@ -327,7 +327,7 @@ export default function TeamsPage() {
             </div>
             <Link
               href="/teams/matches"
-              className="shrink-0 inline-flex items-center justify-center gap-2 min-h-[44px] px-8 py-3 bg-brand-neon text-brand-charcoal font-display font-black uppercase text-sm rounded-2xl border-3 border-brand-charcoal shadow-brutalist hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 transition-all"
+              className="shrink-0 inline-flex items-center justify-center gap-2 min-h-11 px-8 py-3 bg-brand-neon text-brand-charcoal font-display font-black uppercase text-sm rounded-2xl border-3 border-brand-charcoal shadow-brutalist hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 transition-all"
             >
               Open Matchday Hub
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4" aria-hidden="true">

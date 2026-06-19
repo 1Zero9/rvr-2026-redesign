@@ -1,11 +1,10 @@
 import Header from '@/components/Header';
 import Hero from '@/components/Hero';
 import Link from 'next/link';
+import TeletextFixtures from '@/components/TeletextFixtures';
 import { CLUB_SEASON } from '@/config/club-season';
 import { APP_VERSION, APP_VERSION_DATE } from '@/config/version';
 import { KNOWN_DIVISIONS } from '@/config/ddsl-competitions';
-import { cacheGet } from '@/lib/ddsl/cache';
-import type { NormalisedMatch, SyncResponse } from '@/lib/ddsl/types';
 
 const COMMUNITY_CATEGORIES = [
   {
@@ -29,27 +28,6 @@ const COMMUNITY_CATEGORIES = [
     copy: 'A welcoming programme for players of every ability.',
   },
 ] as const;
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Helpers (called at render time — no HTTP round-trip)
-// ─────────────────────────────────────────────────────────────────────────────
-
-function getUpcomingFixtures(): NormalisedMatch[] {
-  const cached = cacheGet<SyncResponse>('ddsl:sync');
-  if (!cached.hit) return [];
-  return cached.data.fixtures
-    .filter((f) => f.status === 'upcoming')
-    .sort((a, b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time))
-    .slice(0, 5);
-}
-
-function formatFixtureDate(iso: string): string {
-  return new Date(iso).toLocaleDateString('en-IE', {
-    weekday: 'short',
-    day: 'numeric',
-    month: 'short',
-  });
-}
 
 interface AgeGroupSummary {
   ageGroup: string;
@@ -84,7 +62,6 @@ function getAgeGroupSummaries(): AgeGroupSummary[] {
 // ─────────────────────────────────────────────────────────────────────────────
 
 export default function Home() {
-  const fixtures = getUpcomingFixtures();
   const ageGroups = getAgeGroupSummaries();
 
   const [startStr] = CLUB_SEASON.currentSeason.split('/');
@@ -108,68 +85,8 @@ export default function Home() {
                 Next Up
                 <span className="text-brand-neon ml-2">⚽</span>
               </h2>
-              <Link
-                href="/teams/matches"
-                className="min-h-[44px] inline-flex items-center px-2 -mr-2 text-xs font-display font-black uppercase tracking-wide text-brand-sky hover:text-brand-neon transition-colors"
-              >
-                All fixtures →
-              </Link>
             </div>
-
-            {fixtures.length === 0 ? (
-              <div className="border border-brand-sky/20 rounded-2xl p-10 text-center">
-                <p className="font-display font-bold text-brand-sky uppercase text-lg">
-                  Fixtures Loading
-                </p>
-                <p className="text-brand-sky/50 text-sm mt-2">
-                  Live data syncs daily at 07:00 UTC — check back soon.
-                </p>
-              </div>
-            ) : (
-              <div className="flex gap-4 overflow-x-auto pb-2 -mx-2 px-2 snap-x snap-mandatory">
-                {fixtures.map((f) => {
-                  const rvrSide = f.isRvrHome ? 'H' : 'A';
-                  const opponent = f.isRvrHome ? f.awayTeam : f.homeTeam;
-                  return (
-                    <div
-                      key={f.id}
-                      className="snap-start flex-shrink-0 w-52 bg-brand-charcoal border-2 border-brand-sky/20 rounded-2xl p-4 flex flex-col gap-3"
-                    >
-                      <div className="flex items-center justify-between">
-                        <span className="inline-block bg-brand-neon text-brand-charcoal font-display font-black text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full">
-                          {f.ageGroup}
-                        </span>
-                        <span
-                          className={`font-display font-black text-xs px-2 py-0.5 rounded-full border ${
-                            rvrSide === 'H'
-                              ? 'border-brand-green text-brand-neon'
-                              : 'border-brand-sky/40 text-brand-sky'
-                          }`}
-                        >
-                          {rvrSide === 'H' ? 'Home' : 'Away'}
-                        </span>
-                      </div>
-
-                      <div>
-                        <p className="text-[11px] text-brand-sky/60 uppercase tracking-wider font-semibold">
-                          vs
-                        </p>
-                        <p className="font-display font-black text-sm text-brand-cream leading-tight mt-0.5">
-                          {opponent}
-                        </p>
-                      </div>
-
-                      <div className="mt-auto pt-2 border-t border-brand-sky/20">
-                        <p className="font-mono text-xs text-brand-sky">
-                          {formatFixtureDate(f.date)}
-                        </p>
-                        <p className="font-mono text-xs text-brand-sky/60">{f.time}</p>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
+            <TeletextFixtures />
           </div>
         </section>
 
