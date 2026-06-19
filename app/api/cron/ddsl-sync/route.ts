@@ -21,6 +21,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { CRON_SECRET } from '@/lib/safeguarding/constants';
 import { KNOWN_DIVISIONS } from '@/config/ddsl-competitions';
+import { scrapeAllAflStandings } from '@/lib/afl/scraper';
+import { AFL_DIVISIONS } from '@/config/afl-competitions';
+import { prisma } from '@/lib/prisma';
 import {
   RVR_CLUB_ID,
   FALLBACK_AJAX_COMPETITION_ID,
@@ -172,6 +175,56 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     console.error('[cron/ddsl-sync] persist error:', err);
   }
 
+  // ── Step 6b: Scrape and persist AFL standings ─────────────────────────────
+  let aflDivisionsUpdated = 0;
+  const activeSeasonId = persistResult?.seasonId;
+
+  if (activeSeasonId) {
+    try {
+      const aflTables = await scrapeAllAflStandings(AFL_DIVISIONS, CURRENT_SEASON);
+
+      if (aflTables.length === 0) {
+        console.warn('[cron/ddsl-sync] AFL scrape returned no divisions — skipping AFL persist');
+      }
+
+      for (const table of aflTables) {
+        await prisma.$transaction([
+          prisma.historicalStanding.deleteMany({
+            where: {
+              seasonId:    activeSeasonId,
+              divisionName: table.division.competitionName,
+              source:      'AFL',
+            },
+          }),
+          prisma.historicalStanding.createMany({
+            data: table.standings.map((row) => ({
+              seasonId:       activeSeasonId,
+              source:         'AFL',
+              divisionName:   table.division.competitionName,
+              position:       row.position,
+              teamName:       row.teamName,
+              played:         row.played,
+              won:            row.won,
+              drawn:          row.drawn,
+              lost:           row.lost,
+              goalsFor:       0,
+              goalsAgainst:   0,
+              goalDifference: 0,
+              points:         row.points,
+            })),
+          }),
+        ]);
+        aflDivisionsUpdated++;
+      }
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      errors.push(`AFL persist: ${msg}`);
+      console.error('[cron/ddsl-sync] AFL persist error:', err);
+    }
+  } else {
+    console.warn('[cron/ddsl-sync] No active season ID available — skipping AFL persist');
+  }
+
   // ── Step 7: Bust the in-process cache ────────────────────────────────────
   cacheInvalidate(SYNC_CACHE_KEY);
 
@@ -192,17 +245,18 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
   console.log(
     `[cron/ddsl-sync] complete — scraped: ${rawStandings.length}, tables: ${tables.length},` +
-    ` rows written: ${persistResult?.rowsWritten ?? 0}, elapsed: ${elapsed}ms`,
+    ` rows written: ${persistResult?.rowsWritten ?? 0}, afl divisions: ${aflDivisionsUpdated}, elapsed: ${elapsed}ms`,
   );
 
   return NextResponse.json({
-    ok:            errors.length === 0,
-    season:        CURRENT_SEASON,
+    ok:                   errors.length === 0,
+    season:               CURRENT_SEASON,
     elapsed,
-    discovered:    discoveredIds.size,
-    tablesScraped: rawStandings.length,
-    tablesWritten: persistResult?.tablesWritten ?? 0,
-    rowsWritten:   persistResult?.rowsWritten   ?? 0,
+    discovered:           discoveredIds.size,
+    tablesScraped:        rawStandings.length,
+    tablesWritten:        persistResult?.tablesWritten ?? 0,
+    rowsWritten:          persistResult?.rowsWritten   ?? 0,
+    aflDivisionsUpdated,
     anomalies,
     errors: process.env.NODE_ENV === 'development'
       ? errors
