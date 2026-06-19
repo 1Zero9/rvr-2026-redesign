@@ -11,7 +11,7 @@ import { ASSET_PATHS } from '@/config/assets';
 
 type NavLink   = { href: string; label: string };
 type NavColumn = { heading: string; links: NavLink[] };
-type NavSection = { label: string; columns: NavColumn[] };
+type NavSection = { label: string; columns: NavColumn[]; directHref?: string };
 
 // ─── Desktop mega-menu data ───────────────────────────────────────────────────
 
@@ -82,6 +82,11 @@ const NAV_SECTIONS: NavSection[] = [
     ],
   },
   {
+    label: 'Tables',
+    directHref: '/league-tables',
+    columns: [],
+  },
+  {
     label: 'Join',
     columns: [
       {
@@ -148,6 +153,7 @@ const NAV_SECTIONS: NavSection[] = [
 const MOBILE_NAV_LINKS = [
   { href: '/teams',                    label: 'Teams'     },
   { href: '/fixtures',                 label: 'Fixtures'  },
+  { href: '/league-tables',           label: 'Tables'    },
   { href: '/register',                 label: 'Join Us'   },
   { href: '/club/safeguarding',        label: 'Club'      },
   { href: '/campaigns/colour-fun-run', label: 'Campaigns' },
@@ -158,6 +164,7 @@ const MOBILE_NAV_LINKS = [
 function isNavActive(label: string, pathname: string): boolean {
   if (label === 'Teams')     return pathname === '/teams';
   if (label === 'Fixtures')  return pathname === '/fixtures';
+  if (label === 'Tables')    return pathname.startsWith('/league-tables');
   if (label === 'Join')      return pathname === '/register';
   if (label === 'Club')      return pathname.startsWith('/club');
   if (label === 'Campaigns') return pathname.startsWith('/campaigns');
@@ -243,58 +250,73 @@ export default function Header() {
                 const isActive = isNavActive(section.label, pathname);
                 return (
                   <div key={section.label} className="relative">
-                    <button
-                      type="button"
-                      onMouseEnter={() => {
-                        if (closeTimer.current) clearTimeout(closeTimer.current);
-                        setOpenSection(section.label);
-                      }}
-                      aria-expanded={isOpen}
-                      className={`min-h-[44px] px-4 flex items-center gap-1.5 font-display font-black uppercase text-sm tracking-wide rounded-lg transition-all ${
-                        isOpen
-                          ? 'text-brand-neon bg-white/10'
-                          : isActive
-                          ? 'text-brand-neon hover:bg-white/5'
-                          : 'text-white/80 hover:text-brand-neon hover:bg-white/5'
-                      }`}
-                    >
-                      {section.label}
-                      <ChevronDown
-                        className={`h-3.5 w-3.5 transition-transform duration-200 ${
-                          isOpen ? 'rotate-180' : ''
+                    {section.directHref ? (
+                      <Link
+                        href={section.directHref}
+                        className={`min-h-[44px] px-4 flex items-center font-display font-black uppercase text-sm tracking-wide rounded-lg transition-all ${
+                          isActive
+                            ? 'text-brand-neon hover:bg-white/5'
+                            : 'text-white/80 hover:text-brand-neon hover:bg-white/5'
                         }`}
-                      />
-                    </button>
+                      >
+                        {section.label}
+                      </Link>
+                    ) : (
+                      <>
+                        <button
+                          type="button"
+                          onMouseEnter={() => {
+                            if (closeTimer.current) clearTimeout(closeTimer.current);
+                            setOpenSection(section.label);
+                          }}
+                          aria-expanded={isOpen}
+                          className={`min-h-[44px] px-4 flex items-center gap-1.5 font-display font-black uppercase text-sm tracking-wide rounded-lg transition-all ${
+                            isOpen
+                              ? 'text-brand-neon bg-white/10'
+                              : isActive
+                              ? 'text-brand-neon hover:bg-white/5'
+                              : 'text-white/80 hover:text-brand-neon hover:bg-white/5'
+                          }`}
+                        >
+                          {section.label}
+                          <ChevronDown
+                            className={`h-3.5 w-3.5 transition-transform duration-200 ${
+                              isOpen ? 'rotate-180' : ''
+                            }`}
+                          />
+                        </button>
 
-                    {isOpen && (
-                      <div className="absolute top-full left-1/2 z-40 mt-1 -translate-x-1/2 border border-brand-sky/20 border-t-2 border-t-brand-neon bg-brand-charcoal shadow-2xl">
-                        <div className="flex gap-10 px-6 py-6">
-                          {section.columns.map((col) => (
-                            <div
-                              key={col.heading}
-                              className="min-w-[140px] border-l border-brand-sky/20 pl-4"
-                            >
-                              <p className="mb-3 whitespace-nowrap font-display text-xs font-black uppercase tracking-widest text-brand-neon">
-                                {col.heading}
-                              </p>
-                              <ul className="space-y-0.5">
-                                {col.links.map((link) => (
-                                  <li key={link.label}>
-                                    <Link
-                                      href={link.href}
-                                      onClick={() => setOpenSection(null)}
-                                      className="group flex min-h-[44px] items-center gap-2 whitespace-nowrap py-2 text-sm font-semibold text-zinc-300 transition-colors hover:text-white"
-                                    >
-                                      <ChevronRight className="h-3.5 w-3.5 shrink-0 text-brand-neon opacity-0 transition-opacity group-hover:opacity-100" />
-                                      {link.label}
-                                    </Link>
-                                  </li>
-                                ))}
-                              </ul>
+                        {isOpen && (
+                          <div className="absolute top-full left-1/2 z-40 mt-1 -translate-x-1/2 border border-brand-sky/20 border-t-2 border-t-brand-neon bg-brand-charcoal shadow-2xl">
+                            <div className="flex gap-10 px-6 py-6">
+                              {section.columns.map((col) => (
+                                <div
+                                  key={col.heading}
+                                  className="min-w-[140px] border-l border-brand-sky/20 pl-4"
+                                >
+                                  <p className="mb-3 whitespace-nowrap font-display text-xs font-black uppercase tracking-widest text-brand-neon">
+                                    {col.heading}
+                                  </p>
+                                  <ul className="space-y-0.5">
+                                    {col.links.map((link) => (
+                                      <li key={link.label}>
+                                        <Link
+                                          href={link.href}
+                                          onClick={() => setOpenSection(null)}
+                                          className="group flex min-h-[44px] items-center gap-2 whitespace-nowrap py-2 text-sm font-semibold text-zinc-300 transition-colors hover:text-white"
+                                        >
+                                          <ChevronRight className="h-3.5 w-3.5 shrink-0 text-brand-neon opacity-0 transition-opacity group-hover:opacity-100" />
+                                          {link.label}
+                                        </Link>
+                                      </li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              ))}
                             </div>
-                          ))}
-                        </div>
-                      </div>
+                          </div>
+                        )}
+                      </>
                     )}
                   </div>
                 );

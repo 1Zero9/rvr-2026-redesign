@@ -33,7 +33,7 @@ const sections: NavSection[] = [
     icon: <Users className="w-5 h-5 text-brand-neon" />,
     links: [
       { label: 'Squad Directory', path: '/teams' },
-      { label: 'Fixtures & Results', path: '/teams/matches' },
+      { label: 'Fixtures & Results', path: '/fixtures' },
       { label: 'Football For All', path: '/football-for-all' },
     ],
   },
@@ -42,7 +42,7 @@ const sections: NavSection[] = [
     icon: <HelpCircle className="w-5 h-5 text-brand-neon" />,
     links: [
       { label: 'Squad Directory', path: '/teams' },
-      { label: 'Fixtures & Results', path: '/teams/matches' },
+      { label: 'Fixtures & Results', path: '/fixtures' },
       { label: 'Football For All Sessions', path: '/football-for-all' },
       { label: 'Register Now', path: '/register' },
       { label: 'Family Registration', path: '/register' },
@@ -52,7 +52,7 @@ const sections: NavSection[] = [
     title: 'Youth Competitive',
     icon: <Activity className="w-5 h-5 text-brand-neon" />,
     links: [
-      { label: 'Fixtures & Results', path: '/teams/matches' },
+      { label: 'Fixtures & Results', path: '/fixtures' },
       { label: 'DDSL Match Schedules', path: '/ddsl-jmo' },
       { label: 'Squad Directory', path: '/teams' },
       { label: 'Register Now', path: '/register' },
@@ -64,7 +64,7 @@ const sections: NavSection[] = [
     icon: <Trophy className="w-5 h-5 text-brand-neon" />,
     links: [
       { label: 'Squad Directory', path: '/teams' },
-      { label: 'Fixtures & Results', path: '/teams/matches' },
+      { label: 'Fixtures & Results', path: '/fixtures' },
     ],
   },
   {

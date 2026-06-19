@@ -515,6 +515,7 @@ model HistoricalStanding {
   id             String   @id @default(cuid())
   seasonId       String
   season         Season   @relation(fields: [seasonId], references: [id], onDelete: Restrict)
+  source         String   @default("DDSL")
   divisionName   String
   position       Int
   teamName       String
@@ -531,6 +532,7 @@ model HistoricalStanding {
 
   @@index([seasonId, divisionName])
   @@index([seasonId, divisionName, position])
+  @@index([seasonId, source])
   @@index([teamName])
 }
 

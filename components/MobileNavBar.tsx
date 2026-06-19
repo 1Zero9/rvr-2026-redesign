@@ -12,8 +12,8 @@ const navItems = [
     icon: Home,
   },
   {
-    label: 'Matches',
-    path: '/teams/matches',
+    label: 'Fixtures',
+    path: '/fixtures',
     ariaLabel: 'View Fixtures and Results',
     icon: Calendar,
   },
