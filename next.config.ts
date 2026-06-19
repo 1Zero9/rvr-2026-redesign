@@ -57,9 +57,29 @@ const nextConfig: NextConfig = {
     ];
   },
 
-  // Disallow crawling of admin/api paths
   async redirects() {
-    return [];
+    return [
+      {
+        source: '/club-teams',
+        destination: '/teams',
+        permanent: true,
+      },
+      {
+        source: '/club-teams/:slug*',
+        destination: '/teams',
+        permanent: true,
+      },
+      {
+        source: '/teams/matches',
+        destination: '/fixtures',
+        permanent: true,
+      },
+      {
+        source: '/club/anniversary',
+        destination: '/campaigns/45th-anniversary-kit',
+        permanent: true,
+      },
+    ];
   },
 };
 

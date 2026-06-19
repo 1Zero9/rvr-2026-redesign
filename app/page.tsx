@@ -225,7 +225,7 @@ export default function Home() {
               {COMMUNITY_CATEGORIES.map((cat) => (
                 <Link
                   key={cat.label}
-                  href="/club-teams"
+                  href="/teams"
                   className="group block bg-brand-charcoal border-2 border-brand-neon hover:border-brand-maroon rounded-2xl p-6 transition-colors min-h-[44px]"
                 >
                   <div className="flex items-center gap-3 mb-3">

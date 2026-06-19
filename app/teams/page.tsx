@@ -87,7 +87,7 @@ export default function TeamsPage() {
               pre-DDSL academy, adult, community, and inclusive football.
             </p>
             <Link
-              href="/teams/matches"
+              href="/fixtures"
               className="inline-flex items-center gap-2 min-h-11 px-6 py-3 bg-brand-neon text-brand-charcoal font-display font-black uppercase text-sm rounded-2xl border-3 border-brand-charcoal shadow-brutalist hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 transition-all"
             >
               Live Fixtures &amp; Tables
@@ -119,7 +119,7 @@ export default function TeamsPage() {
               {ageGroups.map((ag) => (
                 <Link
                   key={ag.ageGroup}
-                  href="/teams/matches"
+                  href="/fixtures"
                   className="group block bg-brand-charcoal border-2 border-brand-sky/30 hover:border-brand-neon rounded-2xl p-5 transition-colors min-h-11"
                 >
                   {/* Tier badge */}
@@ -326,7 +326,7 @@ export default function TeamsPage() {
               </p>
             </div>
             <Link
-              href="/teams/matches"
+              href="/fixtures"
               className="shrink-0 inline-flex items-center justify-center gap-2 min-h-11 px-8 py-3 bg-brand-neon text-brand-charcoal font-display font-black uppercase text-sm rounded-2xl border-3 border-brand-charcoal shadow-brutalist hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 transition-all"
             >
               Open Matchday Hub

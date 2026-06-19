@@ -144,7 +144,7 @@ export default async function ClubTeamPage({
         {/* ── Back link ─────────────────────────────────────────────────────── */}
         <div className="bg-brand-navy border-t border-brand-sky/20 px-4 py-2">
           <Link
-            href="/club-teams"
+            href="/teams"
             className="inline-flex items-center min-h-[44px] text-brand-sky hover:text-brand-neon transition-colors font-semibold"
           >
             ← All Teams
