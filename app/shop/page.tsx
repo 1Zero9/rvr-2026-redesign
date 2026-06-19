@@ -45,38 +45,41 @@ export default function ShopPage() {
       <Header />
 
       <main>
-        <section className="relative w-full overflow-hidden bg-brand-navy py-12 md:py-16">
+        <section className="relative w-full overflow-hidden bg-brand-navy py-10 md:py-12">
           <div
             className="pointer-events-none absolute inset-0"
             style={neonGridStyle}
             aria-hidden="true"
           />
-          <div className="relative mx-auto max-w-4xl px-4 text-center">
-            <span className="mb-6 inline-block border-2 border-brand-charcoal bg-brand-neon px-4 py-2 font-display text-xs font-black uppercase tracking-widest text-brand-charcoal">
-              Official Club Shop
-            </span>
+          <div className="relative mx-auto grid max-w-6xl items-center gap-8 px-4 text-center md:grid-cols-[0.9fr_1.1fr] md:gap-12 md:px-6 md:text-left">
+            <div>
+              <span className="mb-5 inline-block border-2 border-brand-charcoal bg-brand-neon px-4 py-2 font-display text-xs font-black uppercase tracking-widest text-brand-charcoal">
+                Official Club Shop
+              </span>
 
-            <h1 className="mb-4 font-display text-4xl font-black uppercase italic leading-none tracking-tight text-brand-cream md:text-6xl">
-              KIT UP,
-              <br />
-              VALLEY
-            </h1>
+              <h1 className="font-display text-4xl font-black uppercase italic leading-none tracking-tight text-brand-cream md:text-6xl">
+                KIT UP,
+                <br />
+                VALLEY
+              </h1>
+            </div>
 
-            <p className="mx-auto mb-8 max-w-xl text-lg font-semibold text-brand-sky md:text-xl">
-              Official Rivervalley Rangers AFC kit and merchandise, exclusively
-              through our partner Balon Sports.
-            </p>
+            <div className="md:border-l md:border-brand-sky/25 md:pl-12">
+              <p className="mx-auto mb-6 max-w-xl text-lg font-semibold text-brand-sky md:mx-0 md:text-xl">
+                Official Rivervalley Rangers AFC kit and merchandise,
+                exclusively through our partner Balon Sports.
+              </p>
 
-            <a
-              href={balonStoreUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn-brutalist-neon mb-0 inline-flex min-h-11 items-center gap-2 px-8 py-4 text-base"
-            >
-              Shop Now on Balon →
-            </a>
+              <a
+                href={balonStoreUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-brutalist-neon inline-flex min-h-11 items-center gap-2 px-8 py-4 text-base"
+              >
+                Shop Now on Balon →
+              </a>
+            </div>
           </div>
-
         </section>
 
         <section className="bg-brand-cream py-16">
