@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Header from '@/components/Header';
-import FixtureList from '@/components/fixtures/FixtureList';
+import FixturesPageClient from '@/components/fixtures/FixturesPageClient';
 import type { SyncResponse, NormalisedMatch } from '@/lib/ddsl/types';
 import { CLUB_SEASON } from '@/config/club-season';
 
@@ -31,16 +31,16 @@ export default async function FixturesPage() {
   return (
     <div className="bg-brand-cream min-h-screen">
       <Header />
-
-      <main className="max-w-2xl mx-auto px-4 py-8">
-        <h1 className="text-brand-navy font-display font-black italic text-4xl lg:text-6xl uppercase tracking-tight leading-none mb-1">
-          Fixtures &amp; Results
-        </h1>
-        <p className="text-zinc-500 text-sm font-semibold mb-8">
-          {CLUB_SEASON.currentSeason} Season
-        </p>
-
-        <FixtureList fixtures={fixtures} results={results} />
+      <main>
+        <div className="max-w-2xl mx-auto px-4 pt-8">
+          <h1 className="text-brand-navy font-display font-black italic text-4xl lg:text-6xl uppercase tracking-tight leading-none mb-1">
+            Fixtures &amp; Results
+          </h1>
+          <p className="text-zinc-500 text-sm font-semibold mb-6">
+            {CLUB_SEASON.currentSeason} Season
+          </p>
+        </div>
+        <FixturesPageClient fixtures={fixtures} results={results} />
       </main>
     </div>
   );
