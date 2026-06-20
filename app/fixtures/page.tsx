@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
 import Header from '@/components/Header';
 import FixturesPageClient from '@/components/fixtures/FixturesPageClient';
-import type { SyncResponse, NormalisedMatch } from '@/lib/ddsl/types';
+import type { SyncResponse, NormalisedMatch, LeagueTable } from '@/lib/ddsl/types';
+import { prisma } from '@/lib/prisma';
 import { CLUB_SEASON } from '@/config/club-season';
 
 export const metadata: Metadata = {
@@ -22,11 +23,54 @@ async function getSyncData(): Promise<SyncResponse | null> {
   }
 }
 
+export type HistoricalStandingEntry = {
+  divisionName: string;
+  teamName:     string;
+  position:     number;
+  played:       number;
+  won:          number;
+  drawn:        number;
+  lost:         number;
+  points:       number;
+};
+
 export default async function FixturesPage() {
   const data = await getSyncData();
 
   const fixtures: NormalisedMatch[] = data?.fixtures ?? [];
-  const results: NormalisedMatch[]  = data?.results  ?? [];
+  const results:  NormalisedMatch[] = data?.results  ?? [];
+  const tables:   LeagueTable[]     = data?.tables   ?? [];
+
+  // Two-step historical standings query — avoids nested relation filter
+  let historicalStandings: HistoricalStandingEntry[] = [];
+  try {
+    const activeSeason = await prisma.season.findFirst({
+      where: { isActive: true },
+      select: { id: true },
+    });
+
+    if (activeSeason) {
+      historicalStandings = await prisma.historicalStanding.findMany({
+        where: {
+          seasonId: activeSeason.id,
+          source:   'DDSL',
+        },
+        select: {
+          divisionName: true,
+          teamName:     true,
+          position:     true,
+          played:       true,
+          won:          true,
+          drawn:        true,
+          lost:         true,
+          points:       true,
+        },
+        orderBy: { position: 'asc' },
+      });
+    }
+  } catch {
+    // DB unavailable — historicalStandings stays empty
+  }
 
   return (
     <div className="bg-brand-cream min-h-screen">
@@ -40,7 +84,12 @@ export default async function FixturesPage() {
             {CLUB_SEASON.currentSeason} Season
           </p>
         </div>
-        <FixturesPageClient fixtures={fixtures} results={results} />
+        <FixturesPageClient
+          fixtures={fixtures}
+          results={results}
+          tables={tables}
+          historicalStandings={historicalStandings}
+        />
       </main>
     </div>
   );
