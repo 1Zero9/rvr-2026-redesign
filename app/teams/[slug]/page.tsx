@@ -3,10 +3,15 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import Header from '@/components/Header';
 import { KNOWN_DIVISIONS } from '@/config/ddsl-competitions';
-import { ACTIVE_SEASON_WHERE } from '@/lib/db/active-season';
 import { prisma } from '@/lib/prisma';
-import { cacheGet } from '@/lib/ddsl/cache';
-import type { SyncResponse, NormalisedMatch } from '@/lib/ddsl/types';
+import {
+  scrapeClubAjax,
+  discoverCompetitionId,
+  RVR_CLUB_ID,
+  FALLBACK_AJAX_COMPETITION_ID,
+} from '@/lib/ddsl/scraper';
+import { transformAll } from '@/lib/ddsl/transform';
+import type { NormalisedMatch } from '@/lib/ddsl/types';
 import { CLUB_SEASON } from '@/config/club-season';
 
 // ─── Static params ────────────────────────────────────────────────────────────
@@ -34,7 +39,6 @@ export async function generateMetadata({
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const COMPETITIVE_AGES = new Set(['U12', 'U13', 'U14', 'U15', 'U17']);
-const SYNC_CACHE_KEY = 'ddsl:sync';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -51,25 +55,6 @@ function formatDate(iso: string): string {
   return d.toLocaleDateString('en-IE', { weekday: 'short', day: 'numeric', month: 'short' });
 }
 
-function getFixturesFromCache(competitionName: string): {
-  upcoming: NormalisedMatch[];
-  results: NormalisedMatch[];
-} {
-  const cached = cacheGet<SyncResponse>(SYNC_CACHE_KEY);
-  if (!cached.hit) return { upcoming: [], results: [] };
-
-  const upcoming = cached.data.fixtures
-    .filter((m) => m.competition === competitionName && m.status === 'upcoming')
-    .sort((a, b) => a.date.localeCompare(b.date));
-
-  const results = cached.data.results
-    .filter((m) => m.competition === competitionName && m.status === 'completed')
-    .sort((a, b) => b.date.localeCompare(a.date))
-    .slice(0, 5);
-
-  return { upcoming, results };
-}
-
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default async function TeamPage({
@@ -83,7 +68,7 @@ export default async function TeamPage({
 
   const competitive = COMPETITIVE_AGES.has(division.ageGroup);
 
-  // Standings (competitive only)
+  // Standings (competitive only) — two-step: resolve season id, then query
   let standings: {
     position: number;
     teamName: string;
@@ -96,30 +81,68 @@ export default async function TeamPage({
 
   if (competitive) {
     try {
-      const rows = await prisma.historicalStanding.findMany({
-        where: {
-          ...ACTIVE_SEASON_WHERE,
-          source: 'DDSL',
-          divisionName: division.competitionName,
-        },
-        orderBy: { position: 'asc' },
+      const activeSeason = await prisma.season.findFirst({
+        where: { isActive: true },
+        select: { id: true },
       });
-      standings = rows.map((r) => ({
-        position: r.position,
-        teamName: r.teamName,
-        played:   r.played,
-        won:      r.won,
-        drawn:    r.drawn,
-        lost:     r.lost,
-        points:   r.points,
-      }));
+      if (activeSeason) {
+        const rows = await prisma.historicalStanding.findMany({
+          where: {
+            seasonId:    activeSeason.id,
+            source:      'DDSL',
+            divisionName: division.competitionName,
+          },
+          orderBy: { position: 'asc' },
+        });
+        standings = rows.map((r) => ({
+          position: r.position,
+          teamName: r.teamName,
+          played:   r.played,
+          won:      r.won,
+          drawn:    r.drawn,
+          lost:     r.lost,
+          points:   r.points,
+        }));
+      }
     } catch {
       // DB unavailable — show empty standings
     }
   }
 
-  // Fixtures from in-process cache (populated by daily cron or sync endpoint)
-  const { upcoming, results } = getFixturesFromCache(division.competitionName);
+  // Fixtures — scrape live from DDSL, filter to this division
+  let upcoming: NormalisedMatch[] = [];
+  let results: NormalisedMatch[] = [];
+  try {
+    const competitionId =
+      (await discoverCompetitionId(RVR_CLUB_ID)) ?? FALLBACK_AJAX_COMPETITION_ID;
+
+    const [fixturesData, resultsData] = await Promise.all([
+      scrapeClubAjax(RVR_CLUB_ID, competitionId, 'fixtures'),
+      scrapeClubAjax(RVR_CLUB_ID, competitionId, 'results'),
+    ]);
+
+    const allFixtures = transformAll(
+      fixturesData.fixtures.filter(
+        (f) => f.competition.competitionName === division.competitionName,
+      ),
+    );
+    const allResults = transformAll(
+      resultsData.fixtures.filter(
+        (f) => f.competition.competitionName === division.competitionName,
+      ),
+    );
+
+    upcoming = allFixtures
+      .filter((m) => m.status === 'upcoming')
+      .sort((a, b) => a.date.localeCompare(b.date));
+
+    results = allResults
+      .filter((m) => m.status === 'completed')
+      .sort((a, b) => b.date.localeCompare(a.date))
+      .slice(0, 5);
+  } catch {
+    // DDSL unavailable — show empty fixtures
+  }
 
   const displayName = stripDdsl(division.competitionName);
 
