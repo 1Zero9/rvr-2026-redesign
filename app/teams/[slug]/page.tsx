@@ -51,8 +51,11 @@ function isRVR(teamName: string): boolean {
 }
 
 function formatDate(iso: string): string {
-  const d = new Date(iso);
-  return d.toLocaleDateString('en-IE', { weekday: 'short', day: 'numeric', month: 'short' });
+  return new Date(iso).toLocaleDateString('en-IE', {
+    weekday: 'short',
+    day: 'numeric',
+    month: 'short',
+  });
 }
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
@@ -68,15 +71,15 @@ export default async function TeamPage({
 
   const competitive = COMPETITIVE_AGES.has(division.ageGroup);
 
-  // Standings (competitive only) — two-step: resolve season id, then query
+  // ── Standings (competitive only) — two-step query ────────────────────────
   let standings: {
     position: number;
     teamName: string;
-    played: number;
-    won: number;
-    drawn: number;
-    lost: number;
-    points: number;
+    played:   number;
+    won:      number;
+    drawn:    number;
+    lost:     number;
+    points:   number;
   }[] = [];
 
   if (competitive) {
@@ -88,8 +91,8 @@ export default async function TeamPage({
       if (activeSeason) {
         const rows = await prisma.historicalStanding.findMany({
           where: {
-            seasonId:    activeSeason.id,
-            source:      'DDSL',
+            seasonId:     activeSeason.id,
+            source:       'DDSL',
             divisionName: division.competitionName,
           },
           orderBy: { position: 'asc' },
@@ -109,34 +112,31 @@ export default async function TeamPage({
     }
   }
 
-  // Fixtures — scrape live from DDSL, filter to this division
-  let upcoming: NormalisedMatch[] = [];
-  let results: NormalisedMatch[] = [];
+  // ── Fixtures — scrape live from DDSL ─────────────────────────────────────
+  let divisionFixtures: NormalisedMatch[] = [];
+  let divisionResults:  NormalisedMatch[] = [];
   try {
     const competitionId =
       (await discoverCompetitionId(RVR_CLUB_ID)) ?? FALLBACK_AJAX_COMPETITION_ID;
 
-    const [fixturesData, resultsData] = await Promise.all([
+    const [fixtureData, resultData] = await Promise.all([
       scrapeClubAjax(RVR_CLUB_ID, competitionId, 'fixtures'),
       scrapeClubAjax(RVR_CLUB_ID, competitionId, 'results'),
     ]);
 
-    const allFixtures = transformAll(
-      fixturesData.fixtures.filter(
+    divisionFixtures = transformAll(
+      fixtureData.fixtures.filter(
         (f) => f.competition.competitionName === division.competitionName,
       ),
-    );
-    const allResults = transformAll(
-      resultsData.fixtures.filter(
-        (f) => f.competition.competitionName === division.competitionName,
-      ),
-    );
-
-    upcoming = allFixtures
+    )
       .filter((m) => m.status === 'upcoming')
       .sort((a, b) => a.date.localeCompare(b.date));
 
-    results = allResults
+    divisionResults = transformAll(
+      resultData.fixtures.filter(
+        (f) => f.competition.competitionName === division.competitionName,
+      ),
+    )
       .filter((m) => m.status === 'completed')
       .sort((a, b) => b.date.localeCompare(a.date))
       .slice(0, 5);
@@ -145,13 +145,15 @@ export default async function TeamPage({
   }
 
   const displayName = stripDdsl(division.competitionName);
+  const noFixtures  = divisionFixtures.length === 0 && divisionResults.length === 0;
 
   return (
     <div className="min-h-screen bg-brand-cream">
       <Header />
 
       <main>
-        {/* ── Hero banner ──────────────────────────────────────────────────── */}
+
+        {/* ── Section A: Hero banner ───────────────────────────────────────── */}
         <div className="bg-brand-navy">
           <div className="max-w-2xl mx-auto px-4 pt-6 pb-8">
             <Link
@@ -183,24 +185,24 @@ export default async function TeamPage({
 
         <div className="max-w-2xl mx-auto px-4 py-8 space-y-10">
 
-          {/* ── Standings (competitive) ──────────────────────────────────── */}
+          {/* ── Section B: League Table (competitive only) ───────────────── */}
           {competitive && (
             <section>
-              <div className="border-l-4 border-brand-neon pl-4 py-1 mb-4">
+              <div className="border-l-4 border-brand-neon pl-3 mb-4">
                 <h2 className="font-display italic font-black uppercase text-xl text-brand-charcoal">
                   League Table
                 </h2>
               </div>
 
               {standings.length === 0 ? (
-                <div className="bg-brand-navy border-2 border-brand-sky p-6">
+                <div className="bg-brand-navy border border-brand-sky p-4">
                   <p className="text-brand-cream text-sm">
                     Standings not yet available for this division.
                   </p>
                 </div>
               ) : (
                 <>
-                  <div className="bg-brand-navy border-2 border-brand-navy shadow-brutalist overflow-hidden">
+                  <div className="bg-brand-navy border-2 border-brand-sky shadow-brutalist overflow-hidden">
                     <table className="w-full table-fixed text-xs">
                       <colgroup>
                         <col style={{ width: '2rem' }} />
@@ -253,7 +255,7 @@ export default async function TeamPage({
                       </tbody>
                     </table>
                   </div>
-                  <p className="text-brand-sky text-xs mt-2">
+                  <p className="text-brand-sky text-xs text-right mt-2">
                     Data from DDSL · Updated daily
                   </p>
                 </>
@@ -261,76 +263,86 @@ export default async function TeamPage({
             </section>
           )}
 
-          {/* ── Development info card ────────────────────────────────────── */}
-          {!competitive && (
-            <section>
-              <div className="bg-brand-navy border-2 border-brand-sky p-6">
-                <p className="text-brand-cream text-sm">
-                  This team plays in the DDSL development pathway. Standings are
-                  not published for this age group.
-                </p>
-              </div>
-            </section>
-          )}
-
-          {/* ── Fixtures & Results ───────────────────────────────────────── */}
+          {/* ── Section C: Fixtures & Results ───────────────────────────── */}
           <section>
-            <div className="border-l-4 border-brand-neon pl-4 py-1 mb-4">
+            <div className="border-l-4 border-brand-neon pl-3 mb-4">
               <h2 className="font-display italic font-black uppercase text-xl text-brand-charcoal">
                 Fixtures &amp; Results
               </h2>
             </div>
 
-            {upcoming.length === 0 && results.length === 0 ? (
-              <div className="bg-brand-navy border-2 border-brand-sky p-6">
+            {noFixtures ? (
+              <div className="bg-brand-navy border border-brand-sky p-4">
                 <p className="text-brand-cream text-sm">
-                  No upcoming fixtures scheduled.
+                  No fixtures or results available for this division.
                 </p>
               </div>
             ) : (
-              <div className="space-y-2">
-                {upcoming.map((m) => (
-                  <div
-                    key={m.id}
-                    className="bg-brand-navy border border-brand-sky p-4"
-                  >
-                    <p className="text-brand-neon text-xs font-mono font-bold mb-1">
-                      {formatDate(m.date)} · {m.time}
+              <div>
+                {/* Upcoming fixtures */}
+                {divisionFixtures.length > 0 && (
+                  <div className="mb-6">
+                    <p className="text-brand-charcoal text-xs uppercase tracking-wide mb-2">
+                      Upcoming
                     </p>
-                    <p className="text-brand-cream text-sm font-semibold">
-                      {m.homeTeam} vs {m.awayTeam}
-                    </p>
-                    <p className="text-brand-sky text-xs mt-1">{m.venue.name}</p>
-                  </div>
-                ))}
-
-                {results.length > 0 && (
-                  <>
-                    {upcoming.length > 0 && (
-                      <p className="text-brand-charcoal/50 text-xs font-mono uppercase tracking-wide pt-2 pb-1">
-                        Recent Results
-                      </p>
-                    )}
-                    {results.map((m) => (
-                      <div
-                        key={m.id}
-                        className="bg-brand-navy border border-brand-sky/40 p-4"
-                      >
-                        <p className="text-brand-sky text-xs font-mono mb-1">
-                          {formatDate(m.date)}
-                          {m.score && (
-                            <span className="ml-2 text-brand-neon font-bold">
-                              {m.score.home}–{m.score.away}
+                    <div className="space-y-2">
+                      {divisionFixtures.map((m) => (
+                        <div
+                          key={m.id}
+                          className="bg-brand-navy border border-brand-sky p-3"
+                        >
+                          <p className="text-brand-neon text-sm font-bold mb-1">
+                            {formatDate(m.date)} · {m.time}
+                          </p>
+                          <p className="text-brand-cream text-base">
+                            <span className={isRVR(m.homeTeam) ? 'text-brand-green font-bold' : ''}>
+                              {m.homeTeam}
                             </span>
-                          )}
-                        </p>
-                        <p className="text-brand-cream text-sm font-semibold">
-                          {m.homeTeam} vs {m.awayTeam}
-                        </p>
-                        <p className="text-brand-sky text-xs mt-1">{m.venue.name}</p>
-                      </div>
-                    ))}
-                  </>
+                            {' vs '}
+                            <span className={isRVR(m.awayTeam) ? 'text-brand-green font-bold' : ''}>
+                              {m.awayTeam}
+                            </span>
+                          </p>
+                          <p className="text-brand-sky text-xs mt-1">{m.venue.name}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Recent results */}
+                {divisionResults.length > 0 && (
+                  <div>
+                    <p className="text-brand-charcoal text-xs uppercase tracking-wide mb-2">
+                      Recent Results
+                    </p>
+                    <div className="space-y-2">
+                      {divisionResults.map((m) => (
+                        <div
+                          key={m.id}
+                          className="bg-brand-navy border border-brand-sky p-3"
+                        >
+                          <p className="text-brand-neon text-sm font-bold mb-1">
+                            {formatDate(m.date)}
+                          </p>
+                          <p className="text-brand-cream text-base">
+                            <span className={isRVR(m.homeTeam) ? 'text-brand-green font-bold' : ''}>
+                              {m.homeTeam}
+                            </span>
+                            {m.score && (
+                              <span className="mx-2 text-brand-neon font-bold">
+                                {m.score.home} – {m.score.away}
+                              </span>
+                            )}
+                            <span className={isRVR(m.awayTeam) ? 'text-brand-green font-bold' : ''}>
+                              {m.awayTeam}
+                            </span>
+                          </p>
+                          <p className="text-brand-sky text-xs mt-1">{m.venue.name}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 )}
               </div>
             )}
