@@ -60,7 +60,14 @@ export default function FootballForAllPage() {
   };
 
   return (
-    <div className={`flex flex-col min-h-screen bg-brand-cream text-[#222222] transition-all ${fontSizeClass}`}>
+    <div
+      className={`flex flex-col min-h-screen bg-brand-cream text-[#222222] transition-all ${fontSizeClass}`}
+      style={{
+        backgroundImage: `linear-gradient(rgba(11,31,59,0.04) 1px, transparent 1px),
+                          linear-gradient(90deg, rgba(11,31,59,0.04) 1px, transparent 1px)`,
+        backgroundSize: '40px 40px',
+      }}
+    >
       <Header />
 
       <main className="flex-grow max-w-6xl w-full mx-auto px-4 md:px-6 py-12 space-y-12">

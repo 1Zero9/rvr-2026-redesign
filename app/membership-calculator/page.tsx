@@ -119,7 +119,14 @@ export default function MembershipCalculatorPage() {
   const { subtotal, finalPrice, savings, appliedCap } = calculateTotal();
 
   return (
-    <div className="flex flex-col min-h-screen bg-brand-cream text-brand-charcoal">
+    <div
+      className="flex flex-col min-h-screen bg-brand-cream text-brand-charcoal"
+      style={{
+        backgroundImage: `linear-gradient(rgba(11,31,59,0.04) 1px, transparent 1px),
+                          linear-gradient(90deg, rgba(11,31,59,0.04) 1px, transparent 1px)`,
+        backgroundSize: '40px 40px',
+      }}
+    >
       <Header />
 
       <main className="flex-grow max-w-6xl w-full mx-auto px-4 md:px-6 py-12">

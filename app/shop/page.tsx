@@ -41,7 +41,14 @@ const neonGridStyle = {
 
 export default function ShopPage() {
   return (
-    <div className="min-h-screen bg-brand-cream">
+    <div
+      className="min-h-screen bg-brand-cream"
+      style={{
+        backgroundImage: `linear-gradient(rgba(11,31,59,0.04) 1px, transparent 1px),
+                          linear-gradient(90deg, rgba(11,31,59,0.04) 1px, transparent 1px)`,
+        backgroundSize: '40px 40px',
+      }}
+    >
       <Header />
 
       <main>

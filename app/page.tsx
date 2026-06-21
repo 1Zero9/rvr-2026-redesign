@@ -70,7 +70,14 @@ export default function Home() {
   const nextSeason = `${nextStartYear}/${String(nextStartYear + 1).slice(-2)}`;
 
   return (
-    <div className="flex flex-col min-h-screen bg-brand-cream text-brand-charcoal">
+    <div
+      className="flex flex-col min-h-screen bg-brand-cream text-brand-charcoal"
+      style={{
+        backgroundImage: `linear-gradient(rgba(11,31,59,0.04) 1px, transparent 1px),
+                          linear-gradient(90deg, rgba(11,31,59,0.04) 1px, transparent 1px)`,
+        backgroundSize: '40px 40px',
+      }}
+    >
       <Header />
 
       <main className="flex-grow">

@@ -76,7 +76,14 @@ const merchOptions = [
 
 export default function ColourFunRunPage() {
   return (
-    <div className="min-h-screen bg-brand-cream text-brand-charcoal">
+    <div
+      className="min-h-screen bg-brand-cream text-brand-charcoal"
+      style={{
+        backgroundImage: `linear-gradient(rgba(11,31,59,0.04) 1px, transparent 1px),
+                          linear-gradient(90deg, rgba(11,31,59,0.04) 1px, transparent 1px)`,
+        backgroundSize: '40px 40px',
+      }}
+    >
       <Header />
       <main>
         <section className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:py-16">

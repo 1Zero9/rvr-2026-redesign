@@ -104,7 +104,7 @@ const MOBILE_NAV_GROUPS: MobileNavItem[] = [
   { type: 'header', label: 'All Teams',       href: '/teams'                       },
   { type: 'link',   label: 'DDSL Boys',       href: '/teams?filter=boys'           },
   { type: 'link',   label: 'DDSL Girls',      href: '/teams?filter=girls'          },
-  { type: 'header', label: 'Seniors',         href: '/seniors/first-team'          },
+  { type: 'header', label: 'Seniors',         href: '/seniors'                     },
   { type: 'link',   label: 'First Team',      href: '/seniors/first-team'          },
   { type: 'link',   label: 'Div 3B Saturday', href: '/seniors/lsl-div3b'           },
   { type: 'link',   label: 'Div 3C Saturday', href: '/seniors/lsl-div3c'           },

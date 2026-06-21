@@ -73,7 +73,14 @@ export default async function FixturesPage() {
   }
 
   return (
-    <div className="bg-brand-cream min-h-screen">
+    <div
+      className="bg-brand-cream min-h-screen"
+      style={{
+        backgroundImage: `linear-gradient(rgba(11,31,59,0.04) 1px, transparent 1px),
+                          linear-gradient(90deg, rgba(11,31,59,0.04) 1px, transparent 1px)`,
+        backgroundSize: '40px 40px',
+      }}
+    >
       <Header />
       <main>
         <div className="max-w-2xl mx-auto px-4 pt-8">

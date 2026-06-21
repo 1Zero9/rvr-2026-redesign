@@ -81,7 +81,7 @@ const nextConfig: NextConfig = {
       },
       {
         source: '/tables',
-        destination: '/league-tables',
+        destination: '/teams',
         permanent: true,
       },
       {

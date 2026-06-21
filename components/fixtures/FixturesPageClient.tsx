@@ -224,7 +224,7 @@ export default function FixturesPageClient({ fixtures, results }: Props) {
                 Youth Teams
               </h2>
               <p className="text-zinc-500 text-xs font-mono uppercase tracking-wide mb-4">
-                DDSL 2025/26 · U8 – U17
+                DDSL 2025/26 · U8 – U15
               </p>
             </>
           )}
