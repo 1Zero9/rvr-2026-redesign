@@ -12,7 +12,22 @@ export const metadata: Metadata = {
   description: `All ${totalTeams} teams at Rivervalley Rangers AFC — DDSL Youth, Senior, and Over 35s, ${CLUB_SEASON.currentSeason} season.`,
 };
 
-export default function TeamsPage() {
+export default async function TeamsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ filter?: string }>;
+}) {
+  const { filter } = await searchParams;
+  const initialFilter = (() => {
+    switch (filter?.toLowerCase()) {
+      case 'boys':    return 'BOYS'   as const;
+      case 'girls':   return 'GIRLS'  as const;
+      case 'senior':  return 'SENIOR' as const;
+      case 'over35s': return 'OVER35S' as const;
+      default:        return 'ALL'    as const;
+    }
+  })();
+
   return (
     <div
       className="min-h-screen bg-brand-cream"
@@ -53,6 +68,7 @@ export default function TeamsPage() {
         <TeamsClient
           youthDivisions={KNOWN_DIVISIONS}
           aflDivisions={AFL_DIVISIONS}
+          initialFilter={initialFilter}
         />
       </main>
     </div>

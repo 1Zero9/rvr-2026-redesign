@@ -22,9 +22,16 @@ const NAV_SECTIONS: NavSection[] = [
     columns: [
       {
         links: [
-          { href: '/teams',            label: 'All Teams'    },
-          { href: '/seniors',          label: 'Senior Teams' },
-          { href: '/seniors/over-35s', label: 'Over 35s'     },
+          { href: '/teams',                      label: 'All Teams'       },
+          { href: '/teams?filter=boys',          label: 'DDSL Boys'       },
+          { href: '/teams?filter=girls',         label: 'DDSL Girls'      },
+          { href: '---',                         label: 'SENIORS'         },
+          { href: '/seniors/first-team',         label: 'First Team'      },
+          { href: '/seniors/lsl-div3b',          label: 'Div 3B Saturday' },
+          { href: '/seniors/lsl-div3c',          label: 'Div 3C Saturday' },
+          { href: '---',                         label: 'OVER 35s'        },
+          { href: '/seniors/over-35s/over35s-a', label: 'Over 35s A'      },
+          { href: '/seniors/over-35s/over35s-b', label: 'Over 35s B'      },
         ],
       },
     ],
@@ -89,19 +96,32 @@ const CAMPAIGNS_LINK = { label: 'Campaigns', href: '/campaigns' };
 
 // ─── Mobile overlay links ─────────────────────────────────────────────────────
 
-const MOBILE_NAV_LINKS = [
-  { href: '/teams',     label: 'Teams'     },
-  { href: '/seniors',   label: 'Seniors'   },
-  { href: '/fixtures',  label: 'Fixtures'  },
-  { href: '/register',  label: 'Join Us'   },
-  { href: '/club',      label: 'Club'      },
-  { href: '/campaigns', label: 'Campaigns' },
-] as const;
+type MobileNavItem =
+  | { type: 'header'; label: string; href: string }
+  | { type: 'link';   label: string; href: string };
+
+const MOBILE_NAV_GROUPS: MobileNavItem[] = [
+  { type: 'header', label: 'All Teams',       href: '/teams'                       },
+  { type: 'link',   label: 'DDSL Boys',       href: '/teams?filter=boys'           },
+  { type: 'link',   label: 'DDSL Girls',      href: '/teams?filter=girls'          },
+  { type: 'header', label: 'Seniors',         href: '/seniors/first-team'          },
+  { type: 'link',   label: 'First Team',      href: '/seniors/first-team'          },
+  { type: 'link',   label: 'Div 3B Saturday', href: '/seniors/lsl-div3b'           },
+  { type: 'link',   label: 'Div 3C Saturday', href: '/seniors/lsl-div3c'           },
+  { type: 'header', label: 'Over 35s',        href: '/seniors/over-35s'            },
+  { type: 'link',   label: 'Over 35s A',      href: '/seniors/over-35s/over35s-a' },
+  { type: 'link',   label: 'Over 35s B',      href: '/seniors/over-35s/over35s-b' },
+  { type: 'header', label: 'Fixtures',        href: '/fixtures'                    },
+  { type: 'header', label: 'Join Us',         href: '/register'                    },
+  { type: 'header', label: 'Campaigns',       href: '/campaigns'                   },
+];
 
 // ─── Active-section helper ────────────────────────────────────────────────────
 
 function isNavActive(label: string, pathname: string): boolean {
-  if (label === 'Teams')    return pathname === '/teams' || pathname.startsWith('/seniors');
+  if (label === 'Teams')    return pathname === '/teams' ||
+                                   pathname.startsWith('/seniors') ||
+                                   pathname.startsWith('/teams');
   if (label === 'Fixtures') return pathname === '/fixtures';
   if (label === 'Join')     return pathname === '/register';
   if (label === 'Club')     return pathname.startsWith('/club');
@@ -149,7 +169,7 @@ export default function Header() {
         id="site-header"
         className="relative sticky top-0 z-50 glass-dark border-b border-brand-sky/20"
       >
-        <div className="max-w-6xl mx-auto flex items-center justify-between h-16 px-4 md:px-6">
+        <div className="relative max-w-7xl mx-auto flex items-center justify-between h-16 px-4 md:px-6">
 
           {/* Logo */}
           <Link href="/" className="flex shrink-0 items-center gap-3" onClick={close}>
@@ -174,7 +194,7 @@ export default function Header() {
             </span>
           </Link>
 
-          <div className="hidden lg:flex flex-1 items-center justify-between">
+          <div className="hidden lg:flex flex-1 items-center justify-center gap-8">
             {/* Desktop mega-menu trigger buttons */}
             <nav
               className="flex items-center gap-1"
@@ -217,18 +237,26 @@ export default function Header() {
 
                     {isOpen && (
                       <div className="absolute top-full left-1/2 z-40 mt-1 -translate-x-1/2 border border-brand-sky/20 border-t-2 border-t-brand-neon bg-brand-charcoal shadow-2xl">
-                        {section.twoColumn ? (
-                          // Two-column grid panel (Teams)
-                          <div className="grid grid-cols-2 gap-x-6 w-80 p-4">
-                            {section.columns.map((col, colIndex) => (
-                              <div key={col.heading ?? colIndex}>
-                                {col.heading && (
-                                  <p className="text-brand-neon text-xs uppercase tracking-widest font-bold mb-3">
-                                    {col.heading}
-                                  </p>
-                                )}
-                                <ul className="space-y-2">
-                                  {col.links.map((link) => (
+                        <div className="flex gap-10 px-6 py-6">
+                          {section.columns.map((col, colIndex) => (
+                            <div key={col.heading ?? colIndex} className="min-w-[140px] border-l border-brand-sky/20 pl-4">
+                              {col.heading && (
+                                <p className="mb-3 whitespace-nowrap font-display text-xs font-black uppercase tracking-widest text-brand-neon">
+                                  {col.heading}
+                                </p>
+                              )}
+                              <ul className="space-y-0.5">
+                                {col.links.map((link) => {
+                                  if (link.href === '---') {
+                                    return (
+                                      <li key={link.label} className="pt-3 pb-1">
+                                        <p className="text-brand-neon text-[10px] font-black uppercase tracking-widest pl-6 border-t border-brand-sky/20 pt-2">
+                                          {link.label}
+                                        </p>
+                                      </li>
+                                    );
+                                  }
+                                  return (
                                     <li key={link.label}>
                                       <Link
                                         href={link.href}
@@ -239,39 +267,12 @@ export default function Header() {
                                         {link.label}
                                       </Link>
                                     </li>
-                                  ))}
-                                </ul>
-                              </div>
-                            ))}
-                          </div>
-                        ) : (
-                          // Single or multi-column flat panel (Fixtures, Join, Club)
-                          <div className="flex gap-10 px-6 py-6">
-                            {section.columns.map((col, colIndex) => (
-                              <div key={col.heading ?? colIndex} className="min-w-[140px] border-l border-brand-sky/20 pl-4">
-                                {col.heading && (
-                                  <p className="mb-3 whitespace-nowrap font-display text-xs font-black uppercase tracking-widest text-brand-neon">
-                                    {col.heading}
-                                  </p>
-                                )}
-                                <ul className="space-y-0.5">
-                                  {col.links.map((link) => (
-                                    <li key={link.label}>
-                                      <Link
-                                        href={link.href}
-                                        onClick={() => setOpenSection(null)}
-                                        className="group flex min-h-[44px] items-center gap-2 whitespace-nowrap py-2 text-sm font-semibold text-zinc-300 transition-colors hover:text-white"
-                                      >
-                                        <ChevronRight className="h-3.5 w-3.5 shrink-0 text-brand-neon opacity-0 transition-opacity group-hover:opacity-100" />
-                                        {link.label}
-                                      </Link>
-                                    </li>
-                                  ))}
-                                </ul>
-                              </div>
-                            ))}
-                          </div>
-                        )}
+                                  );
+                                })}
+                              </ul>
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     )}
                   </div>
@@ -300,7 +301,7 @@ export default function Header() {
             </nav>
 
             {/* Search + Desktop CTA */}
-            <div className="shrink-0 flex items-center gap-2">
+            <div className="absolute right-4 md:right-6 flex items-center gap-2">
               <button
                 type="button"
                 onClick={() => setSearchOpen(true)}
@@ -371,19 +372,33 @@ export default function Header() {
           </div>
 
           {/* Nav links */}
-          <nav className="flex-1 flex flex-col justify-center px-6 gap-2" aria-label="Mobile navigation">
-            {MOBILE_NAV_LINKS.map(({ href, label }) => {
-              const active = pathname === href || pathname.startsWith(`${href}/`);
+          <nav className="flex-1 overflow-y-auto px-6 py-4" aria-label="Mobile navigation">
+            {MOBILE_NAV_GROUPS.map((item) => {
+              const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
+              if (item.type === 'header') {
+                return (
+                  <Link
+                    key={item.href + item.label}
+                    href={item.href}
+                    onClick={close}
+                    className={`min-h-[56px] flex items-center px-2 font-display font-black uppercase text-xl border-b border-brand-sky/20 transition-colors mt-2 first:mt-0 ${
+                      active ? 'text-brand-neon' : 'text-white'
+                    }`}
+                  >
+                    {item.label}
+                  </Link>
+                );
+              }
               return (
                 <Link
-                  key={href}
-                  href={href}
+                  key={item.href + item.label}
+                  href={item.href}
                   onClick={close}
-                  className={`min-h-[64px] flex items-center px-4 font-display font-black uppercase text-2xl border-b border-brand-sky/10 transition-colors ${
-                    active ? 'text-brand-neon' : 'text-white'
+                  className={`min-h-[44px] flex items-center pl-6 pr-2 text-base font-semibold border-b border-brand-sky/10 transition-colors ${
+                    active ? 'text-brand-neon' : 'text-brand-sky'
                   }`}
                 >
-                  {label}
+                  {item.label}
                 </Link>
               );
             })}

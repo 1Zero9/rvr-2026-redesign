@@ -263,6 +263,40 @@ export default async function SeniorsPage() {
                   </Link>
                 </div>
               </div>
+              <div className="bg-brand-navy border-2 border-brand-green shadow-brutalist overflow-hidden">
+                <div className="h-1 bg-brand-green" />
+                <div className="p-5">
+                  <p className="font-display italic font-black text-brand-neon text-xl mb-1">
+                    LSL DIV 3B SAT
+                  </p>
+                  <p className="text-brand-sky text-sm mb-4">
+                    LSL Division 3B Saturday
+                  </p>
+                  <Link
+                    href="/seniors/lsl-div3b"
+                    className="text-brand-neon font-bold min-h-[44px] flex items-center text-sm hover:underline"
+                  >
+                    View Team →
+                  </Link>
+                </div>
+              </div>
+              <div className="bg-brand-navy border-2 border-brand-green shadow-brutalist overflow-hidden">
+                <div className="h-1 bg-brand-green" />
+                <div className="p-5">
+                  <p className="font-display italic font-black text-brand-neon text-xl mb-1">
+                    LSL DIV 3C SAT
+                  </p>
+                  <p className="text-brand-sky text-sm mb-4">
+                    LSL Division 3C Saturday
+                  </p>
+                  <Link
+                    href="/seniors/lsl-div3c"
+                    className="text-brand-neon font-bold min-h-[44px] flex items-center text-sm hover:underline"
+                  >
+                    View Team →
+                  </Link>
+                </div>
+              </div>
             </div>
           </section>
 

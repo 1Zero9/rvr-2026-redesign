@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import FixtureList from './FixtureList';
 import SeniorFixtureList from './SeniorFixtureList';
+import Over35sFixtureList from './Over35sFixtureList';
 import type { NormalisedMatch, LeagueTable } from '@/lib/ddsl/types';
 import type { HistoricalStandingEntry } from '@/app/fixtures/page';
 import { useFavourites } from '@/lib/favourites/context';
@@ -10,7 +11,7 @@ import { KNOWN_DIVISIONS } from '@/config/ddsl-competitions';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-type PrimaryFilter = 'all' | 'youth' | 'senior';
+type PrimaryFilter = 'all' | 'youth' | 'senior' | 'over35s';
 type SecondaryFilter =
   | 'all-youth' | 'boys' | 'girls' | 'u8-u11' | 'u12-plus'
   | 'all-senior' | 'lsl' | 'afl' | 'fai'
@@ -28,9 +29,10 @@ interface Props {
 // ─── Pill configs ─────────────────────────────────────────────────────────────
 
 const PRIMARY_PILLS: Array<{ key: PrimaryFilter; label: string }> = [
-  { key: 'all',    label: 'All'    },
-  { key: 'youth',  label: 'Youth'  },
-  { key: 'senior', label: 'Senior' },
+  { key: 'all',     label: 'All'      },
+  { key: 'youth',   label: 'Youth'    },
+  { key: 'senior',  label: 'Senior'   },
+  { key: 'over35s', label: 'Over 35s' },
 ];
 
 const YOUTH_SECONDARY_PILLS: Array<{ key: SecondaryFilter; label: string }> = [
@@ -59,8 +61,9 @@ const SECONDARY_BASE = 'min-h-[44px] min-w-[44px] px-4 flex items-center justify
 
 function primaryPillClass(key: PrimaryFilter, active: PrimaryFilter): string {
   if (key !== active) return `${PRIMARY_BASE} border-brand-navy/20 text-brand-navy/40 bg-transparent`;
-  if (key === 'all')   return `${PRIMARY_BASE} bg-brand-navy text-brand-cream border-brand-navy`;
-  if (key === 'youth') return `${PRIMARY_BASE} bg-brand-sky text-brand-charcoal border-brand-sky`;
+  if (key === 'all')     return `${PRIMARY_BASE} bg-brand-navy text-brand-cream border-brand-navy`;
+  if (key === 'youth')   return `${PRIMARY_BASE} bg-brand-sky text-brand-charcoal border-brand-sky`;
+  if (key === 'over35s') return `${PRIMARY_BASE} bg-brand-neon text-brand-charcoal border-brand-neon`;
   return `${PRIMARY_BASE} bg-brand-green text-white border-brand-green`; // senior
 }
 
@@ -115,8 +118,9 @@ export default function FixturesPageClient({ fixtures, results }: Props) {
 
   function handlePrimaryChange(p: PrimaryFilter) {
     setPrimary(p);
-    if (p === 'youth')  setSecondary('all-youth');
-    if (p === 'senior') setSecondary('all-senior');
+    if (p === 'youth')   setSecondary('all-youth');
+    if (p === 'senior')  setSecondary('all-senior');
+    if (p === 'over35s') setSecondary('all-youth'); // secondary unused for over35s
   }
 
   // ── Derived ──────────────────────────────────────────────────────────────
@@ -147,6 +151,7 @@ export default function FixturesPageClient({ fixtures, results }: Props) {
   const showDdsl    = primary === 'all' || primary === 'youth';
   const showSenior  = (primary === 'all' || primary === 'senior') &&
     (!isFavFiltered || favourites.includes('first-team'));
+  const showOver35s = primary === 'all' || primary === 'over35s';
   const showDdslHdr = primary === 'all';
   const showSnrHdr  = primary === 'all';
   const seniorFilter = getSeniorFilter(primary, secondary);
@@ -192,7 +197,7 @@ export default function FixturesPageClient({ fixtures, results }: Props) {
           </div>
 
           {/* Row 2 — Secondary pills (youth and senior only) */}
-          {primary !== 'all' && (
+          {primary !== 'all' && primary !== 'over35s' && (
             <div className="mt-2 flex flex-wrap gap-2">
               {secondaryPills.map(({ key, label }) => (
                 <button
@@ -249,6 +254,25 @@ export default function FixturesPageClient({ fixtures, results }: Props) {
               </div>
             )}
             <SeniorFixtureList filter={seniorFilter} />
+          </div>
+        </section>
+      )}
+
+      {/* Over 35s section */}
+      {showOver35s && (
+        <section className="bg-brand-navy border-t-4 border-brand-neon">
+          <div className="max-w-2xl mx-auto px-4 py-8">
+            {primary === 'all' && (
+              <div className="mb-6">
+                <h2 className="font-display font-black italic text-3xl lg:text-4xl text-brand-neon">
+                  Over 35s
+                </h2>
+                <p className="text-brand-sky/60 text-sm font-mono mt-1 uppercase tracking-wide">
+                  AFL · 2025/26
+                </p>
+              </div>
+            )}
+            <Over35sFixtureList />
           </div>
         </section>
       )}

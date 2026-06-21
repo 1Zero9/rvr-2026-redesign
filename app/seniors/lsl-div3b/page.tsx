@@ -6,8 +6,8 @@ import FavouriteButton from '@/components/FavouriteButton';
 import type { SeniorMatch, SeniorSyncResponse } from '@/lib/finalwhistle/types';
 
 export const metadata: Metadata = {
-  title: 'First Team | Rivervalley Rangers AFC',
-  description: 'First Team results and fixtures for Rivervalley Rangers AFC senior football.',
+  title: 'LSL Division 3B Saturday | Rivervalley Rangers AFC',
+  description: 'LSL Division 3B Saturday results and fixtures for Rivervalley Rangers AFC.',
 };
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
@@ -125,18 +125,17 @@ function FixtureCard({ match }: { match: SeniorMatch }) {
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
-export default async function FirstTeamPage() {
+export default async function Div3BPage() {
+  const COMPETITION = 'LSL Division 3B Saturday';
+
   const data = await getSeniorData();
 
-  const DIV3B = 'LSL Division 3B Saturday';
-  const DIV3C = 'LSL Division 3C Saturday';
-
   const allResults = (data?.results ?? [])
-    .filter(m => m.competition !== DIV3B && m.competition !== DIV3C)
+    .filter(m => m.competition === COMPETITION)
     .sort((a, b) => b.date.localeCompare(a.date));
 
   const allFixtures = (data?.fixtures ?? [])
-    .filter(m => m.competition !== DIV3B && m.competition !== DIV3C)
+    .filter(m => m.competition === COMPETITION)
     .sort((a, b) => a.date.localeCompare(b.date));
 
   const resultGroups  = groupByCompetition(allResults);
@@ -224,18 +223,17 @@ export default async function FirstTeamPage() {
               ← Senior Teams
             </Link>
             <h1 className="font-display font-black italic text-4xl md:text-5xl uppercase tracking-tight leading-none text-brand-neon mb-2">
-              First Team
+              DIV 3B SATURDAY
             </h1>
             <p className="text-brand-sky text-sm mb-3">
-              Rivervalley Rangers AFC · Senior Football
+              Rivervalley Rangers AFC · LSL Division 3B Saturday
             </p>
             <span className="inline-block px-3 py-1 text-xs font-display font-black uppercase tracking-wider bg-brand-green text-white">
               SENIOR
             </span>
-            <FavouriteButton teamId="first-team" label="First Team" variant="button" />
+            <FavouriteButton teamId="lsl-div3b" label="LSL Division 3B Saturday" variant="button" />
           </div>
         </div>
-        {/* Senior green accent line */}
         <div className="h-1 w-full bg-brand-green" />
 
         {/* ── Tab navigation ───────────────────────────────────────────────── */}

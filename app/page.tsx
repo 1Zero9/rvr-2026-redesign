@@ -5,6 +5,7 @@ import TeletextFixtures from '@/components/TeletextFixtures';
 import { CLUB_SEASON } from '@/config/club-season';
 import { APP_VERSION, APP_VERSION_DATE } from '@/config/version';
 import { KNOWN_DIVISIONS } from '@/config/ddsl-competitions';
+import { AFL_DIVISIONS } from '@/config/afl-competitions';
 
 const COMMUNITY_CATEGORIES = [
   {
@@ -111,16 +112,16 @@ export default function Home() {
                   badgeBg: 'bg-brand-green text-white',
                 },
                 {
-                  value: `${KNOWN_DIVISIONS.length}`,
+                  value: `${KNOWN_DIVISIONS.length + AFL_DIVISIONS.length + 3}`,
                   unit: 'Teams',
-                  label: 'Active divisions',
+                  label: 'Youth, Senior & Over 35s',
                   badge: `${CLUB_SEASON.currentSeason} Season`,
                   bg: 'bg-brand-neon',
                   badgeBg: 'bg-brand-charcoal text-white',
                 },
                 {
-                  value: 'U7',
-                  unit: '– U17',
+                  value: 'U8',
+                  unit: '– U15',
                   label: 'All age groups',
                   badge: 'Boys & Girls',
                   bg: 'bg-white',

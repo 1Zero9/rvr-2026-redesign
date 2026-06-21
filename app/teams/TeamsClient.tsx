@@ -51,13 +51,14 @@ function groupByAge(divisions: KnownDivision[]) {
 
 interface Props {
   youthDivisions: KnownDivision[];
-  aflDivisions: AflDivision[];
+  aflDivisions:   AflDivision[];
+  initialFilter?: 'ALL' | 'BOYS' | 'GIRLS' | 'SENIOR' | 'OVER35S';
 }
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
-export default function TeamsClient({ youthDivisions, aflDivisions }: Props) {
-  const [filter, setFilter] = useState<Filter>('ALL');
+export default function TeamsClient({ youthDivisions, aflDivisions, initialFilter }: Props) {
+  const [filter, setFilter] = useState<Filter>(initialFilter ?? 'ALL');
 
   const boys  = youthDivisions.filter((d) => !d.competitionName.includes('Girls'));
   const girls = youthDivisions.filter((d) =>  d.competitionName.includes('Girls'));
@@ -204,10 +205,11 @@ export default function TeamsClient({ youthDivisions, aflDivisions }: Props) {
                 Senior
               </h2>
               <span className="bg-brand-green text-white text-xs font-bold px-2 py-1 rounded-full">
-                1 team
+                3 teams
               </span>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+
               <div className="relative">
                 <Link
                   href="/seniors/first-team"
@@ -219,7 +221,7 @@ export default function TeamsClient({ youthDivisions, aflDivisions }: Props) {
                       <p className="font-display italic text-brand-cream text-xl leading-tight mb-1">
                         FIRST TEAM
                       </p>
-                      <p className="text-brand-green text-sm">Senior Football · LSL · AFL Cup</p>
+                      <p className="text-brand-green text-sm">LSL Senior 1B Sunday</p>
                     </div>
                     <p className="text-brand-neon text-sm font-bold mt-2">
                       View Fixtures & Results →
@@ -228,6 +230,49 @@ export default function TeamsClient({ youthDivisions, aflDivisions }: Props) {
                 </Link>
                 <FavouriteButton teamId="first-team" label="First Team" variant="icon" />
               </div>
+
+              <div className="relative">
+                <Link
+                  href="/seniors/lsl-div3b"
+                  className="group flex flex-col bg-brand-navy border-2 border-brand-green shadow-brutalist min-h-[88px] hover:border-brand-neon transition-colors"
+                >
+                  <div className="h-1 w-full shrink-0 bg-brand-green" />
+                  <div className="p-4 flex flex-col flex-1 justify-between">
+                    <div>
+                      <p className="font-display italic text-brand-cream text-xl leading-tight mb-1">
+                        DIV 3B SATURDAY
+                      </p>
+                      <p className="text-brand-green text-sm">LSL Division 3B Saturday</p>
+                    </div>
+                    <p className="text-brand-neon text-sm font-bold mt-2">
+                      View Fixtures & Results →
+                    </p>
+                  </div>
+                </Link>
+                <FavouriteButton teamId="lsl-div3b" label="LSL Division 3B Saturday" variant="icon" />
+              </div>
+
+              <div className="relative">
+                <Link
+                  href="/seniors/lsl-div3c"
+                  className="group flex flex-col bg-brand-navy border-2 border-brand-green shadow-brutalist min-h-[88px] hover:border-brand-neon transition-colors"
+                >
+                  <div className="h-1 w-full shrink-0 bg-brand-green" />
+                  <div className="p-4 flex flex-col flex-1 justify-between">
+                    <div>
+                      <p className="font-display italic text-brand-cream text-xl leading-tight mb-1">
+                        DIV 3C SATURDAY
+                      </p>
+                      <p className="text-brand-green text-sm">LSL Division 3C Saturday</p>
+                    </div>
+                    <p className="text-brand-neon text-sm font-bold mt-2">
+                      View Fixtures & Results →
+                    </p>
+                  </div>
+                </Link>
+                <FavouriteButton teamId="lsl-div3c" label="LSL Division 3C Saturday" variant="icon" />
+              </div>
+
             </div>
           </section>
         )}

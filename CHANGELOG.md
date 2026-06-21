@@ -4,6 +4,28 @@ All notable changes to RVR2026 are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 Versioning follows [Semantic Versioning](https://semver.org/).
 
+## [1.0.2] - 2026-06-21
+
+### Added
+- Custom 404 page (app/not-found.tsx) — football pitch out-of-play theme
+- /seniors/over-35s hub page and individual A/B team pages
+- /seniors/lsl-div3b and /seniors/lsl-div3c senior team pages
+- Over 35s section on /fixtures page with AFL standings (Over35sFixtureList)
+- /api/over35s/standings route proxying AFL scraper data
+- ?filter= URL param support on /teams page (boys/girls/senior/over35s)
+- Div 3B Saturday and Div 3C Saturday cards to /teams Senior section
+
+### Changed
+- Header.tsx nav consolidated: TEAMS dropdown now contains all team categories (DDSL Boys/Girls, Seniors, Over 35s) with grouped flat links
+- Mobile nav restructured with section headers and indented sub-links
+- Header max-width increased to max-w-7xl, nav centred on desktop
+- Homepage stats: team count now includes all squads, age range corrected to U8–U15
+- /seniors/first-team filtered to LSL Senior 1B Sunday only (excludes Div 3B and Div 3C matches)
+
+### Removed
+- /league-tables page (permanent redirect to /teams added)
+- Seniors and Over 35s as separate root-level nav items
+
 ## [1.0.1] - 2026-06-18
 
 ### Added

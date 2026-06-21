@@ -114,6 +114,11 @@ const nextConfig: NextConfig = {
         destination: '/astro-booking',
         permanent: false,
       },
+      {
+        source: '/league-tables',
+        destination: '/teams',
+        permanent: true,
+      },
     ];
   },
 };
