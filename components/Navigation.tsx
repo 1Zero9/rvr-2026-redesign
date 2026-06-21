@@ -8,94 +8,202 @@ import {
   ChevronDown,
   ChevronRight,
   Shield,
-  Heart,
-  Trophy,
   Activity,
   Users,
   HelpCircle,
   Megaphone,
 } from 'lucide-react';
 
+// ─── Types ────────────────────────────────────────────────────────────────────
+
 interface NavLink {
   label: string;
   path: string;
 }
 
-interface NavSection {
-  title: string;
-  icon: React.ReactNode;
+interface NavGroup {
+  heading?: string;
   links: NavLink[];
 }
 
-const sections: NavSection[] = [
+type DirectNavItem = {
+  type: 'link';
+  title: string;
+  icon: React.ReactNode;
+  path: string;
+};
+
+type DropdownNavItem = {
+  type: 'dropdown';
+  title: string;
+  icon: React.ReactNode;
+  groups: NavGroup[];
+};
+
+type NavItem = DirectNavItem | DropdownNavItem;
+
+// ─── Nav data ─────────────────────────────────────────────────────────────────
+
+const navItems: NavItem[] = [
   {
-    title: 'Girls & Women',
+    type: 'dropdown',
+    title: 'Teams',
     icon: <Users className="w-5 h-5 text-brand-neon" />,
-    links: [
-      { label: 'Squad Directory', path: '/teams' },
-      { label: 'Fixtures & Results', path: '/fixtures' },
-      { label: 'Football For All', path: '/football-for-all' },
+    groups: [
+      {
+        heading: 'Youth',
+        links: [
+          { label: 'All Teams',            path: '/teams' },
+          { label: 'U8–U11 Academy',       path: '/teams#development' },
+          { label: 'U12–U17 Competitive',  path: '/teams#competitive' },
+        ],
+      },
+      {
+        heading: 'Seniors',
+        links: [
+          { label: 'Senior Hub',   path: '/seniors' },
+          { label: 'First Team',   path: '/seniors/first-team' },
+          { label: 'Over 35s',     path: '/seniors/over-35s' },
+        ],
+      },
     ],
   },
   {
-    title: 'Junior Academy',
-    icon: <HelpCircle className="w-5 h-5 text-brand-neon" />,
-    links: [
-      { label: 'Squad Directory', path: '/teams' },
-      { label: 'Fixtures & Results', path: '/fixtures' },
-      { label: 'Football For All Sessions', path: '/football-for-all' },
-      { label: 'Register Now', path: '/register' },
-      { label: 'Family Registration', path: '/register' },
-    ],
-  },
-  {
-    title: 'Youth Competitive',
+    type: 'dropdown',
+    title: 'Fixtures',
     icon: <Activity className="w-5 h-5 text-brand-neon" />,
-    links: [
-      { label: 'Fixtures & Results', path: '/fixtures' },
-      { label: 'DDSL Match Schedules', path: '/ddsl-jmo' },
-      { label: 'Squad Directory', path: '/teams' },
-      { label: 'Register Now', path: '/register' },
-      { label: 'Family Registration', path: '/register' },
+    groups: [
+      {
+        links: [
+          { label: 'Fixtures & Results', path: '/fixtures' },
+          { label: 'Youth Fixtures',     path: '/fixtures?filter=youth' },
+          { label: 'Senior Fixtures',    path: '/fixtures?filter=senior' },
+        ],
+      },
     ],
   },
   {
-    title: 'Senior Divisions',
-    icon: <Trophy className="w-5 h-5 text-brand-neon" />,
-    links: [
-      { label: 'Squad Directory', path: '/teams' },
-      { label: 'Fixtures & Results', path: '/fixtures' },
+    type: 'dropdown',
+    title: 'Join',
+    icon: <HelpCircle className="w-5 h-5 text-brand-neon" />,
+    groups: [
+      {
+        links: [
+          { label: 'Register Now',        path: '/register' },
+          { label: 'Family Registration', path: '/register' },
+          { label: 'Fees Calculator',     path: '/membership-calculator' },
+          { label: 'Book Astro Pitch',    path: '/astro-booking' },
+        ],
+      },
     ],
   },
   {
-    title: 'Inclusive',
-    icon: <Heart className="w-5 h-5 text-brand-neon" />,
-    links: [
-      { label: 'Football For All', path: '/football-for-all' },
-      { label: 'Sensory-Friendly Sessions', path: '/football-for-all#sensory' },
-      { label: 'Walking Football', path: '/football-for-all#walking' },
-    ],
-  },
-  {
-    title: 'Safeguarding',
+    type: 'dropdown',
+    title: 'Club',
     icon: <Shield className="w-5 h-5 text-brand-neon" />,
-    links: [
-      { label: 'Safeguarding Statement', path: '/club/safeguarding' },
-      { label: 'Garda Vetting', path: '/club/safeguarding' },
-      { label: 'Contact Us', path: '/contact' },
+    groups: [
+      {
+        links: [
+          { label: 'About the Club', path: '/club' },
+          { label: 'Contact Us',     path: '/contact' },
+          { label: 'Safeguarding',   path: '/club/safeguarding' },
+          { label: 'Football For All', path: '/football-for-all' },
+        ],
+      },
     ],
   },
   {
+    type: 'link',
     title: 'Campaigns',
     icon: <Megaphone className="w-5 h-5 text-brand-neon" />,
-    links: [
-      { label: 'Colour Fun Run', path: '/campaigns/colour-fun-run' },
-      { label: '45th Anniversary Kit', path: '/club/anniversary' },
-      { label: 'Shop', path: '/shop' },
-      { label: 'Fees Calculator', path: '/membership-calculator' },
-    ],
+    path: '/campaigns',
   },
 ];
+
+// ─── Desktop dropdown panel ───────────────────────────────────────────────────
+
+function DesktopDropdownPanel({
+  item,
+  alignRight,
+}: {
+  item: DropdownNavItem;
+  alignRight: boolean;
+}) {
+  const isMultiColumn = item.groups.some((g) => g.heading != null);
+
+  return (
+    <>
+      <button
+        className="font-display font-extrabold text-[9px] xl:text-[10px] uppercase tracking-tight xl:tracking-normal text-white/85 hover:text-brand-neon py-2 px-1 xl:px-1.5 rounded-lg flex items-center gap-0.5 transition-colors whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-brand-neon/50"
+        aria-label={`Open ${item.title} menu`}
+        aria-haspopup="true"
+      >
+        {item.title}
+        <ChevronDown className="w-3 h-3 shrink-0 transition-transform duration-150 group-hover/menu:rotate-180" />
+      </button>
+
+      {/*
+        Hover gap fix: pt-3 creates an invisible 12px bridge so the cursor stays
+        inside the hover zone as it travels from button to menu card.
+        hidden/block has zero layout footprint when closed.
+      */}
+      <div
+        className={`absolute top-full hidden group-hover/menu:block z-50 pt-3 ${
+          isMultiColumn ? 'w-72 xl:w-80' : 'w-56 xl:w-64'
+        } ${alignRight ? 'right-0' : 'left-0'}`}
+      >
+        <div
+          className="rounded-xl py-2 shadow-[0_12px_40px_rgba(0,0,0,0.35)] border-2 bg-white"
+          style={{ borderColor: '#B8CDEE' }}
+        >
+          {isMultiColumn ? (
+            // Two-column layout with sub-headings (TEAMS)
+            <div className="grid grid-cols-2 divide-x divide-brand-sky/20">
+              {item.groups.map((group) => (
+                <div key={group.heading ?? 'col'} className="px-2 py-1">
+                  {group.heading && (
+                    <p className="text-[9px] font-black uppercase tracking-widest text-brand-sky px-2 pt-1 pb-2">
+                      {group.heading}
+                    </p>
+                  )}
+                  {group.links.map((link) => (
+                    <a
+                      key={link.label}
+                      href={link.path}
+                      className="flex items-center justify-between px-2 py-2 text-xs font-semibold text-brand-charcoal transition-colors hover:bg-[#F5F0F5] rounded"
+                      onMouseEnter={(e) => { e.currentTarget.style.color = '#8B1E4D'; }}
+                      onMouseLeave={(e) => { e.currentTarget.style.color = ''; }}
+                    >
+                      {link.label}
+                      <ChevronRight className="w-3 h-3 opacity-40 shrink-0" />
+                    </a>
+                  ))}
+                </div>
+              ))}
+            </div>
+          ) : (
+            // Single-column flat list
+            item.groups.flatMap((g) => g.links).map((link) => (
+              <a
+                key={link.label}
+                href={link.path}
+                className="flex items-center justify-between px-4 py-2.5 text-xs font-semibold text-brand-charcoal transition-colors hover:bg-[#F5F0F5]"
+                style={{ '--hover-text': '#8B1E4D' } as React.CSSProperties}
+                onMouseEnter={(e) => { e.currentTarget.style.color = '#8B1E4D'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.color = ''; }}
+              >
+                {link.label}
+                <ChevronRight className="w-3.5 h-3.5 opacity-40 shrink-0" />
+              </a>
+            ))
+          )}
+        </div>
+      </div>
+    </>
+  );
+}
+
+// ─── Main component ───────────────────────────────────────────────────────────
 
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
@@ -131,61 +239,33 @@ export default function Navigation() {
             </div>
           </Link>
 
-          {/* Desktop navigation — justify-between spreads all 7 sections evenly */}
+          {/* Desktop navigation */}
           <nav
             className="hidden lg:flex items-center justify-between flex-1 min-w-0"
             aria-label="Main navigation"
           >
-            {sections.map((section, index) => {
-              // Last two sections anchor their dropdown to the right edge
-              const alignRight = index >= sections.length - 2;
+            {navItems.map((item, index) => {
+              const alignRight = index >= navItems.length - 2;
 
               return (
-                <div key={section.title} className="relative group/menu">
-                  <button
-                    className="font-display font-extrabold text-[9px] xl:text-[10px] uppercase tracking-tight xl:tracking-normal text-white/85 hover:text-brand-neon py-2 px-1 xl:px-1.5 rounded-lg flex items-center gap-0.5 transition-colors whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-brand-neon/50"
-                    aria-label={`Open ${section.title} menu`}
-                    aria-haspopup="true"
-                  >
-                    {section.title}
-                    <ChevronDown className="w-3 h-3 shrink-0 transition-transform duration-150 group-hover/menu:rotate-180" />
-                  </button>
-
-                  {/*
-                    Dropdown hover gap fix:
-                    The outer wrapper starts at top-full with NO margin. A pt-3 top-padding
-                    creates an invisible 12px bridge that keeps the cursor inside the hover
-                    zone as it travels downward from the trigger button to the menu card.
-                    The hidden/block pattern means this wrapper has zero layout footprint
-                    when closed — it cannot push horizontal nav items around.
-                  */}
-                  <div
-                    className={`absolute top-full hidden group-hover/menu:block z-50 pt-3 w-56 xl:w-64 ${
-                      alignRight ? 'right-0' : 'left-0'
-                    }`}
-                  >
-                    <div className="rounded-xl py-2 shadow-[0_12px_40px_rgba(0,0,0,0.35)] border-2 bg-white" style={{ borderColor: '#B8CDEE' }}>
-                      {section.links.map((link) => (
-                        <a
-                          key={link.label}
-                          href={link.path}
-                          className="flex items-center justify-between px-4 py-2.5 text-xs font-semibold text-brand-charcoal transition-colors hover:bg-[#F5F0F5]"
-                          style={{ '--hover-text': '#8B1E4D' } as React.CSSProperties}
-                          onMouseEnter={(e) => { e.currentTarget.style.color = '#8B1E4D'; }}
-                          onMouseLeave={(e) => { e.currentTarget.style.color = ''; }}
-                        >
-                          {link.label}
-                          <ChevronRight className="w-3.5 h-3.5 opacity-40 shrink-0" />
-                        </a>
-                      ))}
-                    </div>
-                  </div>
+                <div key={item.title} className="relative group/menu">
+                  {item.type === 'link' ? (
+                    // Direct link — no dropdown (CAMPAIGNS)
+                    <a
+                      href={item.path}
+                      className="font-display font-extrabold text-[9px] xl:text-[10px] uppercase tracking-tight xl:tracking-normal text-white/85 hover:text-brand-neon py-2 px-1 xl:px-1.5 rounded-lg flex items-center transition-colors whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-brand-neon/50"
+                    >
+                      {item.title}
+                    </a>
+                  ) : (
+                    <DesktopDropdownPanel item={item} alignRight={alignRight} />
+                  )}
                 </div>
               );
             })}
           </nav>
 
-          {/* Desktop CTA — Neon Green for high-energy conversion */}
+          {/* Desktop CTA */}
           <div className="hidden lg:flex items-center shrink-0">
             <a href="/register" className="btn-brutalist-neon px-4 xl:px-5 py-2.5 text-xs whitespace-nowrap">
               Join the Team
@@ -218,22 +298,39 @@ export default function Navigation() {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="p-5 space-y-2 flex-1">
-              {sections.map((section) => {
-                const expanded = activeDropdown === section.title;
+              {navItems.map((item) => {
+                if (item.type === 'link') {
+                  // Direct link — no accordion (CAMPAIGNS)
+                  return (
+                    <a
+                      key={item.title}
+                      href={item.path}
+                      onClick={() => setIsOpen(false)}
+                      className="border border-brand-sky/20 rounded-2xl bg-white/5 p-3 flex items-center gap-2.5 min-h-[44px]"
+                    >
+                      {item.icon}
+                      <span className="font-display font-black text-sm uppercase italic text-white tracking-wide">
+                        {item.title}
+                      </span>
+                    </a>
+                  );
+                }
+
+                const expanded = activeDropdown === item.title;
                 return (
                   <div
-                    key={section.title}
+                    key={item.title}
                     className="border border-brand-sky/20 rounded-2xl bg-white/5 p-3"
                   >
                     <button
-                      onClick={() => toggleDropdown(section.title)}
+                      onClick={() => toggleDropdown(item.title)}
                       className="w-full flex items-center justify-between text-left focus:outline-none"
                       aria-expanded={expanded}
                     >
                       <div className="flex items-center gap-2.5">
-                        {section.icon}
+                        {item.icon}
                         <span className="font-display font-black text-sm uppercase italic text-white tracking-wide">
-                          {section.title}
+                          {item.title}
                         </span>
                       </div>
                       <ChevronDown
@@ -243,15 +340,24 @@ export default function Navigation() {
 
                     {expanded && (
                       <div className="mt-3 pt-3 border-t border-brand-sky/20 space-y-1">
-                        {section.links.map((link) => (
-                          <a
-                            key={link.label}
-                            href={link.path}
-                            onClick={() => setIsOpen(false)}
-                            className="block px-2 py-1.5 text-xs font-semibold text-zinc-300 hover:text-brand-neon hover:underline transition-colors"
-                          >
-                            {link.label}
-                          </a>
+                        {item.groups.map((group) => (
+                          <React.Fragment key={group.heading ?? 'default'}>
+                            {group.heading && (
+                              <p className="text-[9px] font-black uppercase tracking-widest text-brand-sky/60 px-2 pt-2 pb-0.5">
+                                {group.heading}
+                              </p>
+                            )}
+                            {group.links.map((link) => (
+                              <a
+                                key={link.label}
+                                href={link.path}
+                                onClick={() => setIsOpen(false)}
+                                className="block px-2 py-1.5 text-xs font-semibold text-zinc-300 hover:text-brand-neon hover:underline transition-colors"
+                              >
+                                {link.label}
+                              </a>
+                            ))}
+                          </React.Fragment>
                         ))}
                       </div>
                     )}

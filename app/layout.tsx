@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import MobileNavBar from "@/components/MobileNavBar";
+import { FavouritesProvider } from "@/lib/favourites/context";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -29,10 +30,12 @@ export default function RootLayout({
       className={`${inter.variable} ${jakarta.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-brand-cream text-brand-charcoal">
-        <div className="flex-1 pb-28 md:pb-0">
-          {children}
-        </div>
-        <MobileNavBar />
+        <FavouritesProvider>
+          <div className="flex-1 pb-28 md:pb-0">
+            {children}
+          </div>
+          <MobileNavBar />
+        </FavouritesProvider>
       </body>
     </html>
   );

@@ -79,6 +79,41 @@ const nextConfig: NextConfig = {
         destination: '/campaigns/45th-anniversary-kit',
         permanent: true,
       },
+      {
+        source: '/tables',
+        destination: '/league-tables',
+        permanent: true,
+      },
+      {
+        source: '/academy',
+        destination: '/teams',
+        permanent: false,
+      },
+      {
+        source: '/adult',
+        destination: '/seniors',
+        permanent: false,
+      },
+      {
+        source: '/community',
+        destination: '/club',
+        permanent: false,
+      },
+      {
+        source: '/inclusive',
+        destination: '/football-for-all',
+        permanent: false,
+      },
+      {
+        source: '/fees',
+        destination: '/register',
+        permanent: false,
+      },
+      {
+        source: '/book-astro-pitch',
+        destination: '/astro-booking',
+        permanent: false,
+      },
     ];
   },
 };

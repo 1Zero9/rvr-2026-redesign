@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import type { NormalisedMatch, SyncResponse } from '@/lib/ddsl/types';
 import type { SeniorMatch, SeniorSyncResponse } from '@/lib/finalwhistle/types';
+import { useFavourites } from '@/lib/favourites/context';
+import { KNOWN_DIVISIONS } from '@/config/ddsl-competitions';
 
 // ─── Internal types ───────────────────────────────────────────────────────────
 
@@ -20,6 +22,7 @@ interface UnifiedMatch {
   isHome: boolean;
   source: MatchSource;
   gender: MatchGender;
+  competition: string;
 }
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -46,27 +49,29 @@ function genderFrom(competition: string): MatchGender {
 
 function fromDDSL(m: NormalisedMatch): UnifiedMatch {
   return {
-    id:       String(m.id),
-    date:     m.date,
-    time:     m.time,
-    ageGroup: m.ageGroup,
-    opponent: m.isRvrHome ? m.awayTeam : m.homeTeam,
-    isHome:   m.isRvrHome,
-    source:   'ddsl',
-    gender:   genderFrom(m.competition),
+    id:          String(m.id),
+    date:        m.date,
+    time:        m.time,
+    ageGroup:    m.ageGroup,
+    opponent:    m.isRvrHome ? m.awayTeam : m.homeTeam,
+    isHome:      m.isRvrHome,
+    source:      'ddsl',
+    gender:      genderFrom(m.competition),
+    competition: m.competition,
   };
 }
 
 function fromSenior(m: SeniorMatch): UnifiedMatch {
   return {
-    id:       m.matchId,
-    date:     m.date,
-    time:     '',
-    ageGroup: 'Senior',
-    opponent: m.isRvrHome ? m.awayTeam : m.homeTeam,
-    isHome:   m.isRvrHome,
-    source:   'senior',
-    gender:   'Unknown',
+    id:          m.matchId,
+    date:        m.date,
+    time:        '',
+    ageGroup:    'Senior',
+    opponent:    m.isRvrHome ? m.awayTeam : m.homeTeam,
+    isHome:      m.isRvrHome,
+    source:      'senior',
+    gender:      'Unknown',
+    competition: m.competition,
   };
 }
 
@@ -107,6 +112,7 @@ export default function TeletextFixtures() {
   const [allMatches,  setAllMatches]  = useState<UnifiedMatch[]>([]);
   const [loading,     setLoading]     = useState(true);
   const [activeFilter, setActiveFilter] = useState<FilterKey>('All');
+  const { favourites, clear } = useFavourites();
 
   useEffect(() => {
     let active = true;
@@ -145,6 +151,23 @@ export default function TeletextFixtures() {
 
   // ── Derived ────────────────────────────────────────────────────────────────
 
+  const isFavFiltered = favourites.length > 0;
+
+  const favMatches = isFavFiltered
+    ? allMatches.filter((m) => {
+        if (m.source === 'ddsl') {
+          const division = KNOWN_DIVISIONS.find(
+            (d) => d.competitionName === m.competition,
+          );
+          return division ? favourites.includes(division.slug) : false;
+        }
+        if (m.source === 'senior') {
+          return favourites.includes('first-team');
+        }
+        return false;
+      })
+    : allMatches;
+
   const availableAgeGroups = [
     ...new Set(allMatches.filter((m) => m.source === 'ddsl').map((m) => m.ageGroup)),
   ].sort((a, b) => {
@@ -153,7 +176,7 @@ export default function TeletextFixtures() {
     return na - nb;
   });
 
-  const displayMatches = applyFilter(allMatches, activeFilter).slice(0, 6);
+  const displayMatches = applyFilter(favMatches, activeFilter).slice(0, 6);
 
   const tickerItems = allMatches.map((m, i) => (
     <span key={m.id}>
@@ -186,6 +209,22 @@ export default function TeletextFixtures() {
         <span className="text-brand-neon font-mono text-xs shrink-0">P302</span>
         <span className="text-brand-sky/70 text-right">{formatHeaderDate()}</span>
       </div>
+
+      {/* Favourites banner */}
+      {isFavFiltered && (
+        <div className="flex items-center justify-between px-4 py-2 bg-brand-neon/10 border-b border-brand-neon/30">
+          <span className="text-brand-neon text-xs font-bold uppercase tracking-wide">
+            ★ Showing your teams
+          </span>
+          <button
+            type="button"
+            onClick={clear}
+            className="text-brand-sky text-xs underline min-h-[44px] px-2"
+          >
+            Show all · Reset
+          </button>
+        </div>
+      )}
 
       {/* Filter bar */}
       {loading ? (

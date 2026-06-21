@@ -6,12 +6,13 @@ import { usePathname } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
 import { ChevronDown, ChevronRight, Menu, X } from 'lucide-react';
 import { ASSET_PATHS } from '@/config/assets';
+import SearchOverlay from './SearchOverlay';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 type NavLink   = { href: string; label: string };
-type NavColumn = { heading: string; links: NavLink[] };
-type NavSection = { label: string; columns: NavColumn[]; directHref?: string };
+type NavColumn = { heading?: string; links: NavLink[] };
+type NavSection = { label: string; columns: NavColumn[]; twoColumn?: boolean };
 
 // ─── Desktop mega-menu data ───────────────────────────────────────────────────
 
@@ -20,35 +21,10 @@ const NAV_SECTIONS: NavSection[] = [
     label: 'Teams',
     columns: [
       {
-        heading: 'Youth Academy',
         links: [
-          { href: '/teams',           label: 'All Teams'          },
-          { href: '/football-for-all', label: 'Football For All'  },
-          { href: '/register',        label: 'Register Now'       },
-        ],
-      },
-      {
-        heading: 'Youth Competitive',
-        links: [
-          { href: '/teams',    label: 'Squad Directory'    },
-          { href: '/fixtures', label: 'Fixtures & Results' },
-          { href: '/ddsl-jmo', label: 'DDSL JMO'          },
-        ],
-      },
-      {
-        heading: 'Senior & Adult',
-        links: [
-          { href: '/teams',          label: 'Senior Squads'   },
-          { href: '/fixtures',       label: 'Senior Fixtures' },
-          { href: '/astro-booking',  label: 'Book Astro Pitch'},
-        ],
-      },
-      {
-        heading: 'Girls & Women',
-        links: [
-          { href: '/teams',            label: 'Girls Teams'           },
-          { href: '/football-for-all', label: 'Girls Football For All'},
-          { href: '/register',         label: 'Register'              },
+          { href: '/teams',            label: 'All Teams'    },
+          { href: '/seniors',          label: 'Senior Teams' },
+          { href: '/seniors/over-35s', label: 'Over 35s'     },
         ],
       },
     ],
@@ -57,34 +33,13 @@ const NAV_SECTIONS: NavSection[] = [
     label: 'Fixtures',
     columns: [
       {
-        heading: 'Live Data',
         links: [
-          { href: '/fixtures', label: 'All Fixtures & Results' },
-          { href: '/fixtures', label: 'Youth Teams'            },
-          { href: '/fixtures', label: 'Senior Teams'           },
-        ],
-      },
-      {
-        heading: 'Competitions',
-        links: [
-          { href: '/fixtures', label: 'DDSL 2025/26' },
-          { href: '/fixtures', label: 'LSL Senior'   },
-          { href: '/fixtures', label: 'AFL'           },
-          { href: '/fixtures', label: 'FAI Cups'      },
-        ],
-      },
-      {
-        heading: 'Officials',
-        links: [
-          { href: '/ddsl-jmo', label: 'Junior Match Officials' },
+          { href: '/fixtures',               label: 'Fixtures & Results' },
+          { href: '/fixtures?filter=youth',  label: 'Youth Fixtures'     },
+          { href: '/fixtures?filter=senior', label: 'Senior Fixtures'    },
         ],
       },
     ],
-  },
-  {
-    label: 'Tables',
-    directHref: '/league-tables',
-    columns: [],
   },
   {
     label: 'Join',
@@ -92,15 +47,15 @@ const NAV_SECTIONS: NavSection[] = [
       {
         heading: 'Membership',
         links: [
-          { href: '/register',               label: 'Register a Player' },
-          { href: '/membership-calculator',  label: 'Calculate Fees'    },
-          { href: '/astro-booking',          label: 'Book Astro Pitch'  },
+          { href: '/register',              label: 'Register a Player' },
+          { href: '/membership-calculator', label: 'Calculate Fees'    },
+          { href: '/astro-booking',         label: 'Book Astro Pitch'  },
         ],
       },
       {
         heading: 'Programmes',
         links: [
-          { href: '/football-for-all', label: 'Football For All'  },
+          { href: '/football-for-all', label: 'Football For All' },
           { href: '/football-for-all', label: 'Walking Football'  },
           { href: '/football-for-all', label: 'Sensory Sessions'  },
         ],
@@ -121,53 +76,35 @@ const NAV_SECTIONS: NavSection[] = [
         heading: 'Safeguarding',
         links: [
           { href: '/club/safeguarding', label: 'Safeguarding Statement' },
-          { href: '/club/safeguarding', label: 'Garda Vetting'         },
-          { href: '/club/safeguarding', label: 'Child Welfare'         },
-        ],
-      },
-    ],
-  },
-  {
-    label: 'Campaigns',
-    columns: [
-      {
-        heading: 'Active',
-        links: [
-          { href: '/campaigns/colour-fun-run',       label: 'Colour Fun Run'        },
-          { href: '/campaigns/45th-anniversary-kit', label: '45th Anniversary Kit'  },
-        ],
-      },
-      {
-        heading: 'Support the Club',
-        links: [
-          { href: '/membership-calculator', label: 'Membership Fees' },
-          { href: '/shop',                  label: 'Club Shop'        },
+          { href: '/club/safeguarding', label: 'Garda Vetting'          },
+          { href: '/club/safeguarding', label: 'Child Welfare'          },
         ],
       },
     ],
   },
 ];
 
+// Campaigns — rendered as a direct top-level link, no dropdown
+const CAMPAIGNS_LINK = { label: 'Campaigns', href: '/campaigns' };
+
 // ─── Mobile overlay links ─────────────────────────────────────────────────────
 
 const MOBILE_NAV_LINKS = [
-  { href: '/teams',                    label: 'Teams'     },
-  { href: '/fixtures',                 label: 'Fixtures'  },
-  { href: '/league-tables',           label: 'Tables'    },
-  { href: '/register',                 label: 'Join Us'   },
-  { href: '/club/safeguarding',        label: 'Club'      },
-  { href: '/campaigns/colour-fun-run', label: 'Campaigns' },
+  { href: '/teams',     label: 'Teams'     },
+  { href: '/seniors',   label: 'Seniors'   },
+  { href: '/fixtures',  label: 'Fixtures'  },
+  { href: '/register',  label: 'Join Us'   },
+  { href: '/club',      label: 'Club'      },
+  { href: '/campaigns', label: 'Campaigns' },
 ] as const;
 
 // ─── Active-section helper ────────────────────────────────────────────────────
 
 function isNavActive(label: string, pathname: string): boolean {
-  if (label === 'Teams')     return pathname === '/teams';
-  if (label === 'Fixtures')  return pathname === '/fixtures';
-  if (label === 'Tables')    return pathname.startsWith('/league-tables');
-  if (label === 'Join')      return pathname === '/register';
-  if (label === 'Club')      return pathname.startsWith('/club');
-  if (label === 'Campaigns') return pathname.startsWith('/campaigns');
+  if (label === 'Teams')    return pathname === '/teams' || pathname.startsWith('/seniors');
+  if (label === 'Fixtures') return pathname === '/fixtures';
+  if (label === 'Join')     return pathname === '/register';
+  if (label === 'Club')     return pathname.startsWith('/club');
   return false;
 }
 
@@ -176,6 +113,7 @@ function isNavActive(label: string, pathname: string): boolean {
 export default function Header() {
   const [open,        setOpen]        = useState(false);
   const [openSection, setOpenSection] = useState<string | null>(null);
+  const [searchOpen,  setSearchOpen]  = useState(false);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pathname = usePathname();
 
@@ -187,10 +125,13 @@ export default function Header() {
     return () => { document.body.style.overflow = ''; };
   }, [open]);
 
-  // Close mega menu on Escape
+  // Close mega menu and search on Escape
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setOpenSection(null);
+      if (e.key === 'Escape') {
+        setOpenSection(null);
+        setSearchOpen(false);
+      }
     };
     document.addEventListener('keydown', handler);
     return () => document.removeEventListener('keydown', handler);
@@ -248,83 +189,129 @@ export default function Header() {
               {NAV_SECTIONS.map((section) => {
                 const isOpen   = openSection === section.label;
                 const isActive = isNavActive(section.label, pathname);
+
                 return (
                   <div key={section.label} className="relative">
-                    {section.directHref ? (
-                      <Link
-                        href={section.directHref}
-                        className={`min-h-[44px] px-4 flex items-center font-display font-black uppercase text-sm tracking-wide rounded-lg transition-all ${
-                          isActive
-                            ? 'text-brand-neon hover:bg-white/5'
-                            : 'text-white/80 hover:text-brand-neon hover:bg-white/5'
+                    <button
+                      type="button"
+                      onMouseEnter={() => {
+                        if (closeTimer.current) clearTimeout(closeTimer.current);
+                        setOpenSection(section.label);
+                      }}
+                      aria-expanded={isOpen}
+                      className={`min-h-[44px] px-4 flex items-center gap-1.5 font-display font-black uppercase text-sm tracking-wide rounded-lg transition-all ${
+                        isOpen
+                          ? 'text-brand-neon bg-white/10'
+                          : isActive
+                          ? 'text-brand-neon hover:bg-white/5'
+                          : 'text-white/80 hover:text-brand-neon hover:bg-white/5'
+                      }`}
+                    >
+                      {section.label}
+                      <ChevronDown
+                        className={`h-3.5 w-3.5 transition-transform duration-200 ${
+                          isOpen ? 'rotate-180' : ''
                         }`}
-                      >
-                        {section.label}
-                      </Link>
-                    ) : (
-                      <>
-                        <button
-                          type="button"
-                          onMouseEnter={() => {
-                            if (closeTimer.current) clearTimeout(closeTimer.current);
-                            setOpenSection(section.label);
-                          }}
-                          aria-expanded={isOpen}
-                          className={`min-h-[44px] px-4 flex items-center gap-1.5 font-display font-black uppercase text-sm tracking-wide rounded-lg transition-all ${
-                            isOpen
-                              ? 'text-brand-neon bg-white/10'
-                              : isActive
-                              ? 'text-brand-neon hover:bg-white/5'
-                              : 'text-white/80 hover:text-brand-neon hover:bg-white/5'
-                          }`}
-                        >
-                          {section.label}
-                          <ChevronDown
-                            className={`h-3.5 w-3.5 transition-transform duration-200 ${
-                              isOpen ? 'rotate-180' : ''
-                            }`}
-                          />
-                        </button>
+                      />
+                    </button>
 
-                        {isOpen && (
-                          <div className="absolute top-full left-1/2 z-40 mt-1 -translate-x-1/2 border border-brand-sky/20 border-t-2 border-t-brand-neon bg-brand-charcoal shadow-2xl">
-                            <div className="flex gap-10 px-6 py-6">
-                              {section.columns.map((col) => (
-                                <div
-                                  key={col.heading}
-                                  className="min-w-[140px] border-l border-brand-sky/20 pl-4"
-                                >
+                    {isOpen && (
+                      <div className="absolute top-full left-1/2 z-40 mt-1 -translate-x-1/2 border border-brand-sky/20 border-t-2 border-t-brand-neon bg-brand-charcoal shadow-2xl">
+                        {section.twoColumn ? (
+                          // Two-column grid panel (Teams)
+                          <div className="grid grid-cols-2 gap-x-6 w-80 p-4">
+                            {section.columns.map((col, colIndex) => (
+                              <div key={col.heading ?? colIndex}>
+                                {col.heading && (
+                                  <p className="text-brand-neon text-xs uppercase tracking-widest font-bold mb-3">
+                                    {col.heading}
+                                  </p>
+                                )}
+                                <ul className="space-y-2">
+                                  {col.links.map((link) => (
+                                    <li key={link.label}>
+                                      <Link
+                                        href={link.href}
+                                        onClick={() => setOpenSection(null)}
+                                        className="group flex min-h-[44px] items-center gap-2 whitespace-nowrap py-2 text-sm font-semibold text-zinc-300 transition-colors hover:text-white"
+                                      >
+                                        <ChevronRight className="h-3.5 w-3.5 shrink-0 text-brand-neon opacity-0 transition-opacity group-hover:opacity-100" />
+                                        {link.label}
+                                      </Link>
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          // Single or multi-column flat panel (Fixtures, Join, Club)
+                          <div className="flex gap-10 px-6 py-6">
+                            {section.columns.map((col, colIndex) => (
+                              <div key={col.heading ?? colIndex} className="min-w-[140px] border-l border-brand-sky/20 pl-4">
+                                {col.heading && (
                                   <p className="mb-3 whitespace-nowrap font-display text-xs font-black uppercase tracking-widest text-brand-neon">
                                     {col.heading}
                                   </p>
-                                  <ul className="space-y-0.5">
-                                    {col.links.map((link) => (
-                                      <li key={link.label}>
-                                        <Link
-                                          href={link.href}
-                                          onClick={() => setOpenSection(null)}
-                                          className="group flex min-h-[44px] items-center gap-2 whitespace-nowrap py-2 text-sm font-semibold text-zinc-300 transition-colors hover:text-white"
-                                        >
-                                          <ChevronRight className="h-3.5 w-3.5 shrink-0 text-brand-neon opacity-0 transition-opacity group-hover:opacity-100" />
-                                          {link.label}
-                                        </Link>
-                                      </li>
-                                    ))}
-                                  </ul>
-                                </div>
-                              ))}
-                            </div>
+                                )}
+                                <ul className="space-y-0.5">
+                                  {col.links.map((link) => (
+                                    <li key={link.label}>
+                                      <Link
+                                        href={link.href}
+                                        onClick={() => setOpenSection(null)}
+                                        className="group flex min-h-[44px] items-center gap-2 whitespace-nowrap py-2 text-sm font-semibold text-zinc-300 transition-colors hover:text-white"
+                                      >
+                                        <ChevronRight className="h-3.5 w-3.5 shrink-0 text-brand-neon opacity-0 transition-opacity group-hover:opacity-100" />
+                                        {link.label}
+                                      </Link>
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            ))}
                           </div>
                         )}
-                      </>
+                      </div>
                     )}
                   </div>
                 );
               })}
+
+              {/* Campaigns — direct link, no dropdown */}
+              <div
+                onMouseEnter={() => {
+                  if (closeTimer.current) clearTimeout(closeTimer.current);
+                  setOpenSection(null);
+                }}
+              >
+                <Link
+                  href={CAMPAIGNS_LINK.href}
+                  className={`min-h-[44px] px-4 flex items-center font-display font-black uppercase text-sm tracking-wide rounded-lg transition-all ${
+                    pathname.startsWith('/campaigns')
+                      ? 'text-brand-neon hover:bg-white/5'
+                      : 'text-white/80 hover:text-brand-neon hover:bg-white/5'
+                  }`}
+                >
+                  {CAMPAIGNS_LINK.label}
+                </Link>
+              </div>
+
             </nav>
 
-            {/* Desktop CTA */}
-            <div className="shrink-0">
+            {/* Search + Desktop CTA */}
+            <div className="shrink-0 flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setSearchOpen(true)}
+                aria-label="Search teams"
+                className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-brand-sky hover:text-brand-neon transition-colors"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="11" cy="11" r="8" />
+                  <path d="m21 21-4.35-4.35" />
+                </svg>
+              </button>
               <Link href="/register" className="btn-brutalist-neon px-5 py-2.5 text-xs whitespace-nowrap">
                 Join the Team
               </Link>
@@ -350,6 +337,9 @@ export default function Header() {
         </div>
 
       </header>
+
+      {/* Search overlay */}
+      <SearchOverlay isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
 
       {/* Mobile full-screen overlay */}
       {open && (
