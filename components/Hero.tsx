@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { CLUB_SEASON } from '@/config/club-season';
+import AnnouncementTrigger from './announcements/AnnouncementTrigger';
 
 const heroStats = [
   { value: `${CLUB_SEASON.anniversaryYears} Yrs`, label: 'Strong legacy' },
@@ -62,14 +63,14 @@ export default function Hero() {
         </span>
 
         <h1 className="font-display font-black text-5xl md:text-7xl lg:text-8xl tracking-tighter uppercase leading-none italic mb-8 select-none skew-x-[-4deg] max-w-4xl text-center">
-          FEEL THE <span className="text-brand-neon underline decoration-brand-neon decoration-wavy underline-offset-4">RVR</span> ENERGY
+          FEEL THE <span className="text-brand-neon">RVR</span> ENERGY
         </h1>
 
         <p className="font-sans text-lg md:text-2xl text-zinc-200 max-w-2xl mx-auto mb-12 leading-relaxed font-medium">
           Rivervalley Rangers AFC is Swords&apos; premier soccer club. Empowering local athletes across all ages, formats, and levels.
         </p>
 
-        <div className="flex flex-col md:flex-row items-center justify-center gap-4 w-full max-w-lg mb-16">
+        <div className="flex flex-col md:flex-row items-center justify-center gap-4 w-full max-w-2xl mb-16">
           <a
             href="/register"
             className="btn-brutalist-neon px-8 py-4.5 text-lg w-full md:w-auto text-center inline-flex items-center justify-center gap-2 group"
@@ -109,6 +110,8 @@ export default function Hero() {
               />
             </svg>
           </a>
+
+          <AnnouncementTrigger heroMode />
         </div>
 
         {/* Stat cards — scatter-then-snap entrance */}

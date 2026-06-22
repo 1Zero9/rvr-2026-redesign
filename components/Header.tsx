@@ -75,6 +75,7 @@ const NAV_SECTIONS: NavSection[] = [
       {
         heading: 'About RVR',
         links: [
+          { href: '/news',    label: 'News'       },
           { href: '/contact', label: 'Contact Us' },
           { href: '/shop',    label: 'Club Shop'  },
         ],
@@ -113,6 +114,7 @@ const MOBILE_NAV_GROUPS: MobileNavItem[] = [
   { type: 'link',   label: 'Over 35s B',      href: '/seniors/over-35s/over35s-b' },
   { type: 'header', label: 'Fixtures',        href: '/fixtures'                    },
   { type: 'header', label: 'Join Us',         href: '/register'                    },
+  { type: 'header', label: 'News',            href: '/news'                        },
   { type: 'header', label: 'Campaigns',       href: '/campaigns'                   },
 ];
 
@@ -124,7 +126,7 @@ function isNavActive(label: string, pathname: string): boolean {
                                    pathname.startsWith('/teams');
   if (label === 'Fixtures') return pathname === '/fixtures';
   if (label === 'Join')     return pathname === '/register';
-  if (label === 'Club')     return pathname.startsWith('/club');
+  if (label === 'Club')     return pathname.startsWith('/club') || pathname === '/news';
   return false;
 }
 

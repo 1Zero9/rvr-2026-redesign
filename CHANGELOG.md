@@ -4,6 +4,16 @@ All notable changes to RVR2026 are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 Versioning follows [Semantic Versioning](https://semver.org/).
 
+## [1.0.4] - 2026-06-22
+
+### Added
+- feat: static Instagram feed section (POC hardcoded data)
+
+## [1.0.3] - 2026-06-22
+
+### Added
+- feat: sliding pinned announcement notification widget
+
 ## [1.0.2] - 2026-06-21
 
 ### Added

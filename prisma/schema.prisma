@@ -55,6 +55,14 @@ enum ClothingSize {
   ADULT_EXTRA_LARGE
 }
 
+/// Category for public-facing club announcements.
+enum AnnouncementCategory {
+  RECRUITMENT
+  EVENT
+  NEWS
+  VOLUNTEER
+}
+
 /// Privacy-guarded player profile for mobile player cards.
 model PlayerProfile {
   id                    String          @id @default(cuid())
@@ -594,4 +602,27 @@ model ShirtSubmission {
   @@index([moderationStatus])
   @@index([submitterEmail])
   @@index([moderationStatus, createdAt])
+}
+
+/// Public-facing club announcement — recruitment drives, events,
+/// news, and volunteer asks. Surfaced on the homepage and /news page.
+/// Auto-hides after expiresAt if set.
+model Announcement {
+  id          String               @id @default(cuid())
+  title       String
+  category    AnnouncementCategory
+  body        String               // markdown, 2-3 paragraphs max
+  imageUrl    String?              // optional — paste any image URL
+  ctaLabel    String?              // e.g. "Register Now", "Sign Up"
+  ctaUrl      String?              // destination for the CTA button
+  publishedAt DateTime             @default(now())
+  expiresAt   DateTime?            // auto-hides after this date if set
+  isPublished Boolean              @default(false)
+  pinned      Boolean              @default(false) // pins to front of grid
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
+
+  @@index([isPublished, publishedAt])
+  @@index([category, isPublished])
+  @@index([pinned, publishedAt])
 }

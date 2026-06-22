@@ -2,10 +2,14 @@ import Header from '@/components/Header';
 import Hero from '@/components/Hero';
 import Link from 'next/link';
 import TeletextFixtures from '@/components/TeletextFixtures';
+import AnnouncementCard from '@/components/AnnouncementCard';
+import AnnouncementTrigger from '@/components/announcements/AnnouncementTrigger';
+import InstagramFeed from '@/components/InstagramFeed';
 import { CLUB_SEASON } from '@/config/club-season';
 import { APP_VERSION, APP_VERSION_DATE } from '@/config/version';
 import { KNOWN_DIVISIONS } from '@/config/ddsl-competitions';
 import { AFL_DIVISIONS } from '@/config/afl-competitions';
+import { prisma } from '@/lib/prisma';
 
 const COMMUNITY_CATEGORIES = [
   {
@@ -62,8 +66,35 @@ function getAgeGroupSummaries(): AgeGroupSummary[] {
 // Page
 // ─────────────────────────────────────────────────────────────────────────────
 
-export default function Home() {
+export default async function Home() {
   const ageGroups = getAgeGroupSummaries();
+
+  const now = new Date();
+
+  const pinnedAnnouncement = await prisma.announcement.findFirst({
+    where: {
+      isPublished: true,
+      pinned:      true,
+      OR: [{ expiresAt: null }, { expiresAt: { gt: now } }],
+    },
+    select: {
+      id:       true,
+      title:    true,
+      category: true,
+      ctaLabel: true,
+      ctaUrl:   true,
+    },
+    orderBy: { publishedAt: 'desc' },
+  });
+
+  const announcements = await prisma.announcement.findMany({
+    where: {
+      isPublished: true,
+      OR: [{ expiresAt: null }, { expiresAt: { gt: now } }],
+    },
+    orderBy: [{ pinned: 'desc' }, { publishedAt: 'desc' }],
+    take: 3,
+  });
 
   const [startStr] = CLUB_SEASON.currentSeason.split('/');
   const nextStartYear = +startStr + 1;
@@ -97,6 +128,36 @@ export default function Home() {
             <TeletextFixtures />
           </div>
         </section>
+
+        {/* ── 2.5. Announcements ───────────────────────────────────────────── */}
+        {announcements.length > 0 && (
+          <section className="py-16 border-b border-brand-navy/10">
+            <div className="max-w-6xl mx-auto px-6">
+              <div className="flex items-center justify-between mb-8">
+                <div>
+                  <h2 className="font-display font-black italic text-3xl md:text-4xl uppercase tracking-tight leading-none text-brand-charcoal">
+                    Latest News
+                  </h2>
+                  <div className="h-2 w-24 bg-brand-neon border-2 border-brand-charcoal mt-2" />
+                </div>
+                <Link
+                  href="/news"
+                  className="min-h-[44px] inline-flex items-center px-2 -mr-2 text-xs font-display font-black uppercase tracking-wide text-brand-charcoal/50 hover:text-brand-navy transition-colors"
+                >
+                  See all →
+                </Link>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {announcements.map((a) => (
+                  <AnnouncementCard key={a.id} announcement={a} />
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* ── 2.7. Instagram Feed ──────────────────────────────────────────── */}
+        <InstagramFeed />
 
         {/* ── 3. Club in Numbers ───────────────────────────────────────────── */}
         <section className="bg-brand-cream py-20">
@@ -282,6 +343,7 @@ export default function Home() {
               >
                 Check Fees
               </Link>
+              <AnnouncementTrigger pinnedAnnouncement={pinnedAnnouncement} />
             </div>
           </div>
         </section>
@@ -373,6 +435,10 @@ export default function Home() {
           <p>Dublin Football Pride Since {CLUB_SEASON.foundingYear}</p>
           <p className="text-xs text-brand-sky/50 mt-2 md:mt-0">
             RVR2026 v{APP_VERSION} · {APP_VERSION_DATE}
+            {' · '}
+            <a href="/admin/login" className="hover:text-brand-sky/80 transition-colors">
+              Admin
+            </a>
           </p>
         </div>
       </footer>
