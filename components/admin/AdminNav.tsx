@@ -5,6 +5,7 @@ const links = [
   { href: '/admin/enquiries', label: 'Enquiries' },
   { href: '/admin/features', label: 'Features' },
   { href: '/admin/moderation', label: 'Moderation' },
+  { href: '/admin/boot-room', label: 'Boot Room' },
   { href: '/admin/docs', label: 'Docs' },
 ];
 

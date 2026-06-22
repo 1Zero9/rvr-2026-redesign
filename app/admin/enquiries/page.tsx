@@ -33,7 +33,8 @@ export default async function EnquiriesPage() {
           Public Enquiries
         </h1>
         <p className="mt-2 text-sm font-semibold text-zinc-600">
-          Callback and programme-interest submissions from the public site.
+          Callback, volunteering, coaching, programme, and sponsorship
+          submissions from the public site.
         </p>
 
         <div className="mt-8 grid gap-4">

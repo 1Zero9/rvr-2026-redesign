@@ -85,9 +85,12 @@ const NAV_SECTIONS: NavSection[] = [
       {
         heading: 'Club Services',
         links: [
-          { href: '/news',    label: 'News'       },
-          { href: '/contact', label: 'Contact Us' },
-          { href: '/shop',    label: 'Club Shop'  },
+          { href: '/get-involved', label: 'Volunteer & Coach' },
+          { href: '/sponsorship',  label: 'Sponsorship'       },
+          { href: '/boot-room',    label: 'Boot Room'         },
+          { href: '/news',         label: 'News'              },
+          { href: '/contact',      label: 'Contact Us'        },
+          { href: '/shop',         label: 'Club Shop'         },
         ],
       },
       {
@@ -130,6 +133,9 @@ const MOBILE_NAV_GROUPS: MobileNavItem[] = [
   { type: 'link',   label: 'Facilities',       href: '/club#facilities'            },
   { type: 'link',   label: 'Policies',         href: '/club#policies'              },
   { type: 'link',   label: 'Safeguarding',     href: '/club/safeguarding'          },
+  { type: 'link',   label: 'Volunteer & Coach', href: '/get-involved'               },
+  { type: 'link',   label: 'Sponsorship',       href: '/sponsorship'                },
+  { type: 'link',   label: 'Boot Room',         href: '/boot-room'                  },
   { type: 'link',   label: 'Contact Us',       href: '/contact'                    },
   { type: 'link',   label: 'Club Shop',        href: '/shop'                       },
   { type: 'header', label: 'News',            href: '/news'                        },
@@ -144,7 +150,11 @@ function isNavActive(label: string, pathname: string): boolean {
                                    pathname.startsWith('/teams');
   if (label === 'Fixtures') return pathname === '/fixtures';
   if (label === 'Join')     return pathname === '/register';
-  if (label === 'Club')     return pathname.startsWith('/club') || pathname === '/news';
+  if (label === 'Club')     return pathname.startsWith('/club') ||
+                                   pathname === '/news' ||
+                                   pathname === '/get-involved' ||
+                                   pathname === '/sponsorship' ||
+                                   pathname === '/boot-room';
   return false;
 }
 
@@ -244,11 +254,7 @@ export default function Header() {
                         setOpenSection(section.label);
                       }}
                       onFocus={() => setOpenSection(section.label)}
-                      onClick={() =>
-                        setOpenSection((current) =>
-                          current === section.label ? null : section.label,
-                        )
-                      }
+                      onClick={() => setOpenSection(section.label)}
                       aria-expanded={isOpen}
                       className={`min-h-[44px] px-4 flex items-center gap-1.5 font-display font-black uppercase text-sm tracking-wide rounded-lg transition-all ${
                         isOpen

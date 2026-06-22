@@ -1,7 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
-const allowedTypes = new Set(['FOOTBALL_FOR_ALL_CALLBACK', 'JMO_INTEREST']);
+const allowedTypes = new Set([
+  'FOOTBALL_FOR_ALL_CALLBACK',
+  'JMO_INTEREST',
+  'VOLUNTEER_INTEREST',
+  'COACHING_INTEREST',
+  'SPONSORSHIP_INTEREST',
+]);
 const recentRequests = new Map<string, number[]>();
 
 function isRateLimited(request: NextRequest): boolean {

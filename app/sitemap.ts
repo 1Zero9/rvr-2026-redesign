@@ -6,6 +6,7 @@ const SITE_URL = 'https://rvr-2026-redesign.vercel.app';
 const routes = [
   '',
   '/astro-booking',
+  '/boot-room',
   '/campaigns',
   '/club',
   '/club/safeguarding',
@@ -13,6 +14,7 @@ const routes = [
   '/ddsl-jmo',
   '/fixtures',
   '/football-for-all',
+  '/get-involved',
   '/membership-calculator',
   '/news',
   '/register',
@@ -24,6 +26,7 @@ const routes = [
   '/seniors/over-35s/over35s-a',
   '/seniors/over-35s/over35s-b',
   '/shop',
+  '/sponsorship',
   '/teams',
 ];
 
