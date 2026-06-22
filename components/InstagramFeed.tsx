@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { INSTAGRAM_POSTS, type InstagramPost } from '@/lib/instagram-data';
 
 function PostCard({ post }: { post: InstagramPost }) {
@@ -17,11 +18,13 @@ function PostCard({ post }: { post: InstagramPost }) {
       rel="noopener noreferrer"
       className="relative aspect-square overflow-hidden group border-2 border-transparent hover:border-brand-neon transition-colors duration-200 block"
     >
-      <img
+      <Image
         src={post.imageUrl}
         alt={post.caption.slice(0, 100)}
+        width={400}
+        height={400}
+        unoptimized
         className="w-full h-full object-cover"
-        loading="lazy"
       />
       <div className="absolute inset-0 bg-brand-navy/80 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex flex-col justify-end p-3">
         <p className="text-white text-xs leading-snug line-clamp-3 mb-1">

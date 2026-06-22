@@ -1,41 +1,29 @@
 import Header from "@/components/Header";
 import KitDesignCompetition from "@/components/campaigns/KitDesignCompetition";
 import type { KitSubmission } from "@/types/campaigns";
+import { notFound } from "next/navigation";
+import { isFeatureEnabled } from "@/lib/features";
+import { prisma } from "@/lib/prisma";
 
-const sampleSubmissions: KitSubmission[] = [
-  {
-    id: "rvr-green-river",
-    designerName: "Ava",
-    teamName: "Green River",
-    imageUrl:
-      "https://images.unsplash.com/photo-1551958219-acbc608c6377?auto=format&fit=crop&w=900&q=80",
-    votesCount: 48,
-    isApproved: true,
-    createdAt: "2026-05-20T10:00:00.000Z",
-  },
-  {
-    id: "rvr-1981-hoops",
-    designerName: "Noah",
-    teamName: "1981 Hoops",
-    imageUrl:
-      "https://images.unsplash.com/photo-1522778119026-d647f0596c20?auto=format&fit=crop&w=900&q=80",
-    votesCount: 36,
-    isApproved: true,
-    createdAt: "2026-05-21T10:00:00.000Z",
-  },
-  {
-    id: "rvr-astro-nights",
-    designerName: "Sophie",
-    teamName: "Astro Nights",
-    imageUrl:
-      "https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=900&q=80",
-    votesCount: 42,
-    isApproved: true,
-    createdAt: "2026-05-22T10:00:00.000Z",
-  },
-];
+export default async function AnniversaryKitPage() {
+  if (!(await isFeatureEnabled("anniversaryKit"))) notFound();
 
-export default function AnniversaryKitPage() {
+  const approved = await prisma.kitDesignSubmission.findMany({
+    where: { moderationStatus: "APPROVED" },
+    orderBy: [{ voteCount: "desc" }, { createdAt: "desc" }],
+    take: 50,
+  });
+
+  const submissions: KitSubmission[] = approved.map((submission) => ({
+    id: submission.id,
+    designerName: submission.submitterName,
+    teamName: submission.teamName ?? "RVR Community",
+    imageUrl: submission.thumbnailUrl ?? submission.designFileUrl,
+    votesCount: submission.voteCount,
+    isApproved: true,
+    createdAt: submission.createdAt.toISOString(),
+  }));
+
   return (
     <div
       className="min-h-screen bg-brand-cream"
@@ -47,7 +35,7 @@ export default function AnniversaryKitPage() {
     >
       <Header />
       <main>
-        <KitDesignCompetition initialSubmissions={sampleSubmissions} />
+        <KitDesignCompetition initialSubmissions={submissions} />
       </main>
     </div>
   );

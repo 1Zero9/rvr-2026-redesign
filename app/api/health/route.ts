@@ -11,15 +11,16 @@
 
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { getFeatureAvailability } from '@/lib/features';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(): Promise<NextResponse> {
-  const required = [
-    'DATABASE_URL',
-    'STRIPE_SECRET_KEY',
-    'STRIPE_WEBHOOK_SECRET',
-  ];
+  const features = await getFeatureAvailability();
+  const required = ['DATABASE_URL'];
+  if (features.stripePayments) {
+    required.push('STRIPE_SECRET_KEY', 'STRIPE_WEBHOOK_SECRET');
+  }
 
   const missing = required.filter((key) => !process.env[key]);
 
@@ -39,6 +40,7 @@ export async function GET(): Promise<NextResponse> {
     {
       status: healthy ? 'ok' : 'degraded',
       db: dbStatus,
+      features,
       ...(dbError ? { dbError } : {}),
       ...(missing.length > 0 ? { missingEnvVars: missing } : {}),
     },

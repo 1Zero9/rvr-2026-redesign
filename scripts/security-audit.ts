@@ -58,9 +58,6 @@ const SENSITIVE_PUBLIC_SUFFIXES = [
   "COMET", "WEBHOOK", "PRIVATE",
 ];
 
-// Files/paths that must never exist in the repo
-const FORBIDDEN_FILES = [".env", ".env.production", ".env.staging", "*.pem", "*.key"];
-
 // ---------------------------------------------------------------------------
 // File walker
 // ---------------------------------------------------------------------------

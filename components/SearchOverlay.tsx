@@ -31,8 +31,10 @@ export default function SearchOverlay({ isOpen, onClose }: Props) {
 
   useEffect(() => {
     if (isOpen) {
-      setQuery('');
-      const t = setTimeout(() => inputRef.current?.focus(), 50);
+      const t = setTimeout(() => {
+        setQuery('');
+        inputRef.current?.focus();
+      }, 50);
       return () => clearTimeout(t);
     }
   }, [isOpen]);
@@ -44,14 +46,14 @@ export default function SearchOverlay({ isOpen, onClose }: Props) {
     .map((id) => SEARCH_INDEX.find((e) => e.id === id))
     .filter((e): e is SearchEntry => e !== undefined);
 
+  if (!isOpen) return null;
+
   return (
     <div
       aria-modal="true"
       role="dialog"
       aria-label="Search teams"
-      className={`fixed inset-0 z-50 bg-brand-navy/95 backdrop-blur-sm transition-opacity duration-200 ${
-        isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
-      }`}
+      className="fixed inset-0 z-50 bg-brand-navy/95 backdrop-blur-sm"
     >
       {/* Close button */}
       <button

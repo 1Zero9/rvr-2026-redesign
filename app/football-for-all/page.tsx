@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import Header from '@/components/Header';
+import PublicPageShell from '@/components/layout/PublicPageShell';
+import PageHero from '@/components/layout/PageHero';
 
 interface Testimonial {
   quote: string;
@@ -37,6 +38,8 @@ export default function FootballForAllPage() {
   const [callbackRequested, setCallbackRequested] = useState(false);
   const [callbackName, setCallbackName] = useState('');
   const [callbackPhone, setCallbackPhone] = useState('');
+  const [callbackError, setCallbackError] = useState('');
+  const [callbackSubmitting, setCallbackSubmitting] = useState(false);
 
   // Proportional font sizing definitions
   const fontSizeClass = 
@@ -52,23 +55,45 @@ export default function FootballForAllPage() {
     setActiveTestimonial((prev) => (prev - 1 + TESTIMONIALS.length) % TESTIMONIALS.length);
   };
 
-  const handleCallbackSubmit = (e: React.FormEvent) => {
+  const handleCallbackSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (callbackName && callbackPhone) {
+    if (!callbackName || !callbackPhone || callbackSubmitting) return;
+
+    setCallbackSubmitting(true);
+    setCallbackError('');
+
+    try {
+      const response = await fetch('/api/enquiries', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'FOOTBALL_FOR_ALL_CALLBACK',
+          name: callbackName,
+          phone: callbackPhone,
+        }),
+      });
+
+      if (!response.ok) {
+        const result = (await response.json()) as { error?: string };
+        throw new Error(result.error || 'Your request could not be submitted.');
+      }
       setCallbackRequested(true);
+    } catch (error) {
+      setCallbackError(
+        error instanceof Error ? error.message : 'Your request could not be submitted.',
+      );
+    } finally {
+      setCallbackSubmitting(false);
     }
   };
 
   return (
-    <div
-      className={`flex flex-col min-h-screen bg-brand-cream text-[#222222] transition-all ${fontSizeClass}`}
-      style={{
-        backgroundImage: `linear-gradient(rgba(11,31,59,0.04) 1px, transparent 1px),
-                          linear-gradient(90deg, rgba(11,31,59,0.04) 1px, transparent 1px)`,
-        backgroundSize: '40px 40px',
-      }}
-    >
-      <Header />
+    <PublicPageShell className={`transition-all ${fontSizeClass}`}>
+      <PageHero
+        eyebrow="Football For All"
+        title="Inclusive Sports Academy"
+        description="Adaptive, mixed-ability, and walking football in a safe and welcoming club environment."
+      />
 
       <main className="flex-grow max-w-6xl w-full mx-auto px-4 md:px-6 py-12 space-y-12">
         
@@ -115,19 +140,6 @@ export default function FootballForAllPage() {
               A++ (Extra Large)
             </button>
           </div>
-        </div>
-
-        {/* PORTAL HEADER */}
-        <div className="text-center space-y-4 py-6">
-          <span className="inline-block bg-[#D1E7DD] text-brand-green font-display font-extrabold text-xs px-4 py-1.5 rounded-full border-2 border-brand-green/30 uppercase tracking-wider">
-            Football For All
-          </span>
-          <h1 className="font-display font-black text-3xl sm:text-5xl uppercase italic tracking-tight text-brand-charcoal">
-            Inclusive Sports Academy
-          </h1>
-          <p className="font-sans text-lg md:text-xl font-medium text-zinc-600 max-w-2xl mx-auto leading-relaxed">
-            Welcome to Rivervalley Rangers' adaptive, mixed-ability, and walking football hub. Creating a safe, gentle, and happy environment for everyone.
-          </p>
         </div>
 
         {/* PROGRAM HIGHLIGHTS GRID */}
@@ -182,7 +194,7 @@ export default function FootballForAllPage() {
         {/* COORDINATOR CONTACT & TESTIMONIALS SPLIT GRID */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           
-          {/* LEFT: Coordinator Tony Contact Card */}
+              {/* LEFT: Programme contact card */}
           <div className="lg:col-span-5 space-y-4">
             <h2 className="font-display font-bold text-xl uppercase tracking-tight text-brand-charcoal">
               Inclusive Program Coordinator
@@ -191,22 +203,22 @@ export default function FootballForAllPage() {
               
               {/* Profile Bio */}
               <div className="flex items-center gap-4">
-                {/* Visual Avatar Placeholder */}
+                {/* Programme mark */}
                 <div className="w-16 h-16 rounded-full bg-brand-sage border-2 border-zinc-400 flex items-center justify-center text-3xl font-display font-bold text-brand-green select-none" aria-hidden="true">
-                  T
+                  RVR
                 </div>
                 <div>
                   <h3 className="font-display font-black text-xl uppercase italic text-brand-charcoal leading-none">
-                    Tony Dunne
+                    Football For All Team
                   </h3>
                   <span className="font-sans text-xs font-bold text-zinc-500 uppercase tracking-wide block mt-1">
-                    Coordinator & UEFA Coach
+                    Inclusive programme enquiries
                   </span>
                   <a
-                    href="tel:+353871234567"
-                    className="inline-flex items-center gap-1.5 text-brand-green font-bold text-sm mt-2 hover:underline focus:ring-2 focus:ring-brand-green focus:outline-none rounded"
+                    href="mailto:info@rvrafc.ie?subject=Football%20For%20All"
+                    className="inline-flex min-h-11 items-center gap-1.5 rounded text-sm font-bold text-brand-green hover:underline focus:outline-none focus:ring-2 focus:ring-brand-green"
                   >
-                    📞 Call Tony: 087 123 4567
+                    Email info@rvrafc.ie
                   </a>
                 </div>
               </div>
@@ -219,7 +231,8 @@ export default function FootballForAllPage() {
 
                 {callbackRequested ? (
                   <div className="p-4 bg-[#D1E7DD] border border-[#A3CFBB] text-[#0F5132] rounded-xl text-xs font-semibold">
-                    Thank you, {callbackName}! Tony will call you back shortly on {callbackPhone}.
+                    Thank you, {callbackName}. Your callback request has been
+                    received by the club team.
                   </div>
                 ) : (
                   <form onSubmit={handleCallbackSubmit} className="space-y-3">
@@ -231,7 +244,8 @@ export default function FootballForAllPage() {
                         type="text"
                         value={callbackName}
                         onChange={(e) => setCallbackName(e.target.value)}
-                        className="w-full p-2 border-2 border-zinc-300 rounded-lg text-sm focus:border-brand-green focus:outline-none"
+                        autoComplete="name"
+                        className="min-h-11 w-full rounded-lg border-2 border-zinc-300 p-2 text-sm focus:border-brand-green focus:outline-none"
                         placeholder="Enter name"
                       />
                     </div>
@@ -243,15 +257,22 @@ export default function FootballForAllPage() {
                         type="tel"
                         value={callbackPhone}
                         onChange={(e) => setCallbackPhone(e.target.value)}
-                        className="w-full p-2 border-2 border-zinc-300 rounded-lg text-sm focus:border-brand-green focus:outline-none"
-                        placeholder="e.g. 087 123 4567"
+                        autoComplete="tel"
+                        className="min-h-11 w-full rounded-lg border-2 border-zinc-300 p-2 text-sm focus:border-brand-green focus:outline-none"
+                        placeholder="Your phone number"
                       />
                     </div>
+                    {callbackError && (
+                      <p role="alert" className="text-sm font-bold text-red-700">
+                        {callbackError}
+                      </p>
+                    )}
                     <button
                       type="submit"
-                      className="w-full py-2.5 px-4 bg-brand-green text-white font-display font-black text-xs uppercase tracking-wide rounded-lg hover:bg-[#004f3a] transition-all focus:ring-4 focus:ring-brand-green focus:outline-none shadow-[2px_2px_0px_0px_#121212] active:translate-y-0.5 active:shadow-none"
+                      disabled={callbackSubmitting}
+                      className="min-h-11 w-full rounded-lg bg-brand-green px-4 py-2.5 font-display text-xs font-black uppercase tracking-wide text-white shadow-[2px_2px_0px_0px_#121212] transition-all hover:bg-[#004f3a] focus:outline-none focus:ring-4 focus:ring-brand-green active:translate-y-0.5 active:shadow-none disabled:cursor-wait disabled:opacity-60"
                     >
-                      Request Call Back
+                      {callbackSubmitting ? 'Sending…' : 'Request Call Back'}
                     </button>
                   </form>
                 )}
@@ -290,14 +311,14 @@ export default function FootballForAllPage() {
                 <div className="flex gap-2">
                   <button
                     onClick={prevTestimonial}
-                    className="p-2 border-2 border-zinc-300 rounded-lg hover:border-brand-charcoal focus:ring-4 focus:ring-brand-green focus:outline-none bg-zinc-50"
+                    className="flex min-h-11 min-w-11 items-center justify-center rounded-lg border-2 border-zinc-300 bg-zinc-50 p-2 hover:border-brand-charcoal focus:outline-none focus:ring-4 focus:ring-brand-green"
                     aria-label="Previous Testimonial"
                   >
                     ←
                   </button>
                   <button
                     onClick={nextTestimonial}
-                    className="p-2 border-2 border-zinc-300 rounded-lg hover:border-brand-charcoal focus:ring-4 focus:ring-brand-green focus:outline-none bg-zinc-50"
+                    className="flex min-h-11 min-w-11 items-center justify-center rounded-lg border-2 border-zinc-300 bg-zinc-50 p-2 hover:border-brand-charcoal focus:outline-none focus:ring-4 focus:ring-brand-green"
                     aria-label="Next Testimonial"
                   >
                     →
@@ -326,52 +347,16 @@ export default function FootballForAllPage() {
               <strong>AAA Color Contrast Ratio:</strong> Colors are soft and muted, yet verify a contrast ratio of &gt; 7:1 for body copy against light backgrounds (Charcoal text on Cream and Sage).
             </li>
             <li>
-              <strong>Keyboard Navigation:</strong> High-contrast focus borders are implemented using Tailwind's <code>focus:ring-4 focus:ring-brand-green</code> to help keyboard-only navigators.
+              <strong>Keyboard Navigation:</strong> High-contrast focus borders are implemented using Tailwind&apos;s <code>focus:ring-4 focus:ring-brand-green</code> to help keyboard-only navigators.
             </li>
             <li>
-              <strong>ARIA tags & Accessibility Labels:</strong> Non-text items like arrow buttons and custom settings buttons include descriptive <code>aria-label</code> tags. Emojis are hidden from screen readers using <code>aria-hidden="true"</code>.
+              <strong>ARIA tags &amp; Accessibility Labels:</strong> Non-text items like arrow buttons and custom settings buttons include descriptive <code>aria-label</code> tags. Emojis are hidden from screen readers using <code>aria-hidden=&quot;true&quot;</code>.
             </li>
           </ul>
         </section>
 
       </main>
 
-      {/* Footer */}
-      <footer className="bg-brand-charcoal text-white border-t-4 border-brand-charcoal py-12">
-        <div className="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div>
-            <h4 className="font-display font-black text-xl italic uppercase tracking-tight text-brand-neon mb-4">
-              RIVERVALLEY RANGERS AFC
-            </h4>
-            <p className="text-zinc-400 text-sm leading-relaxed max-w-xs">
-              Swords' leading community football club, established in 1981. Dedicated to equality, youth development, and inclusive sports.
-            </p>
-          </div>
-          <div>
-            <h4 className="font-display font-bold text-sm uppercase tracking-wider text-white mb-4">
-              Our Locations
-            </h4>
-            <ul className="space-y-2 text-zinc-400 text-sm">
-              <li>📍 Ward Rivervalley Park, Swords, Co. Dublin</li>
-              <li>🏟️ Ward Rivervalley All-Weather Astro Pitch</li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-display font-bold text-sm uppercase tracking-wider text-white mb-4">
-              Legal & Safety
-            </h4>
-            <ul className="space-y-2 text-zinc-400 text-sm">
-              <li>✓ 100% Garda Vetted Coaches</li>
-              <li>✓ Child Safeguarding Statement</li>
-              <li>✓ FAI Club Mark Accredited</li>
-            </ul>
-          </div>
-        </div>
-        <div className="max-w-6xl mx-auto px-6 mt-12 pt-8 border-t border-zinc-800 flex flex-col md:flex-row items-center justify-between text-xs text-zinc-500">
-          <p>© {new Date().getFullYear()} Rivervalley Rangers AFC. All rights reserved.</p>
-          <p>Dublin Football Pride Since 1981</p>
-        </div>
-      </footer>
-    </div>
+    </PublicPageShell>
   );
 }

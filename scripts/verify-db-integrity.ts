@@ -45,7 +45,6 @@ function isValidEmail(s: string): boolean {
 }
 
 const TWENTY_FOUR_HOURS = 24 * 60 * 60 * 1000;
-const SEVEN_DAYS = 7 * TWENTY_FOUR_HOURS;
 
 // ---------------------------------------------------------------------------
 // Check: StaffMember profiles

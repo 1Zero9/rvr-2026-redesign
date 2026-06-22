@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
-import Header from "@/components/Header";
-import { Mail, MapPin, Phone, ShieldCheck } from "lucide-react";
+import PublicPageShell from "@/components/layout/PublicPageShell";
+import PageHero from "@/components/layout/PageHero";
+import { Mail, MapPin, ShieldCheck } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Contact | Rivervalley Rangers AFC",
@@ -28,34 +29,12 @@ const contacts = [
 
 export default function ContactPage() {
   return (
-    <div
-      className="min-h-screen bg-brand-cream text-brand-charcoal"
-      style={{
-        backgroundImage: `linear-gradient(rgba(11,31,59,0.04) 1px, transparent 1px),
-                          linear-gradient(90deg, rgba(11,31,59,0.04) 1px, transparent 1px)`,
-        backgroundSize: '40px 40px',
-      }}
-    >
-      <Header />
-
-      <main>
-        <section className="border-b-4 border-brand-charcoal bg-white">
-          <div className="mx-auto max-w-6xl px-6 py-14 lg:py-20">
-            <div className="max-w-2xl">
-              <span className="mb-4 inline-flex items-center gap-2 rounded-full border-3 border-brand-charcoal bg-brand-neon px-4 py-2 font-display text-xs font-black uppercase tracking-wider">
-                <Mail className="h-4 w-4" aria-hidden="true" />
-                Get in Touch
-              </span>
-              <h1 className="font-display text-4xl font-black uppercase italic leading-none tracking-tighter md:text-6xl">
-                Contact Us
-              </h1>
-              <p className="mt-5 text-base font-semibold leading-relaxed text-zinc-600 md:text-lg">
-                Reach the RVR committee, coaching staff, or welfare team.
-                We aim to respond to all enquiries within two working days.
-              </p>
-            </div>
-          </div>
-        </section>
+    <PublicPageShell>
+      <PageHero
+        eyebrow={<><Mail className="h-4 w-4" aria-hidden="true" /> Get in Touch</>}
+        title="Contact Us"
+        description="Reach the RVR committee, coaching staff, or welfare team. We aim to respond within two working days."
+      />
 
         <section className="mx-auto max-w-6xl px-6 py-12 lg:py-16">
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -115,7 +94,6 @@ export default function ContactPage() {
             </div>
           </div>
         </section>
-      </main>
-    </div>
+    </PublicPageShell>
   );
 }

@@ -1,54 +1,60 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import Header from '@/components/Header';
+import PublicPageShell from '@/components/layout/PublicPageShell';
+import PageHero from '@/components/layout/PageHero';
+import { getFeatureAvailability } from '@/lib/features';
 
 export const metadata: Metadata = {
   title: 'Campaigns | Rivervalley Rangers AFC',
   description: 'Fundraising campaigns, community competitions, and club initiatives from Rivervalley Rangers AFC.',
 };
 
-export default function CampaignsPage() {
+export default async function CampaignsPage() {
+  const features = await getFeatureAvailability();
+
   return (
-    <div
-      className="min-h-screen bg-brand-cream"
-      style={{
-        backgroundImage: `linear-gradient(rgba(11,31,59,0.04) 1px, transparent 1px),
-                          linear-gradient(90deg, rgba(11,31,59,0.04) 1px, transparent 1px)`,
-        backgroundSize: '40px 40px',
-      }}
-    >
-      <Header />
+    <PublicPageShell>
+      <PageHero
+        eyebrow="Community Initiatives"
+        title="Campaigns"
+        description="Fundraising, competitions, and special club projects."
+        maxWidth="4xl"
+      />
 
-      <main>
-        <div className="bg-brand-navy py-12">
-          <div className="max-w-2xl mx-auto px-4">
-            <h1 className="font-display font-black italic text-4xl md:text-5xl uppercase tracking-tight leading-none text-brand-neon mb-2">
-              Campaigns
-            </h1>
-            <p className="text-brand-sky text-base">
-              Fundraising &amp; Community Initiatives
-            </p>
-          </div>
-        </div>
-
-        <div className="max-w-2xl mx-auto px-4 py-10">
-          <div className="bg-brand-cream border-2 border-brand-sky shadow-brutalist p-6">
-            <h2 className="font-display italic font-black text-2xl text-brand-navy mb-3">
-              Coming Soon
-            </h2>
-            <p className="text-brand-charcoal text-base mb-6">
-              We&apos;re building something here. Check back soon for fundraising campaigns,
-              community competitions, and club initiatives.
-            </p>
+        <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6">
+          {features.anniversaryKit ? (
             <Link
-              href="/contact"
-              className="inline-flex items-center justify-center bg-brand-neon text-brand-charcoal font-bold px-6 py-3 min-h-[44px]"
+              href="/campaigns/45th-anniversary-kit"
+              className="block border-3 border-brand-charcoal bg-white p-6 shadow-brutalist transition hover:translate-x-1 hover:translate-y-1 hover:shadow-none"
             >
-              Get in Touch →
+              <p className="font-display text-xs font-black uppercase text-brand-green">
+                Open campaign
+              </p>
+              <h2 className="mt-2 font-display text-2xl font-black italic text-brand-navy">
+                45th Anniversary Kit
+              </h2>
+              <p className="mt-3 text-base text-brand-charcoal">
+                Submit a kit concept and view approved community designs.
+              </p>
             </Link>
-          </div>
+          ) : (
+            <div className="site-surface p-6">
+              <h2 className="font-display text-2xl font-black italic text-brand-navy">
+                No public campaigns currently open
+              </h2>
+              <p className="mb-6 mt-3 text-base text-brand-charcoal">
+                New fundraising and community initiatives will be published here
+                once registration details are confirmed.
+              </p>
+              <Link
+                href="/contact"
+                className="inline-flex min-h-11 items-center justify-center bg-brand-neon px-6 py-3 font-bold text-brand-charcoal"
+              >
+                Contact the Club →
+              </Link>
+            </div>
+          )}
         </div>
-      </main>
-    </div>
+    </PublicPageShell>
   );
 }

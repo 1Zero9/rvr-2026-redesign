@@ -1,14 +1,35 @@
 import { getPendingShirts } from '@/lib/moderation/get-pending-shirts';
 import { APP_VERSION } from '@/config/version';
 import ModerationActions from './ModerationActions';
+import AdminNav from '@/components/admin/AdminNav';
+import { requireAdmin } from '@/lib/admin/require-admin';
+import { prisma } from '@/lib/prisma';
+import { revalidatePath } from 'next/cache';
+
+async function moderateSubmission(
+  id: string,
+  moderationStatus: 'APPROVED' | 'REJECTED',
+) {
+  'use server';
+  await requireAdmin();
+  await prisma.shirtSubmission.update({
+    where: { id },
+    data: {
+      moderationStatus,
+      reviewedAt: new Date(),
+      reviewedBy: 'admin',
+    },
+  });
+  revalidatePath('/admin/moderation');
+}
 
 export default async function ModerationPage() {
   const submissions = await getPendingShirts();
-  const adminSecret = process.env.ADMIN_SECRET ?? '';
 
   return (
     <main className="min-h-screen bg-brand-navy text-brand-cream p-8 font-sans">
       <div className="max-w-7xl mx-auto">
+        <AdminNav />
 
         <div className="mb-10">
           <h1 className="font-display font-black text-4xl uppercase tracking-tight text-brand-cream italic">
@@ -87,7 +108,10 @@ export default async function ModerationPage() {
                       )}
                     </td>
                     <td className="px-4 py-3">
-                      <ModerationActions id={s.id} adminSecret={adminSecret} />
+                      <ModerationActions
+                        approveAction={moderateSubmission.bind(null, s.id, 'APPROVED')}
+                        rejectAction={moderateSubmission.bind(null, s.id, 'REJECTED')}
+                      />
                     </td>
                   </tr>
                 ))}

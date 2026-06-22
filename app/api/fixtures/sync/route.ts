@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { cacheGet, cacheSet, TTL_MS } from '@/lib/ddsl/cache';
 import { LOCAL_SEED } from '@/lib/ddsl/local-seed';
 import { applyDivisionFilter } from '@/lib/ddsl/division-filter';
@@ -73,7 +73,7 @@ function buildDivisionList(
 // Route handler
 // ---------------------------------------------------------------------------
 
-export async function GET(_req: NextRequest): Promise<NextResponse> {
+export async function GET(): Promise<NextResponse> {
   const cached = cacheGet<SyncResponse>(CACHE_KEY);
   if (cached.hit) {
     return NextResponse.json(cached.data, {

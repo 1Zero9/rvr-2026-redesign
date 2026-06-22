@@ -15,8 +15,39 @@ const jakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Rivervalley Rangers AFC | 2026 Redesign",
+  metadataBase: new URL("https://rvr-2026-redesign.vercel.app"),
+  title: {
+    default: "Rivervalley Rangers AFC",
+    template: "%s",
+  },
   description: "Swords' premier football club. Bold, energetic, and community-first since 1981.",
+  applicationName: "Rivervalley Rangers AFC",
+  alternates: {
+    canonical: "./",
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_IE",
+    siteName: "Rivervalley Rangers AFC",
+    title: "Rivervalley Rangers AFC",
+    description:
+      "Swords community football club for youth, senior, inclusive, and Over 35s football.",
+    images: [
+      {
+        url: "/river-valley-rangers-logo-pack-v2/rvr-crest-1024.png",
+        width: 1024,
+        height: 1024,
+        alt: "Rivervalley Rangers AFC crest",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary",
+    title: "Rivervalley Rangers AFC",
+    description:
+      "Swords community football club for youth, senior, inclusive, and Over 35s football.",
+    images: ["/river-valley-rangers-logo-pack-v2/rvr-crest-1024.png"],
+  },
 };
 
 export default function RootLayout({

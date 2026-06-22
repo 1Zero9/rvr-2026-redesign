@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { requireAdmin } from '@/lib/admin/require-admin';
 
 export async function POST(req: NextRequest) {
-  const secret = req.headers.get('x-admin-secret');
-  if (secret !== process.env.ADMIN_SECRET) {
+  try {
+    await requireAdmin();
+  } catch {
     return NextResponse.json({ error: 'Unauthorised' }, { status: 401 });
   }
   const body = await req.json();

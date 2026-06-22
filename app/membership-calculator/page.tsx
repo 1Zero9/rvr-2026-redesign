@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
-import Header from '@/components/Header';
+import React, { useEffect, useState } from 'react';
+import PublicPageShell from '@/components/layout/PublicPageShell';
+import PageHero from '@/components/layout/PageHero';
 
 type MemberRole = 'adult-player' | 'student-over-18' | 'youth-player' | 'junior-academy' | 'volunteer';
 
@@ -22,6 +23,14 @@ const PRICING: Record<MemberRole, { label: string; price: number }> = {
 export default function MembershipCalculatorPage() {
   const [members, setMembers] = useState<Member[]>([]);
   const [nextId, setNextId] = useState(1);
+  const [paymentsEnabled, setPaymentsEnabled] = useState(false);
+
+  useEffect(() => {
+    fetch('/api/features')
+      .then((response) => response.json() as Promise<{ stripePayments?: boolean }>)
+      .then((features) => setPaymentsEnabled(features.stripePayments === true))
+      .catch(() => setPaymentsEnabled(false));
+  }, []);
 
   const addMember = (isAdult: boolean) => {
     const defaultRole: MemberRole = isAdult ? 'volunteer' : 'youth-player';
@@ -119,30 +128,14 @@ export default function MembershipCalculatorPage() {
   const { subtotal, finalPrice, savings, appliedCap } = calculateTotal();
 
   return (
-    <div
-      className="flex flex-col min-h-screen bg-brand-cream text-brand-charcoal"
-      style={{
-        backgroundImage: `linear-gradient(rgba(11,31,59,0.04) 1px, transparent 1px),
-                          linear-gradient(90deg, rgba(11,31,59,0.04) 1px, transparent 1px)`,
-        backgroundSize: '40px 40px',
-      }}
-    >
-      <Header />
+    <PublicPageShell>
+      <PageHero
+        eyebrow="Registration Portal"
+        title="Family Membership Pricing"
+        description="Build a family group and see the applicable individual rates, caps, and estimated savings."
+      />
 
-      <main className="flex-grow max-w-6xl w-full mx-auto px-4 md:px-6 py-12">
-        
-        {/* Page Header */}
-        <div className="text-center mb-10">
-          <span className="inline-block bg-brand-green text-white font-display font-black text-xs px-3 py-1.5 rounded-full uppercase tracking-wider mb-4 border-2 border-brand-charcoal">
-            Registration Portal
-          </span>
-          <h1 className="font-display font-black text-3xl md:text-5xl uppercase italic tracking-tight leading-none text-brand-charcoal">
-            Family Membership Pricing Calculator
-          </h1>
-          <p className="font-sans text-base md:text-lg font-semibold text-zinc-600 mt-3 max-w-xl mx-auto leading-relaxed">
-            Register multiple family members together and unlock automated tiered pricing. The more you register, the more you save.
-          </p>
-        </div>
+      <section className="mx-auto w-full max-w-6xl px-4 py-12 md:px-6">
 
         {/* Desktop Split-Screen Grid (collapses to single column on mobile) */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
@@ -226,8 +219,8 @@ export default function MembershipCalculatorPage() {
                       className="p-2 border-2 border-brand-charcoal rounded-lg bg-red-100 hover:bg-red-200 text-brand-charcoal md:self-center self-end shadow-[2px_2px_0px_0px_#121212] active:translate-y-0.5 active:shadow-none transition-all"
                       aria-label={`Remove ${member.name}`}
                     >
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" className="w-5 h-5">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor" className="w-5 h-5">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
                       </svg>
                     </button>
 
@@ -288,22 +281,17 @@ export default function MembershipCalculatorPage() {
               </div>
 
               {/* Checkout CTA */}
-              <button
-                disabled={members.length === 0}
-                onClick={() => alert(`Redirecting to Secure Stripe Checkout with final value: €${finalPrice}`)}
-                className="w-full btn-brutalist-neon py-4 text-center text-base uppercase font-display font-black tracking-wide bg-brand-neon hover:bg-[#96f431] flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none"
-              >
-                Proceed to Secure Stripe Checkout
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" className="w-5 h-5">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
-                </svg>
-              </button>
-
-              <div className="flex items-center justify-center gap-2 text-[10px] text-zinc-500 font-bold uppercase tracking-wider text-center">
-                <span>🛡️ PCI-DSS SSL Secure Checkout</span>
-                <span>•</span>
-                <span>Stripe Verified</span>
-              </div>
+              {paymentsEnabled ? (
+                <p className="border-2 border-brand-green bg-[#D1E7DD] p-4 text-center text-sm font-bold text-[#0F5132]">
+                  Online payment is enabled. Complete registration through the
+                  club registration workflow to continue to checkout.
+                </p>
+              ) : (
+                <p className="border-2 border-brand-navy bg-brand-cream p-4 text-center text-sm font-bold text-brand-navy">
+                  This calculator provides an estimate only. Online membership
+                  payment is not currently available.
+                </p>
+              )}
 
             </div>
 
@@ -321,44 +309,7 @@ export default function MembershipCalculatorPage() {
 
         </div>
 
-      </main>
-
-      {/* Footer */}
-      <footer className="bg-brand-charcoal text-white border-t-4 border-brand-charcoal py-12">
-        <div className="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div>
-            <h4 className="font-display font-black text-xl italic uppercase tracking-tight text-brand-neon mb-4">
-              RIVERVALLEY RANGERS AFC
-            </h4>
-            <p className="text-zinc-400 text-sm leading-relaxed max-w-xs">
-              Swords' leading community football club, established in 1981. Dedicated to equality, youth development, and inclusive sports.
-            </p>
-          </div>
-          <div>
-            <h4 className="font-display font-bold text-sm uppercase tracking-wider text-white mb-4">
-              Our Locations
-            </h4>
-            <ul className="space-y-2 text-zinc-400 text-sm">
-              <li>📍 Ward Rivervalley Park, Swords, Co. Dublin</li>
-              <li>🏟️ Ward Rivervalley All-Weather Astro Pitch</li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-display font-bold text-sm uppercase tracking-wider text-white mb-4">
-              Legal & Safety
-            </h4>
-            <ul className="space-y-2 text-zinc-400 text-sm">
-              <li>✓ 100% Garda Vetted Coaches</li>
-              <li>✓ Child Safeguarding Statement</li>
-              <li>✓ FAI Club Mark Accredited</li>
-            </ul>
-          </div>
-        </div>
-        <div className="max-w-6xl mx-auto px-6 mt-12 pt-8 border-t border-zinc-800 flex flex-col md:flex-row items-center justify-between text-xs text-zinc-500">
-          <p>© {new Date().getFullYear()} Rivervalley Rangers AFC. All rights reserved.</p>
-          <p>Dublin Football Pride Since 1981</p>
-        </div>
-      </footer>
-    </div>
+      </section>
+    </PublicPageShell>
   );
 }

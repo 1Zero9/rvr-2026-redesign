@@ -9,7 +9,7 @@ function getStripe(): Stripe {
       throw new Error('STRIPE_SECRET_KEY environment variable is not set');
     }
     stripeInstance = new Stripe(process.env.STRIPE_SECRET_KEY, {
-      apiVersion: '2026-05-27.dahlia' as any,
+      apiVersion: '2026-05-27.dahlia',
       typescript: true,
     });
   }

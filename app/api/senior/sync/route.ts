@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { cacheGet, cacheSet } from '@/lib/ddsl/cache';
 import { scrapeSeniorMatches } from '@/lib/finalwhistle/scraper';
 import type { SeniorSyncResponse } from '@/lib/finalwhistle/types';
@@ -8,7 +8,7 @@ export const revalidate = 0;
 
 const CACHE_KEY = 'fw:senior:sync';
 
-export async function GET(_req: NextRequest): Promise<NextResponse> {
+export async function GET(): Promise<NextResponse> {
   const cached = cacheGet<SeniorSyncResponse>(CACHE_KEY);
   if (cached.hit) {
     return NextResponse.json(cached.data, {

@@ -203,9 +203,9 @@ export default function PlayerRecruitmentWizard() {
 
         {/* Header */}
         <div className="flex items-center justify-between mb-8 border-b-2 border-brand-charcoal pb-4">
-          <span className="font-display font-black text-sm uppercase italic text-brand-green">
+          <h2 className="font-display font-black text-xl uppercase italic text-brand-green">
             Player Registration
-          </span>
+          </h2>
           <span className="font-display font-black text-xs bg-brand-neon border-2 border-brand-charcoal px-3 py-1 rounded-full text-brand-charcoal">
             Step {step} of 3
           </span>

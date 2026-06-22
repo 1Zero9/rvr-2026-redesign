@@ -4,11 +4,11 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 interface Props {
-  id:          string;
-  adminSecret: string;
+  approveAction: () => Promise<void>;
+  rejectAction: () => Promise<void>;
 }
 
-export default function ModerationActions({ id, adminSecret }: Props) {
+export default function ModerationActions({ approveAction, rejectAction }: Props) {
   const router = useRouter();
   const [loading, setLoading] = useState<'approve' | 'reject' | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -18,20 +18,7 @@ export default function ModerationActions({ id, adminSecret }: Props) {
     setError(null);
 
     try {
-      const res = await fetch(`/api/admin/moderation/shirts/${id}/${action}`, {
-        method:  'POST',
-        headers: {
-          'Content-Type':  'application/json',
-          'Authorization': `Bearer ${adminSecret}`,
-        },
-        body: JSON.stringify({ reviewedBy: 'admin' }),
-      });
-
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({})) as { error?: string };
-        throw new Error(data.error ?? 'Request failed.');
-      }
-
+      await (action === 'approve' ? approveAction() : rejectAction());
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong.');

@@ -164,14 +164,14 @@ export default function FixturesPageClient({ fixtures, results }: Props) {
     <>
       {/* Favourites banner */}
       {isFavFiltered && (
-        <div className="flex items-center justify-between px-4 py-2 bg-brand-neon/10 border-b border-brand-neon/30">
-          <span className="text-brand-neon text-xs font-bold uppercase tracking-wide">
+        <div className="mx-auto mt-6 flex max-w-4xl items-center justify-between border-2 border-brand-navy bg-white px-4 py-2 shadow-[3px_3px_0_#0B1F3B]">
+          <span className="text-xs font-bold uppercase tracking-wide text-brand-green">
             ★ Showing your teams
           </span>
           <button
             type="button"
             onClick={clear}
-            className="text-brand-sky text-xs underline min-h-[44px] px-2"
+            className="min-h-11 px-2 text-xs font-bold text-brand-navy underline"
           >
             Show all · Reset
           </button>
@@ -179,8 +179,8 @@ export default function FixturesPageClient({ fixtures, results }: Props) {
       )}
 
       {/* Sticky two-row filter bar */}
-      <div className="sticky top-0 z-10 bg-brand-cream border-b-2 border-brand-navy/10 pt-3 pb-3 mb-6">
-        <div className="max-w-2xl mx-auto px-4">
+      <div className="sticky top-16 z-10 border-y-2 border-brand-navy/10 bg-brand-cream/95 py-3 backdrop-blur-md">
+        <div className="mx-auto max-w-4xl px-4 sm:px-6">
 
           {/* Row 1 — Primary pills */}
           <div className="flex gap-2 w-full">
@@ -217,7 +217,7 @@ export default function FixturesPageClient({ fixtures, results }: Props) {
 
       {/* DDSL Youth section */}
       {showDdsl && (
-        <div className="max-w-2xl mx-auto px-4 pb-8">
+        <section className="mx-auto max-w-4xl px-4 py-10 sm:px-6">
           {showDdslHdr && (
             <>
               <h2 className="font-display font-black italic text-2xl text-brand-navy mb-1">
@@ -230,25 +230,24 @@ export default function FixturesPageClient({ fixtures, results }: Props) {
           )}
 
           {ddslEmpty ? (
-            <div className="bg-brand-navy border border-brand-sky/20 p-6 text-center rounded-none">
-              <p className="text-brand-sky font-display font-bold">No fixtures in this category.</p>
+            <div className="site-surface p-6 text-center">
+              <p className="font-display font-bold text-brand-navy">No fixtures in this category.</p>
             </div>
           ) : (
             <FixtureList fixtures={ddslFixtures} results={ddslResults} />
           )}
-        </div>
+        </section>
       )}
 
-      {/* Senior section — full viewport width */}
       {showSenior && (
-        <section className="bg-brand-charcoal border-t-4 border-brand-neon">
-          <div className="max-w-2xl mx-auto px-4 py-8">
+        <section className="mx-auto max-w-4xl px-4 py-10 sm:px-6">
+          <div className="site-surface p-5 sm:p-7">
             {showSnrHdr && (
               <div className="mb-6">
-                <h2 className="font-display font-black italic text-3xl lg:text-4xl text-brand-cream">
+                <h2 className="site-section-heading text-2xl sm:text-3xl">
                   Senior Teams
                 </h2>
-                <p className="text-brand-sky/60 text-sm font-mono mt-1 uppercase tracking-wide">
+                <p className="mt-1 font-mono text-sm uppercase tracking-wide text-zinc-500">
                   LSL · AFL · FAI Cups
                 </p>
               </div>
@@ -260,14 +259,14 @@ export default function FixturesPageClient({ fixtures, results }: Props) {
 
       {/* Over 35s section */}
       {showOver35s && (
-        <section className="bg-brand-navy border-t-4 border-brand-neon">
-          <div className="max-w-2xl mx-auto px-4 py-8">
+        <section className="mx-auto max-w-4xl px-4 py-10 sm:px-6">
+          <div className="site-surface p-5 sm:p-7">
             {primary === 'all' && (
               <div className="mb-6">
-                <h2 className="font-display font-black italic text-3xl lg:text-4xl text-brand-neon">
+                <h2 className="site-section-heading text-2xl sm:text-3xl">
                   Over 35s
                 </h2>
-                <p className="text-brand-sky/60 text-sm font-mono mt-1 uppercase tracking-wide">
+                <p className="mt-1 font-mono text-sm uppercase tracking-wide text-zinc-500">
                   AFL · 2025/26
                 </p>
               </div>

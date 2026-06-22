@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import Header from '@/components/Header';
 import AnnouncementForm from '../_components/AnnouncementForm';
+import { requireAdmin } from '@/lib/admin/require-admin';
 
 export const metadata: Metadata = {
   title: 'New Announcement | RVR Admin',
@@ -11,6 +12,7 @@ export const metadata: Metadata = {
 export default function NewAnnouncementPage() {
   async function createAnnouncement(formData: FormData) {
     'use server';
+    await requireAdmin();
     const { prisma } = await import('@/lib/prisma');
     await prisma.announcement.create({
       data: {

@@ -53,6 +53,8 @@ export default function AnnouncementModal({ announcement, onClose }: Props) {
         {/* Image */}
         {announcement.imageUrl && (
           <div className="w-full aspect-video overflow-hidden">
+            {/* Admin-provided URLs can use arbitrary HTTPS hosts, so Next Image cannot safely allowlist them. */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={announcement.imageUrl}
               alt={announcement.title}

@@ -24,7 +24,8 @@ export function FavouritesProvider({ children }: { children: React.ReactNode }) 
   const [favourites, setFavourites] = useState<FavouriteId[]>([]);
 
   useEffect(() => {
-    setFavourites(getFavourites());
+    const timer = setTimeout(() => setFavourites(getFavourites()), 0);
+    return () => clearTimeout(timer);
   }, []);
 
   const toggle = (id: FavouriteId) => {

@@ -289,7 +289,7 @@ export default function TeletextFixtures() {
               }`}
             >
               {/* 1. Age badge */}
-              <span className={`font-bold text-[10px] px-1.5 py-0.5 w-9 text-center shrink-0 ${badgeClass(m)}`}>
+              <span className={`inline-flex min-h-6 min-w-max shrink-0 items-center justify-center px-2 py-0.5 text-center text-[10px] font-bold ${badgeClass(m)}`}>
                 {m.ageGroup}
               </span>
 
@@ -303,7 +303,7 @@ export default function TeletextFixtures() {
               </span>
 
               {/* 3. Opponent */}
-              <span className="flex-1 text-white text-xs truncate min-w-0">
+              <span className="min-w-0 flex-1 whitespace-normal break-words text-xs leading-5 text-white">
                 <span className="text-brand-sky/50">vs </span>
                 {m.opponent}
               </span>
@@ -329,7 +329,7 @@ export default function TeletextFixtures() {
             href="https://ddsl.ie"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-brand-sky/40 hover:text-brand-sky text-[10px] font-mono uppercase tracking-wide transition-colors"
+            className="inline-flex min-h-11 items-center text-[10px] font-mono uppercase tracking-wide text-brand-sky/40 transition-colors hover:text-brand-sky"
           >
             Powered by DDSL.ie
           </a>
@@ -338,7 +338,7 @@ export default function TeletextFixtures() {
             href="https://www.finalwhistle.ie/soccer/team/rivervalley-rangers-afc/"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-brand-sky/40 hover:text-brand-sky text-[10px] font-mono uppercase tracking-wide transition-colors"
+            className="inline-flex min-h-11 items-center text-[10px] font-mono uppercase tracking-wide text-brand-sky/40 transition-colors hover:text-brand-sky"
           >
             FinalWhistle.ie
           </a>

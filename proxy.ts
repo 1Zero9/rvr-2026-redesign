@@ -1,15 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { ADMIN_COOKIE_NAME, verifyAdminSession } from '@/lib/admin/session';
 
-export function middleware(req: NextRequest): NextResponse {
-  if (req.nextUrl.pathname.startsWith('/admin')) {
+export function proxy(req: NextRequest): NextResponse {
+  if (
+    req.nextUrl.pathname.startsWith('/admin') ||
+    req.nextUrl.pathname.startsWith('/jmo-admin')
+  ) {
     // Login page is always accessible
     if (req.nextUrl.pathname === '/admin/login') return NextResponse.next();
 
-    const secret  = process.env.ADMIN_SECRET ?? '';
-    const header  = req.headers.get('authorization') ?? '';
-    const cookie  = req.cookies.get('rvr_admin')?.value ?? '';
-
-    const authorised = header === `Bearer ${secret}` || cookie === secret;
+    const cookie = req.cookies.get(ADMIN_COOKIE_NAME)?.value;
+    const authorised = verifyAdminSession(cookie);
     if (!authorised) {
       // Browser requests get redirected to login; API calls get 401
       const accept = req.headers.get('accept') ?? '';
@@ -23,5 +24,5 @@ export function middleware(req: NextRequest): NextResponse {
 }
 
 export const config = {
-  matcher: ['/admin/:path*'],
+  matcher: ['/admin/:path*', '/jmo-admin/:path*'],
 };

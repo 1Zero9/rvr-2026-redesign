@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { prisma } from '@/lib/prisma';
 import Header from '@/components/Header';
+import AdminNav from '@/components/admin/AdminNav';
 
 export const metadata: Metadata = {
   title: 'Announcements Admin | RVR',
@@ -25,6 +26,7 @@ export default async function AnnouncementsAdminPage() {
     <div className="min-h-screen bg-brand-cream">
       <Header />
       <main className="max-w-4xl mx-auto px-4 py-8">
+        <AdminNav />
 
         <div className="flex items-center justify-between mb-8">
           <div>

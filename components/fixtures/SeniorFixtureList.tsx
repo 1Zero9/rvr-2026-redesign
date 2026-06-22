@@ -72,12 +72,12 @@ export default function SeniorFixtureList({ filter }: Props) {
   if (loading) {
     return (
       <div>
-        <div className="bg-black border-b border-brand-sky/20 px-3 py-2 min-h-[44px] flex items-center">
-          <span className="animate-pulse w-32 h-3 bg-brand-sky/30 inline-block" />
+        <div className="flex min-h-11 items-center border-b border-brand-navy/10 bg-brand-cream px-3 py-2">
+          <span className="inline-block h-3 w-32 animate-pulse bg-brand-navy/15" />
         </div>
         {[0, 1, 2].map((i) => (
-          <div key={i} className="bg-black border-b border-brand-sky/20 px-3 py-2 min-h-[44px] flex items-center">
-            <span className="animate-pulse w-48 h-3 bg-brand-sky/30 inline-block" />
+          <div key={i} className="flex min-h-11 items-center border-b border-brand-navy/10 bg-white px-3 py-2">
+            <span className="inline-block h-3 w-48 animate-pulse bg-brand-navy/15" />
           </div>
         ))}
       </div>
@@ -88,8 +88,8 @@ export default function SeniorFixtureList({ filter }: Props) {
 
   if (allResults.length === 0 && allFixtures.length === 0) {
     return (
-      <div className="bg-brand-navy border border-brand-sky/20 p-6 text-center">
-        <p className="text-brand-sky font-display font-bold">No senior data available.</p>
+      <div className="rounded-xl border-2 border-brand-navy/15 bg-brand-cream p-6 text-center">
+        <p className="font-display font-bold text-brand-navy">No senior data available.</p>
       </div>
     );
   }
@@ -118,7 +118,7 @@ export default function SeniorFixtureList({ filter }: Props) {
     <div>
       {/* Tabs — hidden when a filter prop forces the content */}
       {showTabs && (
-        <div className="flex border-b-2 border-brand-sky/20 mb-4">
+        <div className="mb-4 flex border-b-2 border-brand-navy/10">
           {(['Results', 'Upcoming'] as Tab[]).map((tab) => (
             <button
               key={tab}
@@ -126,8 +126,8 @@ export default function SeniorFixtureList({ filter }: Props) {
               onClick={() => setActiveTab(tab)}
               className={`flex-1 min-h-[44px] py-3 font-display font-black uppercase text-sm tracking-wide transition-colors border-b-2 -mb-px ${
                 activeTab === tab
-                  ? 'text-white border-brand-neon'
-                  : 'text-zinc-400 border-transparent'
+                  ? 'text-brand-navy border-brand-green'
+                  : 'text-zinc-400 border-transparent hover:text-brand-navy'
               }`}
             >
               {tab}
@@ -143,13 +143,13 @@ export default function SeniorFixtureList({ filter }: Props) {
       {effectiveTab === 'Results' && (
         <div>
           {resultGroups.length === 0 ? (
-            <div className="bg-brand-navy border border-brand-sky/20 p-6 text-center">
-              <p className="text-brand-sky font-display font-bold">No results yet.</p>
+            <div className="rounded-xl border-2 border-brand-navy/15 bg-brand-cream p-6 text-center">
+              <p className="font-display font-bold text-brand-navy">No results yet.</p>
             </div>
           ) : (
             resultGroups.map(([competition, matches]) => (
               <div key={competition}>
-                <h3 className="border-l-4 border-brand-neon pl-3 mt-6 mb-2 text-white font-display font-bold italic text-base">
+                <h3 className="mb-2 mt-6 border-l-4 border-brand-neon pl-3 font-display text-base font-bold italic text-brand-navy">
                   {competition}
                 </h3>
                 {matches.map((m, i) => {
@@ -157,29 +157,29 @@ export default function SeniorFixtureList({ filter }: Props) {
                   return (
                     <div
                       key={m.matchId}
-                      className={`px-3 py-2 flex items-center gap-2 min-h-[44px] border-b border-brand-sky/20 ${
-                        i % 2 === 0 ? 'bg-black' : 'bg-brand-navy/40'
+                      className={`flex min-h-11 items-center gap-2 border-b border-brand-navy/10 px-3 py-2 ${
+                        i % 2 === 0 ? 'bg-brand-cream' : 'bg-white'
                       }`}
                     >
                       {/* H/A */}
                       <span
                         className={`w-5 text-[10px] font-bold shrink-0 ${
-                          m.isRvrHome ? 'text-brand-neon' : 'text-brand-sky/60'
+                          m.isRvrHome ? 'text-brand-green' : 'text-zinc-400'
                         }`}
                       >
                         {m.isRvrHome ? 'H' : 'A'}
                       </span>
 
                       {/* Opponent */}
-                      <span className="flex-1 text-white text-xs truncate min-w-0">
-                        <span className="text-brand-sky/50">vs </span>
+                      <span className="min-w-0 flex-1 truncate text-xs text-brand-navy">
+                        <span className="text-zinc-400">vs </span>
                         {opp}
                       </span>
 
                       {/* Score or PPD */}
                       <span
                         className={`shrink-0 w-12 text-right font-mono text-xs ${
-                          m.status === 'Result' ? 'text-brand-neon font-bold' : 'text-brand-sky/50 italic'
+                          m.status === 'Result' ? 'text-brand-green font-bold' : 'text-zinc-400 italic'
                         }`}
                       >
                         {m.status === 'Result' && m.score
@@ -190,7 +190,7 @@ export default function SeniorFixtureList({ filter }: Props) {
                       </span>
 
                       {/* Date */}
-                      <span className="shrink-0 w-16 text-right text-[10px] font-mono text-brand-sky/70">
+                      <span className="w-16 shrink-0 text-right font-mono text-[10px] text-zinc-500">
                         {formatDate(m.date)}
                       </span>
                     </div>
@@ -206,8 +206,8 @@ export default function SeniorFixtureList({ filter }: Props) {
       {effectiveTab === 'Upcoming' && (
         <div>
           {filteredFixtures.length === 0 ? (
-            <div className="bg-brand-navy border border-brand-sky/20 p-6 text-center">
-              <p className="text-brand-sky font-display font-bold">No upcoming senior fixtures.</p>
+            <div className="rounded-xl border-2 border-brand-navy/15 bg-brand-cream p-6 text-center">
+              <p className="font-display font-bold text-brand-navy">No upcoming senior fixtures.</p>
             </div>
           ) : (
             filteredFixtures.map((m, i) => {
@@ -215,32 +215,32 @@ export default function SeniorFixtureList({ filter }: Props) {
               return (
                 <div
                   key={m.matchId}
-                  className={`px-3 py-2 flex items-center gap-2 min-h-[44px] border-b border-brand-sky/20 ${
-                    i % 2 === 0 ? 'bg-black' : 'bg-brand-navy/40'
+                  className={`flex min-h-11 items-center gap-2 border-b border-brand-navy/10 px-3 py-2 ${
+                    i % 2 === 0 ? 'bg-brand-cream' : 'bg-white'
                   }`}
                 >
                   {/* H/A */}
                   <span
                     className={`w-5 text-[10px] font-bold shrink-0 ${
-                      m.isRvrHome ? 'text-brand-neon' : 'text-brand-sky/60'
+                      m.isRvrHome ? 'text-brand-green' : 'text-zinc-400'
                     }`}
                   >
                     {m.isRvrHome ? 'H' : 'A'}
                   </span>
 
                   {/* Opponent */}
-                  <span className="flex-1 text-white text-xs truncate min-w-0">
-                    <span className="text-brand-sky/50">vs </span>
+                  <span className="min-w-0 flex-1 truncate text-xs text-brand-navy">
+                    <span className="text-zinc-400">vs </span>
                     {opp}
                   </span>
 
                   {/* Time */}
-                  <span className="text-brand-sky/50 text-[10px] shrink-0 w-10 text-right font-mono">
+                  <span className="w-10 shrink-0 text-right font-mono text-[10px] text-zinc-400">
                     TBC
                   </span>
 
                   {/* Date */}
-                  <span className="shrink-0 w-16 text-right text-[10px] font-mono text-brand-neon">
+                  <span className="w-16 shrink-0 text-right font-mono text-[10px] text-brand-green">
                     {formatDate(m.date)}
                   </span>
                 </div>
@@ -251,12 +251,12 @@ export default function SeniorFixtureList({ filter }: Props) {
       )}
 
       {/* Attribution */}
-      <div className="text-right mt-3 text-[10px] font-mono">
+      <div className="mt-3 text-right text-[10px] font-mono">
         <a
           href="https://www.finalwhistle.ie/soccer/team/rivervalley-rangers-afc/"
           target="_blank"
           rel="noopener noreferrer"
-          className="text-brand-sky/30 hover:text-brand-sky transition-colors uppercase tracking-wide"
+          className="inline-flex min-h-11 items-center uppercase tracking-wide text-zinc-400 transition-colors hover:text-brand-navy"
         >
           Powered by FinalWhistle.ie
         </a>

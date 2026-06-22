@@ -10,6 +10,7 @@ import { APP_VERSION, APP_VERSION_DATE } from '@/config/version';
 import { KNOWN_DIVISIONS } from '@/config/ddsl-competitions';
 import { AFL_DIVISIONS } from '@/config/afl-competitions';
 import { prisma } from '@/lib/prisma';
+import { getFeatureAvailability } from '@/lib/features';
 
 const COMMUNITY_CATEGORIES = [
   {
@@ -68,6 +69,7 @@ function getAgeGroupSummaries(): AgeGroupSummary[] {
 
 export default async function Home() {
   const ageGroups = getAgeGroupSummaries();
+  const features = await getFeatureAvailability();
 
   const now = new Date();
 
@@ -121,7 +123,7 @@ export default async function Home() {
           <div className="max-w-6xl mx-auto px-6">
             <div className="flex items-center justify-between mb-8">
               <h2 className="font-display font-black text-3xl md:text-4xl uppercase tracking-tight italic text-brand-cream">
-                Next Up
+                Matchday
                 <span className="text-brand-neon ml-2">⚽</span>
               </h2>
             </div>
@@ -157,7 +159,7 @@ export default async function Home() {
         )}
 
         {/* ── 2.7. Instagram Feed ──────────────────────────────────────────── */}
-        <InstagramFeed />
+        {features.instagramFeed && <InstagramFeed />}
 
         {/* ── 3. Club in Numbers ───────────────────────────────────────────── */}
         <section className="bg-brand-cream py-20">
@@ -436,7 +438,10 @@ export default async function Home() {
           <p className="text-xs text-brand-sky/50 mt-2 md:mt-0">
             RVR2026 v{APP_VERSION} · {APP_VERSION_DATE}
             {' · '}
-            <a href="/admin/login" className="hover:text-brand-sky/80 transition-colors">
+            <a
+              href="/admin/login"
+              className="inline-flex min-h-11 items-center transition-colors hover:text-brand-sky/80"
+            >
               Admin
             </a>
           </p>

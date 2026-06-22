@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
-import Header from "@/components/Header";
 import { clubZapPaymentMap } from "@/config/payments";
 import { CalendarDays, Clock, MapPin, PhoneCall, ShieldCheck, Zap } from "lucide-react";
+import PublicPageShell from "@/components/layout/PublicPageShell";
+import PageHero from "@/components/layout/PageHero";
 
 export const metadata: Metadata = {
   title: "Book Astro Pitch | Rivervalley Rangers AFC",
@@ -24,35 +25,12 @@ const slots = [
 
 export default function AstroBookingPage() {
   return (
-    <div
-      className="min-h-screen bg-brand-cream text-brand-charcoal"
-      style={{
-        backgroundImage: `linear-gradient(rgba(11,31,59,0.04) 1px, transparent 1px),
-                          linear-gradient(90deg, rgba(11,31,59,0.04) 1px, transparent 1px)`,
-        backgroundSize: '40px 40px',
-      }}
-    >
-      <Header />
-
-      <main>
-        {/* Page header */}
-        <section className="border-b-4 border-brand-charcoal bg-white">
-          <div className="mx-auto max-w-6xl px-6 py-14 lg:py-20">
-            <div className="max-w-2xl">
-              <span className="mb-4 inline-flex items-center gap-2 rounded-full border-3 border-brand-charcoal bg-brand-neon px-4 py-2 font-display text-xs font-black uppercase tracking-wider">
-                <CalendarDays className="h-4 w-4" aria-hidden="true" />
-                Pitch Hire
-              </span>
-              <h1 className="font-display text-4xl font-black uppercase italic leading-none tracking-tighter md:text-6xl">
-                Book Astro Pitch
-              </h1>
-              <p className="mt-5 text-base font-semibold leading-relaxed text-zinc-600 md:text-lg">
-                Ward Rivervalley all-weather astro pitch — available for club
-                training, school groups, and community hire throughout the week.
-              </p>
-            </div>
-          </div>
-        </section>
+    <PublicPageShell>
+      <PageHero
+        eyebrow={<><CalendarDays className="h-4 w-4" aria-hidden="true" /> Pitch Hire</>}
+        title="Book Astro Pitch"
+        description="Ward Rivervalley all-weather astro pitch for club training, school groups, and community hire."
+      />
 
         {/* Main content */}
         <section className="mx-auto max-w-6xl px-6 py-12 lg:py-16">
@@ -143,7 +121,6 @@ export default function AstroBookingPage() {
             </div>
           </div>
         </section>
-      </main>
-    </div>
+    </PublicPageShell>
   );
 }

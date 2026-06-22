@@ -626,3 +626,31 @@ model Announcement {
   @@index([category, isPublished])
   @@index([pinned, publishedAt])
 }
+
+/// Admin-controlled availability for optional public site capabilities.
+/// Features default to disabled in application code until explicitly enabled.
+model SiteFeature {
+  key         String   @id
+  label       String
+  description String
+  enabled     Boolean  @default(false)
+  updatedAt   DateTime @updatedAt
+
+  @@index([enabled])
+}
+
+/// Public enquiry captured from a lightweight interest or callback form.
+model PublicEnquiry {
+  id        String   @id @default(cuid())
+  type      String
+  name      String
+  email     String?
+  phone     String?
+  details   String?
+  status    String   @default("NEW")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([type, status])
+  @@index([createdAt])
+}

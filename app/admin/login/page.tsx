@@ -1,5 +1,10 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
+import {
+  ADMIN_COOKIE_NAME,
+  createAdminSession,
+  isAdminSecretConfigured,
+} from '@/lib/admin/session';
 
 export default async function AdminLoginPage({
   searchParams,
@@ -10,14 +15,15 @@ export default async function AdminLoginPage({
   async function login(formData: FormData) {
     'use server';
     const entered = formData.get('secret') as string;
-    if (entered === process.env.ADMIN_SECRET) {
+    if (isAdminSecretConfigured() && entered === process.env.ADMIN_SECRET) {
       const jar = await cookies();
-      jar.set('rvr_admin', entered, {
+      jar.set(ADMIN_COOKIE_NAME, createAdminSession(), {
         httpOnly: true,
         secure:   process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
+        sameSite: 'strict',
         path:     '/admin',
         maxAge:   60 * 60 * 8, // 8 hours
+        priority: 'high',
       });
       redirect('/admin/announcements');
     }

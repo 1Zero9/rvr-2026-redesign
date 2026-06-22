@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { stripe } from '@/lib/membership/stripe';
 import { prisma } from '@/lib/prisma';
 import type Stripe from 'stripe';
+import { isFeatureEnabled } from '@/lib/features';
 
 // Next.js App Router — disable automatic body parsing so we get the raw
 // buffer Stripe needs for signature verification.
@@ -10,6 +11,10 @@ export const dynamic = 'force-dynamic';
 const WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET;
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
+  if (!(await isFeatureEnabled('stripePayments'))) {
+    return NextResponse.json({ error: 'Stripe payments are disabled.' }, { status: 404 });
+  }
+
   if (!WEBHOOK_SECRET) {
     console.error('[membership/webhook] STRIPE_WEBHOOK_SECRET is not set');
     return NextResponse.json({ error: 'Webhook secret not configured' }, { status: 500 });

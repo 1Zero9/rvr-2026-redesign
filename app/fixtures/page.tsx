@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
-import Header from '@/components/Header';
 import FixturesPageClient from '@/components/fixtures/FixturesPageClient';
+import PublicPageShell from '@/components/layout/PublicPageShell';
+import PageHero from '@/components/layout/PageHero';
 import type { SyncResponse, NormalisedMatch, LeagueTable } from '@/lib/ddsl/types';
 import { prisma } from '@/lib/prisma';
 import { CLUB_SEASON } from '@/config/club-season';
@@ -18,7 +19,7 @@ async function getSyncData(): Promise<SyncResponse | null> {
     });
     if (!res.ok) return null;
     return res.json() as Promise<SyncResponse>;
-  } catch (_err) {
+  } catch {
     return null;
   }
 }
@@ -73,31 +74,19 @@ export default async function FixturesPage() {
   }
 
   return (
-    <div
-      className="bg-brand-cream min-h-screen"
-      style={{
-        backgroundImage: `linear-gradient(rgba(11,31,59,0.04) 1px, transparent 1px),
-                          linear-gradient(90deg, rgba(11,31,59,0.04) 1px, transparent 1px)`,
-        backgroundSize: '40px 40px',
-      }}
-    >
-      <Header />
-      <main>
-        <div className="max-w-2xl mx-auto px-4 pt-8">
-          <h1 className="text-brand-navy font-display font-black italic text-4xl lg:text-6xl uppercase tracking-tight leading-none mb-1">
-            Fixtures &amp; Results
-          </h1>
-          <p className="text-zinc-500 text-sm font-semibold mb-6">
-            {CLUB_SEASON.currentSeason} Season
-          </p>
-        </div>
-        <FixturesPageClient
-          fixtures={fixtures}
-          results={results}
-          tables={tables}
-          historicalStandings={historicalStandings}
-        />
-      </main>
-    </div>
+    <PublicPageShell>
+      <PageHero
+        eyebrow={`${CLUB_SEASON.currentSeason} Season`}
+        title="Fixtures & Results"
+        description="Youth, senior, and Over 35s fixtures, results, and standings in one consistent match centre."
+        maxWidth="4xl"
+      />
+      <FixturesPageClient
+        fixtures={fixtures}
+        results={results}
+        tables={tables}
+        historicalStandings={historicalStandings}
+      />
+    </PublicPageShell>
   );
 }

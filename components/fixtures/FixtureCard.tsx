@@ -24,13 +24,13 @@ export default function FixtureCard({ match }: { match: NormalisedMatch }) {
   const awayIsRvr = isRvr(match.awayTeam);
 
   return (
-    <article className="bg-brand-navy border border-brand-sky rounded-none p-4 mb-3">
+    <article className="mb-3 rounded-xl border-2 border-brand-navy/15 bg-white p-4 shadow-[3px_3px_0_rgba(11,31,59,0.12)]">
       {/* Top row: competition badge + date */}
-      <div className="flex items-start justify-between gap-2 mb-3">
-        <span className="bg-brand-neon text-brand-charcoal text-xs font-bold uppercase px-2 py-1 leading-tight shrink-0">
+      <div className="mb-3 flex flex-wrap items-start justify-between gap-2">
+        <span className="max-w-full bg-brand-neon px-2 py-1 text-xs font-bold uppercase leading-tight text-brand-charcoal">
           {match.competition}
         </span>
-        <span className="text-brand-sky text-sm text-right shrink-0">
+        <span className="ml-auto text-right text-sm font-semibold text-zinc-500">
           {formatDate(match.date)}
           {match.time ? ` · ${match.time}` : ''}
         </span>
@@ -40,15 +40,15 @@ export default function FixtureCard({ match }: { match: NormalisedMatch }) {
       <div className="space-y-1 mb-3">
         <p
           className={`font-display text-lg font-bold italic leading-tight ${
-            homeIsRvr ? 'text-brand-neon' : 'text-white'
+            homeIsRvr ? 'text-brand-green' : 'text-brand-navy'
           }`}
         >
           {match.homeTeam}
         </p>
-        <p className="text-brand-neon text-sm font-bold">vs</p>
+        <p className="text-sm font-bold text-zinc-400">vs</p>
         <p
           className={`font-display text-lg font-bold italic leading-tight ${
-            awayIsRvr ? 'text-brand-neon' : 'text-white'
+            awayIsRvr ? 'text-brand-green' : 'text-brand-navy'
           }`}
         >
           {match.awayTeam}
@@ -57,9 +57,9 @@ export default function FixtureCard({ match }: { match: NormalisedMatch }) {
 
       {/* Bottom row: venue left, score right (results only) */}
       <div className="flex items-end justify-between gap-2">
-        <p className="text-brand-sky text-sm">{match.venue.name}</p>
+        <p className="text-sm font-semibold text-zinc-500">{match.venue.name}</p>
         {isResult && match.score !== null && (
-          <p className="text-brand-neon font-display font-bold text-xl leading-none shrink-0">
+          <p className="shrink-0 font-display text-xl font-bold leading-none text-brand-green">
             {match.score.home} – {match.score.away}
           </p>
         )}

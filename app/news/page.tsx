@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
-import Header from '@/components/Header';
+import PublicPageShell from '@/components/layout/PublicPageShell';
+import PageHero from '@/components/layout/PageHero';
 import AnnouncementCard from '@/components/AnnouncementCard';
 import Link from 'next/link';
 import { prisma } from '@/lib/prisma';
@@ -44,27 +45,14 @@ export default async function NewsPage({
   });
 
   return (
-    <div
-      className="min-h-screen bg-brand-cream"
-      style={{
-        backgroundImage: `linear-gradient(rgba(11,31,59,0.04) 1px, transparent 1px),
-                          linear-gradient(90deg, rgba(11,31,59,0.04) 1px, transparent 1px)`,
-        backgroundSize: '40px 40px',
-      }}
-    >
-      <Header />
-
-      <main className="max-w-5xl mx-auto px-4 md:px-6">
-
-        {/* Page heading */}
-        <div className="pt-8 mb-8">
-          <h1 className="text-brand-navy font-display font-black italic text-4xl lg:text-6xl uppercase tracking-tight leading-none mb-1">
-            Club News
-          </h1>
-          <p className="text-zinc-500 text-sm font-semibold">
-            Rivervalley Rangers AFC · Announcements, Events &amp; Recruitment
-          </p>
-        </div>
+    <PublicPageShell>
+      <PageHero
+        eyebrow="Club Updates"
+        title="Club News"
+        description="Announcements, events, recruitment drives, and volunteer opportunities from around RVR."
+        maxWidth="5xl"
+      />
+      <section className="mx-auto max-w-5xl px-4 py-10 md:px-6">
 
         {/* Category filter */}
         <div className="flex gap-2 flex-wrap mb-8">
@@ -99,7 +87,7 @@ export default async function NewsPage({
           </div>
         )}
 
-      </main>
-    </div>
+      </section>
+    </PublicPageShell>
   );
 }

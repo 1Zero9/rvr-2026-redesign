@@ -29,15 +29,22 @@ export default function PinnedAnnouncementWidget({ announcement }: Props) {
   const [gone,     setGone]     = useState(false);
 
   useEffect(() => {
-    const dismissed = localStorage.getItem(STORAGE_KEY);
-    if (dismissed === announcement.id) {
-      setGone(true);
-      return;
-    }
-    setMounted(true);
-    // Defer one frame so the transition fires after initial render
-    const t = requestAnimationFrame(() => setVisible(true));
-    return () => cancelAnimationFrame(t);
+    let visibleFrame: number | undefined;
+    const mountFrame = requestAnimationFrame(() => {
+      const dismissed = localStorage.getItem(STORAGE_KEY);
+      if (dismissed === announcement.id) {
+        setGone(true);
+        return;
+      }
+
+      setMounted(true);
+      // Defer a second frame so the transition fires after initial render.
+      visibleFrame = requestAnimationFrame(() => setVisible(true));
+    });
+    return () => {
+      cancelAnimationFrame(mountFrame);
+      if (visibleFrame !== undefined) cancelAnimationFrame(visibleFrame);
+    };
   }, [announcement.id]);
 
   function dismiss() {

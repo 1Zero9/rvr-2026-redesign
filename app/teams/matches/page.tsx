@@ -83,13 +83,6 @@ const SEASON_OPTIONS: SeasonOption[] = [
 // Helpers
 // ---------------------------------------------------------------------------
 
-function hexToRgba(hex: string, alpha: number): string {
-  const r = parseInt(hex.slice(1, 3), 16);
-  const g = parseInt(hex.slice(3, 5), 16);
-  const b = parseInt(hex.slice(5, 7), 16);
-  return `rgba(${r},${g},${b},${alpha})`;
-}
-
 type SelectedDivisionKey = "all" | string;
 
 interface DivisionOption {
@@ -424,8 +417,6 @@ export default function MatchesPage() {
   // Fetch current-season sync on mount
   useEffect(() => {
     let active = true;
-    setSyncLoading(true);
-    setSyncError("");
 
     fetch("/api/fixtures/sync", { cache: "no-store" })
       .then((res) => {
@@ -451,8 +442,6 @@ export default function MatchesPage() {
     if (historicalData) return; // already loaded
 
     let active = true;
-    setHistoricalLoading(true);
-    setHistoricalError("");
 
     const option = SEASON_OPTIONS.find((o) => o.key === "archived")!;
     fetch(option.apiPath, { cache: "no-store" })
@@ -475,6 +464,10 @@ export default function MatchesPage() {
 
   // Reset division filter when switching seasons
   function handleSeasonChange(key: SeasonKey) {
+    if (key === "archived" && !historicalData) {
+      setHistoricalLoading(true);
+      setHistoricalError("");
+    }
     setSelectedSeason(key);
     setSelectedDivisionKey("all");
   }

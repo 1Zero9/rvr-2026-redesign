@@ -9,7 +9,8 @@ import {
   ShieldCheck,
   UserRoundCheck,
 } from "lucide-react";
-import Header from "@/components/Header";
+import PublicPageShell from "@/components/layout/PublicPageShell";
+import PageHero from "@/components/layout/PageHero";
 
 export const metadata: Metadata = {
   title: "Safeguarding and Child Welfare | Rivervalley Rangers AFC",
@@ -65,55 +66,24 @@ const vettingSteps = [
 
 export default function SafeguardingPage() {
   return (
-    <div className="min-h-screen bg-brand-navy text-white">
-      <Header />
-
-      <main>
-        <section className="border-b-4 border-white bg-brand-navy">
-          <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:py-20">
-            <div className="grid gap-8 lg:grid-cols-[1fr_360px] lg:items-end">
-              <div>
-                <span className="mb-5 inline-flex items-center gap-2 rounded-full border-3 border-white bg-brand-neon px-4 py-2 font-display text-xs font-black uppercase text-brand-charcoal shadow-[4px_4px_0_#FFFFFF]">
-                  <ShieldCheck className="h-4 w-4" aria-hidden="true" />
-                  Entry-Level FAI Club Mark Charter
-                </span>
-                <h1 className="font-display text-4xl font-black uppercase leading-none tracking-tight sm:text-5xl lg:text-7xl">
-                  Safeguarding and child welfare.
-                </h1>
-                <p className="mt-5 max-w-3xl text-base font-semibold leading-relaxed text-white/85 sm:text-lg">
-                  Rivervalley Rangers AFC provides named welfare contacts,
-                  mandatory compliance documents, and clear online vetting steps
-                  for every coach and volunteer.
-                </p>
-              </div>
-
-              <aside className="rounded-[2rem] border-4 border-white bg-white p-5 text-brand-navy shadow-[6px_6px_0_#85E320]">
-                <p className="font-display text-xs font-black uppercase text-brand-green">
-                  Charter status
-                </p>
-                <p className="mt-2 font-display text-3xl font-black uppercase leading-none">
-                  FAI Club Mark
-                </p>
-                <p className="mt-3 text-sm font-bold leading-6 text-zinc-700">
-                  Entry-level awardee with active child welfare and volunteer
-                  compliance processes.
-                </p>
-              </aside>
-            </div>
-          </div>
-        </section>
+    <PublicPageShell>
+      <PageHero
+        eyebrow={<><ShieldCheck className="h-4 w-4" aria-hidden="true" /> FAI Club Mark Charter</>}
+        title="Safeguarding & Child Welfare"
+        description="Named welfare contacts, mandatory compliance documents, and clear vetting steps for every coach and volunteer."
+      />
 
         <section className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:py-16">
           <div className="mb-7 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <p className="font-display text-xs font-black uppercase text-brand-neon">
+              <p className="font-display text-xs font-black uppercase text-brand-green">
                 Child welfare officers
               </p>
-              <h2 className="mt-2 font-display text-3xl font-black uppercase leading-tight sm:text-5xl">
+              <h2 className="site-section-heading mt-2 text-3xl sm:text-5xl">
                 Direct safeguarding contacts.
               </h2>
             </div>
-            <p className="max-w-md text-sm font-semibold leading-6 text-white/80">
+            <p className="max-w-md text-sm font-semibold leading-6 text-zinc-600">
               Use these officer contact details for child welfare questions,
               formal concerns, and safeguarding support.
             </p>
@@ -123,7 +93,7 @@ export default function SafeguardingPage() {
             {welfareOfficers.map((officer) => (
               <article
                 key={officer.role}
-                className="rounded-[2rem] border-4 border-white bg-brand-navy p-6 shadow-[6px_6px_0_#85E320] sm:p-7"
+                className="site-surface p-6 sm:p-7"
               >
                 <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl border-3 border-white bg-brand-neon shadow-[3px_3px_0_#FFFFFF]">
                   <UserRoundCheck
@@ -131,18 +101,18 @@ export default function SafeguardingPage() {
                     aria-hidden="true"
                   />
                 </div>
-                <p className="font-display text-xs font-black uppercase text-brand-neon">
+                <p className="font-display text-xs font-black uppercase text-brand-green">
                   {officer.role}
                 </p>
-                <h3 className="mt-2 font-display text-3xl font-black uppercase leading-none text-white">
+                <h3 className="mt-2 font-display text-3xl font-black uppercase leading-none text-brand-navy">
                   {officer.name}
                 </h3>
-                <p className="mt-4 text-sm font-semibold leading-6 text-white/80">
+                <p className="mt-4 text-sm font-semibold leading-6 text-zinc-600">
                   {officer.summary}
                 </p>
                 <a
                   href={`mailto:${officer.email}`}
-                  className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-xl border-3 border-white bg-white px-4 py-3 text-sm font-black text-brand-navy shadow-[3px_3px_0_#85E320] transition hover:-translate-y-0.5 hover:bg-brand-neon"
+                  className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-xl border-3 border-brand-navy bg-brand-cream px-4 py-3 text-sm font-black text-brand-navy transition hover:bg-brand-neon"
                 >
                   <Mail className="h-4 w-4 text-brand-green" aria-hidden="true" />
                   {officer.email}
@@ -152,7 +122,7 @@ export default function SafeguardingPage() {
           </div>
         </section>
 
-        <section className="border-y-4 border-white bg-white text-brand-navy">
+        <section className="border-y-2 border-brand-navy/10">
           <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:py-16">
             <div className="mb-7 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
               <div>
@@ -204,7 +174,7 @@ export default function SafeguardingPage() {
         </section>
 
         <section className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:py-16">
-          <div className="rounded-[2rem] border-4 border-white bg-brand-navy p-6 shadow-[6px_6px_0_#85E320] sm:p-8">
+          <div className="site-surface p-6 sm:p-8">
             <div className="grid gap-8 lg:grid-cols-[0.78fr_1.22fr]">
               <div>
                 <span className="mb-5 inline-flex h-14 w-14 items-center justify-center rounded-2xl border-3 border-white bg-brand-neon shadow-[3px_3px_0_#FFFFFF]">
@@ -213,13 +183,13 @@ export default function SafeguardingPage() {
                     aria-hidden="true"
                   />
                 </span>
-                <p className="font-display text-xs font-black uppercase text-brand-neon">
+                <p className="font-display text-xs font-black uppercase text-brand-green">
                   Online vetting guide
                 </p>
-                <h2 className="mt-2 font-display text-3xl font-black uppercase leading-tight sm:text-5xl">
+                <h2 className="site-section-heading mt-2 text-3xl sm:text-5xl">
                   Apply through FAI Connect COMET.
                 </h2>
-                <p className="mt-4 text-sm font-semibold leading-6 text-white/80">
+                <p className="mt-4 text-sm font-semibold leading-6 text-zinc-600">
                   Volunteers must complete Garda Vetting online before working
                   with youth players.
                 </p>
@@ -229,12 +199,12 @@ export default function SafeguardingPage() {
                 {vettingSteps.map((step, index) => (
                   <li
                     key={step}
-                    className="flex gap-4 rounded-2xl border-3 border-white/20 bg-white/10 p-4"
+                    className="flex gap-4 rounded-2xl border-2 border-brand-navy/10 bg-brand-cream p-4"
                   >
                     <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-3 border-brand-neon bg-brand-neon font-display text-sm font-black text-brand-charcoal">
                       {index + 1}
                     </span>
-                    <span className="pt-1 text-sm font-semibold leading-6 text-white/90">
+                    <span className="pt-1 text-sm font-semibold leading-6 text-zinc-700">
                       {step}
                     </span>
                   </li>
@@ -272,7 +242,6 @@ export default function SafeguardingPage() {
             </div>
           </div>
         </section>
-      </main>
-    </div>
+    </PublicPageShell>
   );
 }

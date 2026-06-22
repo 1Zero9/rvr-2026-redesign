@@ -97,8 +97,8 @@ export default function FixtureList({ fixtures, results }: FixtureListProps) {
 
       {/* Content */}
       {activeGroups.length === 0 ? (
-        <div className="bg-brand-navy border border-brand-sky rounded-none p-8 text-center">
-          <p className="text-brand-sky font-display font-bold text-lg">
+        <div className="site-surface p-8 text-center">
+          <p className="font-display text-lg font-bold text-brand-navy">
             No fixtures found. Check back soon.
           </p>
         </div>

@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { validateAndClassifyMembers, calculatePricing, type ValidationError } from '@/lib/membership/pricing';
 import { createCheckoutSession } from '@/lib/membership/stripe';
 import type { CalculateRequest, CalculateResponse } from '@/lib/membership/types';
+import { isFeatureEnabled } from '@/lib/features';
 
 function badRequest(errors: ValidationError[] | string) {
   const body =
@@ -13,6 +14,13 @@ function badRequest(errors: ValidationError[] | string) {
 }
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
+  if (!(await isFeatureEnabled('stripePayments'))) {
+    return NextResponse.json(
+      { error: 'Online membership payment is not currently available.' },
+      { status: 503 },
+    );
+  }
+
   // -------------------------------------------------------------------------
   // 1. Parse body
   // -------------------------------------------------------------------------

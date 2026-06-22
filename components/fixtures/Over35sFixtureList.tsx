@@ -29,7 +29,7 @@ export default function Over35sFixtureList() {
     return (
       <div className="space-y-2">
         {[0, 1].map((i) => (
-          <div key={i} className="animate-pulse bg-brand-navy/40 h-12 w-full" />
+          <div key={i} className="h-12 w-full animate-pulse rounded-lg bg-brand-navy/10" />
         ))}
       </div>
     );
@@ -37,8 +37,8 @@ export default function Over35sFixtureList() {
 
   if (data.length === 0) {
     return (
-      <div className="bg-brand-navy border border-brand-sky/20 p-6 text-center">
-        <p className="text-brand-sky font-display font-bold">
+      <div className="rounded-xl border-2 border-brand-navy/15 bg-brand-cream p-6 text-center">
+        <p className="font-display font-bold text-brand-navy">
           No Over 35s data available.
         </p>
       </div>
@@ -49,11 +49,11 @@ export default function Over35sFixtureList() {
     <div className="space-y-8">
       {data.map(({ division, table }) => (
         <div key={division.id}>
-          <h3 className="border-l-4 border-brand-neon pl-3 mb-3 text-white font-display font-bold italic text-base">
+          <h3 className="mb-3 border-l-4 border-brand-neon pl-3 font-display text-base font-bold italic text-brand-navy">
             {division.competitionName}
           </h3>
           {!table ? (
-            <p className="text-brand-sky/60 text-sm">
+            <p className="text-sm text-zinc-500">
               Standings unavailable — check back soon.
             </p>
           ) : (
@@ -90,8 +90,8 @@ export default function Over35sFixtureList() {
                             rvr
                               ? 'bg-brand-neon text-brand-charcoal font-bold border-l-4 border-brand-navy'
                               : i % 2 === 0
-                              ? 'bg-brand-navy text-brand-cream'
-                              : 'bg-white/5 text-brand-cream'
+                              ? 'bg-brand-cream text-brand-navy'
+                              : 'bg-white text-brand-navy'
                           }
                         >
                           <td className="py-2.5 text-center">{row.position}</td>
@@ -102,7 +102,7 @@ export default function Over35sFixtureList() {
                           <td className="py-2.5 text-center">{row.won}</td>
                           <td className="py-2.5 text-center">{row.drawn}</td>
                           <td className="py-2.5 text-center">{row.lost}</td>
-                          <td className={`py-2.5 text-center font-bold ${rvr ? '' : 'text-brand-neon'}`}>
+                          <td className={`py-2.5 text-center font-bold ${rvr ? '' : 'text-brand-green'}`}>
                             {row.points}
                           </td>
                         </tr>
@@ -111,7 +111,7 @@ export default function Over35sFixtureList() {
                   </tbody>
                 </table>
               </div>
-              <p className="text-brand-sky/40 text-[10px] font-mono text-right mt-2 uppercase tracking-wide">
+              <p className="mt-2 text-right font-mono text-[10px] uppercase tracking-wide text-zinc-400">
                 Data from Amateur Football League
               </p>
             </>

@@ -1,16 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-
-function isAuthorised(req: NextRequest): boolean {
-  const header = req.headers.get('authorization') ?? '';
-  return header === `Bearer ${process.env.ADMIN_SECRET}`;
-}
+import { requireAdmin } from '@/lib/admin/require-admin';
 
 export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ): Promise<NextResponse> {
-  if (!isAuthorised(req)) {
+  try {
+    await requireAdmin();
+  } catch {
     return NextResponse.json({ error: 'Unauthorised.' }, { status: 401 });
   }
 

@@ -1,5 +1,6 @@
-import Header from "@/components/Header";
 import { Backpack, Dumbbell, Footprints, Shirt } from "lucide-react";
+import PublicPageShell from "@/components/layout/PublicPageShell";
+import PageHero from "@/components/layout/PageHero";
 
 export const metadata = {
   title: "Club Shop | Rivervalley Rangers AFC",
@@ -33,63 +34,26 @@ const productCategories = [
 const balonStoreUrl =
   "https://www.balondirect.com/product-category/rivervalley-rangers";
 
-const neonGridStyle = {
-  backgroundImage:
-    "linear-gradient(rgba(133,227,32,0.12) 1px, transparent 1px), linear-gradient(90deg, rgba(133,227,32,0.12) 1px, transparent 1px)",
-  backgroundSize: "40px 40px",
-};
-
 export default function ShopPage() {
   return (
-    <div
-      className="min-h-screen bg-brand-cream"
-      style={{
-        backgroundImage: `linear-gradient(rgba(11,31,59,0.04) 1px, transparent 1px),
-                          linear-gradient(90deg, rgba(11,31,59,0.04) 1px, transparent 1px)`,
-        backgroundSize: '40px 40px',
-      }}
-    >
-      <Header />
+    <PublicPageShell>
+      <PageHero
+        eyebrow="Official Club Shop"
+        title="Kit Up, Valley"
+        description="Official Rivervalley Rangers AFC kit and merchandise, exclusively through Balon Sports."
+        actions={
+          <a
+            href={balonStoreUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-brutalist-neon inline-flex min-h-11 items-center px-8 py-4 text-base"
+          >
+            Shop Now on Balon →
+          </a>
+        }
+      />
 
-      <main>
-        <section className="relative w-full overflow-hidden bg-brand-navy py-10 md:py-12">
-          <div
-            className="pointer-events-none absolute inset-0"
-            style={neonGridStyle}
-            aria-hidden="true"
-          />
-          <div className="relative mx-auto grid max-w-6xl items-center gap-8 px-4 text-center md:grid-cols-[0.9fr_1.1fr] md:gap-12 md:px-6 md:text-left">
-            <div>
-              <span className="mb-5 inline-block border-2 border-brand-charcoal bg-brand-neon px-4 py-2 font-display text-xs font-black uppercase tracking-widest text-brand-charcoal">
-                Official Club Shop
-              </span>
-
-              <h1 className="font-display text-4xl font-black uppercase italic leading-none tracking-tight text-brand-cream md:text-6xl">
-                KIT UP,
-                <br />
-                VALLEY
-              </h1>
-            </div>
-
-            <div className="md:border-l md:border-brand-sky/25 md:pl-12">
-              <p className="mx-auto mb-6 max-w-xl text-lg font-semibold text-brand-sky md:mx-0 md:text-xl">
-                Official Rivervalley Rangers AFC kit and merchandise,
-                exclusively through our partner Balon Sports.
-              </p>
-
-              <a
-                href={balonStoreUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn-brutalist-neon inline-flex min-h-11 items-center gap-2 px-8 py-4 text-base"
-              >
-                Shop Now on Balon →
-              </a>
-            </div>
-          </div>
-        </section>
-
-        <section className="bg-brand-cream py-16">
+        <section className="py-12">
           <div className="mx-auto max-w-4xl px-4">
             <h2 className="mb-2 font-display text-3xl font-black uppercase italic text-brand-charcoal md:text-4xl">
               What&apos;s In The Shop
@@ -126,21 +90,16 @@ export default function ShopPage() {
           </div>
         </section>
 
-        <section className="relative overflow-hidden border-t-4 border-brand-neon bg-brand-navy py-14">
-          <div
-            className="pointer-events-none absolute inset-0"
-            style={neonGridStyle}
-            aria-hidden="true"
-          />
-          <div className="relative mx-auto max-w-4xl px-4 md:flex md:items-center md:justify-between md:gap-12">
+        <section className="mx-auto max-w-4xl px-4 pb-14">
+          <div className="site-surface p-6 md:flex md:items-center md:justify-between md:gap-12 md:p-8">
             <div>
-              <p className="mb-2 font-mono text-xs uppercase tracking-widest text-brand-neon">
+              <p className="mb-2 font-mono text-xs uppercase tracking-widest text-brand-green">
                 Our Kit Partner
               </p>
-              <h2 className="mb-4 font-display text-3xl font-black italic text-brand-cream md:text-4xl">
+              <h2 className="mb-4 font-display text-3xl font-black italic text-brand-navy md:text-4xl">
                 Powered by Balon Sports
               </h2>
-              <p className="mb-6 max-w-md text-sm leading-relaxed text-brand-sky/80 md:mb-0">
+              <p className="mb-6 max-w-md text-sm leading-relaxed text-zinc-600 md:mb-0">
                 Balon Sports are our official kit supplier, providing
                 high-quality teamwear for every RVR squad from U7 right through
                 to our senior teams. All orders are handled directly through
@@ -157,14 +116,14 @@ export default function ShopPage() {
               >
                 Visit the RVR Store on Balon →
               </a>
-              <p className="mt-3 text-center font-mono text-xs text-brand-sky/40 md:text-right">
+              <p className="mt-3 text-center font-mono text-xs text-zinc-400 md:text-right">
                 balondirect.com
               </p>
             </div>
           </div>
         </section>
 
-        <section className="border-t border-zinc-200 bg-brand-cream py-10">
+        <section className="border-t border-brand-navy/10 py-10">
           <div className="mx-auto max-w-4xl px-4 text-center">
             <p className="font-mono text-xs uppercase tracking-wide text-zinc-400">
               New season kit available each August · All sizes · Delivery
@@ -172,7 +131,6 @@ export default function ShopPage() {
             </p>
           </div>
         </section>
-      </main>
-    </div>
+    </PublicPageShell>
   );
 }

@@ -1,5 +1,7 @@
 import type { NextConfig } from "next";
 
+const isDevelopment = process.env.NODE_ENV === "development";
+
 const securityHeaders = [
   // Prevent framing (clickjacking)
   { key: "X-Frame-Options", value: "DENY" },
@@ -16,13 +18,14 @@ const securityHeaders = [
   },
   // Content-Security-Policy
   // 'unsafe-inline' for styles is needed by Tailwind CSS-in-JS and Next.js inline styles.
-  // 'unsafe-eval' is kept off; Next.js in production mode does not require it.
+  // React requires 'unsafe-eval' for development diagnostics. It remains disabled
+  // in production, where neither React nor Next.js requires it.
   // Stripe JS (checkout) requires js.stripe.com and hooks.stripe.com.
   {
     key: "Content-Security-Policy",
     value: [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' https://js.stripe.com",
+      `script-src 'self' 'unsafe-inline'${isDevelopment ? " 'unsafe-eval'" : ""} https://js.stripe.com`,
       "style-src 'self' 'unsafe-inline'",
       "img-src 'self' data: https:",
       "font-src 'self' data:",

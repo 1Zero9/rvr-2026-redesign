@@ -4,6 +4,7 @@ import { notFound, redirect } from 'next/navigation';
 import { prisma } from '@/lib/prisma';
 import Header from '@/components/Header';
 import AnnouncementForm from '../_components/AnnouncementForm';
+import { requireAdmin } from '@/lib/admin/require-admin';
 
 export const metadata: Metadata = {
   title: 'Edit Announcement | RVR Admin',
@@ -21,6 +22,7 @@ export default async function EditAnnouncementPage({
 
   async function updateAnnouncement(formData: FormData) {
     'use server';
+    await requireAdmin();
     const { prisma: db } = await import('@/lib/prisma');
     await db.announcement.update({
       where: { id },
@@ -43,6 +45,7 @@ export default async function EditAnnouncementPage({
 
   async function deleteAnnouncement() {
     'use server';
+    await requireAdmin();
     const { prisma: db } = await import('@/lib/prisma');
     await db.announcement.delete({ where: { id } });
     redirect('/admin/announcements');

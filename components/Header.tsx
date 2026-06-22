@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { ChevronDown, ChevronRight, Menu, X } from 'lucide-react';
 import { ASSET_PATHS } from '@/config/assets';
 import SearchOverlay from './SearchOverlay';
@@ -73,7 +73,17 @@ const NAV_SECTIONS: NavSection[] = [
     label: 'Club',
     columns: [
       {
-        heading: 'About RVR',
+        heading: 'Club Information',
+        links: [
+          { href: '/club',            label: 'Club Overview' },
+          { href: '/club#history',    label: 'History'       },
+          { href: '/club#committee',  label: 'Committee'     },
+          { href: '/club#facilities', label: 'Facilities'    },
+          { href: '/club#policies',   label: 'Policies'      },
+        ],
+      },
+      {
+        heading: 'Club Services',
         links: [
           { href: '/news',    label: 'News'       },
           { href: '/contact', label: 'Contact Us' },
@@ -114,6 +124,14 @@ const MOBILE_NAV_GROUPS: MobileNavItem[] = [
   { type: 'link',   label: 'Over 35s B',      href: '/seniors/over-35s/over35s-b' },
   { type: 'header', label: 'Fixtures',        href: '/fixtures'                    },
   { type: 'header', label: 'Join Us',         href: '/register'                    },
+  { type: 'header', label: 'Club Information', href: '/club'                       },
+  { type: 'link',   label: 'Club History',     href: '/club#history'               },
+  { type: 'link',   label: 'Committee',        href: '/club#committee'             },
+  { type: 'link',   label: 'Facilities',       href: '/club#facilities'            },
+  { type: 'link',   label: 'Policies',         href: '/club#policies'              },
+  { type: 'link',   label: 'Safeguarding',     href: '/club/safeguarding'          },
+  { type: 'link',   label: 'Contact Us',       href: '/contact'                    },
+  { type: 'link',   label: 'Club Shop',        href: '/shop'                       },
   { type: 'header', label: 'News',            href: '/news'                        },
   { type: 'header', label: 'Campaigns',       href: '/campaigns'                   },
 ];
@@ -137,9 +155,14 @@ export default function Header() {
   const [openSection, setOpenSection] = useState<string | null>(null);
   const [searchOpen,  setSearchOpen]  = useState(false);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const searchButtonRef = useRef<HTMLButtonElement>(null);
   const pathname = usePathname();
 
   const close = () => setOpen(false);
+  const closeSearch = useCallback(() => {
+    setSearchOpen(false);
+    requestAnimationFrame(() => searchButtonRef.current?.focus());
+  }, []);
 
   // Body scroll lock for mobile overlay
   useEffect(() => {
@@ -152,12 +175,12 @@ export default function Header() {
     const handler = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         setOpenSection(null);
-        setSearchOpen(false);
+        if (searchOpen) closeSearch();
       }
     };
     document.addEventListener('keydown', handler);
     return () => document.removeEventListener('keydown', handler);
-  }, []);
+  }, [closeSearch, searchOpen]);
 
   useEffect(() => {
     return () => {
@@ -220,6 +243,12 @@ export default function Header() {
                         if (closeTimer.current) clearTimeout(closeTimer.current);
                         setOpenSection(section.label);
                       }}
+                      onFocus={() => setOpenSection(section.label)}
+                      onClick={() =>
+                        setOpenSection((current) =>
+                          current === section.label ? null : section.label,
+                        )
+                      }
                       aria-expanded={isOpen}
                       className={`min-h-[44px] px-4 flex items-center gap-1.5 font-display font-black uppercase text-sm tracking-wide rounded-lg transition-all ${
                         isOpen
@@ -305,6 +334,7 @@ export default function Header() {
             {/* Search + Desktop CTA */}
             <div className="absolute right-4 md:right-6 flex items-center gap-2">
               <button
+                ref={searchButtonRef}
                 type="button"
                 onClick={() => setSearchOpen(true)}
                 aria-label="Search teams"
@@ -342,7 +372,7 @@ export default function Header() {
       </header>
 
       {/* Search overlay */}
-      <SearchOverlay isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
+      <SearchOverlay isOpen={searchOpen} onClose={closeSearch} />
 
       {/* Mobile full-screen overlay */}
       {open && (

@@ -1,9 +1,56 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Header from '@/components/Header';
 
 export default function JMOPage() {
+  const [submitState, setSubmitState] = useState<
+    'idle' | 'submitting' | 'success' | 'error'
+  >('idle');
+  const [submitMessage, setSubmitMessage] = useState('');
+
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (submitState === 'submitting') return;
+
+    const form = event.currentTarget;
+    const data = new FormData(form);
+    setSubmitState('submitting');
+    setSubmitMessage('');
+
+    try {
+      const response = await fetch('/api/enquiries', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'JMO_INTEREST',
+          name: data.get('fullname'),
+          email: data.get('email'),
+          phone: data.get('phone'),
+          website: data.get('website'),
+          details: [
+            `Date of birth: ${data.get('dob') || 'Not supplied'}`,
+            `Background: ${data.get('notes') || 'Not supplied'}`,
+          ].join('\n'),
+        }),
+      });
+
+      if (!response.ok) {
+        const result = (await response.json()) as { error?: string };
+        throw new Error(result.error || 'The application could not be submitted.');
+      }
+
+      form.reset();
+      setSubmitState('success');
+      setSubmitMessage('Your JMO interest form has been received by the club team.');
+    } catch (error) {
+      setSubmitState('error');
+      setSubmitMessage(
+        error instanceof Error ? error.message : 'The application could not be submitted.',
+      );
+    }
+  }
+
   return (
     <div className="flex flex-col min-h-screen bg-brand-cream text-brand-charcoal">
       <Header />
@@ -22,8 +69,8 @@ export default function JMOPage() {
               
               {/* Special program tag */}
               <div className="inline-flex items-center gap-2 bg-brand-ddsl text-white font-display font-black text-xs px-4 py-2 rounded-xl border-3 border-brand-charcoal shadow-[3px_3px_0px_0px_#121212] -rotate-1">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" className="w-4 h-4 text-brand-neon">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499c.195-.39.687-.39.882 0l2.4 4.883 5.385.782c.439.064.615.608.297.917l-3.9 3.801 1.222 5.384c.099.436-.356.767-.745.562L12 17.587l-4.819 2.533c-.39.205-.846-.126-.745-.562l1.223-5.384-3.9-3.801c-.318-.309-.142-.853.297-.917l5.384-.782 2.4-4.884z" />
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor" className="w-4 h-4 text-brand-neon">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M11.48 3.499c.195-.39.687-.39.882 0l2.4 4.883 5.385.782c.439.064.615.608.297.917l-3.9 3.801 1.222 5.384c.099.436-.356.767-.745.562L12 17.587l-4.819 2.533c-.39.205-.846-.126-.745-.562l1.223-5.384-3.9-3.801c-.318-.309-.142-.853.297-.917l5.384-.782 2.4-4.884z" />
                 </svg>
                 DDSL BORN TO LEAD PROGRAM
               </div>
@@ -42,14 +89,14 @@ export default function JMOPage() {
               <div className="flex flex-col sm:flex-row gap-4 sm:items-center max-w-md">
                 <a href="#apply" className="btn-brutalist-neon px-8 py-4 text-center text-lg shadow-brutalist bg-brand-neon hover:bg-[#96f431] flex items-center justify-center gap-2">
                   Become a JMO
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" className="w-5 h-5">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75" />
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="3" stroke="currentColor" className="w-5 h-5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75" />
                   </svg>
                 </a>
                 <a href="#parents" className="btn-brutalist-green px-8 py-4 text-center text-lg bg-brand-ddsl hover:bg-[#004f3a] text-white flex items-center justify-center gap-2">
                   Parent Info Hub
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" className="w-5 h-5 text-brand-neon">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="3" stroke="currentColor" className="w-5 h-5 text-brand-neon">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </a>
               </div>
@@ -347,44 +394,62 @@ export default function JMOPage() {
               Submit your details below to register interest in the upcoming FAI Referee Certification Seminar. An RVR Coordinator will contact you shortly.
             </p>
 
-            <form onSubmit={(e) => { e.preventDefault(); alert('Thank you for registering interest! A coordinator will contact you shortly.'); }} className="text-left space-y-6 bg-white text-brand-charcoal p-8 border-4 border-brand-charcoal rounded-2xl shadow-brutalist">
+            <form onSubmit={handleSubmit} className="text-left space-y-6 bg-white text-brand-charcoal p-8 border-4 border-brand-charcoal rounded-2xl shadow-brutalist">
               
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
                   <label htmlFor="fullname" className="block font-display font-bold text-sm uppercase tracking-wide mb-2">Full Name</label>
-                  <input required type="text" id="fullname" className="w-full p-3 border-3 border-brand-charcoal rounded-xl focus:outline-none focus:ring-3 focus:ring-brand-neon font-sans font-semibold" placeholder="Enter full name" />
+                  <input required type="text" id="fullname" name="fullname" autoComplete="name" className="w-full p-3 border-3 border-brand-charcoal rounded-xl focus:outline-none focus:ring-3 focus:ring-brand-neon font-sans font-semibold" placeholder="Enter full name" />
                 </div>
                 <div>
                   <label htmlFor="dob" className="block font-display font-bold text-sm uppercase tracking-wide mb-2">Date of Birth</label>
-                  <input required type="date" id="dob" className="w-full p-3 border-3 border-brand-charcoal rounded-xl focus:outline-none focus:ring-3 focus:ring-brand-neon font-sans font-semibold" />
+                  <input required type="date" id="dob" name="dob" autoComplete="bday" className="w-full p-3 border-3 border-brand-charcoal rounded-xl focus:outline-none focus:ring-3 focus:ring-brand-neon font-sans font-semibold" />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
                   <label htmlFor="email" className="block font-display font-bold text-sm uppercase tracking-wide mb-2">Email Address</label>
-                  <input required type="email" id="email" className="w-full p-3 border-3 border-brand-charcoal rounded-xl focus:outline-none focus:ring-3 focus:ring-brand-neon font-sans font-semibold" placeholder="name@example.com" />
+                  <input required type="email" id="email" name="email" autoComplete="email" className="w-full p-3 border-3 border-brand-charcoal rounded-xl focus:outline-none focus:ring-3 focus:ring-brand-neon font-sans font-semibold" placeholder="name@example.com" />
                 </div>
                 <div>
                   <label htmlFor="phone" className="block font-display font-bold text-sm uppercase tracking-wide mb-2">Phone Number</label>
-                  <input required type="tel" id="phone" className="w-full p-3 border-3 border-brand-charcoal rounded-xl focus:outline-none focus:ring-3 focus:ring-brand-neon font-sans font-semibold" placeholder="e.g. 087 123 4567" />
+                  <input required type="tel" id="phone" name="phone" autoComplete="tel" className="w-full p-3 border-3 border-brand-charcoal rounded-xl focus:outline-none focus:ring-3 focus:ring-brand-neon font-sans font-semibold" placeholder="Your phone number" />
                 </div>
               </div>
 
               <div>
                 <label htmlFor="notes" className="block font-display font-bold text-sm uppercase tracking-wide mb-2">Club Background / Experience (Optional)</label>
-                <textarea id="notes" rows={3} className="w-full p-3 border-3 border-brand-charcoal rounded-xl focus:outline-none focus:ring-3 focus:ring-brand-neon font-sans font-semibold" placeholder="Do you play for an RVR squad? Tell us briefly..."></textarea>
+                <textarea id="notes" name="notes" rows={3} className="w-full p-3 border-3 border-brand-charcoal rounded-xl focus:outline-none focus:ring-3 focus:ring-brand-neon font-sans font-semibold" placeholder="Do you play for an RVR squad? Tell us briefly..."></textarea>
               </div>
 
               <div className="flex items-start gap-3">
-                <input required type="checkbox" id="consent" className="mt-1 w-5 h-5 border-3 border-brand-charcoal rounded cursor-pointer accent-brand-neon" />
+                <input required type="checkbox" id="consent" name="consent" className="mt-1 w-5 h-5 border-3 border-brand-charcoal rounded cursor-pointer accent-brand-neon" />
                 <label htmlFor="consent" className="font-sans text-xs font-semibold text-zinc-600 leading-snug">
                   I confirm that I am aged 16 or older, or have received permission from my parent/guardian to submit my details for referee training.
                 </label>
               </div>
 
-              <button type="submit" className="w-full btn-brutalist-neon py-4 text-lg bg-brand-neon hover:bg-[#96f431]">
-                Submit Application Form
+              <div className="sr-only" aria-hidden="true">
+                <label htmlFor="website">Website</label>
+                <input id="website" name="website" tabIndex={-1} autoComplete="off" />
+              </div>
+
+              {submitMessage && (
+                <p
+                  role={submitState === 'error' ? 'alert' : 'status'}
+                  className={`rounded-xl border-2 p-4 text-sm font-bold ${
+                    submitState === 'error'
+                      ? 'border-red-700 bg-red-50 text-red-800'
+                      : 'border-brand-green bg-[#D1E7DD] text-[#0F5132]'
+                  }`}
+                >
+                  {submitMessage}
+                </p>
+              )}
+
+              <button disabled={submitState === 'submitting'} type="submit" className="w-full btn-brutalist-neon py-4 text-lg bg-brand-neon hover:bg-[#96f431] disabled:cursor-wait disabled:opacity-60">
+                {submitState === 'submitting' ? 'Submitting…' : 'Submit Application Form'}
               </button>
 
             </form>
@@ -401,7 +466,7 @@ export default function JMOPage() {
               RIVERVALLEY RANGERS AFC
             </h4>
             <p className="text-zinc-400 text-sm leading-relaxed max-w-xs">
-              Swords' leading community football club, established in 1981. Dedicated to equality, youth development, and inclusive sports.
+              Swords&apos; leading community football club, established in 1981. Dedicated to equality, youth development, and inclusive sports.
             </p>
           </div>
           <div>
