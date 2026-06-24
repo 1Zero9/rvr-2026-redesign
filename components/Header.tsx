@@ -278,15 +278,12 @@ export default function Header() {
 
           {/* Logo */}
           <Link href="/" className="flex shrink-0 items-center gap-3" onClick={close}>
-            <span className="flex h-11 w-11 items-center justify-center rounded-xl border-2 border-brand-sky/40 bg-brand-green font-display text-sm font-black italic text-brand-neon shadow-[2px_2px_0_rgba(184,205,238,0.25)] lg:hidden">
-              RVR
-            </span>
             <Image
-              src={ASSET_PATHS.crestMaster}
+              src="/river-valley-rangers-logo-pack-v2/rvr-new4.png"
               alt="Rivervalley Rangers AFC crest"
               width={44}
               height={44}
-              className="hidden lg:block rounded-lg"
+              className="block rounded-lg"
               priority
             />
             <span className="grid leading-none">

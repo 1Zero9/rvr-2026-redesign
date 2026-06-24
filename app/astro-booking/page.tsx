@@ -1,126 +1,91 @@
-import type { Metadata } from "next";
-import { clubZapPaymentMap } from "@/config/payments";
-import { CalendarDays, Clock, MapPin, PhoneCall, ShieldCheck, Zap } from "lucide-react";
-import PublicPageShell from "@/components/layout/PublicPageShell";
-import PageHero from "@/components/layout/PageHero";
+import PublicPageShell from '@/components/layout/PublicPageShell';
 
-export const metadata: Metadata = {
-  title: "Book Astro Pitch | Rivervalley Rangers AFC",
-  description:
-    "Book the Rivervalley Rangers AFC all-weather astro pitch in Swords, Dublin. Available for club training, schools, and community hire.",
+export const metadata = {
+  title: 'Book the Astro | Rivervalley Rangers AFC',
+  description: "Book the St Finian's Community College astroturf pitch in Swords via SportsKey.",
 };
 
-const features = [
-  { label: "Full-size all-weather surface", icon: Zap },
-  { label: "Floodlit for evening sessions", icon: Clock },
-  { label: "Ward Rivervalley Park, Swords", icon: MapPin },
-  { label: "FAI Club Mark facility", icon: ShieldCheck },
-];
-
-const slots = [
-  { day: "Monday – Friday", time: "17:00 – 21:00" },
-  { day: "Saturday", time: "09:00 – 18:00" },
-  { day: "Sunday", time: "10:00 – 17:00" },
+const CARDS = [
+  {
+    title: 'The Pitch',
+    body: 'Full-size 3G astroturf surface. Floodlit. Suitable for 5-a-side, 7-a-side, and 11-a-side formats.',
+    extra: null,
+  },
+  {
+    title: 'Location',
+    body: "St Finian's Community College, Swords, Co. Dublin. 5 minutes from Swords town centre.",
+    extra: 'Seatown Road, Swords, K67 X264',
+  },
+  {
+    title: 'How to Book',
+    body: 'Bookings are managed directly through the SportsKey platform. Select your date and time, pay securely online.',
+    extra: null,
+  },
 ];
 
 export default function AstroBookingPage() {
   return (
     <PublicPageShell>
-      <PageHero
-        eyebrow={<><CalendarDays className="h-4 w-4" aria-hidden="true" /> Pitch Hire</>}
-        title="Book Astro Pitch"
-        description="Ward Rivervalley all-weather astro pitch for club training, school groups, and community hire."
-      />
 
-        {/* Main content */}
-        <section className="mx-auto max-w-6xl px-6 py-12 lg:py-16">
-          <div className="grid gap-8 lg:grid-cols-2">
+      {/* ── 1. Hero ──────────────────────────────────────────────────── */}
+      <section className="bg-brand-navy border-b-3 border-brand-neon px-4 py-12 md:py-20">
+        <div className="max-w-6xl mx-auto">
+          <h1 className="font-display font-black italic text-5xl md:text-7xl text-brand-neon leading-none mb-4">
+            Book the Astro
+          </h1>
+          <p className="text-brand-cream text-lg md:text-xl font-semibold">
+            St Finian&apos;s Community College Astroturf &middot; Swords, Co. Dublin
+          </p>
+        </div>
+      </section>
 
-            {/* Facility features */}
-            <div className="brutalist-card p-6 sm:p-8">
-              <h2 className="font-display text-2xl font-black uppercase leading-tight tracking-tight text-brand-charcoal">
-                Facility Details
+      {/* ── 2. Info cards ────────────────────────────────────────────── */}
+      <section className="bg-brand-cream px-4 py-12">
+        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
+          {CARDS.map((card) => (
+            <div
+              key={card.title}
+              className="border-3 border-brand-navy bg-brand-cream shadow-brutalist p-6"
+            >
+              <h2 className="font-display font-black italic text-xl text-brand-navy border-b-3 border-brand-navy pb-2 mb-3">
+                {card.title}
               </h2>
-              <ul className="mt-6 space-y-4">
-                {features.map(({ label, icon: Icon }) => (
-                  <li key={label} className="flex items-center gap-3">
-                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border-2 border-brand-charcoal bg-brand-neon">
-                      <Icon className="h-4 w-4 text-brand-charcoal" aria-hidden="true" />
-                    </span>
-                    <span className="font-display text-sm font-black uppercase text-brand-charcoal">
-                      {label}
-                    </span>
-                  </li>
-                ))}
-              </ul>
+              <p className="text-brand-charcoal text-sm leading-relaxed">
+                {card.body}
+              </p>
+              {card.extra && (
+                <p className="mt-3 text-xs font-mono font-bold text-brand-charcoal/60">
+                  {card.extra}
+                </p>
+              )}
             </div>
+          ))}
+        </div>
+      </section>
 
-            {/* Availability */}
-            <div className="brutalist-card p-6 sm:p-8">
-              <h2 className="font-display text-2xl font-black uppercase leading-tight tracking-tight text-brand-charcoal">
-                Available Slots
-              </h2>
-              <ul className="mt-6 space-y-3">
-                {slots.map((slot) => (
-                  <li
-                    key={slot.day}
-                    className="flex items-center justify-between rounded-xl border-2 border-zinc-200 bg-brand-cream px-4 py-3"
-                  >
-                    <span className="font-display text-sm font-black uppercase text-brand-charcoal">
-                      {slot.day}
-                    </span>
-                    <span className="font-mono text-xs font-bold text-zinc-600">
-                      {slot.time}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-              <p className="mt-4 text-xs font-semibold text-zinc-500">
-                Slots subject to club training schedules. Confirm availability
-                before booking.
-              </p>
-            </div>
-          </div>
+      {/* ── 3. CTA block ─────────────────────────────────────────────── */}
+      <section className="bg-brand-neon border-y-3 border-brand-navy px-4 py-12 text-center">
+        <p className="font-display font-black italic text-3xl md:text-4xl text-brand-navy mb-8">
+          Ready to book?
+        </p>
+        <a
+          href="https://portal.sportskey.com/venues/st-finian-s-astro"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-block bg-brand-navy text-brand-neon font-display font-black italic text-xl px-8 py-4 border-3 border-brand-navy shadow-brutalist hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] transition-transform min-h-[44px]"
+        >
+          Check Availability →
+        </a>
+      </section>
 
-          {/* Booking CTA block */}
-          <div className="mt-10 grid gap-5 sm:grid-cols-2">
-            {/* Online booking */}
-            <div className="rounded-2xl border-4 border-brand-charcoal bg-brand-charcoal p-6 text-white shadow-brutalist">
-              <p className="font-display text-sm font-black uppercase tracking-wide text-brand-neon">
-                Book Online
-              </p>
-              <p className="mt-2 text-sm font-semibold leading-relaxed text-zinc-300">
-                Club sessions and structured hire can be reserved through the
-                club portal.
-              </p>
-              <a
-                href={clubZapPaymentMap.camps.targetUrl}
-                aria-label={clubZapPaymentMap.camps.title}
-                className="btn-brutalist-neon mt-5 inline-block px-6 py-3 text-sm"
-              >
-                Reserve via Club Portal
-              </a>
-            </div>
+      {/* ── 4. Notice strip ──────────────────────────────────────────── */}
+      <div className="bg-brand-cream border-y-3 border-brand-navy px-4 py-4">
+        <p className="text-sm text-brand-charcoal text-center">
+          Booking is managed by St Finian&apos;s Community College via SportsKey.
+          Rivervalley Rangers AFC is not responsible for availability or payment processing.
+        </p>
+      </div>
 
-            {/* Phone enquiry */}
-            <div className="rounded-2xl border-4 border-brand-charcoal bg-white p-6 shadow-brutalist">
-              <p className="font-display text-sm font-black uppercase tracking-wide text-brand-green">
-                Phone Enquiry
-              </p>
-              <p className="mt-2 text-sm font-semibold leading-relaxed text-zinc-600">
-                For school groups, one-off community bookings, or weekend
-                availability, contact the club directly.
-              </p>
-              <a
-                href="mailto:info@rvrafc.ie"
-                className="btn-brutalist-green mt-5 inline-flex items-center gap-2 px-6 py-3 text-sm"
-              >
-                <PhoneCall className="h-4 w-4" aria-hidden="true" />
-                Email the Club
-              </a>
-            </div>
-          </div>
-        </section>
     </PublicPageShell>
   );
 }
