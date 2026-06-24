@@ -7,11 +7,16 @@ import { FavouritesProvider } from "@/lib/favourites/context";
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
 });
 
 const jakarta = Plus_Jakarta_Sans({
   variable: "--font-jakarta",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
+  style: ["normal", "italic"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {

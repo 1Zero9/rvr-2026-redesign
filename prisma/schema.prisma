@@ -55,6 +55,19 @@ enum ClothingSize {
   ADULT_EXTRA_LARGE
 }
 
+enum RegistrationStatus {
+  NEW
+  CONTACTED
+  WAITLISTED
+  ENROLLED
+  DECLINED
+}
+
+enum PlayerGender {
+  MALE
+  FEMALE
+}
+
 /// Category for public-facing club announcements.
 enum AnnouncementCategory {
   RECRUITMENT
@@ -74,16 +87,20 @@ model PlayerProfile {
   position             String?
   profileSummary       String?
   cardImageUrl         String?
-  isPrivate            Boolean         @default(true)
-  photoConsentStatus   ConsentStatus   @default(NOT_REQUESTED)
-  medicalConsentStatus ConsentStatus   @default(NOT_REQUESTED)
-  dataConsentStatus    ConsentStatus   @default(NOT_REQUESTED)
+  isPrivate            Boolean            @default(true)
+  registrationStatus   RegistrationStatus @default(NEW)
+  gender               PlayerGender?
+  notes                String?
+  photoConsentStatus   ConsentStatus      @default(NOT_REQUESTED)
+  medicalConsentStatus ConsentStatus      @default(NOT_REQUESTED)
+  dataConsentStatus    ConsentStatus      @default(NOT_REQUESTED)
   parentConsents       ParentConsent[]
-  createdAt            DateTime        @default(now())
-  updatedAt            DateTime        @updatedAt
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
 
   @@index([teamName])
   @@index([isPrivate])
+  @@index([registrationStatus, createdAt])
   @@index([lastName, firstName])
   @@index([photoConsentStatus, dataConsentStatus])
 }
@@ -95,6 +112,7 @@ model ParentConsent {
   playerProfile    PlayerProfile @relation(fields: [playerProfileId], references: [id], onDelete: Cascade)
   parentName       String
   parentEmail      String
+  parentPhone      String?
   signatureHash    String
   photoRelease     Boolean       @default(false)
   medicalTreatment Boolean       @default(false)

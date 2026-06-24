@@ -3,15 +3,17 @@
 import { prisma } from '@/lib/prisma';
 import { createHash } from 'crypto';
 
-export type PlayerPosition = 'Goalkeeper' | 'Defender' | 'Midfielder' | 'Forward';
+export type PlayerGender = 'MALE' | 'FEMALE';
 
 export interface RegistrationInput {
-  firstName: string;
-  lastName: string;
+  firstName:   string;
+  lastName:    string;
   yearOfBirth: number;
-  position: PlayerPosition;
-  parentName: string;
+  gender:      PlayerGender;
+  parentName:  string;
   parentEmail: string;
+  parentPhone: string;
+  notes:       string;
   gdprConsent: boolean;
 }
 
@@ -19,21 +21,10 @@ export type RegistrationResult =
   | { ok: true; playerId: string; firstName: string }
   | { ok: false; error: string };
 
-const VALID_POSITIONS: ReadonlySet<string> = new Set([
-  'Goalkeeper',
-  'Defender',
-  'Midfielder',
-  'Forward',
-]);
+const CURRENT_YEAR = new Date().getFullYear();
 
-// U7–U12 players always have isPrivate locked to true server-side.
-// No public or admin endpoint may set isPrivate: false for these age groups.
-const YOUTH_LOCK_AGE_MIN = 7;
-const YOUTH_LOCK_AGE_MAX = 12;
-
-function isYouthPrivacyLocked(yearOfBirth: number): boolean {
-  const age = new Date().getFullYear() - yearOfBirth;
-  return age >= YOUTH_LOCK_AGE_MIN && age <= YOUTH_LOCK_AGE_MAX;
+function isValidYear(y: number) {
+  return y >= CURRENT_YEAR - 80 && y <= CURRENT_YEAR - 4;
 }
 
 function buildConsentHash(
@@ -50,40 +41,33 @@ function buildConsentHash(
 export async function registerPlayer(
   input: RegistrationInput,
 ): Promise<RegistrationResult> {
-  const firstName = input.firstName.trim();
-  const lastName = input.lastName.trim();
-  const parentName = input.parentName.trim();
+  const firstName   = input.firstName.trim();
+  const lastName    = input.lastName.trim();
+  const parentName  = input.parentName.trim();
   const parentEmail = input.parentEmail.trim().toLowerCase();
+  const parentPhone = input.parentPhone.trim();
+  const notes       = input.notes.trim();
 
-  if (firstName.length < 2) {
+  if (firstName.length < 2)
     return { ok: false, error: 'Player first name must be at least 2 characters.' };
-  }
-  if (lastName.length < 2) {
+  if (lastName.length < 2)
     return { ok: false, error: 'Player last name must be at least 2 characters.' };
-  }
-  if (parentName.length < 2) {
-    return { ok: false, error: 'Parent or guardian full name is required.' };
-  }
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(parentEmail)) {
-    return { ok: false, error: 'A valid email address is required.' };
-  }
-  if (!VALID_POSITIONS.has(input.position)) {
-    return { ok: false, error: 'Please select a valid playing position.' };
-  }
-
-  const yearOfBirth = Math.trunc(input.yearOfBirth);
-  const currentYear = new Date().getFullYear();
-  if (yearOfBirth < currentYear - 80 || yearOfBirth > currentYear - 4) {
+  if (!isValidYear(Math.trunc(input.yearOfBirth)))
     return { ok: false, error: 'Year of birth is outside the accepted range.' };
-  }
+  if (!['MALE', 'FEMALE'].includes(input.gender))
+    return { ok: false, error: 'Please select Boys or Girls.' };
+  if (parentName.length < 2)
+    return { ok: false, error: 'Parent or guardian full name is required.' };
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(parentEmail))
+    return { ok: false, error: 'A valid email address is required.' };
+  if (parentPhone.length < 7)
+    return { ok: false, error: 'A valid phone number is required.' };
+  if (!input.gdprConsent)
+    return { ok: false, error: 'Consent is required to submit.' };
 
-  if (!input.gdprConsent) {
-    return { ok: false, error: 'GDPR consent is required to complete registration.' };
-  }
-
-  const youthLocked = isYouthPrivacyLocked(yearOfBirth);
-  const displayName = `${firstName} ${lastName}`;
-  const signedAt = new Date();
+  const yearOfBirth   = Math.trunc(input.yearOfBirth);
+  const displayName   = `${firstName} ${lastName}`;
+  const signedAt      = new Date();
   const signatureHash = buildConsentHash(displayName, parentName, parentEmail, signedAt);
 
   try {
@@ -94,12 +78,11 @@ export async function registerPlayer(
           lastName,
           displayName,
           yearOfBirth,
-          position: input.position,
-          // All new profiles start private.
-          // For U7–U12 (youthLocked), this is an explicit enforcement —
-          // mutation endpoints must check isYouthPrivacyLocked before allowing changes.
-          isPrivate: youthLocked ? true : true,
-          dataConsentStatus: 'PENDING',
+          gender:             input.gender,
+          notes:              notes || null,
+          registrationStatus: 'NEW',
+          isPrivate:          true,
+          dataConsentStatus:  'PENDING',
         },
       });
 
@@ -108,10 +91,11 @@ export async function registerPlayer(
           playerProfileId: created.id,
           parentName,
           parentEmail,
+          parentPhone:     parentPhone || null,
           signatureHash,
-          photoRelease: input.gdprConsent,
+          photoRelease:    input.gdprConsent,
           medicalTreatment: false,
-          dataProcessing: input.gdprConsent,
+          dataProcessing:  input.gdprConsent,
           signedAt,
         },
       });
