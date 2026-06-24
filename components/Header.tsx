@@ -4,7 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { ChevronDown, ChevronRight, Menu, X } from 'lucide-react';
+import { ArrowRight, ChevronDown, ChevronRight, Menu, X } from 'lucide-react';
 import { ASSET_PATHS } from '@/config/assets';
 import SearchOverlay from './SearchOverlay';
 
@@ -110,36 +110,79 @@ const CAMPAIGNS_LINK = { label: 'Campaigns', href: '/campaigns' };
 
 // ─── Mobile overlay links ─────────────────────────────────────────────────────
 
-type MobileNavItem =
-  | { type: 'header'; label: string; href: string }
-  | { type: 'link';   label: string; href: string };
+type MobileNavSection = {
+  label: string;
+  href: string;
+  topLinkLabel?: string;
+  links?: NavLink[];
+};
 
-const MOBILE_NAV_GROUPS: MobileNavItem[] = [
-  { type: 'header', label: 'All Teams',       href: '/teams'                       },
-  { type: 'link',   label: 'DDSL Boys',       href: '/teams?filter=boys'           },
-  { type: 'link',   label: 'DDSL Girls',      href: '/teams?filter=girls'          },
-  { type: 'header', label: 'Seniors',         href: '/seniors'                     },
-  { type: 'link',   label: 'First Team',      href: '/seniors/first-team'          },
-  { type: 'link',   label: 'Div 3B Saturday', href: '/seniors/lsl-div3b'           },
-  { type: 'link',   label: 'Div 3C Saturday', href: '/seniors/lsl-div3c'           },
-  { type: 'header', label: 'Over 35s',        href: '/seniors/over-35s'            },
-  { type: 'link',   label: 'Over 35s A',      href: '/seniors/over-35s/over35s-a' },
-  { type: 'link',   label: 'Over 35s B',      href: '/seniors/over-35s/over35s-b' },
-  { type: 'header', label: 'Fixtures',        href: '/fixtures'                    },
-  { type: 'header', label: 'Join Us',         href: '/register'                    },
-  { type: 'header', label: 'Club Information', href: '/club'                       },
-  { type: 'link',   label: 'Club History',     href: '/club#history'               },
-  { type: 'link',   label: 'Committee',        href: '/club#committee'             },
-  { type: 'link',   label: 'Facilities',       href: '/club#facilities'            },
-  { type: 'link',   label: 'Policies',         href: '/club#policies'              },
-  { type: 'link',   label: 'Safeguarding',     href: '/club/safeguarding'          },
-  { type: 'link',   label: 'Volunteer & Coach', href: '/get-involved'               },
-  { type: 'link',   label: 'Sponsorship',       href: '/sponsorship'                },
-  { type: 'link',   label: 'Boot Room',         href: '/boot-room'                  },
-  { type: 'link',   label: 'Contact Us',       href: '/contact'                    },
-  { type: 'link',   label: 'Club Shop',        href: '/shop'                       },
-  { type: 'header', label: 'News',            href: '/news'                        },
-  { type: 'header', label: 'Campaigns',       href: '/campaigns'                   },
+const MOBILE_NAV_SECTIONS: MobileNavSection[] = [
+  {
+    label: 'All Teams',
+    href: '/teams',
+    topLinkLabel: 'View all teams',
+    links: [
+      { href: '/teams?filter=boys',  label: 'DDSL Boys'  },
+      { href: '/teams?filter=girls', label: 'DDSL Girls' },
+    ],
+  },
+  {
+    label: 'Seniors',
+    href: '/seniors',
+    topLinkLabel: 'View senior football',
+    links: [
+      { href: '/seniors/first-team', label: 'First Team'      },
+      { href: '/seniors/lsl-div3b',  label: 'Div 3B Saturday' },
+      { href: '/seniors/lsl-div3c',  label: 'Div 3C Saturday' },
+    ],
+  },
+  {
+    label: 'Over 35s',
+    href: '/seniors/over-35s',
+    topLinkLabel: 'View Over 35s hub',
+    links: [
+      { href: '/seniors/over-35s/over35s-a', label: 'Over 35s A' },
+      { href: '/seniors/over-35s/over35s-b', label: 'Over 35s B' },
+    ],
+  },
+  {
+    label: 'Fixtures',
+    href: '/fixtures',
+    topLinkLabel: 'View all fixtures',
+    links: [
+      { href: '/fixtures?filter=youth',  label: 'Youth Fixtures'  },
+      { href: '/fixtures?filter=senior', label: 'Senior Fixtures' },
+    ],
+  },
+  {
+    label: 'Join Us',
+    href: '/register',
+    topLinkLabel: 'Register a player',
+    links: [
+      { href: '/membership-calculator', label: 'Calculate Fees'   },
+      { href: '/astro-booking',         label: 'Book Astro Pitch' },
+      { href: '/football-for-all',      label: 'Football For All' },
+    ],
+  },
+  {
+    label: 'Club',
+    href: '/club',
+    topLinkLabel: 'View club overview',
+    links: [
+      { href: '/club#history',       label: 'History'           },
+      { href: '/club#committee',     label: 'Committee'         },
+      { href: '/club#facilities',    label: 'Facilities'        },
+      { href: '/club#policies',      label: 'Policies'          },
+      { href: '/club/safeguarding',  label: 'Safeguarding'      },
+      { href: '/get-involved',       label: 'Volunteer & Coach' },
+      { href: '/sponsorship',        label: 'Sponsorship'       },
+      { href: '/contact',            label: 'Contact Us'        },
+      { href: '/shop',               label: 'Club Shop'         },
+    ],
+  },
+  { label: 'News',      href: '/news'      },
+  { label: 'Campaigns', href: '/campaigns' },
 ];
 
 // ─── Active-section helper ────────────────────────────────────────────────────
@@ -158,17 +201,43 @@ function isNavActive(label: string, pathname: string): boolean {
   return false;
 }
 
+function hrefMatchesPath(href: string, pathname: string): boolean {
+  const path = href.split(/[?#]/)[0];
+  return pathname === path || (path !== '/' && pathname.startsWith(`${path}/`));
+}
+
+function isMobileSectionActive(section: MobileNavSection, pathname: string): boolean {
+  if (section.label === 'Seniors') {
+    return pathname === '/seniors' ||
+           pathname.startsWith('/seniors/first-team') ||
+           pathname.startsWith('/seniors/lsl-');
+  }
+  if (section.label === 'Over 35s') {
+    return pathname.startsWith('/seniors/over-35s');
+  }
+  return hrefMatchesPath(section.href, pathname) ||
+         Boolean(section.links?.some((link) => hrefMatchesPath(link.href, pathname)));
+}
+
 // ─── Component ───────────────────────────────────────────────────────────────
 
 export default function Header() {
   const [open,        setOpen]        = useState(false);
   const [openSection, setOpenSection] = useState<string | null>(null);
+  const [mobileSection, setMobileSection] = useState<string | null>(null);
   const [searchOpen,  setSearchOpen]  = useState(false);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const searchButtonRef = useRef<HTMLButtonElement>(null);
   const pathname = usePathname();
+  const activeMobileSection = MOBILE_NAV_SECTIONS.find((section) => isMobileSectionActive(section, pathname));
 
   const close = () => setOpen(false);
+  const toggleMobileNav = () => {
+    if (!open) {
+      setMobileSection(activeMobileSection?.links?.length ? activeMobileSection.label : null);
+    }
+    setOpen((current) => !current);
+  };
   const closeSearch = useCallback(() => {
     setSearchOpen(false);
     requestAnimationFrame(() => searchButtonRef.current?.focus());
@@ -185,12 +254,13 @@ export default function Header() {
     const handler = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         setOpenSection(null);
+        if (open) setOpen(false);
         if (searchOpen) closeSearch();
       }
     };
     document.addEventListener('keydown', handler);
     return () => document.removeEventListener('keydown', handler);
-  }, [closeSearch, searchOpen]);
+  }, [closeSearch, open, searchOpen]);
 
   useEffect(() => {
     return () => {
@@ -363,7 +433,7 @@ export default function Header() {
             type="button"
             aria-label={open ? 'Close navigation' : 'Open navigation'}
             aria-expanded={open}
-            onClick={() => setOpen((o) => !o)}
+            onClick={toggleMobileNav}
             className="rounded-xl border-2 border-brand-sky/30 bg-brand-neon p-2 shadow-[3px_3px_0_rgba(184,205,238,0.3)] transition active:translate-y-0.5 active:shadow-none lg:hidden"
           >
             {open ? (
@@ -380,80 +450,125 @@ export default function Header() {
       {/* Search overlay */}
       <SearchOverlay isOpen={searchOpen} onClose={closeSearch} />
 
-      {/* Mobile full-screen overlay */}
-      {open && (
-        <div className="fixed inset-0 z-50 bg-brand-navy flex flex-col lg:hidden">
+      {/* Mobile slide-out drawer */}
+      <div
+        className={`fixed inset-0 z-[60] lg:hidden transition ${
+          open ? 'pointer-events-auto' : 'pointer-events-none'
+        }`}
+        aria-hidden={!open}
+      >
+        <button
+          type="button"
+          aria-label="Close navigation backdrop"
+          onClick={close}
+          className={`absolute inset-0 bg-brand-charcoal/30 transition-opacity duration-300 ease-out ${
+            open ? 'opacity-100' : 'opacity-0'
+          }`}
+        />
 
-          {/* Overlay header row */}
-          <div className="h-16 flex items-center justify-between px-4 border-b border-brand-sky/20 shrink-0">
-            <Link href="/" onClick={close} className="flex items-center gap-3">
-              <span className="flex h-11 w-11 items-center justify-center rounded-xl border-2 border-brand-sky/40 bg-brand-green font-display text-sm font-black italic text-brand-neon shadow-[2px_2px_0_rgba(184,205,238,0.25)]">
-                RVR
-              </span>
-              <span className="grid leading-none">
-                <span className="font-display text-lg font-black uppercase italic tracking-tight text-white">
-                  Rivervalley
-                </span>
-                <span className="font-display text-xs font-bold uppercase tracking-wider text-brand-neon">
-                  Rangers AFC
-                </span>
-              </span>
-            </Link>
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="Mobile navigation"
+          className={`absolute inset-y-0 right-0 flex w-3/4 max-w-sm flex-col border-l border-brand-sky/20 bg-brand-navy shadow-[-18px_0_40px_rgba(0,0,0,0.35)] transition-transform duration-300 ease-out ${
+            open ? 'translate-x-0' : 'translate-x-full'
+          }`}
+        >
+          <div className="flex h-16 shrink-0 items-center justify-end px-4">
             <button
               type="button"
               aria-label="Close navigation"
               onClick={close}
-              className="rounded-xl border-2 border-brand-sky/30 bg-brand-neon p-2 shadow-[3px_3px_0_rgba(184,205,238,0.3)] transition active:translate-y-0.5 active:shadow-none"
+              className="flex h-11 w-11 items-center justify-center rounded-xl border-2 border-brand-sky/30 bg-brand-neon text-brand-charcoal shadow-[3px_3px_0_rgba(18,18,18,0.35)] transition active:translate-y-0.5 active:shadow-none"
             >
-              <X className="h-6 w-6 text-brand-charcoal" />
+              <ArrowRight className="h-6 w-6" />
             </button>
           </div>
 
           {/* Nav links */}
-          <nav className="flex-1 overflow-y-auto px-6 py-4" aria-label="Mobile navigation">
-            {MOBILE_NAV_GROUPS.map((item) => {
-              const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
-              if (item.type === 'header') {
+          <nav className="flex-1 overflow-y-auto px-5 pb-8 pt-1" aria-label="Mobile navigation">
+            {MOBILE_NAV_SECTIONS.map((section) => {
+              const links = section.links ?? [];
+              const active = isMobileSectionActive(section, pathname);
+              const expanded = mobileSection === section.label;
+
+              if (links.length === 0) {
                 return (
                   <Link
-                    key={item.href + item.label}
-                    href={item.href}
+                    key={section.href + section.label}
+                    href={section.href}
                     onClick={close}
-                    className={`min-h-[56px] flex items-center px-2 font-display font-black uppercase text-xl border-b border-brand-sky/20 transition-colors mt-2 first:mt-0 ${
-                      active ? 'text-brand-neon' : 'text-white'
+                    aria-current={active ? 'page' : undefined}
+                    className={`group mt-1 flex min-h-[54px] items-center justify-between gap-3 border-b px-1 font-display text-lg font-black uppercase transition-colors first:mt-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-neon/70 ${
+                      active
+                        ? 'border-brand-neon/50 text-brand-neon'
+                        : 'border-brand-sky/15 text-white hover:border-brand-sky/40 hover:text-brand-neon'
                     }`}
                   >
-                    {item.label}
+                    <span>{section.label}</span>
+                    <ChevronRight className="h-4 w-4 shrink-0 text-brand-sky transition-transform group-hover:translate-x-0.5 group-hover:text-brand-neon" aria-hidden="true" />
                   </Link>
                 );
               }
+
               return (
-                <Link
-                  key={item.href + item.label}
-                  href={item.href}
-                  onClick={close}
-                  className={`min-h-[44px] flex items-center pl-6 pr-2 text-base font-semibold border-b border-brand-sky/10 transition-colors ${
-                    active ? 'text-brand-neon' : 'text-brand-sky'
-                  }`}
-                >
-                  {item.label}
-                </Link>
+                <div key={section.label} className="border-b border-brand-sky/15">
+                  <button
+                    type="button"
+                    aria-expanded={expanded}
+                    onClick={() => setMobileSection((current) => current === section.label ? null : section.label)}
+                    className={`group flex min-h-[54px] w-full items-center justify-between gap-3 px-1 text-left font-display text-lg font-black uppercase transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-neon/70 ${
+                      active
+                        ? 'text-brand-neon'
+                        : 'text-white hover:text-brand-neon'
+                    }`}
+                  >
+                    <span>{section.label}</span>
+                    <ChevronDown
+                      className={`h-4 w-4 shrink-0 text-brand-sky transition-transform group-hover:text-brand-neon ${
+                        expanded ? 'rotate-180 text-brand-neon' : ''
+                      }`}
+                      aria-hidden="true"
+                    />
+                  </button>
+
+                  {expanded && (
+                    <div className="pb-1">
+                      <Link
+                        href={section.href}
+                        onClick={close}
+                        className={`flex min-h-[42px] items-center border-t border-brand-sky/10 pl-5 pr-1 text-sm font-bold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-neon/70 ${
+                          hrefMatchesPath(section.href, pathname)
+                            ? 'text-brand-neon'
+                            : 'text-brand-sky hover:text-white'
+                        }`}
+                      >
+                        {section.topLinkLabel ?? `View ${section.label}`}
+                      </Link>
+                      {links.map((link) => {
+                        const linkActive = !/[?#]/.test(link.href) && hrefMatchesPath(link.href, pathname);
+                        return (
+                          <Link
+                            key={link.href + link.label}
+                            href={link.href}
+                            onClick={close}
+                            className={`flex min-h-[40px] items-center border-t border-brand-sky/10 pl-5 pr-1 text-sm font-semibold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-neon/70 ${
+                              linkActive ? 'text-brand-neon' : 'text-brand-sky/85 hover:text-white'
+                            }`}
+                          >
+                            {link.label}
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
               );
             })}
           </nav>
 
-          {/* Bottom CTAs */}
-          <div className="px-6 pb-10 grid gap-3 shrink-0">
-            <Link href="/register" onClick={close} className="btn-brutalist-neon block py-4 text-center text-base">
-              Join the Team
-            </Link>
-            <Link href="/astro-booking" onClick={close} className="btn-brutalist-green block py-4 text-center text-base">
-              Book Astro Pitch
-            </Link>
-          </div>
-
         </div>
-      )}
+      </div>
     </>
   );
 }

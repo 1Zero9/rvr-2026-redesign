@@ -23,7 +23,7 @@ const PILLS: { id: Filter; label: string; activeClass: string }[] = [
   { id: 'BOYS',    label: 'BOYS',     activeClass: 'bg-brand-sky text-brand-charcoal' },
   { id: 'GIRLS',   label: 'GIRLS',    activeClass: 'bg-brand-maroon text-white' },
   { id: 'SENIOR',  label: 'SENIOR',   activeClass: 'bg-brand-green text-white' },
-  { id: 'OVER35S', label: 'OVER 35s', activeClass: 'bg-brand-neon text-brand-charcoal' },
+  { id: 'OVER35S', label: 'OVER 35',  activeClass: 'bg-brand-neon text-brand-charcoal' },
 ];
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -74,14 +74,14 @@ export default function TeamsClient({ youthDivisions, aflDivisions, initialFilte
   return (
     <div>
       {/* ── Filter bar ────────────────────────────────────────────────────── */}
-      <div className="sticky top-0 z-10 bg-brand-cream border-b-2 border-brand-sky/30 py-3 px-4">
-        <div className="max-w-5xl mx-auto flex gap-2 overflow-x-auto scrollbar-hide">
+      <div className="sticky top-16 z-40 bg-brand-cream/95 border-y-2 border-brand-sky/30 px-4 py-3 backdrop-blur sm:top-16">
+        <div className="mx-auto flex max-w-5xl flex-wrap gap-2 sm:flex-nowrap sm:overflow-x-auto">
           {PILLS.map(({ id, label, activeClass }) => (
             <button
               key={id}
               type="button"
               onClick={() => setFilter(id)}
-              className={`rounded-full px-4 py-2 min-h-[44px] text-sm font-bold whitespace-nowrap transition-colors ${
+              className={`min-h-[44px] rounded-full px-3 py-2 text-xs font-bold whitespace-nowrap transition-colors sm:px-4 sm:text-sm ${
                 filter === id
                   ? activeClass
                   : 'bg-brand-navy text-brand-cream border border-brand-sky/30'
@@ -94,17 +94,17 @@ export default function TeamsClient({ youthDivisions, aflDivisions, initialFilte
       </div>
 
       {/* ── Sections ──────────────────────────────────────────────────────── */}
-      <div className="max-w-5xl mx-auto px-4 md:px-6 pb-12">
+      <div className="mx-auto max-w-5xl px-4 pb-36 md:px-6 md:pb-16">
 
         {/* SECTION 1 — DDSL BOYS */}
         {showBoys && (
           <section>
-            <div className="flex items-center gap-3 mb-4 mt-8">
-              <div className="h-8 w-1 bg-brand-sky" />
-              <h2 className="font-display italic uppercase text-brand-charcoal text-2xl">
+            <div className="mb-4 mt-7 flex flex-wrap items-center gap-2 sm:gap-3">
+              <div className="h-8 w-1 shrink-0 bg-brand-sky" />
+              <h2 className="font-display text-2xl italic uppercase text-brand-charcoal">
                 DDSL Boys
               </h2>
-              <span className="bg-brand-sky text-brand-charcoal text-xs font-bold px-2 py-1 rounded-full">
+              <span className="rounded-full bg-brand-sky px-2 py-1 text-xs font-bold text-brand-charcoal">
                 {boys.length} teams
               </span>
             </div>
@@ -113,21 +113,21 @@ export default function TeamsClient({ youthDivisions, aflDivisions, initialFilte
               const isDev = DEVELOPMENT_AGES.has(ageGroup);
               return (
                 <div key={ageGroup}>
-                  <h3 className="text-brand-charcoal font-display italic text-lg border-b border-brand-sky/30 pb-1 mb-3 mt-6">
+                  <h3 className="mb-3 mt-6 flex items-center gap-2 border-b border-brand-sky/30 pb-2 font-display text-lg italic text-brand-charcoal">
                     {ageGroup}
-                    <span className="text-brand-sky text-sm ml-2 font-sans font-normal">
-                      · {isDev ? 'Development' : 'Competitive'}
+                    <span className="rounded-full bg-brand-sky px-2 py-1 font-sans text-xs font-bold not-italic text-brand-charcoal">
+                      {isDev ? 'Development' : 'Competitive'}
                     </span>
                   </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                     {divisions.map((div) => (
                       <div key={div.slug} className="relative">
                         <Link
                           href={`/teams/${div.slug}`}
-                          className="group flex flex-col bg-brand-navy border-2 border-brand-sky shadow-brutalist min-h-[88px] hover:border-brand-neon transition-colors"
+                          className="group flex min-h-[100px] flex-col border-2 border-brand-sky bg-brand-navy shadow-[4px_4px_0_#0B1F3B] transition-colors hover:border-brand-neon sm:min-h-[88px] sm:shadow-brutalist"
                         >
                           <div className={`h-1 w-full shrink-0 ${isDev ? 'bg-brand-sky/50' : 'bg-brand-neon'}`} />
-                          <div className="p-4 flex flex-col flex-1 justify-between">
+                          <div className="flex flex-1 flex-col justify-between p-4 pr-14">
                             <p className="font-display italic text-brand-cream text-base leading-tight mb-2">
                               {stripDdsl(div.competitionName)}
                             </p>
@@ -149,8 +149,8 @@ export default function TeamsClient({ youthDivisions, aflDivisions, initialFilte
         {/* SECTION 2 — DDSL GIRLS */}
         {showGirls && (
           <section>
-            <div className="flex items-center gap-3 mb-4 mt-8">
-              <div className="h-8 w-1 bg-brand-maroon" />
+            <div className="mb-4 mt-7 flex flex-wrap items-center gap-2 sm:gap-3">
+              <div className="h-8 w-1 shrink-0 bg-brand-maroon" />
               <h2 className="font-display italic uppercase text-brand-charcoal text-2xl">
                 DDSL Girls
               </h2>
@@ -163,21 +163,21 @@ export default function TeamsClient({ youthDivisions, aflDivisions, initialFilte
               const isDev = DEVELOPMENT_AGES.has(ageGroup);
               return (
                 <div key={ageGroup}>
-                  <h3 className="text-brand-charcoal font-display italic text-lg border-b border-brand-maroon/30 pb-1 mb-3 mt-6">
+                  <h3 className="mb-3 mt-6 flex items-center gap-2 border-b border-brand-maroon/30 pb-2 font-display text-lg italic text-brand-charcoal">
                     {ageGroup}
-                    <span className="text-brand-maroon text-sm ml-2 font-sans font-normal">
-                      · {isDev ? 'Development' : 'Competitive'}
+                    <span className="rounded-full bg-brand-maroon px-2 py-1 font-sans text-xs font-bold not-italic text-white">
+                      {isDev ? 'Development' : 'Competitive'}
                     </span>
                   </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                     {divisions.map((div) => (
                       <div key={div.slug} className="relative">
                         <Link
                           href={`/teams/${div.slug}`}
-                          className="group flex flex-col bg-brand-navy border-2 border-brand-maroon shadow-brutalist min-h-[88px] hover:border-brand-neon transition-colors"
+                          className="group flex min-h-[100px] flex-col border-2 border-brand-maroon bg-brand-navy shadow-[4px_4px_0_#0B1F3B] transition-colors hover:border-brand-neon sm:min-h-[88px] sm:shadow-brutalist"
                         >
                           <div className={`h-1 w-full shrink-0 ${isDev ? 'bg-brand-maroon/40' : 'bg-brand-maroon'}`} />
-                          <div className="p-4 flex flex-col flex-1 justify-between">
+                          <div className="flex flex-1 flex-col justify-between p-4 pr-14">
                             <p className="font-display italic text-brand-cream text-base leading-tight mb-2">
                               {stripDdsl(div.competitionName)}
                             </p>
@@ -199,8 +199,8 @@ export default function TeamsClient({ youthDivisions, aflDivisions, initialFilte
         {/* SECTION 3 — SENIOR */}
         {showSenior && (
           <section>
-            <div className="flex items-center gap-3 mb-4 mt-8">
-              <div className="h-8 w-1 bg-brand-green" />
+            <div className="mb-4 mt-7 flex flex-wrap items-center gap-2 sm:gap-3">
+              <div className="h-8 w-1 shrink-0 bg-brand-green" />
               <h2 className="font-display italic uppercase text-brand-charcoal text-2xl">
                 Senior
               </h2>
@@ -208,15 +208,15 @@ export default function TeamsClient({ youthDivisions, aflDivisions, initialFilte
                 3 teams
               </span>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
 
               <div className="relative">
                 <Link
                   href="/seniors/first-team"
-                  className="group flex flex-col bg-brand-navy border-2 border-brand-green shadow-brutalist min-h-[88px] hover:border-brand-neon transition-colors"
+                  className="group flex min-h-[112px] flex-col border-2 border-brand-green bg-brand-navy shadow-[4px_4px_0_#0B1F3B] transition-colors hover:border-brand-neon sm:min-h-[88px] sm:shadow-brutalist"
                 >
                   <div className="h-1 w-full shrink-0 bg-brand-green" />
-                  <div className="p-4 flex flex-col flex-1 justify-between">
+                  <div className="flex flex-1 flex-col justify-between p-4 pr-14">
                     <div>
                       <p className="font-display italic text-brand-cream text-xl leading-tight mb-1">
                         FIRST TEAM
@@ -234,10 +234,10 @@ export default function TeamsClient({ youthDivisions, aflDivisions, initialFilte
               <div className="relative">
                 <Link
                   href="/seniors/lsl-div3b"
-                  className="group flex flex-col bg-brand-navy border-2 border-brand-green shadow-brutalist min-h-[88px] hover:border-brand-neon transition-colors"
+                  className="group flex min-h-[112px] flex-col border-2 border-brand-green bg-brand-navy shadow-[4px_4px_0_#0B1F3B] transition-colors hover:border-brand-neon sm:min-h-[88px] sm:shadow-brutalist"
                 >
                   <div className="h-1 w-full shrink-0 bg-brand-green" />
-                  <div className="p-4 flex flex-col flex-1 justify-between">
+                  <div className="flex flex-1 flex-col justify-between p-4 pr-14">
                     <div>
                       <p className="font-display italic text-brand-cream text-xl leading-tight mb-1">
                         DIV 3B SATURDAY
@@ -255,10 +255,10 @@ export default function TeamsClient({ youthDivisions, aflDivisions, initialFilte
               <div className="relative">
                 <Link
                   href="/seniors/lsl-div3c"
-                  className="group flex flex-col bg-brand-navy border-2 border-brand-green shadow-brutalist min-h-[88px] hover:border-brand-neon transition-colors"
+                  className="group flex min-h-[112px] flex-col border-2 border-brand-green bg-brand-navy shadow-[4px_4px_0_#0B1F3B] transition-colors hover:border-brand-neon sm:min-h-[88px] sm:shadow-brutalist"
                 >
                   <div className="h-1 w-full shrink-0 bg-brand-green" />
-                  <div className="p-4 flex flex-col flex-1 justify-between">
+                  <div className="flex flex-1 flex-col justify-between p-4 pr-14">
                     <div>
                       <p className="font-display italic text-brand-cream text-xl leading-tight mb-1">
                         DIV 3C SATURDAY
@@ -280,8 +280,8 @@ export default function TeamsClient({ youthDivisions, aflDivisions, initialFilte
         {/* SECTION 4 — OVER 35s */}
         {showOver35 && (
           <section>
-            <div className="flex items-center gap-3 mb-4 mt-8">
-              <div className="h-8 w-1 bg-brand-neon" />
+            <div className="mb-4 mt-7 flex flex-wrap items-center gap-2 sm:gap-3">
+              <div className="h-8 w-1 shrink-0 bg-brand-neon" />
               <h2 className="font-display italic uppercase text-brand-charcoal text-2xl">
                 Over 35s
               </h2>
@@ -289,15 +289,15 @@ export default function TeamsClient({ youthDivisions, aflDivisions, initialFilte
                 {aflDivisions.length} teams
               </span>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               {aflDivisions.map((division) => (
                 <div key={division.id} className="relative">
                   <Link
                     href={`/seniors/over-35s/${division.id}`}
-                    className="group flex flex-col bg-brand-navy border-2 border-brand-neon shadow-brutalist min-h-[88px] hover:border-brand-sky transition-colors"
+                    className="group flex min-h-[112px] flex-col border-2 border-brand-neon bg-brand-navy shadow-[4px_4px_0_#0B1F3B] transition-colors hover:border-brand-sky sm:min-h-[88px] sm:shadow-brutalist"
                   >
                     <div className="h-1 w-full shrink-0 bg-brand-neon" />
-                    <div className="p-4 flex flex-col flex-1 justify-between">
+                    <div className="flex flex-1 flex-col justify-between p-4 pr-14">
                       <div>
                         <p className="font-display italic text-brand-cream text-xl leading-tight mb-1">
                           {division.id === 'over35s-a' ? 'OVER 35s A' : 'OVER 35s B'}
