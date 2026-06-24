@@ -120,10 +120,10 @@ export default async function Home() {
         <Hero />
 
         {/* ── 2. Upcoming Fixtures ─────────────────────────────────────────── */}
-        <section className="bg-brand-navy py-14 border-b border-brand-sky/20">
+        <section className="bg-white py-14 border-b border-brand-navy/10">
           <div className="max-w-6xl mx-auto px-6">
             <div className="flex items-center justify-between mb-8">
-              <h2 className="font-display font-black text-3xl md:text-4xl uppercase tracking-tight italic text-brand-cream">
+              <h2 className="font-display font-black text-3xl md:text-4xl uppercase tracking-tight italic text-brand-charcoal">
                 Matchday
                 <span className="text-brand-neon ml-2">⚽</span>
               </h2>
@@ -163,13 +163,13 @@ export default async function Home() {
         {features.instagramFeed && <InstagramFeed />}
 
         {/* ── 3. Club in Numbers ───────────────────────────────────────────── */}
-        <section className="bg-brand-cream py-20">
+        <section className="bg-brand-navy py-20">
           <div className="max-w-6xl mx-auto px-6">
             <div className="text-center mb-14">
-              <h2 className="font-display font-black text-4xl md:text-6xl uppercase tracking-tight leading-none text-brand-charcoal italic">
+              <h2 className="font-display font-black text-4xl md:text-6xl uppercase tracking-tight leading-none text-brand-cream italic">
                 The Numbers
               </h2>
-              <div className="h-3 w-40 bg-brand-neon mx-auto border-3 border-brand-charcoal -rotate-1 shadow-sm mt-4" />
+              <div className="h-3 w-40 bg-brand-neon mx-auto border-3 border-brand-cream -rotate-1 shadow-sm mt-4" />
             </div>
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
@@ -181,6 +181,7 @@ export default async function Home() {
                   badge: `Est. ${CLUB_SEASON.foundingYear}`,
                   bg: 'bg-white',
                   badgeBg: 'bg-brand-green text-white',
+                  computed: true,
                 },
                 {
                   value: `${stats.totalTeams}`,
@@ -189,6 +190,7 @@ export default async function Home() {
                   badge: `${CLUB_SEASON.currentSeason} Season`,
                   bg: 'bg-brand-neon',
                   badgeBg: 'bg-brand-charcoal text-white',
+                  computed: true,
                 },
                 {
                   value: `${Math.floor(stats.estimatedPlayers / 10) * 10}+`,
@@ -197,6 +199,7 @@ export default async function Home() {
                   badge: 'Estimated',
                   bg: 'bg-white',
                   badgeBg: 'bg-brand-navy text-white',
+                  computed: true,
                 },
                 {
                   value: `${CLUB_SEASON.foundingYear}`,
@@ -205,11 +208,16 @@ export default async function Home() {
                   badge: `${CLUB_SEASON.anniversaryEdition} Anniversary`,
                   bg: 'bg-white',
                   badgeBg: 'bg-brand-maroon text-white',
+                  computed: false,
                 },
               ].map((stat) => (
                 <div
                   key={stat.label}
-                  className={`brutalist-card p-6 flex flex-col gap-3 ${stat.bg}`}
+                  className={`p-6 flex flex-col gap-3 rounded-2xl border-4 ${stat.bg} ${
+                    stat.computed
+                      ? 'border-brand-green shadow-[6px_6px_0_#005C39]'
+                      : 'border-brand-charcoal shadow-[6px_6px_0_#121212]'
+                  }`}
                 >
                   <span
                     className={`inline-block font-display font-black text-[10px] uppercase tracking-wider px-3 py-1 rounded-full border-2 border-brand-charcoal ${stat.badgeBg}`}
@@ -236,15 +244,15 @@ export default async function Home() {
         </section>
 
         {/* ── 4. Teams Grid ────────────────────────────────────────────────── */}
-        <section className="bg-brand-charcoal py-20 border-t border-b border-brand-sky/10">
+        <section className="bg-white py-20 border-t border-b border-brand-navy/10">
           <div className="max-w-6xl mx-auto px-6">
             <div className="flex items-center justify-between mb-10">
-              <h2 className="font-display font-black text-4xl md:text-5xl uppercase tracking-tight italic text-brand-cream">
+              <h2 className="font-display font-black text-4xl md:text-5xl uppercase tracking-tight italic text-brand-charcoal">
                 Our Teams
               </h2>
               <Link
                 href="/teams"
-                className="min-h-[44px] inline-flex items-center px-2 -mr-2 text-xs font-display font-black uppercase tracking-wide text-brand-sky hover:text-brand-neon transition-colors"
+                className="min-h-[44px] inline-flex items-center px-2 -mr-2 text-xs font-display font-black uppercase tracking-wide text-brand-charcoal/40 hover:text-brand-navy transition-colors"
               >
                 Full directory →
               </Link>
@@ -255,24 +263,24 @@ export default async function Home() {
                 <Link
                   key={ag.ageGroup}
                   href="/teams"
-                  className="group relative border-2 border-brand-sky/20 hover:border-brand-neon rounded-2xl p-5 flex flex-col gap-2 bg-brand-navy/60 hover:bg-brand-navy transition-all"
+                  className="group relative border-2 border-brand-navy/20 hover:border-brand-neon rounded-2xl p-5 flex flex-col gap-2 bg-brand-cream hover:bg-brand-navy transition-all"
                 >
-                  <span className="font-display font-black text-5xl tracking-tighter italic leading-none text-brand-cream group-hover:text-brand-neon transition-colors">
+                  <span className="font-display font-black text-5xl tracking-tighter italic leading-none text-brand-navy group-hover:text-brand-neon transition-colors">
                     {ag.ageGroup}
                   </span>
                   <div className="flex gap-1.5 mt-1 flex-wrap">
                     {ag.hasBoys && (
-                      <span className="text-[10px] font-display font-black uppercase tracking-wider bg-brand-sky/20 text-brand-sky px-2 py-0.5 rounded-full">
+                      <span className="text-[10px] font-display font-black uppercase tracking-wider bg-brand-navy/10 text-brand-navy group-hover:bg-brand-sky/20 group-hover:text-brand-sky px-2 py-0.5 rounded-full transition-colors">
                         Boys
                       </span>
                     )}
                     {ag.hasGirls && (
-                      <span className="text-[10px] font-display font-black uppercase tracking-wider bg-brand-maroon/30 text-brand-cream px-2 py-0.5 rounded-full">
+                      <span className="text-[10px] font-display font-black uppercase tracking-wider bg-brand-maroon/10 text-brand-maroon group-hover:bg-brand-maroon/30 group-hover:text-brand-cream px-2 py-0.5 rounded-full transition-colors">
                         Girls
                       </span>
                     )}
                   </div>
-                  <p className="text-xs text-brand-sky/50 mt-auto">
+                  <p className="text-xs text-brand-charcoal/40 group-hover:text-brand-sky/50 mt-auto transition-colors">
                     {ag.divisionCount} division{ag.divisionCount !== 1 ? 's' : ''}
                   </p>
                 </Link>
@@ -282,13 +290,13 @@ export default async function Home() {
         </section>
 
         {/* ── 5. More Than A Football Club ─────────────────────────────────── */}
-        <section className="bg-brand-navy py-20 border-t border-brand-sky/10">
+        <section className="bg-brand-cream py-20 border-t border-brand-navy/10">
           <div className="max-w-6xl mx-auto px-4 md:px-6">
             <div className="mb-12">
-              <h2 className="font-display font-black italic text-4xl md:text-6xl uppercase tracking-tight leading-none text-brand-cream mb-3">
+              <h2 className="font-display font-black italic text-4xl md:text-6xl uppercase tracking-tight leading-none text-brand-charcoal mb-3">
                 More Than A Football Club
               </h2>
-              <p className="text-brand-neon text-lg font-semibold">
+              <p className="text-brand-green text-lg font-semibold">
                 Academy · Adult · Community · Inclusive
               </p>
             </div>
