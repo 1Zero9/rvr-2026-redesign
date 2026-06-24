@@ -2,12 +2,14 @@
 
 import React from 'react';
 import { CLUB_SEASON } from '@/config/club-season';
+import { computeClubStats } from '@/lib/club-stats';
 
 export default function Stats() {
+  const { yearsActive, totalTeams, estimatedPlayers } = computeClubStats();
   const statsData = [
     {
       badge: `Since ${CLUB_SEASON.foundingYear}`,
-      title: `${CLUB_SEASON.anniversaryYears} Yrs`,
+      title: `${yearsActive} Yrs`,
       desc: 'Strong community football legacy in Dublin.',
       badgeBg: 'bg-brand-green text-white',
       cardBg: 'bg-white hover:bg-zinc-50',
@@ -15,7 +17,7 @@ export default function Stats() {
     },
     {
       badge: 'Parity Channels',
-      title: '18+',
+      title: `${totalTeams}`,
       desc: 'Active teams across all divisions & formats.',
       badgeBg: 'bg-brand-neon text-brand-charcoal',
       cardBg: 'bg-[#E8F4F0] hover:bg-[#DCECE7] text-brand-greenDark',
@@ -23,7 +25,7 @@ export default function Stats() {
     },
     {
       badge: 'Swords Community',
-      title: '350+',
+      title: `${Math.floor(estimatedPlayers / 10) * 10}+`,
       desc: 'Active local players developing weekly.',
       badgeBg: 'bg-brand-green text-white',
       cardBg: 'bg-white hover:bg-zinc-50',

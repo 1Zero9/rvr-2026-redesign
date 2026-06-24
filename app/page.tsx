@@ -8,9 +8,9 @@ import InstagramFeed from '@/components/InstagramFeed';
 import { CLUB_SEASON } from '@/config/club-season';
 import { APP_VERSION, APP_VERSION_DATE } from '@/config/version';
 import { KNOWN_DIVISIONS } from '@/config/ddsl-competitions';
-import { AFL_DIVISIONS } from '@/config/afl-competitions';
 import { prisma } from '@/lib/prisma';
 import { getFeatureAvailability } from '@/lib/features';
+import { computeClubStats } from '@/lib/club-stats';
 
 const COMMUNITY_CATEGORIES = [
   {
@@ -69,7 +69,8 @@ function getAgeGroupSummaries(): AgeGroupSummary[] {
 
 export default async function Home() {
   const ageGroups = getAgeGroupSummaries();
-  const features = await getFeatureAvailability();
+  const features  = await getFeatureAvailability();
+  const stats     = computeClubStats();
 
   const now = new Date();
 
@@ -174,7 +175,7 @@ export default async function Home() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
               {[
                 {
-                  value: `${CLUB_SEASON.anniversaryYears}`,
+                  value: `${stats.yearsActive}`,
                   unit: 'Years',
                   label: 'Serving Swords',
                   badge: `Est. ${CLUB_SEASON.foundingYear}`,
@@ -182,7 +183,7 @@ export default async function Home() {
                   badgeBg: 'bg-brand-green text-white',
                 },
                 {
-                  value: `${KNOWN_DIVISIONS.length + AFL_DIVISIONS.length + 3}`,
+                  value: `${stats.totalTeams}`,
                   unit: 'Teams',
                   label: 'Youth, Senior & Over 35s',
                   badge: `${CLUB_SEASON.currentSeason} Season`,
@@ -190,10 +191,10 @@ export default async function Home() {
                   badgeBg: 'bg-brand-charcoal text-white',
                 },
                 {
-                  value: 'U8',
-                  unit: '– U15',
-                  label: 'All age groups',
-                  badge: 'Boys & Girls',
+                  value: `${Math.floor(stats.estimatedPlayers / 10) * 10}+`,
+                  unit: '',
+                  label: 'Players across all squads',
+                  badge: 'Estimated',
                   bg: 'bg-white',
                   badgeBg: 'bg-brand-navy text-white',
                 },

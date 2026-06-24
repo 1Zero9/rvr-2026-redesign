@@ -2,12 +2,15 @@
 
 import React from 'react';
 import { CLUB_SEASON } from '@/config/club-season';
+import { computeClubStats } from '@/lib/club-stats';
 import AnnouncementTrigger from './announcements/AnnouncementTrigger';
 
+const { yearsActive, totalTeams, estimatedPlayers } = computeClubStats();
+
 const heroStats = [
-  { value: `${CLUB_SEASON.anniversaryYears} Yrs`, label: 'Strong legacy' },
-  { value: '18+', label: 'Active teams' },
-  { value: '350+', label: 'Local players' },
+  { value: `${yearsActive} Yrs`, label: 'Strong legacy' },
+  { value: `${totalTeams}`, label: 'Active teams' },
+  { value: `${Math.floor(estimatedPlayers / 10) * 10}+`, label: 'Local players' },
   { value: '25+', label: 'Qualified coaches' },
   { value: 'Vetted', label: 'Garda vetted' },
 ];
