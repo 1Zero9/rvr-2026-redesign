@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useTransition } from 'react';
-import { CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
+import { CheckCircle2, AlertCircle, Loader2, Send } from 'lucide-react';
 import { registerPlayer, type PlayerGender } from '@/app/actions/registerPlayer';
 
 const CURRENT_YEAR = new Date().getFullYear();
@@ -32,7 +32,9 @@ const BLANK: FormState = {
 };
 
 const inputClass =
-  'w-full px-4 py-3 rounded-xl border-2 border-zinc-200 bg-white text-brand-charcoal font-sans text-sm font-medium placeholder:text-zinc-400 focus:outline-none focus:border-brand-navy focus:ring-2 focus:ring-brand-navy/10 transition-colors';
+  'w-full px-4 py-3 rounded-xl border-2 border-brand-navy bg-white text-brand-charcoal font-sans text-base font-semibold placeholder:text-zinc-400 outline-none focus:ring-4 focus:ring-brand-neon transition-colors';
+
+const labelClass = 'block text-xs font-black text-brand-navy uppercase tracking-wide mb-1.5 font-display';
 
 export default function PlayerRecruitmentWizard() {
   const [form, setForm]                   = useState<FormState>(BLANK);
@@ -86,17 +88,12 @@ export default function PlayerRecruitmentWizard() {
   if (submitted) {
     return (
       <section className="max-w-xl mx-auto px-4 py-16 text-center">
-        <div className="bg-white border-t-4 border-brand-neon shadow-brutalist p-10">
-          <div className="flex items-center justify-center w-16 h-16 rounded-full bg-brand-neon border-3 border-brand-charcoal mx-auto mb-6">
-            <CheckCircle2 className="w-8 h-8 text-brand-charcoal" />
-          </div>
-          <p className="font-display font-black text-xs uppercase tracking-widest text-brand-green mb-2">
-            Expression of Interest Received
-          </p>
-          <h2 className="font-display font-black text-3xl uppercase italic text-brand-charcoal mb-3">
+        <div className="rounded-2xl border-2 border-brand-navy bg-white p-10">
+          <CheckCircle2 className="w-10 h-10 text-brand-green mx-auto mb-4" />
+          <h2 className="font-display font-black text-3xl uppercase text-brand-navy mb-3">
             Thanks, {submittedName}!
           </h2>
-          <p className="text-sm text-zinc-500 leading-relaxed max-w-sm mx-auto mb-8">
+          <p className="text-sm font-semibold text-zinc-600 leading-relaxed max-w-sm mx-auto mb-8">
             We&apos;ve got your details. A club coordinator will be in touch
             within two working days to discuss the next steps.
           </p>
@@ -116,22 +113,20 @@ export default function PlayerRecruitmentWizard() {
 
   return (
     <section className="max-w-xl mx-auto px-4 py-12">
-      <form onSubmit={handleSubmit} noValidate className="bg-white shadow-brutalist border-t-4 border-brand-neon">
+      <form onSubmit={handleSubmit} noValidate className="rounded-2xl border-2 border-brand-navy bg-white p-6 sm:p-8">
 
         {/* ── Player ──────────────────────────────────────────────── */}
-        <div className="px-6 pt-8 pb-6 md:px-8">
-          <p className="font-display font-black text-xs uppercase tracking-widest text-brand-neon mb-1">
-            Step 1
-          </p>
-          <h2 className="font-display font-black italic text-2xl text-brand-charcoal mb-6">
-            About the Player
-          </h2>
+        <p className="font-display font-black text-xs uppercase tracking-widest text-brand-neon mb-1">
+          Step 1
+        </p>
+        <h2 className="font-display font-black text-3xl uppercase text-brand-navy mb-6">
+          About the Player
+        </h2>
 
-          <div className="grid grid-cols-2 gap-3 mb-4">
+        <div className="grid gap-5">
+          <div className="grid grid-cols-2 gap-3">
             <div>
-              <label htmlFor="firstName" className="block text-xs font-bold text-zinc-500 uppercase tracking-wide mb-1.5">
-                First Name
-              </label>
+              <label htmlFor="firstName" className={labelClass}>First Name</label>
               <input
                 type="text" id="firstName"
                 value={form.firstName}
@@ -142,9 +137,7 @@ export default function PlayerRecruitmentWizard() {
               />
             </div>
             <div>
-              <label htmlFor="lastName" className="block text-xs font-bold text-zinc-500 uppercase tracking-wide mb-1.5">
-                Last Name
-              </label>
+              <label htmlFor="lastName" className={labelClass}>Last Name</label>
               <input
                 type="text" id="lastName"
                 value={form.lastName}
@@ -156,10 +149,8 @@ export default function PlayerRecruitmentWizard() {
             </div>
           </div>
 
-          <div className="mb-4">
-            <label htmlFor="yearOfBirth" className="block text-xs font-bold text-zinc-500 uppercase tracking-wide mb-1.5">
-              Year of Birth
-            </label>
+          <div>
+            <label htmlFor="yearOfBirth" className={labelClass}>Year of Birth</label>
             <div className="flex items-center gap-3">
               <input
                 type="text" id="yearOfBirth"
@@ -167,7 +158,7 @@ export default function PlayerRecruitmentWizard() {
                 value={form.yearOfBirth}
                 onChange={(e) => set('yearOfBirth', e.target.value.replace(/\D/g, ''))}
                 placeholder="e.g. 2015"
-                className="px-4 py-3 rounded-xl border-2 border-zinc-200 bg-white font-sans text-sm font-medium placeholder:text-zinc-400 focus:outline-none focus:border-brand-navy focus:ring-2 focus:ring-brand-navy/10 transition-colors w-32"
+                className="px-4 py-3 rounded-xl border-2 border-brand-navy bg-white font-sans text-base font-semibold placeholder:text-zinc-400 outline-none focus:ring-4 focus:ring-brand-neon transition-colors w-32"
               />
               {ageHint && (
                 <span className="font-display font-black text-xs uppercase px-3 py-1.5 bg-brand-navy text-white tracking-wide rounded-full">
@@ -178,7 +169,7 @@ export default function PlayerRecruitmentWizard() {
           </div>
 
           <div>
-            <p className="text-xs font-bold text-zinc-500 uppercase tracking-wide mb-1.5">Section</p>
+            <p className={labelClass}>Section</p>
             <div className="grid grid-cols-2 gap-3">
               {(['MALE', 'FEMALE'] as const).map((g) => (
                 <button
@@ -188,7 +179,7 @@ export default function PlayerRecruitmentWizard() {
                   className={`py-3 rounded-xl border-2 font-display font-black text-sm uppercase tracking-wide transition-all ${
                     form.gender === g
                       ? 'bg-brand-navy border-brand-navy text-white shadow-[3px_3px_0_#85E320]'
-                      : 'border-zinc-200 text-zinc-400 hover:border-zinc-400 hover:text-zinc-600 bg-white'
+                      : 'border-brand-navy text-brand-navy hover:bg-brand-navy/5 bg-white'
                   }`}
                 >
                   {g === 'MALE' ? '⚽ Boys' : '⚽ Girls'}
@@ -198,117 +189,107 @@ export default function PlayerRecruitmentWizard() {
           </div>
         </div>
 
-        <div className="mx-6 md:mx-8 h-px bg-zinc-100" />
+        <div className="my-8 h-px bg-zinc-100" />
 
         {/* ── Parent ──────────────────────────────────────────────── */}
-        <div className="px-6 py-6 md:px-8">
-          <p className="font-display font-black text-xs uppercase tracking-widest text-brand-neon mb-1">
-            Step 2
-          </p>
-          <h2 className="font-display font-black italic text-2xl text-brand-charcoal mb-6">
-            Parent / Guardian
-          </h2>
+        <p className="font-display font-black text-xs uppercase tracking-widest text-brand-neon mb-1">
+          Step 2
+        </p>
+        <h2 className="font-display font-black text-3xl uppercase text-brand-navy mb-6">
+          Parent / Guardian
+        </h2>
 
-          <div className="space-y-4">
+        <div className="grid gap-5">
+          <div>
+            <label htmlFor="parentName" className={labelClass}>Full Name</label>
+            <input
+              type="text" id="parentName"
+              value={form.parentName}
+              onChange={(e) => set('parentName', e.target.value)}
+              autoComplete="name"
+              placeholder="Parent or guardian name"
+              className={inputClass}
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
             <div>
-              <label htmlFor="parentName" className="block text-xs font-bold text-zinc-500 uppercase tracking-wide mb-1.5">
-                Full Name
-              </label>
+              <label htmlFor="email" className={labelClass}>Email</label>
               <input
-                type="text" id="parentName"
-                value={form.parentName}
-                onChange={(e) => set('parentName', e.target.value)}
-                autoComplete="name"
-                placeholder="Parent or guardian name"
+                type="email" id="email"
+                value={form.email}
+                onChange={(e) => set('email', e.target.value)}
+                autoComplete="email"
+                placeholder="name@example.com"
                 className={inputClass}
               />
             </div>
-
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label htmlFor="email" className="block text-xs font-bold text-zinc-500 uppercase tracking-wide mb-1.5">
-                  Email
-                </label>
-                <input
-                  type="email" id="email"
-                  value={form.email}
-                  onChange={(e) => set('email', e.target.value)}
-                  autoComplete="email"
-                  placeholder="name@example.com"
-                  className={inputClass}
-                />
-              </div>
-              <div>
-                <label htmlFor="phone" className="block text-xs font-bold text-zinc-500 uppercase tracking-wide mb-1.5">
-                  Phone
-                </label>
-                <input
-                  type="tel" id="phone"
-                  value={form.phone}
-                  onChange={(e) => set('phone', e.target.value)}
-                  autoComplete="tel"
-                  placeholder="087 123 4567"
-                  className={inputClass}
-                />
-              </div>
-            </div>
-
             <div>
-              <label htmlFor="notes" className="block text-xs font-bold text-zinc-500 uppercase tracking-wide mb-1.5">
-                Anything else?{' '}
-                <span className="text-zinc-400 normal-case font-normal tracking-normal">optional</span>
-              </label>
-              <textarea
-                id="notes" rows={3}
-                value={form.notes}
-                onChange={(e) => set('notes', e.target.value)}
-                placeholder="Previous club, preferred training nights, any questions…"
-                className="w-full px-4 py-3 rounded-xl border-2 border-zinc-200 bg-white font-sans text-sm font-medium placeholder:text-zinc-400 focus:outline-none focus:border-brand-navy focus:ring-2 focus:ring-brand-navy/10 transition-colors resize-none"
+              <label htmlFor="phone" className={labelClass}>Phone</label>
+              <input
+                type="tel" id="phone"
+                value={form.phone}
+                onChange={(e) => set('phone', e.target.value)}
+                autoComplete="tel"
+                placeholder="087 123 4567"
+                className={inputClass}
               />
             </div>
           </div>
+
+          <div>
+            <label htmlFor="notes" className={labelClass}>
+              Anything else?{' '}
+              <span className="text-zinc-400 normal-case font-sans font-normal tracking-normal">optional</span>
+            </label>
+            <textarea
+              id="notes" rows={4}
+              value={form.notes}
+              onChange={(e) => set('notes', e.target.value)}
+              placeholder="Previous club, preferred training nights, any questions…"
+              className="w-full px-4 py-3 rounded-xl border-2 border-brand-navy bg-white font-sans text-base font-semibold placeholder:text-zinc-400 outline-none focus:ring-4 focus:ring-brand-neon transition-colors resize-none"
+            />
+          </div>
         </div>
 
-        <div className="mx-6 md:mx-8 h-px bg-zinc-100" />
+        <div className="my-8 h-px bg-zinc-100" />
 
         {/* ── Consent + submit ────────────────────────────────────── */}
-        <div className="px-6 py-6 md:px-8">
-          <label className="flex items-start gap-3 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={form.gdprConsent}
-              onChange={(e) => set('gdprConsent', e.target.checked)}
-              className="mt-0.5 w-5 h-5 rounded accent-brand-neon shrink-0"
-            />
-            <span className="text-xs text-zinc-500 leading-relaxed">
-              I consent to Rivervalley Rangers AFC storing these details to
-              process this expression of interest, and to the use of match day
-              and training photographs on club channels.
-            </span>
-          </label>
+        <label className="flex items-start gap-3 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={form.gdprConsent}
+            onChange={(e) => set('gdprConsent', e.target.checked)}
+            className="mt-0.5 w-5 h-5 rounded accent-brand-neon shrink-0"
+          />
+          <span className="text-xs text-zinc-500 leading-relaxed font-semibold">
+            I consent to Rivervalley Rangers AFC storing these details to
+            process this expression of interest, and to the use of match day
+            and training photographs on club channels.
+          </span>
+        </label>
 
-          {error && (
-            <div className="mt-4 flex items-start gap-3 rounded-xl border-2 border-red-200 bg-red-50 p-4">
-              <AlertCircle className="w-4 h-4 text-red-500 shrink-0 mt-0.5" />
-              <p className="text-xs font-semibold text-red-700">{error}</p>
-            </div>
-          )}
+        {error && (
+          <div className="mt-4 flex items-start gap-3 rounded-xl border-2 border-red-200 bg-red-50 p-4">
+            <AlertCircle className="w-4 h-4 text-red-500 shrink-0 mt-0.5" />
+            <p className="text-xs font-semibold text-red-700">{error}</p>
+          </div>
+        )}
 
-          <button
-            type="submit"
-            disabled={!isValid() || isPending}
-            className="mt-6 w-full py-4 font-display font-black text-sm uppercase tracking-wide bg-brand-neon text-brand-charcoal border-3 border-brand-charcoal shadow-brutalist hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none flex items-center justify-center gap-2 min-h-[44px]"
-          >
-            {isPending
-              ? <><Loader2 className="w-4 h-4 animate-spin" /> Submitting…</>
-              : 'Submit Expression of Interest →'
-            }
-          </button>
+        <button
+          type="submit"
+          disabled={!isValid() || isPending}
+          className="btn-brutalist-neon mt-6 w-full inline-flex items-center justify-center gap-2 min-h-[48px] px-6 py-3 text-sm disabled:opacity-40 disabled:cursor-not-allowed"
+        >
+          {isPending
+            ? <><Loader2 className="w-4 h-4 animate-spin" /> Submitting…</>
+            : <><Send className="w-4 h-4" /> Submit Expression of Interest</>
+          }
+        </button>
 
-          <p className="mt-4 text-center text-xs text-zinc-400">
-            A club coordinator will follow up within two working days.
-          </p>
-        </div>
+        <p className="mt-4 text-center text-xs text-zinc-400 font-semibold">
+          A club coordinator will follow up within two working days.
+        </p>
 
       </form>
     </section>

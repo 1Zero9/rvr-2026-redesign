@@ -73,12 +73,12 @@ export default function PublicEnquiryForm({
   if (status === 'success') {
     return (
       <div
-        className="site-surface p-6 sm:p-8"
+        className="rounded-2xl border-2 border-brand-navy bg-white p-6 sm:p-8"
         role="status"
         aria-live="polite"
       >
         <CheckCircle2 className="h-10 w-10 text-brand-green" aria-hidden="true" />
-        <h2 className="mt-4 font-display text-2xl font-black uppercase text-brand-navy">
+        <h2 className="mt-4 font-display text-3xl font-black uppercase text-brand-navy">
           Enquiry received
         </h2>
         <p className="mt-3 text-sm font-semibold leading-6 text-zinc-600">
@@ -96,8 +96,8 @@ export default function PublicEnquiryForm({
   }
 
   return (
-    <form onSubmit={submitEnquiry} className="site-surface p-6 sm:p-8">
-      <h2 className="font-display text-2xl font-black uppercase text-brand-navy">
+    <form onSubmit={submitEnquiry} className="rounded-2xl border-2 border-brand-navy bg-white p-6 sm:p-8">
+      <h2 className="font-display text-3xl font-black uppercase text-brand-navy">
         {title}
       </h2>
       <p className="mt-2 text-sm font-semibold leading-6 text-zinc-600">
