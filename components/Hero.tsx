@@ -71,7 +71,7 @@ export default function Hero() {
             alt="Rivervalley Rangers AFC crest"
             width={288}
             height={288}
-            className="w-36 h-36 md:w-52 md:h-52 lg:w-72 lg:h-72 object-contain shrink-0 select-none"
+            className="w-32 h-32 md:w-44 md:h-44 lg:w-60 lg:h-60 object-contain shrink-0 select-none"
           />
           <h1 className="font-display font-black text-5xl md:text-7xl lg:text-8xl tracking-tighter uppercase leading-none italic select-none skew-x-[-4deg] text-center md:text-left">
             FEEL THE <span className="text-brand-neon">RVR</span> ENERGY
