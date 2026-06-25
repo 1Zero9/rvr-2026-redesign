@@ -69,9 +69,9 @@ export default function Hero() {
           <img
             src="/river-valley-rangers-logo-pack-v2/RVR-New-White.png"
             alt="Rivervalley Rangers AFC crest"
-            width={192}
-            height={192}
-            className="w-28 h-28 md:w-40 md:h-40 lg:w-48 lg:h-48 object-contain shrink-0 select-none"
+            width={288}
+            height={288}
+            className="w-36 h-36 md:w-52 md:h-52 lg:w-72 lg:h-72 object-contain shrink-0 select-none"
           />
           <h1 className="font-display font-black text-5xl md:text-7xl lg:text-8xl tracking-tighter uppercase leading-none italic select-none skew-x-[-4deg] text-center md:text-left">
             FEEL THE <span className="text-brand-neon">RVR</span> ENERGY
