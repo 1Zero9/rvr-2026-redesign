@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { Loader2 } from 'lucide-react';
 import type { NormalisedMatch, SyncResponse } from '@/lib/ddsl/types';
 import type { SeniorMatch, SeniorSyncResponse } from '@/lib/finalwhistle/types';
 import { useFavourites } from '@/lib/favourites/context';
@@ -264,12 +265,20 @@ export default function TeletextFixtures() {
       {/* Board body */}
       {loading ? (
         <div>
+          <div className="bg-black px-3 py-5 flex items-center gap-3 border-b border-brand-sky/20">
+            <Loader2 className="w-4 h-4 text-brand-neon animate-spin shrink-0" />
+            <span className="text-brand-neon font-mono text-xs font-bold uppercase tracking-widest">
+              Loading fixture data&hellip; please wait
+            </span>
+          </div>
           {[0, 1, 2].map((i) => (
             <div
               key={i}
-              className="bg-black border-b border-brand-sky/20 px-3 py-2 min-h-11 flex items-center"
+              className="bg-black border-b border-brand-sky/20 px-3 py-2 min-h-11 flex items-center gap-2"
             >
-              <span className="animate-pulse w-48 h-3 bg-brand-sky/30 rounded-none inline-block" />
+              <span className="animate-pulse w-10 h-3 bg-brand-sky/20 inline-block" />
+              <span className="animate-pulse h-3 bg-brand-sky/10 inline-block flex-1" style={{ animationDelay: `${i * 120}ms` }} />
+              <span className="animate-pulse w-14 h-3 bg-brand-sky/20 inline-block" style={{ animationDelay: `${i * 80}ms` }} />
             </div>
           ))}
         </div>
