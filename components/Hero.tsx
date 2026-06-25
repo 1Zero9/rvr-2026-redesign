@@ -67,7 +67,7 @@ export default function Hero() {
 
         <div className="flex flex-col md:flex-row items-center gap-6 md:gap-10 mb-8 w-full justify-center">
           <img
-            src="/river-valley-rangers-logo-pack-v2/RVR-New-White.png"
+            src="/river-valley-rangers-logo-pack-v2/RVR-New-White2.png"
             alt="Rivervalley Rangers AFC crest"
             width={288}
             height={288}

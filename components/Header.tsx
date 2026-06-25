@@ -280,7 +280,7 @@ export default function Header() {
           {/* Logo */}
           <Link href="/" className="flex shrink-0 items-center gap-3" onClick={close}>
             <Image
-              src="/river-valley-rangers-logo-pack-v2/RVR-New-White.png"
+              src="/river-valley-rangers-logo-pack-v2/RVR-New-White2.png"
               alt="Rivervalley Rangers AFC crest"
               width={44}
               height={44}
