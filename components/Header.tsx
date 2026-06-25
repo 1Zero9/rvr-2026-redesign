@@ -62,9 +62,9 @@ const NAV_SECTIONS: NavSection[] = [
       {
         heading: 'Programmes',
         links: [
-          { href: '/football-for-all', label: 'Football For All' },
-          { href: '/football-for-all', label: 'Walking Football'  },
-          { href: '/football-for-all', label: 'Sensory Sessions'  },
+          { href: '/football-for-all',   label: 'Football For All' },
+          { href: '/walking-football',   label: 'Walking Football'  },
+          { href: '/football-for-all',   label: 'Sensory Sessions'  },
         ],
       },
     ],
@@ -163,6 +163,7 @@ const MOBILE_NAV_SECTIONS: MobileNavSection[] = [
       { href: '/membership-calculator', label: 'Calculate Fees'   },
       { href: '/astro-booking',         label: 'Book Astro Pitch' },
       { href: '/football-for-all',      label: 'Football For All' },
+      { href: '/walking-football',       label: 'Walking Football' },
     ],
   },
   {
@@ -279,11 +280,11 @@ export default function Header() {
           {/* Logo */}
           <Link href="/" className="flex shrink-0 items-center gap-3" onClick={close}>
             <Image
-              src="/river-valley-rangers-logo-pack-v2/rvr-new4.png"
+              src="/river-valley-rangers-logo-pack-v2/RVR-New-White.png"
               alt="Rivervalley Rangers AFC crest"
               width={44}
               height={44}
-              className="block rounded-lg"
+              className="block"
               priority
             />
             <span className="grid leading-none">
