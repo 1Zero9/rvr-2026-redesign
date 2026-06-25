@@ -120,7 +120,7 @@ export default async function Home() {
         <Hero />
 
         {/* ── 2. Upcoming Fixtures ─────────────────────────────────────────── */}
-        <section className="bg-white py-14 border-b border-brand-navy/10">
+        <section className="bg-brand-cream py-14 border-b border-brand-navy/10">
           <div className="max-w-6xl mx-auto px-6">
             <div className="flex items-center justify-between mb-8">
               <h2 className="font-display font-black text-3xl md:text-4xl uppercase tracking-tight italic text-brand-charcoal">
