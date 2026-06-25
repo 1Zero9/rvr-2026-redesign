@@ -60,8 +60,8 @@ export default function Hero() {
         </div>
       </div>
 
-      <div className="relative z-20 max-w-5xl mx-auto px-6 text-center py-20 flex flex-col items-center">
-        <span className="inline-block bg-brand-neon text-brand-charcoal font-display font-black text-xs md:text-sm px-5 py-2 rounded-full uppercase tracking-wider mb-8 border-3 border-brand-charcoal shadow-brutalist rotate-[-2deg] hover:rotate-0 transition-transform cursor-default">
+      <div className="relative z-20 max-w-5xl mx-auto px-6 text-center py-10 md:py-20 flex flex-col items-center">
+        <span className="inline-block bg-brand-neon text-brand-charcoal font-display font-black text-xs md:text-sm px-5 py-2 rounded-full uppercase tracking-wider mb-5 md:mb-8 border-3 border-brand-charcoal shadow-brutalist rotate-[-2deg] hover:rotate-0 transition-transform cursor-default">
           Dublin, Ireland &bull; Rivervalley Rangers AFC
         </span>
 
@@ -71,14 +71,14 @@ export default function Hero() {
             alt="Rivervalley Rangers AFC crest"
             width={288}
             height={288}
-            className="w-32 h-32 md:w-44 md:h-44 lg:w-60 lg:h-60 object-contain shrink-0 select-none"
+            className="w-24 h-24 md:w-44 md:h-44 lg:w-60 lg:h-60 object-contain shrink-0 select-none"
           />
           <h1 className="font-display font-black text-5xl md:text-7xl lg:text-8xl tracking-tighter uppercase leading-none italic select-none skew-x-[-4deg] text-center md:text-left">
             FEEL THE <span className="text-brand-neon">RVR</span> ENERGY
           </h1>
         </div>
 
-        <p className="font-sans text-lg md:text-2xl text-zinc-200 max-w-2xl mx-auto mb-12 leading-relaxed font-medium">
+        <p className="font-sans text-lg md:text-2xl text-zinc-200 max-w-2xl mx-auto mb-6 md:mb-12 leading-relaxed font-medium">
           Rivervalley Rangers AFC is Swords&apos; premier soccer club. Empowering local athletes across all ages, formats, and levels.
         </p>
 
