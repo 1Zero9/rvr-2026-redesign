@@ -693,3 +693,251 @@ model BootRoomListing {
   @@index([moderationStatus, createdAt])
   @@index([category, moderationStatus])
 }
+
+// ---------------------------------------------------------------------------
+// Competition Management System — Auth Layer
+// ---------------------------------------------------------------------------
+
+enum GlobalRole {
+  SUPER_ADMIN
+}
+
+enum AssignmentRole {
+  EVENT_ADMIN
+  PITCH_ADMIN
+}
+
+/// Admin user for the Competition Management System. Uses NextAuth magic-link.
+model AdminUser {
+  id            String                  @id @default(cuid())
+  email         String                  @unique
+  emailVerified DateTime?
+  name          String?
+  image         String?
+  globalRole    GlobalRole?
+  assignments   CompetitionAssignment[]
+  accounts      AuthAccount[]
+  sessions      AuthSession[]
+  createdComps  Competition[]           @relation("CompetitionCreatedBy")
+  assignedTeams TeamPlayer[]            @relation("TeamPlayerAssignedBy")
+  resultEntries Fixture[]               @relation("FixtureResultEntry")
+  createdAt     DateTime                @default(now())
+  updatedAt     DateTime                @updatedAt
+
+  @@index([email])
+}
+
+model AuthAccount {
+  id                String    @id @default(cuid())
+  userId            String
+  user              AdminUser @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model AuthSession {
+  id           String    @id @default(cuid())
+  sessionToken String    @unique
+  userId       String
+  expires      DateTime
+  user         AdminUser @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ---------------------------------------------------------------------------
+// Competition Management System — Competition Models
+// ---------------------------------------------------------------------------
+
+enum CompetitionType {
+  MINI_LEAGUE
+  KNOCKOUT
+  GROUP_KNOCKOUT
+  BLITZ
+  FESTIVAL
+}
+
+enum CompetitionState {
+  DRAFT
+  READY
+  LIVE
+  COMPLETE
+  ARCHIVED
+}
+
+enum ParticipantMode {
+  PLAYERS
+  TEAMS
+}
+
+enum PlayerStatus {
+  ACTIVE
+  INACTIVE
+  UNASSIGNED
+}
+
+enum FixtureStatus {
+  SCHEDULED
+  LIVE
+  COMPLETE
+  VOID
+  WALKOVER
+}
+
+enum TeamTheme {
+  COUNTRIES
+  PREMIER_LEAGUE
+  LOI_CLUBS
+  LEGENDS
+  COLOURS
+  ANIMALS
+  CUSTOM
+}
+
+model Competition {
+  id                       String                  @id @default(cuid())
+  slug                     String                  @unique
+  name                     String
+  type                     CompetitionType
+  state                    CompetitionState        @default(DRAFT)
+  participantMode          ParticipantMode
+  ageGroup                 String
+  teamTheme                TeamTheme
+  customThemeNames         String[]
+  dates                    DateTime[]
+  dataRetentionDays        Int                     @default(90)
+  dataNoticeAcknowledgedAt DateTime?
+  isPublic                 Boolean                 @default(false)
+  publicSlug               String?                 @unique
+  venues                   CompetitionVenue[]
+  teams                    CompetitionTeam[]
+  playerPool               PlayerPoolEntry[]
+  fixtures                 Fixture[]
+  assignments              CompetitionAssignment[]
+  createdById              String
+  createdBy                AdminUser               @relation("CompetitionCreatedBy", fields: [createdById], references: [id])
+  createdAt                DateTime                @default(now())
+  updatedAt                DateTime                @updatedAt
+
+  @@index([state])
+}
+
+model CompetitionVenue {
+  id            String      @id @default(cuid())
+  competitionId String
+  competition   Competition @relation(fields: [competitionId], references: [id], onDelete: Cascade)
+  name          String
+  pitches       String[]
+  createdAt     DateTime    @default(now())
+
+  @@index([competitionId])
+}
+
+model CompetitionTeam {
+  id            String          @id @default(cuid())
+  competitionId String
+  competition   Competition     @relation(fields: [competitionId], references: [id], onDelete: Cascade)
+  name          String
+  themeName     String
+  colourHex     String?
+  players       TeamPlayer[]
+  homeFixtures  Fixture[]       @relation("HomeTeam")
+  awayFixtures  Fixture[]       @relation("AwayTeam")
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  @@index([competitionId])
+}
+
+model PlayerPoolEntry {
+  id            String          @id @default(cuid())
+  competitionId String
+  competition   Competition     @relation(fields: [competitionId], references: [id], onDelete: Cascade)
+  firstName     String
+  lastName      String
+  displayName   String
+  ageGroup      String?
+  clubOrSchool  String?
+  notes         String?
+  status        PlayerStatus    @default(UNASSIGNED)
+  availableDays String[]
+  teamPlayer    TeamPlayer?
+  uploadBatchId String?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  @@index([competitionId, status])
+}
+
+model TeamPlayer {
+  id                String          @id @default(cuid())
+  teamId            String
+  team              CompetitionTeam @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  playerPoolEntryId String          @unique
+  playerPoolEntry   PlayerPoolEntry @relation(fields: [playerPoolEntryId], references: [id], onDelete: Cascade)
+  assignedAt        DateTime        @default(now())
+  assignedById      String?
+  assignedBy        AdminUser?      @relation("TeamPlayerAssignedBy", fields: [assignedById], references: [id])
+  movedFromTeamId   String?
+  movedAt           DateTime?
+
+  @@index([teamId])
+}
+
+model Fixture {
+  id                String          @id @default(cuid())
+  competitionId     String
+  competition       Competition     @relation(fields: [competitionId], references: [id], onDelete: Cascade)
+  homeTeamId        String
+  homeTeam          CompetitionTeam @relation("HomeTeam", fields: [homeTeamId], references: [id])
+  awayTeamId        String
+  awayTeam          CompetitionTeam @relation("AwayTeam", fields: [awayTeamId], references: [id])
+  venueName         String
+  pitchLabel        String?
+  scheduledAt       DateTime?
+  duration          Int?
+  status            FixtureStatus   @default(SCHEDULED)
+  homeScore         Int?
+  awayScore         Int?
+  resultEnteredAt   DateTime?
+  resultEnteredById String?
+  resultEnteredBy   AdminUser?      @relation("FixtureResultEntry", fields: [resultEnteredById], references: [id])
+  round             String?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  @@index([competitionId, status])
+}
+
+model CompetitionAssignment {
+  id            String         @id @default(cuid())
+  adminUserId   String
+  adminUser     AdminUser      @relation(fields: [adminUserId], references: [id], onDelete: Cascade)
+  competitionId String
+  competition   Competition    @relation(fields: [competitionId], references: [id], onDelete: Cascade)
+  role          AssignmentRole
+  pitchId       String?
+  createdAt     DateTime       @default(now())
+
+  @@index([adminUserId])
+  @@index([competitionId])
+}

@@ -4,6 +4,20 @@ All notable changes to RVR2026 are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 Versioning follows [Semantic Versioning](https://semver.org/).
 
+## [1.1.0] — 2026-06-27
+
+feat: Competition Management System — auth, schema, upload pipeline, public view, squad card generation
+
+- NextAuth.js v5 magic-link login at `/competitions/login`; roles SUPER_ADMIN / EVENT_ADMIN / PITCH_ADMIN
+- New Prisma models: AdminUser, AuthAccount, AuthSession, VerificationToken, Competition, CompetitionVenue, CompetitionTeam, PlayerPoolEntry, TeamPlayer, Fixture, CompetitionAssignment
+- CSV/XLSX upload with fuzzy column detection, per-row flagging, GDPR notice gate, displayName-only public surfaces
+- Theme pools (Countries, PL, LOI, Legends, Colours, Animals), Fisher-Yates randomiser, even team distribution
+- Fixture generation for mini league, knockout, group+knockout, blitz, festival
+- Public view `/competitions/[slug]` — Now / Fixtures / Standings / Teams tabs
+- Squad card PNG generation via Satori at `/api/competitions/[id]/squad-card/[teamId]`
+- Pitch Admin stripped score-entry UI for parent volunteers
+- GDPR purge cron at `/api/cron/competitions-purge`
+
 ## [1.0.4] - 2026-06-22
 
 ### Added
