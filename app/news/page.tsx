@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import PublicPageShell from '@/components/layout/PublicPageShell';
-import PageHero from '@/components/layout/PageHero';
+import PageHeroNavy from '@/components/layout/PageHeroNavy';
 import AnnouncementCard from '@/components/AnnouncementCard';
 import Link from 'next/link';
 import { prisma } from '@/lib/prisma';
@@ -46,11 +46,10 @@ export default async function NewsPage({
 
   return (
     <PublicPageShell>
-      <PageHero
+      <PageHeroNavy
         eyebrow="Club Updates"
         title="Club News"
         description="Announcements, events, recruitment drives, and volunteer opportunities from around RVR."
-        maxWidth="5xl"
       />
       <section className="mx-auto max-w-5xl px-4 py-10 md:px-6">
 

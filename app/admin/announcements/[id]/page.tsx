@@ -2,7 +2,6 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import { prisma } from '@/lib/prisma';
-import Header from '@/components/Header';
 import AnnouncementForm from '../_components/AnnouncementForm';
 import { requireAdmin } from '@/lib/admin/require-admin';
 
@@ -65,9 +64,8 @@ export default async function EditAnnouncementPage({
   };
 
   return (
-    <div className="min-h-screen bg-brand-cream">
-      <Header />
-      <main className="max-w-2xl mx-auto px-4 py-8">
+    <main className="min-h-screen bg-brand-cream px-4 py-8 text-brand-charcoal">
+      <div className="mx-auto max-w-2xl">
 
         <div className="mb-8">
           <Link
@@ -88,7 +86,7 @@ export default async function EditAnnouncementPage({
           initialData={initialData}
         />
 
-      </main>
-    </div>
+      </div>
+    </main>
   );
 }

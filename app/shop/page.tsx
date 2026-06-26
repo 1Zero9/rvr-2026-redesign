@@ -1,6 +1,6 @@
 import { Backpack, Dumbbell, Footprints, Shirt } from "lucide-react";
 import PublicPageShell from "@/components/layout/PublicPageShell";
-import PageHero from "@/components/layout/PageHero";
+import PageHeroNavy from "@/components/layout/PageHeroNavy";
 
 export const metadata = {
   title: "Club Shop | Rivervalley Rangers AFC",
@@ -37,8 +37,7 @@ const balonStoreUrl =
 export default function ShopPage() {
   return (
     <PublicPageShell>
-      <PageHero
-        eyebrow="Official Club Shop"
+      <PageHeroNavy
         title="Kit Up, Valley"
         description="Official Rivervalley Rangers AFC kit and merchandise, exclusively through Balon Sports."
         actions={
@@ -46,7 +45,7 @@ export default function ShopPage() {
             href={balonStoreUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="btn-brutalist-neon inline-flex min-h-11 items-center px-8 py-4 text-base"
+            className="btn-brutalist-neon inline-flex min-h-11 items-center px-8 py-4 text-base mt-2"
           >
             Shop Now on Balon →
           </a>
@@ -90,7 +89,8 @@ export default function ShopPage() {
           </div>
         </section>
 
-        <section className="mx-auto max-w-4xl px-4 pb-14">
+        <section className="pb-14">
+          <div className="mx-auto max-w-4xl px-4">
           <div className="site-surface p-6 md:flex md:items-center md:justify-between md:gap-12 md:p-8">
             <div>
               <p className="mb-2 font-mono text-xs uppercase tracking-widest text-brand-green">
@@ -120,6 +120,7 @@ export default function ShopPage() {
                 balondirect.com
               </p>
             </div>
+          </div>
           </div>
         </section>
 

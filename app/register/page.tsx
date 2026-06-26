@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import PlayerRecruitmentWizard from "@/components/PlayerRecruitmentWizard";
 import PublicPageShell from "@/components/layout/PublicPageShell";
-import PageHero from "@/components/layout/PageHero";
+import PageHeroNavy from "@/components/layout/PageHeroNavy";
 
 export const metadata: Metadata = {
   title: "Join the Club | Rivervalley Rangers AFC",
@@ -12,11 +12,10 @@ export const metadata: Metadata = {
 export default function RegisterPage() {
   return (
     <PublicPageShell>
-      <PageHero
+      <PageHeroNavy
         eyebrow="Join RVR"
         title="Player Registration"
         description="Tell us about the player and the right club contact will follow up with the next available pathway."
-        maxWidth="4xl"
       />
       <PlayerRecruitmentWizard />
     </PublicPageShell>

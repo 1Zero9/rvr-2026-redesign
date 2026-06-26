@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import Header from '@/components/Header';
+import PublicPageShell from '@/components/layout/PublicPageShell';
+import PageHeroNavy from '@/components/layout/PageHeroNavy';
 import type { SeniorMatch, SeniorSyncResponse } from '@/lib/finalwhistle/types';
 
 export const metadata: Metadata = {
@@ -123,67 +124,29 @@ export default async function SeniorsPage() {
   const fixtures = data?.fixtures ?? [];
 
   return (
-    <div
-      className="min-h-screen bg-brand-cream"
-      style={{
-        backgroundImage: `
-          linear-gradient(rgba(11,31,59,0.04) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(11,31,59,0.04) 1px, transparent 1px)
-        `,
-        backgroundSize: '40px 40px',
-      }}
-    >
-      <Header />
-
-      <main>
-
-        {/* ── Hero ────────────────────────────────────────────────────────── */}
-        <div className="relative bg-brand-navy overflow-hidden">
-          <div
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              backgroundImage: `linear-gradient(rgba(133,227,32,0.12) 1px, transparent 1px),
-                                linear-gradient(90deg, rgba(133,227,32,0.12) 1px, transparent 1px)`,
-              backgroundSize: '40px 40px',
-            }}
-          />
-          <div className="relative max-w-2xl mx-auto px-4 pt-6 pb-8">
-            <h1 className="font-display font-black italic text-4xl md:text-5xl uppercase tracking-tight leading-none text-brand-neon mb-2">
-              Senior Football
-            </h1>
-            <p className="text-brand-sky text-sm mb-6">
-              Rivervalley Rangers AFC · Adult Teams
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <Link
-                href="/seniors/first-team"
-                className="bg-white/10 border border-brand-sky/30 p-4 min-h-[44px] flex items-center justify-between group"
-              >
-                <div>
-                  <p className="font-display italic font-black text-brand-cream text-base">First Team</p>
-                  <p className="text-brand-sky/70 text-xs mt-0.5">LSL · AFL Cup · Senior Football</p>
-                </div>
-                <span className="text-brand-neon text-sm group-hover:translate-x-1 transition-transform">
-                  View →
-                </span>
-              </Link>
-              <Link
-                href="/seniors/over-35s"
-                className="bg-white/10 border border-brand-sky/30 p-4 min-h-[44px] flex items-center justify-between group"
-              >
-                <div>
-                  <p className="font-display italic font-black text-brand-cream text-base">Over 35s</p>
-                  <p className="text-brand-sky/70 text-xs mt-0.5">AFL Division 2 North · AFL Division 4 North</p>
-                </div>
-                <span className="text-brand-neon text-sm group-hover:translate-x-1 transition-transform">
-                  View →
-                </span>
-              </Link>
-            </div>
+    <PublicPageShell>
+      <PageHeroNavy
+        title="Senior Football"
+        description="Rivervalley Rangers AFC · Adult Teams"
+        links={
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <Link href="/seniors/first-team" className="bg-white/10 border border-brand-sky/30 p-4 min-h-[44px] flex items-center justify-between group">
+              <div>
+                <p className="font-display italic font-black text-brand-cream text-base">First Team</p>
+                <p className="text-brand-sky/70 text-xs mt-0.5">LSL · AFL Cup · Senior Football</p>
+              </div>
+              <span className="text-brand-neon text-sm group-hover:translate-x-1 transition-transform">View →</span>
+            </Link>
+            <Link href="/seniors/over-35s" className="bg-white/10 border border-brand-sky/30 p-4 min-h-[44px] flex items-center justify-between group">
+              <div>
+                <p className="font-display italic font-black text-brand-cream text-base">Over 35s</p>
+                <p className="text-brand-sky/70 text-xs mt-0.5">AFL Division 2 North · AFL Division 4 North</p>
+              </div>
+              <span className="text-brand-neon text-sm group-hover:translate-x-1 transition-transform">View →</span>
+            </Link>
           </div>
-        </div>
-        {/* Senior green accent line */}
-        <div className="h-1 w-full bg-brand-green" />
+        }
+      />
 
         <div className="max-w-2xl mx-auto px-4 py-8 space-y-10">
 
@@ -301,7 +264,6 @@ export default async function SeniorsPage() {
           </section>
 
         </div>
-      </main>
-    </div>
+    </PublicPageShell>
   );
 }

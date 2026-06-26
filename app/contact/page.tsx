@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import PublicPageShell from "@/components/layout/PublicPageShell";
-import PageHero from "@/components/layout/PageHero";
+import PageHeroNavy from "@/components/layout/PageHeroNavy";
 import { Mail, MapPin, ShieldCheck } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -30,7 +30,7 @@ const contacts = [
 export default function ContactPage() {
   return (
     <PublicPageShell>
-      <PageHero
+      <PageHeroNavy
         eyebrow={<><Mail className="h-4 w-4" aria-hidden="true" /> Get in Touch</>}
         title="Contact Us"
         description="Reach the RVR committee, coaching staff, or welfare team. We aim to respond within two working days."

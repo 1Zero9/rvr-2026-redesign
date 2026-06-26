@@ -1,4 +1,5 @@
 import PublicPageShell from '@/components/layout/PublicPageShell';
+import PageHeroNavy from '@/components/layout/PageHeroNavy';
 
 export const metadata = {
   title: 'Book the Astro | Rivervalley Rangers AFC',
@@ -27,17 +28,10 @@ export default function AstroBookingPage() {
   return (
     <PublicPageShell>
 
-      {/* ── 1. Hero ──────────────────────────────────────────────────── */}
-      <section className="bg-brand-navy border-b-3 border-brand-neon px-4 py-12 md:py-20">
-        <div className="max-w-6xl mx-auto">
-          <h1 className="font-display font-black italic text-5xl md:text-7xl text-brand-neon leading-none mb-4">
-            Book the Astro
-          </h1>
-          <p className="text-brand-cream text-lg md:text-xl font-semibold">
-            St Finian&apos;s Community College Astroturf &middot; Swords, Co. Dublin
-          </p>
-        </div>
-      </section>
+      <PageHeroNavy
+        title="Book the Astro"
+        description="St Finian's Community College Astroturf · Swords, Co. Dublin"
+      />
 
       {/* ── 2. Info cards ────────────────────────────────────────────── */}
       <section className="bg-brand-cream px-4 py-12">

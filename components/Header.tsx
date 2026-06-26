@@ -275,7 +275,7 @@ export default function Header() {
         id="site-header"
         className="relative sticky top-0 z-50 glass-dark border-b border-brand-sky/20"
       >
-        <div className="relative max-w-7xl mx-auto flex items-center justify-between h-16 px-4 md:px-6">
+        <div className="relative max-w-7xl mx-auto flex items-center justify-between h-16 px-4 md:px-6 lg:grid lg:grid-cols-[auto_1fr_auto] lg:items-center">
 
           {/* Logo */}
           <Link href="/" className="flex shrink-0 items-center gap-3" onClick={close}>
@@ -297,7 +297,7 @@ export default function Header() {
             </span>
           </Link>
 
-          <div className="hidden lg:flex flex-1 items-center justify-center gap-8">
+          <div className="hidden lg:flex flex-1 items-center justify-center gap-8 lg:justify-self-center">
             {/* Desktop mega-menu trigger buttons */}
             <nav
               className="flex items-center gap-1"
@@ -405,25 +405,25 @@ export default function Header() {
 
             </nav>
 
-            {/* Search + Desktop CTA */}
-            <div className="absolute right-4 md:right-6 flex items-center gap-2">
-              <button
-                ref={searchButtonRef}
-                type="button"
-                onClick={() => setSearchOpen(true)}
-                aria-label="Search teams"
-                className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-brand-sky hover:text-brand-neon transition-colors"
-              >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <circle cx="11" cy="11" r="8" />
-                  <path d="m21 21-4.35-4.35" />
-                </svg>
-              </button>
-              <Link href="/register" className="btn-brutalist-neon px-5 py-2.5 text-xs whitespace-nowrap">
-                Join the Team
-              </Link>
-            </div>
+          </div>
 
+          {/* Search + Desktop CTA */}
+          <div className="hidden lg:flex items-center gap-2 lg:justify-self-end">
+            <button
+              ref={searchButtonRef}
+              type="button"
+              onClick={() => setSearchOpen(true)}
+              aria-label="Search teams"
+              className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-brand-sky hover:text-brand-neon transition-colors"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="11" cy="11" r="8" />
+                <path d="m21 21-4.35-4.35" />
+              </svg>
+            </button>
+            <Link href="/register" className="btn-brutalist-neon px-5 py-2.5 text-xs whitespace-nowrap">
+              Join the Team
+            </Link>
           </div>
 
           {/* Mobile hamburger */}

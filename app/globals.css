@@ -120,11 +120,11 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.25);
 }
 
-/* Dark navigation bar — blends with the homepage charcoal grid canvas */
+/* Dark navigation bar — sits above brand-navy hero, darkened to distinguish */
 .glass-dark {
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  background: rgba(11, 31, 59, 0.97);
+  background: rgba(4, 12, 25, 1);
 }
 
 .glass-liquid {

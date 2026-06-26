@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import Header from '@/components/Header';
+import PublicPageShell from '@/components/layout/PublicPageShell';
+import PageHeroNavy from '@/components/layout/PageHeroNavy';
 import { AFL_DIVISIONS } from '@/config/afl-competitions';
 
 export const metadata: Metadata = {
@@ -10,65 +11,32 @@ export const metadata: Metadata = {
 
 export default function Over35sHubPage() {
   return (
-    <div
-      className="min-h-screen bg-brand-cream"
-      style={{
-        backgroundImage: `
-          linear-gradient(rgba(11,31,59,0.04) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(11,31,59,0.04) 1px, transparent 1px)
-        `,
-        backgroundSize: '40px 40px',
-      }}
-    >
-      <Header />
-
-      <main>
-
-        {/* ── Hero ────────────────────────────────────────────────────────── */}
-        <div className="relative overflow-hidden bg-brand-navy">
-          <div
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              backgroundImage: `linear-gradient(rgba(133,227,32,0.12) 1px, transparent 1px),
-                                linear-gradient(90deg, rgba(133,227,32,0.12) 1px, transparent 1px)`,
-              backgroundSize: '40px 40px',
-            }}
-          />
-          <div className="relative mx-auto max-w-2xl px-4 pb-8 pt-6">
-            <Link
-              href="/seniors"
-              className="inline-block text-brand-sky text-sm mb-5 hover:text-brand-neon transition-colors"
-            >
-              ← Senior Teams
-            </Link>
-            <h1 className="font-display font-black italic text-4xl md:text-5xl uppercase tracking-tight leading-none text-brand-neon mb-2">
-              OVER 35s
-            </h1>
-            <p className="text-brand-sky text-sm mb-3">
-              Rivervalley Rangers AFC · Amateur Football League
-            </p>
-            <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-              {AFL_DIVISIONS.map((division, i) => (
-                <Link
-                  key={division.id}
-                  href={`/seniors/over-35s/${division.id}`}
-                  className="group flex min-h-[44px] items-center justify-between border border-brand-sky/30 bg-white/10 p-4"
-                >
-                  <div>
-                    <p className="font-display text-base font-black italic text-brand-cream">
-                      {i === 0 ? 'Over 35s A' : 'Over 35s B'}
-                    </p>
-                    <p className="mt-0.5 text-xs text-brand-sky/70">{division.competitionName}</p>
-                  </div>
-                  <span className="text-sm text-brand-neon transition-transform group-hover:translate-x-1">
-                    View →
-                  </span>
-                </Link>
-              ))}
-            </div>
+    <PublicPageShell>
+      <PageHeroNavy
+        backHref="/seniors"
+        backLabel="Senior Teams"
+        title="Over 35s"
+        description="Rivervalley Rangers AFC · Amateur Football League"
+        links={
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+            {AFL_DIVISIONS.map((division, i) => (
+              <Link
+                key={division.id}
+                href={`/seniors/over-35s/${division.id}`}
+                className="group flex min-h-[44px] items-center justify-between border border-brand-sky/30 bg-white/10 p-4"
+              >
+                <div>
+                  <p className="font-display text-base font-black italic text-brand-cream">
+                    {i === 0 ? 'Over 35s A' : 'Over 35s B'}
+                  </p>
+                  <p className="mt-0.5 text-xs text-brand-sky/70">{division.competitionName}</p>
+                </div>
+                <span className="text-sm text-brand-neon transition-transform group-hover:translate-x-1">View →</span>
+              </Link>
+            ))}
           </div>
-        </div>
-        <div className="h-1 w-full bg-brand-green" />
+        }
+      />
 
         {/* ── Team cards ──────────────────────────────────────────────────── */}
         <div className="max-w-2xl mx-auto px-4 py-8 pb-36 md:pb-16">
@@ -103,7 +71,6 @@ export default function Over35sHubPage() {
           </section>
         </div>
 
-      </main>
-    </div>
+    </PublicPageShell>
   );
 }

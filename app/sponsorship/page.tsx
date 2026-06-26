@@ -9,7 +9,7 @@ import {
 } from 'lucide-react';
 import ContentSection from '@/components/layout/ContentSection';
 import PublicEnquiryForm from '@/components/forms/PublicEnquiryForm';
-import PageHero from '@/components/layout/PageHero';
+import PageHeroNavy from '@/components/layout/PageHeroNavy';
 import PublicPageShell from '@/components/layout/PublicPageShell';
 
 export const metadata: Metadata = {
@@ -48,7 +48,7 @@ const opportunities = [
 export default function SponsorshipPage() {
   return (
     <PublicPageShell>
-      <PageHero
+      <PageHeroNavy
         eyebrow="Partner with RVR"
         title="Sponsorship"
         description="Support grassroots football while building a visible, credible connection with families and the wider Swords community."

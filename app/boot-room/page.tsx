@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { ArrowRight, PackageCheck, Recycle, ShieldCheck } from 'lucide-react';
 import BootRoomSubmissionForm from '@/components/boot-room/BootRoomSubmissionForm';
 import ContentSection from '@/components/layout/ContentSection';
-import PageHero from '@/components/layout/PageHero';
+import PageHeroNavy from '@/components/layout/PageHeroNavy';
 import PublicPageShell from '@/components/layout/PublicPageShell';
 import { prisma } from '@/lib/prisma';
 
@@ -33,7 +33,7 @@ export default async function BootRoomPage() {
 
   return (
     <PublicPageShell>
-      <PageHero
+      <PageHeroNavy
         eyebrow="Reuse football equipment"
         title="Boot Room Exchange"
         description="Pass on clean boots, kit, and equipment that another RVR family can use. Every listing is reviewed before publication."

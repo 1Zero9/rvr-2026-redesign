@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import Header from "@/components/Header";
+import PublicPageShell from "@/components/layout/PublicPageShell";
 import DDSLTableWidget from "@/components/DDSLTableWidget";
 import {
   CalendarDays,
@@ -529,9 +529,8 @@ export default function MatchesPage() {
     : "Ready";
 
   return (
-    <div className="min-h-screen bg-brand-navy text-white">
-      <Header />
-
+    <PublicPageShell>
+      <div className="flex-1 bg-brand-navy text-white">
       <main>
         {/* ── Hero ─────────────────────────────────────────────────────────── */}
         <section className="border-b-4 border-white bg-brand-navy">
@@ -719,6 +718,7 @@ export default function MatchesPage() {
           )}
         </section>
       </main>
-    </div>
+      </div>
+    </PublicPageShell>
   );
 }

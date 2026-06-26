@@ -14,7 +14,7 @@ import {
   Users,
 } from 'lucide-react';
 import ContentSection from '@/components/layout/ContentSection';
-import PageHero from '@/components/layout/PageHero';
+import PageHeroNavy from '@/components/layout/PageHeroNavy';
 import PublicPageShell from '@/components/layout/PublicPageShell';
 import {
   clubContacts,
@@ -67,7 +67,7 @@ function StatusLabel({
 export default function ClubPage() {
   return (
     <PublicPageShell>
-      <PageHero
+      <PageHeroNavy
         eyebrow={`Est. ${clubOverview.foundingYear}`}
         title="Club Information"
         description="Our story, leadership contacts, home facilities, and public club documents in one place."

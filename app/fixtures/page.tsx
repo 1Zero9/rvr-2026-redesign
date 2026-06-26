@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import FixturesPageClient from '@/components/fixtures/FixturesPageClient';
 import PublicPageShell from '@/components/layout/PublicPageShell';
-import PageHero from '@/components/layout/PageHero';
+import PageHeroNavy from '@/components/layout/PageHeroNavy';
 import type { SyncResponse, NormalisedMatch, LeagueTable } from '@/lib/ddsl/types';
 import { prisma } from '@/lib/prisma';
 import { CLUB_SEASON } from '@/config/club-season';
@@ -75,11 +75,10 @@ export default async function FixturesPage() {
 
   return (
     <PublicPageShell>
-      <PageHero
+      <PageHeroNavy
         eyebrow={`${CLUB_SEASON.currentSeason} Season`}
         title="Fixtures & Results"
         description="Youth, senior, and Over 35s fixtures, results, and standings in one consistent match centre."
-        maxWidth="4xl"
       />
       <FixturesPageClient
         fixtures={fixtures}

@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import Header from '@/components/Header';
+import PublicPageShell from '@/components/layout/PublicPageShell';
 import { CLUB_TEAMS, findClubTeam } from '@/config/club-teams';
 
 export function generateStaticParams() {
@@ -34,9 +34,8 @@ export default async function ClubTeamPage({
   const ctaLabel = team.category === 'academy' ? 'Register Now' : 'Contact Us';
 
   return (
-    <div className="flex flex-col min-h-screen bg-brand-navy">
-      <Header />
-
+    <PublicPageShell>
+      <div className="flex-1 bg-brand-navy">
       <main className="flex-grow">
 
         {/* ── Hero ──────────────────────────────────────────────────────────── */}
@@ -152,6 +151,7 @@ export default async function ClubTeamPage({
         </div>
 
       </main>
-    </div>
+      </div>
+    </PublicPageShell>
   );
 }

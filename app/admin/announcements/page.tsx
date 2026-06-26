@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { prisma } from '@/lib/prisma';
-import Header from '@/components/Header';
 import AdminNav from '@/components/admin/AdminNav';
 
 export const metadata: Metadata = {
@@ -23,9 +22,8 @@ export default async function AnnouncementsAdminPage() {
   const now = new Date();
 
   return (
-    <div className="min-h-screen bg-brand-cream">
-      <Header />
-      <main className="max-w-4xl mx-auto px-4 py-8">
+    <main className="min-h-screen bg-brand-cream px-4 py-8 text-brand-charcoal">
+      <div className="mx-auto max-w-4xl">
         <AdminNav />
 
         <div className="flex items-center justify-between mb-8">
@@ -102,7 +100,7 @@ export default async function AnnouncementsAdminPage() {
           </div>
         )}
 
-      </main>
-    </div>
+      </div>
+    </main>
   );
 }

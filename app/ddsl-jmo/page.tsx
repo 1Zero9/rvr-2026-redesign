@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import Header from '@/components/Header';
+import PublicPageShell from '@/components/layout/PublicPageShell';
 
 export default function JMOPage() {
   const [submitState, setSubmitState] = useState<
@@ -52,10 +52,8 @@ export default function JMOPage() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-brand-cream text-brand-charcoal">
-      <Header />
-
-      <main className="flex-grow">
+    <PublicPageShell>
+      <main className="flex-grow bg-brand-cream text-brand-charcoal">
         
         {/* HERO SECTION */}
         <section className="relative overflow-hidden bg-[#FAF8F5] py-16 md:py-24 border-b-4 border-brand-charcoal">
@@ -458,7 +456,7 @@ export default function JMOPage() {
 
       </main>
 
-      {/* Footer */}
+      {/* Page footer */}
       <footer className="bg-brand-charcoal text-white border-t-4 border-brand-charcoal py-12">
         <div className="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
@@ -494,6 +492,6 @@ export default function JMOPage() {
           <p>Dublin Football Pride Since 1981</p>
         </div>
       </footer>
-    </div>
+    </PublicPageShell>
   );
 }

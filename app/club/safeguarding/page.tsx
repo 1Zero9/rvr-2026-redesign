@@ -10,7 +10,7 @@ import {
   UserRoundCheck,
 } from "lucide-react";
 import PublicPageShell from "@/components/layout/PublicPageShell";
-import PageHero from "@/components/layout/PageHero";
+import PageHeroNavy from "@/components/layout/PageHeroNavy";
 
 export const metadata: Metadata = {
   title: "Safeguarding and Child Welfare | Rivervalley Rangers AFC",
@@ -67,7 +67,7 @@ const vettingSteps = [
 export default function SafeguardingPage() {
   return (
     <PublicPageShell>
-      <PageHero
+      <PageHeroNavy
         eyebrow={<><ShieldCheck className="h-4 w-4" aria-hidden="true" /> FAI Club Mark Charter</>}
         title="Safeguarding & Child Welfare"
         description="Named welfare contacts, mandatory compliance documents, and clear vetting steps for every coach and volunteer."

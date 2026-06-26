@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import Header from '@/components/Header';
+import PublicPageShell from '@/components/layout/PublicPageShell';
 import { CLUB_TEAMS } from '@/config/club-teams';
 import type { ClubTeamCategory } from '@/config/club-teams';
 
@@ -21,9 +21,8 @@ const CATEGORY_LABELS: Record<ClubTeamCategory, string> = {
 
 export default function ClubTeamsPage() {
   return (
-    <div className="flex flex-col min-h-screen bg-brand-navy">
-      <Header />
-
+    <PublicPageShell>
+      <div className="flex-1 bg-brand-navy">
       <main className="flex-grow">
         {/* Page header */}
         <div className="px-4 md:px-8 pt-16 pb-12 border-b border-brand-sky/20">
@@ -76,6 +75,7 @@ export default function ClubTeamsPage() {
           })}
         </div>
       </main>
-    </div>
+      </div>
+    </PublicPageShell>
   );
 }

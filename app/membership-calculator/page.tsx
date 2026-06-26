@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import PublicPageShell from '@/components/layout/PublicPageShell';
-import PageHero from '@/components/layout/PageHero';
+import PageHeroNavy from '@/components/layout/PageHeroNavy';
 
 type MemberRole = 'adult-player' | 'student-over-18' | 'youth-player' | 'junior-academy' | 'volunteer';
 
@@ -129,7 +129,7 @@ export default function MembershipCalculatorPage() {
 
   return (
     <PublicPageShell>
-      <PageHero
+      <PageHeroNavy
         eyebrow="Registration Portal"
         title="Family Membership Pricing"
         description="Build a family group and see the applicable individual rates, caps, and estimated savings."

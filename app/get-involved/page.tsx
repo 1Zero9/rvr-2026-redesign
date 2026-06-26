@@ -9,7 +9,7 @@ import {
 } from 'lucide-react';
 import ContentSection from '@/components/layout/ContentSection';
 import PublicEnquiryForm from '@/components/forms/PublicEnquiryForm';
-import PageHero from '@/components/layout/PageHero';
+import PageHeroNavy from '@/components/layout/PageHeroNavy';
 import PublicPageShell from '@/components/layout/PublicPageShell';
 
 export const metadata: Metadata = {
@@ -49,7 +49,7 @@ const process = [
 export default function GetInvolvedPage() {
   return (
     <PublicPageShell>
-      <PageHero
+      <PageHeroNavy
         eyebrow="Volunteer with RVR"
         title="Help Build the Club"
         description="Give time, share skills, or start a coaching journey. RVR depends on volunteers who can make a practical contribution."

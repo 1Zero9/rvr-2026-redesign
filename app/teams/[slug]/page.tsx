@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import Header from '@/components/Header';
+import PublicPageShell from '@/components/layout/PublicPageShell';
+import PageHeroNavy from '@/components/layout/PageHeroNavy';
 import TeamPageTabs from '@/components/TeamPageTabs';
 import FavouriteButton from '@/components/FavouriteButton';
 import { KNOWN_DIVISIONS } from '@/config/ddsl-competitions';
@@ -334,43 +335,14 @@ export default async function TeamPage({
   );
 
   return (
-    <div
-      className="min-h-screen bg-brand-cream"
-      style={{
-        backgroundImage: `
-          linear-gradient(rgba(11,31,59,0.04) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(11,31,59,0.04) 1px, transparent 1px)
-        `,
-        backgroundSize: '40px 40px',
-      }}
-    >
-      <Header />
-
-      <main>
-
-        {/* ── Hero ────────────────────────────────────────────────────────── */}
-        <div className="relative bg-brand-navy overflow-hidden">
-          <div
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              backgroundImage: `linear-gradient(rgba(133,227,32,0.12) 1px, transparent 1px),
-                                linear-gradient(90deg, rgba(133,227,32,0.12) 1px, transparent 1px)`,
-              backgroundSize: '40px 40px',
-            }}
-          />
-          <div className="relative max-w-2xl mx-auto px-4 pt-6 pb-8">
-            <Link
-              href="/teams"
-              className="inline-block text-brand-sky text-sm mb-5 hover:text-brand-neon transition-colors"
-            >
-              ← All Teams
-            </Link>
-            <h1 className="font-display font-black italic text-4xl md:text-5xl uppercase tracking-tight leading-none text-brand-neon mb-2">
-              {displayName}
-            </h1>
-            <p className="text-brand-sky text-sm mb-3">
-              {division.ageGroup} · DDSL {CLUB_SEASON.currentSeason} Season
-            </p>
+    <PublicPageShell>
+      <PageHeroNavy
+        backHref="/teams"
+        backLabel="All Teams"
+        title={displayName}
+        description={`${division.ageGroup} · DDSL ${CLUB_SEASON.currentSeason} Season`}
+        actions={
+          <>
             <span className={`inline-block px-3 py-1 text-xs font-display font-black uppercase tracking-wider ${colours.bg} ${colours.text}`}>
               {teamBadgeLabel(teamType)}
             </span>
@@ -379,10 +351,10 @@ export default async function TeamPage({
               label={division.competitionName}
               variant="button"
             />
-          </div>
-        </div>
-        {/* Team colour accent line */}
-        <div className={`h-1 w-full ${colours.bg}`} />
+          </>
+        }
+        accentColor={colours.bg}
+      />
 
         {/* ── Tab navigation ───────────────────────────────────────────────── */}
         <TeamPageTabs
@@ -393,7 +365,6 @@ export default async function TeamPage({
           results={resultsPanel}
         />
 
-      </main>
-    </div>
+    </PublicPageShell>
   );
 }

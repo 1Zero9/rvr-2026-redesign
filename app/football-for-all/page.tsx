@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import PublicPageShell from '@/components/layout/PublicPageShell';
-import PageHero from '@/components/layout/PageHero';
+import PageHeroNavy from '@/components/layout/PageHeroNavy';
 
 interface Testimonial {
   quote: string;
@@ -89,13 +89,12 @@ export default function FootballForAllPage() {
 
   return (
     <PublicPageShell className={`transition-all ${fontSizeClass}`}>
-      <PageHero
-        eyebrow="Football For All"
-        title="Inclusive Sports Academy"
+      <PageHeroNavy
+        title="Football For All"
         description="Adaptive, mixed-ability, and walking football in a safe and welcoming club environment."
       />
 
-      <main className="flex-grow max-w-6xl w-full mx-auto px-4 md:px-6 py-12 space-y-12">
+      <div className="flex-grow max-w-6xl w-full mx-auto px-4 md:px-6 py-12 space-y-12">
         
         {/* TOP WIDGET: Accessibility Text Customizer */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 bg-brand-cream-dark border-3 border-zinc-300 rounded-2xl shadow-sm">
@@ -355,7 +354,7 @@ export default function FootballForAllPage() {
           </ul>
         </section>
 
-      </main>
+      </div>
 
     </PublicPageShell>
   );

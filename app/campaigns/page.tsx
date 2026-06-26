@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import PublicPageShell from '@/components/layout/PublicPageShell';
-import PageHero from '@/components/layout/PageHero';
+import PageHeroNavy from '@/components/layout/PageHeroNavy';
 import { getFeatureAvailability } from '@/lib/features';
 
 export const metadata: Metadata = {
@@ -14,11 +14,10 @@ export default async function CampaignsPage() {
 
   return (
     <PublicPageShell>
-      <PageHero
+      <PageHeroNavy
         eyebrow="Community Initiatives"
         title="Campaigns"
         description="Fundraising, competitions, and special club projects."
-        maxWidth="4xl"
       />
 
         <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6">

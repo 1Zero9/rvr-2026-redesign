@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import Header from '@/components/Header';
+import PublicPageShell from '@/components/layout/PublicPageShell';
+import PageHeroNavy from '@/components/layout/PageHeroNavy';
 import PublicEnquiryForm from '@/components/forms/PublicEnquiryForm';
 
 export const metadata: Metadata = {
@@ -42,79 +43,32 @@ const RULES = [
 
 export default function WalkingFootballPage() {
   return (
-    <div
-      className="min-h-screen bg-brand-cream"
-      style={{
-        backgroundImage: `
-          linear-gradient(rgba(11,31,59,0.04) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(11,31,59,0.04) 1px, transparent 1px)
-        `,
-        backgroundSize: '40px 40px',
-      }}
-    >
-      <Header />
-
-      <main>
-
-        {/* ── Hero ─────────────────────────────────────────────────────────── */}
-        <div className="relative overflow-hidden bg-brand-navy">
-          <div
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              backgroundImage: `linear-gradient(rgba(133,227,32,0.12) 1px, transparent 1px),
-                                linear-gradient(90deg, rgba(133,227,32,0.12) 1px, transparent 1px)`,
-              backgroundSize: '40px 40px',
-            }}
-          />
-          <div className="relative mx-auto max-w-3xl px-4 pb-10 pt-6">
-            <Link
-              href="/football-for-all"
-              className="inline-block text-brand-sky text-sm mb-6 hover:text-brand-neon transition-colors"
-            >
-              ← Football For All
-            </Link>
-
-            <div className="flex items-start gap-4 mb-4">
-              <span className="text-5xl select-none" aria-hidden="true">🚶</span>
-              <div>
-                <div className="inline-flex items-center gap-2 mb-3">
-                  <span className="bg-brand-neon text-brand-charcoal font-display font-black text-xs px-3 py-1 uppercase tracking-wider">
-                    Over 55s
-                  </span>
-                  <span className="bg-brand-green text-white font-display font-black text-xs px-3 py-1 uppercase tracking-wider">
-                    All abilities welcome
-                  </span>
-                </div>
-                <h1 className="font-display font-black italic text-4xl md:text-5xl uppercase tracking-tight leading-none text-brand-neon mb-2">
-                  Walking Football
-                </h1>
-                <p className="text-brand-sky text-base leading-relaxed max-w-xl">
-                  Football for everyone, at any pace. Stay active, make friends, and enjoy the beautiful game — no running required.
-                </p>
-              </div>
+    <PublicPageShell>
+      <PageHeroNavy
+        backHref="/football-for-all"
+        backLabel="Football For All"
+        title="Walking Football"
+        description="Football for everyone, at any pace. Stay active, make friends, and enjoy the beautiful game — no running required."
+        links={
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+            <div className="border border-brand-sky/30 bg-white/10 p-4">
+              <p className="text-brand-neon font-display font-black text-xs uppercase tracking-widest mb-1">Venue</p>
+              <p className="text-brand-cream text-sm font-semibold">Rivervalley Park, Swords</p>
             </div>
-
-            {/* Quick info strip */}
-            <div className="mt-6 grid grid-cols-2 md:grid-cols-3 gap-3">
-              <div className="border border-brand-sky/30 bg-white/10 p-4">
-                <p className="text-brand-neon font-display font-black text-xs uppercase tracking-widest mb-1">Venue</p>
-                <p className="text-brand-cream text-sm font-semibold">Rivervalley Park, Swords</p>
-              </div>
-              <div className="border border-brand-sky/30 bg-white/10 p-4">
-                <p className="text-brand-neon font-display font-black text-xs uppercase tracking-widest mb-1">Sessions</p>
-                <p className="text-brand-cream text-sm font-semibold">TBC — contact us to join</p>
-              </div>
-              <div className="border border-brand-sky/30 bg-white/10 p-4">
-                <p className="text-brand-neon font-display font-black text-xs uppercase tracking-widest mb-1">Open to</p>
-                <p className="text-brand-cream text-sm font-semibold">Adults 55+ · All abilities</p>
-              </div>
+            <div className="border border-brand-sky/30 bg-white/10 p-4">
+              <p className="text-brand-neon font-display font-black text-xs uppercase tracking-widest mb-1">Sessions</p>
+              <p className="text-brand-cream text-sm font-semibold">TBC — contact us to join</p>
+            </div>
+            <div className="border border-brand-sky/30 bg-white/10 p-4">
+              <p className="text-brand-neon font-display font-black text-xs uppercase tracking-widest mb-1">Open to</p>
+              <p className="text-brand-cream text-sm font-semibold">Adults 55+ · All abilities</p>
             </div>
           </div>
-        </div>
-        <div className="h-1 w-full bg-brand-green" />
+        }
+      />
 
-        {/* ── Main content ─────────────────────────────────────────────────── */}
-        <div className="mx-auto max-w-3xl px-4 py-10 space-y-10">
+      {/* ── Main content ─────────────────────────────────────────────────── */}
+      <div className="mx-auto max-w-3xl px-4 py-10 space-y-10">
 
           {/* What is Walking Football */}
           <section className="bg-white rounded-2xl border-2 border-brand-navy p-6 sm:p-8">
@@ -186,9 +140,7 @@ export default function WalkingFootballPage() {
             />
           </section>
 
-        </div>
-
-      </main>
-    </div>
+      </div>
+    </PublicPageShell>
   );
 }

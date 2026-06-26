@@ -1,4 +1,4 @@
-import Header from "@/components/Header";
+import PublicPageShell from "@/components/layout/PublicPageShell";
 import KitDesignCompetition from "@/components/campaigns/KitDesignCompetition";
 import type { KitSubmission } from "@/types/campaigns";
 import { notFound } from "next/navigation";
@@ -25,18 +25,8 @@ export default async function AnniversaryKitPage() {
   }));
 
   return (
-    <div
-      className="min-h-screen bg-brand-cream"
-      style={{
-        backgroundImage: `linear-gradient(rgba(11,31,59,0.04) 1px, transparent 1px),
-                          linear-gradient(90deg, rgba(11,31,59,0.04) 1px, transparent 1px)`,
-        backgroundSize: '40px 40px',
-      }}
-    >
-      <Header />
-      <main>
-        <KitDesignCompetition initialSubmissions={submissions} />
-      </main>
-    </div>
+    <PublicPageShell>
+      <KitDesignCompetition initialSubmissions={submissions} />
+    </PublicPageShell>
   );
 }
