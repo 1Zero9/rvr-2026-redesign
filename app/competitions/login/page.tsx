@@ -55,7 +55,7 @@ export default async function CompetitionsLoginPage({
           action={async (formData: FormData) => {
             "use server";
             const email = formData.get("email") as string;
-            await signIn("nodemailer", {
+            await signIn("resend", {
               email,
               redirectTo: "/competitions/admin",
             });
