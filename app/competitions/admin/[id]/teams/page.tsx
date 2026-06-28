@@ -1,9 +1,12 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { requireEventAdmin } from "@/lib/competitions/auth-helpers";
 import { CompetitionAdminShell } from "@/components/competitions/CompetitionAdminShell";
 import { TeamGrid } from "@/components/competitions/TeamGrid";
+import { distributeToTeams, suggestTeamCount } from "@/lib/competitions/randomiser";
+import { getThemeNames } from "@/lib/competitions/theme-pools";
+import { createId } from "@paralleldrive/cuid2";
 
 export const metadata = { title: "Teams | RVR Competitions" };
 
@@ -38,6 +41,43 @@ export default async function TeamsPage({
   ];
 
   const totalPlayers = competition.teams.reduce((s, t) => s + t.players.length, 0);
+  const playerCount = await prisma.playerPoolEntry.count({ where: { competitionId: id } });
+
+  async function generateTeams() {
+    "use server";
+    const comp = await prisma.competition.findUnique({
+      where: { id },
+      include: { playerPool: { where: { status: "UNASSIGNED" } } },
+    });
+    if (!comp) return;
+
+    const players = comp.playerPool;
+    const teamCount = suggestTeamCount(players.length);
+    const themeNames = getThemeNames(comp.teamTheme, comp.customThemeNames, teamCount);
+    const distributed = distributeToTeams(players, teamCount);
+
+    await prisma.$transaction(async (tx) => {
+      await tx.teamPlayer.deleteMany({ where: { team: { competitionId: id } } });
+      await tx.competitionTeam.deleteMany({ where: { competitionId: id } });
+      for (let i = 0; i < teamCount; i++) {
+        const teamId = createId();
+        await tx.competitionTeam.create({
+          data: { id: teamId, competitionId: id, name: themeNames[i] ?? `Team ${i + 1}`, themeName: themeNames[i] ?? `Team ${i + 1}` },
+        });
+        const group = distributed[i] ?? [];
+        if (group.length > 0) {
+          await tx.teamPlayer.createMany({
+            data: group.map((p) => ({ id: createId(), teamId, playerPoolEntryId: p.id })),
+          });
+          await tx.playerPoolEntry.updateMany({
+            where: { id: { in: group.map((p) => p.id) } },
+            data: { status: "ACTIVE" },
+          });
+        }
+      }
+    });
+    redirect(`/competitions/admin/${id}/teams`);
+  }
 
   return (
     <CompetitionAdminShell nav={nav} title="Teams">
@@ -47,19 +87,11 @@ export default async function TeamsPage({
             {competition.teams.length} teams · {totalPlayers} players assigned
           </p>
           <div className="flex gap-2 flex-wrap">
-            <form
-              action={async () => {
-                "use server";
-                const res = await fetch(
-                  `${process.env.NEXTAUTH_URL ?? "http://localhost:3000"}/api/competitions/${id}/teams/generate`,
-                  { method: "POST" },
-                );
-                if (!res.ok) throw new Error("Generate failed");
-              }}
-            >
+            <form action={generateTeams}>
               <button
                 type="submit"
-                className="min-h-[44px] px-5 bg-brand-navy text-brand-neon font-display font-black italic uppercase text-sm border-3 border-brand-charcoal shadow-brutalist hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all"
+                disabled={playerCount === 0}
+                className="min-h-[44px] px-5 bg-brand-navy text-brand-neon font-display font-black italic uppercase text-sm border-3 border-brand-charcoal shadow-brutalist hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 Auto-Generate Teams
               </button>
@@ -67,14 +99,20 @@ export default async function TeamsPage({
           </div>
         </div>
 
-        {competition.teams.length === 0 ? (
+        {playerCount === 0 && (
+          <div className="bg-brand-sky/10 border border-brand-sky/30 px-4 py-3 text-sm text-brand-navy">
+            Upload players first, then auto-generate teams.
+          </div>
+        )}
+
+        {competition.teams.length === 0 && playerCount > 0 ? (
           <div className="text-center py-16 border-2 border-dashed border-brand-navy/20">
             <p className="text-zinc-400 text-sm">No teams yet.</p>
-            <p className="text-zinc-400 text-xs mt-1">Upload players first, then auto-generate teams.</p>
+            <p className="text-zinc-400 text-xs mt-1">{playerCount} players in pool — click Auto-Generate Teams.</p>
           </div>
-        ) : (
+        ) : competition.teams.length > 0 ? (
           <TeamGrid teams={competition.teams} />
-        )}
+        ) : null}
 
         {competition.teams.length > 0 && (
           <div className="pt-4 border-t border-brand-navy/10">
