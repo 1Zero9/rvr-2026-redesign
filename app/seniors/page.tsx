@@ -186,7 +186,39 @@ export default async function SeniorsPage() {
             )}
           </section>
 
-          {/* ── Section 3: Our Teams ─────────────────────────────────────── */}
+          {/* ── Section 3: Ladies Football Fit ───────────────────────────── */}
+          <section>
+            <h2 className="font-display italic font-black uppercase text-xl text-brand-charcoal border-l-4 border-brand-green pl-3 mb-4">
+              Ladies Football Fit
+            </h2>
+            <div className="bg-brand-navy border-2 border-brand-green shadow-brutalist overflow-hidden">
+              <div className="h-1 bg-brand-neon" />
+              <div className="p-5 space-y-3">
+                <p className="font-display italic font-black text-brand-neon text-xl">
+                  GET FIT · HAVE FUN · LEARN THE BASICS
+                </p>
+                <p className="text-brand-sky text-sm leading-relaxed">
+                  A weekly football fitness session designed for ladies of all ages and abilities. Whether you&apos;re a complete beginner or returning to the game, all are welcome at Rivervalley.
+                </p>
+                <div className="grid grid-cols-3 gap-3 pt-2">
+                  <div className="bg-white/10 border border-brand-sky/30 p-3">
+                    <p className="text-brand-neon text-[10px] font-display font-black uppercase tracking-widest mb-1">Day &amp; Time</p>
+                    <p className="text-brand-cream text-xs font-semibold">Tuesdays at 8pm</p>
+                  </div>
+                  <div className="bg-white/10 border border-brand-sky/30 p-3">
+                    <p className="text-brand-neon text-[10px] font-display font-black uppercase tracking-widest mb-1">Venue</p>
+                    <p className="text-brand-cream text-xs font-semibold">Small Astro, Rivervalley</p>
+                  </div>
+                  <div className="bg-white/10 border border-brand-sky/30 p-3">
+                    <p className="text-brand-neon text-[10px] font-display font-black uppercase tracking-widest mb-1">Cost</p>
+                    <p className="text-brand-cream text-xs font-semibold">€5 per session</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* ── Section 4: Our Teams ─────────────────────────────────────── */}
           <section>
             <h2 className="font-display italic font-black uppercase text-xl text-brand-charcoal border-l-4 border-brand-green pl-3 mb-4">
               Our Teams

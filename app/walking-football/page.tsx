@@ -5,8 +5,8 @@ import PageHeroNavy from '@/components/layout/PageHeroNavy';
 import PublicEnquiryForm from '@/components/forms/PublicEnquiryForm';
 
 export const metadata: Metadata = {
-  title: 'Walking Football (Over 55s) | Rivervalley Rangers AFC',
-  description: 'Walking Football at Rivervalley Rangers AFC — open to all adults over 55. No running required. Stay active, social, and connected to the game in Swords, Dublin.',
+  title: 'Walking Football | Rivervalley Rangers AFC',
+  description: 'Walking Football at Rivervalley Rangers AFC — open to all adults. No running required. Stay active, social, and connected to the game in Swords, Dublin.',
 };
 
 const BENEFITS = [
@@ -50,18 +50,22 @@ export default function WalkingFootballPage() {
         title="Walking Football"
         description="Football for everyone, at any pace. Stay active, make friends, and enjoy the beautiful game — no running required."
         links={
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             <div className="border border-brand-sky/30 bg-white/10 p-4">
               <p className="text-brand-neon font-display font-black text-xs uppercase tracking-widest mb-1">Venue</p>
-              <p className="text-brand-cream text-sm font-semibold">Rivervalley Park, Swords</p>
+              <p className="text-brand-cream text-sm font-semibold">Rivervalley Astro, Swords</p>
             </div>
             <div className="border border-brand-sky/30 bg-white/10 p-4">
               <p className="text-brand-neon font-display font-black text-xs uppercase tracking-widest mb-1">Sessions</p>
-              <p className="text-brand-cream text-sm font-semibold">TBC — contact us to join</p>
+              <p className="text-brand-cream text-sm font-semibold">Every Monday night, 8–9pm</p>
+            </div>
+            <div className="border border-brand-sky/30 bg-white/10 p-4">
+              <p className="text-brand-neon font-display font-black text-xs uppercase tracking-widest mb-1">Cost</p>
+              <p className="text-brand-cream text-sm font-semibold">€5 per week</p>
             </div>
             <div className="border border-brand-sky/30 bg-white/10 p-4">
               <p className="text-brand-neon font-display font-black text-xs uppercase tracking-widest mb-1">Open to</p>
-              <p className="text-brand-cream text-sm font-semibold">Adults 55+ · All abilities</p>
+              <p className="text-brand-cream text-sm font-semibold">All adults · All abilities</p>
             </div>
           </div>
         }
@@ -80,7 +84,7 @@ export default function WalkingFootballPage() {
                 Walking Football is one of the fastest growing sports in Ireland — and for good reason. It&apos;s the real game, played at walking pace, designed specifically for adults who want to stay active without the physical demands of traditional football.
               </p>
               <p>
-                At Rivervalley Rangers AFC we run walking football sessions open to all adults over 55, whether you played the game for decades or haven&apos;t kicked a ball since school. Our coaches create a welcoming, sociable environment where everyone can enjoy the sport.
+                At Rivervalley Rangers AFC we run walking football sessions open to all adults, whether you played the game for decades or haven&apos;t kicked a ball since school. Our coaches create a welcoming, sociable environment where everyone can enjoy the sport.
               </p>
               <p>
                 Sessions are led by FAI-qualified coaches and are covered by the club&apos;s full insurance and Garda Vetting policy. All participants are welcome — men and women, all fitness levels, all backgrounds.

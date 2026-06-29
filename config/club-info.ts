@@ -51,6 +51,13 @@ export const clubTimeline = [
     status: 'verified' as const,
   },
   {
+    year: '2024',
+    title: 'FAI Club Mark Award',
+    description:
+      'Rivervalley Rangers AFC awarded FAI Club Mark accreditation, recognising the club\'s high standards in player welfare, governance, and community football. Supported by Circle K.',
+    status: 'verified' as const,
+  },
+  {
     year: 'Archive',
     title: 'Club milestones being compiled',
     description:

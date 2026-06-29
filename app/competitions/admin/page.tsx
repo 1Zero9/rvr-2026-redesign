@@ -27,8 +27,16 @@ export default async function CompetitionsAdminPage() {
 
   const isSuperAdmin = user.globalRole === GlobalRole.SUPER_ADMIN;
 
+  const dashboardNav = isSuperAdmin
+    ? [
+        { href: "/competitions/admin", label: "Dashboard" },
+        { href: "/competitions/admin/users", label: "Users" },
+        { href: "/competitions/admin/new", label: "New Competition" },
+      ]
+    : undefined;
+
   return (
-    <CompetitionAdminShell title="Competitions Dashboard">
+    <CompetitionAdminShell nav={dashboardNav} title="Competitions Dashboard">
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <p className="text-sm text-zinc-500">{competitions.length} competition{competitions.length !== 1 ? "s" : ""}</p>

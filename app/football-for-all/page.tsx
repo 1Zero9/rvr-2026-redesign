@@ -157,7 +157,7 @@ export default function FootballForAllPage() {
                 Weekly Session Details
               </h3>
               <p className="font-sans text-sm font-semibold text-zinc-700 leading-relaxed">
-                Sessions run every Saturday from **12:30 PM to 1:30 PM** at the **Ward 3G All-Weather Astro**. Matches are played on short, secure pitches with plenty of seating space for parents.
+                Sessions run every Saturday at **2:30pm** at the **Rivervalley Community Centre**. Fun and friendly sessions for girls and boys — all welcome.
               </p>
             </div>
 
