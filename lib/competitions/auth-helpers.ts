@@ -18,6 +18,14 @@ export async function requireSuperAdmin(): Promise<SessionUser> {
   return user;
 }
 
+export async function requireSiteAdmin(): Promise<SessionUser> {
+  const user = await requireCompetitionSession();
+  if (user.globalRole !== GlobalRole.SITE_ADMIN && user.globalRole !== GlobalRole.SUPER_ADMIN) {
+    redirect("/admin/login");
+  }
+  return user;
+}
+
 export async function requireEventAdmin(competitionId: string): Promise<SessionUser> {
   const user = await requireCompetitionSession();
   if (user.globalRole === GlobalRole.SUPER_ADMIN) return user;

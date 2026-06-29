@@ -55,7 +55,12 @@ export default async function AdminUsersPage() {
     const role = formData.get("role") as string;
     await prisma.adminUser.update({
       where: { id: userId },
-      data: { globalRole: role === "SUPER_ADMIN" ? GlobalRole.SUPER_ADMIN : null },
+      data: {
+        globalRole:
+          role === "SUPER_ADMIN" ? GlobalRole.SUPER_ADMIN :
+          role === "SITE_ADMIN"  ? GlobalRole.SITE_ADMIN  :
+          null,
+      },
     });
     redirect("/competitions/admin/users");
   }
@@ -126,6 +131,11 @@ export default async function AdminUsersPage() {
                         Super Admin
                       </span>
                     )}
+                    {user.globalRole === GlobalRole.SITE_ADMIN && (
+                      <span className="px-2 py-0.5 text-xs font-bold bg-brand-sky text-brand-navy uppercase">
+                        Site Admin
+                      </span>
+                    )}
                   </div>
                   {user.name && (
                     <p className="text-xs text-zinc-400 mt-0.5">{user.email}</p>
@@ -145,21 +155,23 @@ export default async function AdminUsersPage() {
                 </div>
 
                 <div className="flex flex-wrap gap-2 shrink-0">
-                  {/* Toggle super admin */}
-                  <form action={setGlobalRole}>
+                  {/* Role assignment */}
+                  <form action={setGlobalRole} className="flex items-center gap-2">
                     <input type="hidden" name="userId" value={user.id} />
-                    <input
-                      type="hidden"
+                    <select
                       name="role"
-                      value={user.globalRole === GlobalRole.SUPER_ADMIN ? "" : "SUPER_ADMIN"}
-                    />
+                      defaultValue={user.globalRole ?? ""}
+                      className="min-h-[36px] px-2 text-xs font-bold border-2 border-brand-navy/30 bg-white focus:outline-none focus:border-brand-neon"
+                    >
+                      <option value="">No admin role</option>
+                      <option value="SITE_ADMIN">Site Admin</option>
+                      <option value="SUPER_ADMIN">Super Admin</option>
+                    </select>
                     <button
                       type="submit"
                       className="min-h-[36px] px-3 text-xs font-bold border-2 border-brand-navy/30 hover:border-brand-navy transition-colors"
                     >
-                      {user.globalRole === GlobalRole.SUPER_ADMIN
-                        ? "Remove Super Admin"
-                        : "Make Super Admin"}
+                      Update
                     </button>
                   </form>
 

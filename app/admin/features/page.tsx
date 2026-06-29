@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import { revalidatePath } from 'next/cache';
-import AdminNav from '@/components/admin/AdminNav';
 import { prisma } from '@/lib/prisma';
 import { requireAdmin } from '@/lib/admin/require-admin';
 import {
@@ -48,7 +47,6 @@ export default async function FeatureAvailabilityPage() {
   return (
     <main className="min-h-screen bg-brand-cream px-4 py-8 text-brand-charcoal">
       <div className="mx-auto max-w-4xl">
-        <AdminNav />
         <h1 className="font-display text-4xl font-black uppercase italic text-brand-navy">
           Feature Availability
         </h1>

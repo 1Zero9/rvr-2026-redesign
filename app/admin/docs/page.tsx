@@ -2,7 +2,6 @@ import fs from 'fs/promises';
 import path from 'path';
 import Image from 'next/image';
 import { APP_VERSION } from '@/config/version';
-import AdminNav from '@/components/admin/AdminNav';
 
 export default async function AdminDocsPage() {
   const [changelog, setup] = await Promise.all([
@@ -13,7 +12,6 @@ export default async function AdminDocsPage() {
   return (
     <main className="min-h-screen bg-brand-navy text-brand-cream font-sans p-8">
       <div className="max-w-5xl mx-auto">
-        <AdminNav />
 
         <div className="mb-10">
           <h1 className="font-display font-black text-4xl uppercase tracking-tight text-brand-cream italic">

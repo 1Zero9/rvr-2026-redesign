@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import { revalidatePath } from 'next/cache';
-import AdminNav from '@/components/admin/AdminNav';
 import { requireAdmin } from '@/lib/admin/require-admin';
 import { prisma } from '@/lib/prisma';
 
@@ -28,7 +27,6 @@ export default async function EnquiriesPage() {
   return (
     <main className="min-h-screen bg-brand-cream px-4 py-8 text-brand-charcoal">
       <div className="mx-auto max-w-5xl">
-        <AdminNav />
         <h1 className="font-display text-4xl font-black uppercase italic text-brand-navy">
           Public Enquiries
         </h1>

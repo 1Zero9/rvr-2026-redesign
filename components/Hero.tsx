@@ -1,9 +1,17 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
+import { UserPlus, CalendarDays, Trophy, Newspaper } from 'lucide-react';
 import { CLUB_SEASON } from '@/config/club-season';
 import { computeClubStats } from '@/lib/club-stats';
-import AnnouncementTrigger from './announcements/AnnouncementTrigger';
+
+const HERO_CTAS = [
+  { label: 'Join RVR Academy', sub: 'Register for 2026/27',    href: '/register',      icon: UserPlus    },
+  { label: 'Book Astro Pitch', sub: 'Reserve your slot online', href: '/astro-booking', icon: CalendarDays },
+  { label: 'Match Day',        sub: 'Fixtures & results',       href: '/fixtures',      icon: Trophy       },
+  { label: 'Club News',        sub: 'Latest updates',           href: '/news',          icon: Newspaper    },
+] as const;
 
 const { yearsActive, totalTeams, estimatedPlayers } = computeClubStats();
 
@@ -71,7 +79,7 @@ export default function Hero() {
             alt="Rivervalley Rangers AFC crest"
             width={288}
             height={288}
-            className="w-24 h-24 md:w-44 md:h-44 lg:w-60 lg:h-60 object-contain shrink-0 select-none"
+            className="w-20 h-20 md:w-36 md:h-36 lg:w-48 lg:h-48 object-contain shrink-0 select-none"
           />
           <h1 className="font-display font-black text-5xl md:text-7xl lg:text-8xl tracking-tighter uppercase leading-none italic select-none skew-x-[-4deg] text-center md:text-left">
             FEEL THE <span className="text-brand-neon">RVR</span> ENERGY
@@ -82,48 +90,18 @@ export default function Hero() {
           Rivervalley Rangers AFC is Swords&apos; premier soccer club. Empowering local athletes across all ages, formats, and levels.
         </p>
 
-        <div className="flex flex-col md:flex-row items-center justify-center gap-4 w-full max-w-2xl mb-16">
-          <a
-            href="/register"
-            className="btn-brutalist-neon px-8 py-4.5 text-lg w-full md:w-auto text-center inline-flex items-center justify-center gap-2 group"
-          >
-            Join RVR Academy
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth="3"
-              stroke="currentColor"
-              className="w-5 h-5 group-hover:translate-x-1 transition-transform"
-              aria-hidden="true"
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 w-full max-w-xl mb-16">
+          {HERO_CTAS.map(({ label, sub, href, icon: Icon }) => (
+            <Link
+              key={href}
+              href={href}
+              className="flex flex-col items-center gap-2 rounded-2xl border-2 border-white/20 px-3 py-5 text-center bg-white/10 text-white hover:bg-white/20 backdrop-blur-sm transition-all duration-200 select-none"
             >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-            </svg>
-          </a>
-
-          <a
-            href="/astro-booking"
-            className="btn-brutalist-green px-8 py-4.5 text-lg w-full md:w-auto text-center inline-flex items-center justify-center gap-2 group"
-          >
-            Book Astro Pitch
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth="3"
-              stroke="currentColor"
-              className="w-5 h-5 group-hover:rotate-12 transition-transform"
-              aria-hidden="true"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"
-              />
-            </svg>
-          </a>
-
-          <AnnouncementTrigger heroMode />
+              <Icon className="w-6 h-6 shrink-0" aria-hidden="true" />
+              <span className="font-display font-black text-[11px] uppercase tracking-wide leading-tight">{label}</span>
+              <span className="text-[9px] font-bold leading-tight text-white/50">{sub}</span>
+            </Link>
+          ))}
         </div>
 
         {/* Stat cards — scatter-then-snap entrance */}

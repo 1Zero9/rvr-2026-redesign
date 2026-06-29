@@ -1,7 +1,6 @@
 import { getPendingShirts } from '@/lib/moderation/get-pending-shirts';
 import { APP_VERSION } from '@/config/version';
 import ModerationActions from './ModerationActions';
-import AdminNav from '@/components/admin/AdminNav';
 import { requireAdmin } from '@/lib/admin/require-admin';
 import { prisma } from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
@@ -29,7 +28,6 @@ export default async function ModerationPage() {
   return (
     <main className="min-h-screen bg-brand-navy text-brand-cream p-8 font-sans">
       <div className="max-w-7xl mx-auto">
-        <AdminNav />
 
         <div className="mb-10">
           <h1 className="font-display font-black text-4xl uppercase tracking-tight text-brand-cream italic">

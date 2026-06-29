@@ -2,7 +2,7 @@ import Header from '@/components/Header';
 import Hero from '@/components/Hero';
 import Link from 'next/link';
 import TeletextFixtures from '@/components/TeletextFixtures';
-import AnnouncementCard from '@/components/AnnouncementCard';
+import NewsCarousel from '@/components/NewsCarousel';
 import AnnouncementTrigger from '@/components/announcements/AnnouncementTrigger';
 import InstagramFeed from '@/components/InstagramFeed';
 import { CLUB_SEASON } from '@/config/club-season';
@@ -134,13 +134,7 @@ export default async function Home() {
                   See all →
                 </Link>
               </div>
-              <div className="flex gap-4 overflow-x-auto pb-3 snap-x snap-mandatory -mx-6 px-6 scroll-smooth">
-                {announcements.map((a) => (
-                  <div key={a.id} className="snap-start shrink-0 w-[270px] sm:w-[300px]">
-                    <AnnouncementCard announcement={a} href={a.ctaUrl ?? `/news/${a.id}`} />
-                  </div>
-                ))}
-              </div>
+              <NewsCarousel announcements={announcements} />
             </div>
           </section>
         )}
@@ -343,13 +337,13 @@ export default async function Home() {
             <div className="flex flex-col md:flex-row gap-4 shrink-0 w-full md:w-auto">
               <Link
                 href="/register"
-                className="btn-brutalist-green px-8 py-4 text-base text-center"
+                className="bg-brand-charcoal text-white border-3 border-brand-charcoal font-display font-black uppercase tracking-wide text-sm px-8 py-4 rounded-2xl shadow-brutalist hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all text-center"
               >
                 Register Now
               </Link>
               <Link
                 href="/membership-calculator"
-                className="border-3 border-brand-charcoal bg-transparent text-brand-charcoal font-display font-black uppercase tracking-wide text-sm px-8 py-4 rounded-2xl shadow-brutalist hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all text-center"
+                className="bg-white text-brand-charcoal border-3 border-brand-charcoal font-display font-black uppercase tracking-wide text-sm px-8 py-4 rounded-2xl shadow-brutalist hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all text-center"
               >
                 Check Fees
               </Link>

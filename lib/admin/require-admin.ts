@@ -1,9 +1,11 @@
-import { cookies } from 'next/headers';
-import { ADMIN_COOKIE_NAME, verifyAdminSession } from '@/lib/admin/session';
+import { redirect } from 'next/navigation';
+import { auth } from '@/auth';
+import { GlobalRole } from '@prisma/client';
 
 export async function requireAdmin(): Promise<void> {
-  const token = (await cookies()).get(ADMIN_COOKIE_NAME)?.value;
-  if (!verifyAdminSession(token)) {
-    throw new Error('Unauthorised admin action');
+  const session = await auth();
+  const role = (session?.user as { globalRole?: string | null } | undefined)?.globalRole;
+  if (role !== GlobalRole.SITE_ADMIN && role !== GlobalRole.SUPER_ADMIN) {
+    redirect('/admin/login');
   }
 }

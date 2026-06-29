@@ -1,6 +1,5 @@
 import { revalidatePath } from 'next/cache';
 import type { Metadata } from 'next';
-import AdminNav from '@/components/admin/AdminNav';
 import { requireAdmin } from '@/lib/admin/require-admin';
 import { prisma } from '@/lib/prisma';
 
@@ -57,7 +56,6 @@ export default async function RegistrationsPage() {
   return (
     <main className="min-h-screen bg-brand-cream px-4 py-8 text-brand-charcoal">
       <div className="mx-auto max-w-5xl">
-        <AdminNav />
 
         <div className="flex items-center gap-4 mb-2">
           <h1 className="font-display text-4xl font-black uppercase italic text-brand-navy">

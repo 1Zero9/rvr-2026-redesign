@@ -44,7 +44,7 @@ export default function AnnouncementTrigger({ heroMode, pinnedAnnouncement }: Pr
         onClick={() => setDrawerOpen(true)}
         className={heroMode
           ? 'group border-3 border-white/60 bg-white/10 text-white font-display font-black uppercase tracking-wide text-lg px-8 py-4 rounded-full transition-all text-center flex items-center justify-center gap-2 min-h-[44px] w-full md:w-auto hover:bg-brand-neon hover:text-brand-charcoal hover:border-brand-neon'
-          : 'group border-3 border-brand-neon bg-transparent text-brand-neon font-display font-black uppercase tracking-wide text-sm px-8 py-4 rounded-2xl shadow-brutalist transition-all text-center flex items-center justify-center gap-2 min-h-[44px] w-full md:w-auto hover:bg-brand-neon hover:text-brand-charcoal hover:shadow-none hover:translate-x-1 hover:translate-y-1'
+          : 'group border-3 border-brand-charcoal bg-transparent text-brand-charcoal font-display font-black uppercase tracking-wide text-sm px-8 py-4 rounded-2xl shadow-brutalist transition-all text-center flex items-center justify-center gap-2 min-h-[44px] w-full md:w-auto hover:bg-brand-charcoal hover:text-white hover:shadow-none hover:translate-x-1 hover:translate-y-1'
         }
       >
         <span>📢</span>

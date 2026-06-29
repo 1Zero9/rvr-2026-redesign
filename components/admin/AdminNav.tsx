@@ -2,11 +2,11 @@ import Link from 'next/link';
 import { prisma } from '@/lib/prisma';
 
 const SITE_LINKS = [
-  { href: '/admin/announcements', label: 'Announcements' },
-  { href: '/admin/registrations', label: 'Registrations', badge: 'reg' as const },
-  { href: '/admin/enquiries',     label: 'Enquiries',     badge: 'enq' as const },
-  { href: '/admin/moderation',    label: 'Moderation'    },
-  { href: '/admin/boot-room',     label: 'Boot Room'     },
+  { href: '/admin/announcements', label: 'Announcements', badge: 'ann' as const },
+  { href: '/admin/registrations', label: 'Registrations',  badge: 'reg' as const },
+  { href: '/admin/enquiries',     label: 'Enquiries',       badge: 'enq' as const },
+  { href: '/admin/moderation',    label: 'Moderation'       },
+  { href: '/admin/boot-room',     label: 'Boot Room'        },
 ];
 
 const SUPER_LINKS = [
@@ -16,54 +16,74 @@ const SUPER_LINKS = [
   { href: '/admin/docs',               label: 'Docs'         },
 ];
 
-const BASE  = 'inline-flex min-h-10 items-center gap-1.5 border-2 px-3 font-display text-[11px] font-black uppercase tracking-wide transition';
-const NAVY  = `${BASE} border-brand-navy text-brand-navy hover:bg-brand-navy hover:text-white`;
-const SUPER_STYLE = `${BASE} border-brand-navy/40 text-brand-navy/60 hover:border-brand-navy hover:text-brand-navy hover:bg-brand-navy hover:text-white`;
-
 export default async function AdminNav() {
-  const [newRegCount, newEnqCount] = await Promise.all([
+  const [annCount, regCount, enqCount] = await Promise.all([
+    prisma.announcement.count({ where: { isPublished: false } }),
     prisma.playerProfile.count({ where: { registrationStatus: 'NEW' } }),
     prisma.publicEnquiry.count({ where: { status: 'NEW' } }),
   ]);
 
-  const badges = { reg: newRegCount, enq: newEnqCount };
+  const badges = { ann: annCount, reg: regCount, enq: enqCount };
 
   return (
-    <nav aria-label="Admin navigation" className="mb-8 space-y-2">
-      {/* Site Admin row */}
-      <div className="flex flex-wrap items-center gap-1.5">
-        <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400 pr-1 select-none">
-          Site
-        </span>
-        <Link href="/admin" className={`${NAVY} border-brand-navy/30 text-brand-navy/50 hover:border-brand-navy hover:text-white hover:bg-brand-navy`}>
-          ← Dashboard
-        </Link>
-        {SITE_LINKS.map((link) => {
-          const count = link.badge ? badges[link.badge] : 0;
-          return (
-            <Link key={link.href} href={link.href} className={NAVY}>
-              {link.label}
-              {count > 0 && (
-                <span className="bg-brand-neon text-brand-charcoal font-black text-[9px] px-1 py-0.5 min-w-[16px] text-center leading-none">
-                  {count}
-                </span>
-              )}
-            </Link>
-          );
-        })}
-      </div>
+    <header className="w-full bg-brand-navy text-white">
+      <div className="max-w-6xl mx-auto px-4 h-12 flex items-center gap-6">
 
-      {/* Super Admin row */}
-      <div className="flex flex-wrap items-center gap-1.5">
-        <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400 pr-1 select-none">
-          Super
-        </span>
-        {SUPER_LINKS.map((link) => (
-          <Link key={link.href} href={link.href} className={SUPER_STYLE}>
-            {link.label}
-          </Link>
-        ))}
+        {/* Brand */}
+        <Link
+          href="/admin"
+          className="font-display font-black italic text-sm uppercase tracking-wide text-brand-neon shrink-0 hover:text-white transition-colors"
+        >
+          RVR Admin
+        </Link>
+
+        <span className="h-4 w-px bg-white/20 shrink-0" />
+
+        {/* Site links */}
+        <nav className="flex items-center gap-1 overflow-x-auto" aria-label="Site admin">
+          {SITE_LINKS.map((link) => {
+            const count = link.badge ? badges[link.badge] : 0;
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="relative flex items-center gap-1.5 px-3 h-8 text-xs font-bold uppercase tracking-wide text-white/70 hover:text-white hover:bg-white/10 rounded transition-colors whitespace-nowrap"
+              >
+                {link.label}
+                {count > 0 && (
+                  <span className="bg-brand-neon text-brand-charcoal font-black text-[9px] px-1 min-w-[16px] text-center leading-4 rounded-sm">
+                    {count}
+                  </span>
+                )}
+              </Link>
+            );
+          })}
+        </nav>
+
+        <span className="h-4 w-px bg-white/20 shrink-0" />
+
+        {/* Super links */}
+        <nav className="flex items-center gap-1 overflow-x-auto" aria-label="Super admin">
+          {SUPER_LINKS.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="px-3 h-8 flex items-center text-xs font-bold uppercase tracking-wide text-white/40 hover:text-white/70 hover:bg-white/10 rounded transition-colors whitespace-nowrap"
+            >
+              {link.label}
+            </Link>
+          ))}
+        </nav>
+
+        {/* Back to site — pushed to the right */}
+        <Link
+          href="/"
+          className="ml-auto shrink-0 text-xs font-bold text-white/40 hover:text-white transition-colors whitespace-nowrap"
+        >
+          ← Site
+        </Link>
+
       </div>
-    </nav>
+    </header>
   );
 }

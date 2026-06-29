@@ -699,6 +699,7 @@ model BootRoomListing {
 // ---------------------------------------------------------------------------
 
 enum GlobalRole {
+  SITE_ADMIN
   SUPER_ADMIN
 }
 
