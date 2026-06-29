@@ -17,14 +17,17 @@ const CATEGORY_LABEL: Record<string, string> = {
 
 export default function AnnouncementCard({
   announcement: a,
+  href,
 }: {
   announcement: Announcement;
+  href?: string;
 }) {
   const style = CATEGORY_STYLE[a.category] ?? CATEGORY_STYLE.NEWS;
+  const dest = href ?? `/news/${a.id}`;
 
   return (
     <Link
-      href={`/news/${a.id}`}
+      href={dest}
       className="group bg-white rounded-2xl border border-zinc-100 shadow-sm hover:shadow-md transition-shadow flex flex-col overflow-hidden h-full"
     >
       <div className={`h-1 shrink-0 ${style.strip}`} />

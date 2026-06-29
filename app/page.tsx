@@ -137,7 +137,7 @@ export default async function Home() {
               <div className="flex gap-4 overflow-x-auto pb-3 snap-x snap-mandatory -mx-6 px-6 scroll-smooth">
                 {announcements.map((a) => (
                   <div key={a.id} className="snap-start shrink-0 w-[270px] sm:w-[300px]">
-                    <AnnouncementCard announcement={a} />
+                    <AnnouncementCard announcement={a} href={a.ctaUrl ?? `/news/${a.id}`} />
                   </div>
                 ))}
               </div>
