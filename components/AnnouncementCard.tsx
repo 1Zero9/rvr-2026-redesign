@@ -1,11 +1,18 @@
 import Link from 'next/link';
 import type { Announcement } from '@prisma/client';
 
-const CATEGORY_STYLE: Record<string, { border: string; badge: string }> = {
-  RECRUITMENT: { border: 'border-l-brand-neon',   badge: 'bg-brand-neon text-brand-charcoal'  },
-  EVENT:       { border: 'border-l-brand-sky',    badge: 'bg-brand-sky text-brand-charcoal'   },
-  NEWS:        { border: 'border-l-brand-green',  badge: 'bg-brand-green text-white'          },
-  VOLUNTEER:   { border: 'border-l-brand-maroon', badge: 'bg-brand-maroon text-white'         },
+const CATEGORY_STYLE: Record<string, { strip: string; badge: string }> = {
+  RECRUITMENT: { strip: 'bg-brand-neon',    badge: 'bg-brand-neon/20 text-brand-charcoal'   },
+  EVENT:       { strip: 'bg-brand-sky',     badge: 'bg-brand-sky/20 text-brand-navy'        },
+  NEWS:        { strip: 'bg-brand-green',   badge: 'bg-brand-green/10 text-brand-green'     },
+  VOLUNTEER:   { strip: 'bg-brand-maroon',  badge: 'bg-brand-maroon/10 text-brand-maroon'   },
+};
+
+const CATEGORY_LABEL: Record<string, string> = {
+  RECRUITMENT: 'Recruitment',
+  EVENT:       'Event',
+  NEWS:        'News',
+  VOLUNTEER:   'Volunteer',
 };
 
 export default function AnnouncementCard({
@@ -16,36 +23,36 @@ export default function AnnouncementCard({
   const style = CATEGORY_STYLE[a.category] ?? CATEGORY_STYLE.NEWS;
 
   return (
-    <div className={`bg-white border-2 border-brand-charcoal/10 border-l-4 ${style.border} flex flex-col`}>
-      <div className="p-5 flex-1 flex flex-col">
-        <div className="flex items-center gap-2 mb-3 flex-wrap">
-          <span className={`text-[10px] font-black uppercase tracking-wider px-2 py-0.5 ${style.badge}`}>
-            {a.category}
+    <div className="bg-white rounded-2xl border border-zinc-100 shadow-sm hover:shadow-md transition-shadow flex flex-col overflow-hidden h-full">
+      <div className={`h-1 shrink-0 ${style.strip}`} />
+
+      <div className="p-5 flex-1 flex flex-col gap-3">
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className={`text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full ${style.badge}`}>
+            {CATEGORY_LABEL[a.category] ?? a.category}
           </span>
           {a.pinned && (
-            <span className="text-[10px] font-bold text-brand-charcoal/40 uppercase tracking-wide">
-              📌 Pinned
-            </span>
+            <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wide">Pinned</span>
           )}
-          <span className="text-[10px] text-brand-charcoal/40 font-mono ml-auto">
+          <span className="text-[10px] text-zinc-400 font-mono ml-auto">
             {new Date(a.publishedAt).toLocaleDateString('en-IE')}
           </span>
         </div>
 
-        <h3 className="font-display font-black italic text-lg text-brand-charcoal leading-snug mb-2">
+        <h3 className="font-display font-black text-base leading-snug text-brand-charcoal">
           {a.title}
         </h3>
 
-        <p className="text-sm text-brand-charcoal/70 leading-relaxed line-clamp-3 flex-1">
-          {a.body.replace(/[#*`_>]/g, '').slice(0, 200)}
+        <p className="text-xs text-zinc-500 leading-relaxed line-clamp-3 flex-1">
+          {a.body.replace(/[#*`_>]/g, '').slice(0, 220)}
         </p>
       </div>
 
-      {(a.ctaLabel && a.ctaUrl) && (
-        <div className="px-5 pb-5">
+      {a.ctaLabel && a.ctaUrl && (
+        <div className="px-5 pb-5 pt-1">
           <Link
             href={a.ctaUrl}
-            className="inline-flex items-center min-h-[44px] px-4 bg-brand-navy text-brand-cream text-sm font-bold border-2 border-brand-navy hover:bg-transparent hover:text-brand-navy transition-all"
+            className="inline-flex items-center gap-1 text-xs font-bold text-brand-green hover:underline underline-offset-2"
           >
             {a.ctaLabel} →
           </Link>

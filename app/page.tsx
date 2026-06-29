@@ -96,7 +96,7 @@ export default async function Home() {
       OR: [{ expiresAt: null }, { expiresAt: { gt: now } }],
     },
     orderBy: [{ pinned: 'desc' }, { publishedAt: 'desc' }],
-    take: 3,
+    take: 6,
   });
 
   const [startStr] = CLUB_SEASON.currentSeason.split('/');
@@ -119,7 +119,33 @@ export default async function Home() {
         {/* ── 1. Hero ──────────────────────────────────────────────────────── */}
         <Hero />
 
-        {/* ── 2. Upcoming Fixtures ─────────────────────────────────────────── */}
+        {/* ── 2. Announcements strip ───────────────────────────────────────── */}
+        {announcements.length > 0 && (
+          <section className="py-10 bg-zinc-50 border-b border-zinc-200">
+            <div className="max-w-6xl mx-auto px-6">
+              <div className="flex items-center justify-between mb-5">
+                <h2 className="font-display font-black italic text-2xl uppercase tracking-tight text-brand-charcoal">
+                  Latest News
+                </h2>
+                <Link
+                  href="/news"
+                  className="min-h-[44px] inline-flex items-center text-xs font-display font-black uppercase tracking-wide text-zinc-400 hover:text-brand-navy transition-colors"
+                >
+                  See all →
+                </Link>
+              </div>
+              <div className="flex gap-4 overflow-x-auto pb-3 snap-x snap-mandatory -mx-6 px-6 scroll-smooth">
+                {announcements.map((a) => (
+                  <div key={a.id} className="snap-start shrink-0 w-[270px] sm:w-[300px]">
+                    <AnnouncementCard announcement={a} />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* ── 3. Upcoming Fixtures ─────────────────────────────────────────── */}
         <section className="py-14 border-b border-brand-navy/10">
           <div className="max-w-6xl mx-auto px-6">
             <div className="flex items-center justify-between mb-8">
@@ -131,33 +157,6 @@ export default async function Home() {
             <TeletextFixtures />
           </div>
         </section>
-
-        {/* ── 2.5. Announcements ───────────────────────────────────────────── */}
-        {announcements.length > 0 && (
-          <section className="py-16 border-b border-brand-navy/10">
-            <div className="max-w-6xl mx-auto px-6">
-              <div className="flex items-center justify-between mb-8">
-                <div>
-                  <h2 className="font-display font-black italic text-3xl md:text-4xl uppercase tracking-tight leading-none text-brand-charcoal">
-                    Latest News
-                  </h2>
-                  <div className="h-2 w-24 bg-brand-neon border-2 border-brand-charcoal mt-2" />
-                </div>
-                <Link
-                  href="/news"
-                  className="min-h-[44px] inline-flex items-center px-2 -mr-2 text-xs font-display font-black uppercase tracking-wide text-brand-charcoal/50 hover:text-brand-navy transition-colors"
-                >
-                  See all →
-                </Link>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {announcements.map((a) => (
-                  <AnnouncementCard key={a.id} announcement={a} />
-                ))}
-              </div>
-            </div>
-          </section>
-        )}
 
         {/* ── 2.7. Instagram Feed ──────────────────────────────────────────── */}
         {features.instagramFeed && <InstagramFeed />}
