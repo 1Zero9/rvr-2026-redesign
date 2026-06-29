@@ -25,7 +25,7 @@ export default async function AdminLoginPage({
         maxAge:   60 * 60 * 8, // 8 hours
         priority: 'high',
       });
-      redirect('/admin/announcements');
+      redirect('/admin');
     }
     redirect('/admin/login?error=1');
   }
