@@ -23,7 +23,10 @@ export default function AnnouncementCard({
   const style = CATEGORY_STYLE[a.category] ?? CATEGORY_STYLE.NEWS;
 
   return (
-    <div className="bg-white rounded-2xl border border-zinc-100 shadow-sm hover:shadow-md transition-shadow flex flex-col overflow-hidden h-full">
+    <Link
+      href={`/news/${a.id}`}
+      className="group bg-white rounded-2xl border border-zinc-100 shadow-sm hover:shadow-md transition-shadow flex flex-col overflow-hidden h-full"
+    >
       <div className={`h-1 shrink-0 ${style.strip}`} />
 
       <div className="p-5 flex-1 flex flex-col gap-3">
@@ -39,7 +42,7 @@ export default function AnnouncementCard({
           </span>
         </div>
 
-        <h3 className="font-display font-black text-base leading-snug text-brand-charcoal">
+        <h3 className="font-display font-black text-base leading-snug text-brand-charcoal group-hover:text-brand-green transition-colors">
           {a.title}
         </h3>
 
@@ -48,16 +51,13 @@ export default function AnnouncementCard({
         </p>
       </div>
 
-      {a.ctaLabel && a.ctaUrl && (
+      {a.ctaLabel && (
         <div className="px-5 pb-5 pt-1">
-          <Link
-            href={a.ctaUrl}
-            className="inline-flex items-center gap-1 text-xs font-bold text-brand-green hover:underline underline-offset-2"
-          >
+          <span className="inline-flex items-center gap-1 text-xs font-bold text-brand-green group-hover:underline underline-offset-2">
             {a.ctaLabel} →
-          </Link>
+          </span>
         </div>
       )}
-    </div>
+    </Link>
   );
 }

@@ -101,13 +101,13 @@ export default function AnnouncementForm({ action, deleteAction, initialData }: 
             />
           </div>
           <div>
-            <label htmlFor="ctaUrl" className={LABEL}>CTA URL <span className="font-normal text-brand-charcoal/50">(optional)</span></label>
+            <label htmlFor="ctaUrl" className={LABEL}>CTA URL <span className="font-normal text-brand-charcoal/50">(optional — relative paths like /walking-football are fine)</span></label>
             <input
               id="ctaUrl"
               name="ctaUrl"
-              type="url"
+              type="text"
               defaultValue={d?.ctaUrl ?? ''}
-              placeholder="https://..."
+              placeholder="/walking-football or https://..."
               className={INPUT}
             />
           </div>
