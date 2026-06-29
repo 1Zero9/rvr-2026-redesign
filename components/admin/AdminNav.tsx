@@ -80,7 +80,7 @@ export default async function AdminNav() {
           href="/"
           className="ml-auto shrink-0 text-xs font-bold text-white/40 hover:text-white transition-colors whitespace-nowrap"
         >
-          ← Site
+          ← rivervalleyrangers.ie
         </Link>
 
       </div>
