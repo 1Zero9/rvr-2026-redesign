@@ -20,7 +20,7 @@ const jakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://rvr-2026-redesign.vercel.app"),
+  metadataBase: new URL("https://rivervalleyrangers.ie"),
   title: {
     default: "Rivervalley Rangers AFC",
     template: "%s",

@@ -1,7 +1,7 @@
 import type { MetadataRoute } from 'next';
 import { getFeatureAvailability } from '@/lib/features';
 
-const SITE_URL = 'https://rvr-2026-redesign.vercel.app';
+const SITE_URL = 'https://rivervalleyrangers.ie';
 
 const routes = [
   '',
