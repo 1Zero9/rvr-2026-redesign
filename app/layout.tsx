@@ -30,6 +30,11 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "./",
   },
+  appleWebApp: {
+    capable: true,
+    title: "RVR AFC",
+    statusBarStyle: "black-translucent",
+  },
   openGraph: {
     type: "website",
     locale: "en_IE",

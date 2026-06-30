@@ -10,30 +10,34 @@ import { APP_VERSION, APP_VERSION_DATE } from '@/config/version';
 import { KNOWN_DIVISIONS } from '@/config/ddsl-competitions';
 import { prisma } from '@/lib/prisma';
 import { getFeatureAvailability } from '@/lib/features';
-import { computeClubStats } from '@/lib/club-stats';
+import { GraduationCap, Trophy, Users, Heart, type LucideIcon } from 'lucide-react';
 
-const COMMUNITY_CATEGORIES = [
+const COMMUNITY_CATEGORIES: Array<{
+  Icon: LucideIcon;
+  label: string;
+  copy: string;
+}> = [
   {
-    badge: '⭐',
+    Icon: GraduationCap,
     label: 'Academy',
     copy: 'Little Rangers to U-age groups — where players develop from day one.',
   },
   {
-    badge: '🏆',
+    Icon: Trophy,
     label: 'Adult',
     copy: 'Seniors and Over 35s competing in North Dublin leagues.',
   },
   {
-    badge: '⚽',
+    Icon: Users,
     label: 'Community',
     copy: "Walking Football and Mams' Football, open to all.",
   },
   {
-    badge: '💚',
+    Icon: Heart,
     label: 'Inclusive',
     copy: 'A welcoming programme for players of every ability.',
   },
-] as const;
+];
 
 interface AgeGroupSummary {
   ageGroup: string;
@@ -70,7 +74,6 @@ function getAgeGroupSummaries(): AgeGroupSummary[] {
 export default async function Home() {
   const ageGroups = getAgeGroupSummaries();
   const features  = await getFeatureAvailability();
-  const stats     = computeClubStats();
 
   const now = new Date();
 
@@ -155,86 +158,6 @@ export default async function Home() {
         {/* ── 2.7. Instagram Feed ──────────────────────────────────────────── */}
         {features.instagramFeed && <InstagramFeed />}
 
-        {/* ── 3. Club in Numbers ───────────────────────────────────────────── */}
-        <section className="bg-brand-navy py-20">
-          <div className="max-w-6xl mx-auto px-6">
-            <div className="text-center mb-14">
-              <h2 className="font-display font-black text-4xl md:text-6xl uppercase tracking-tight leading-none text-brand-cream italic">
-                The Numbers
-              </h2>
-              <div className="h-3 w-40 bg-brand-neon mx-auto border-3 border-brand-cream -rotate-1 shadow-sm mt-4" />
-            </div>
-
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-              {[
-                {
-                  value: `${stats.yearsActive}`,
-                  unit: 'Years',
-                  label: 'Serving Swords',
-                  badge: `Est. ${CLUB_SEASON.foundingYear}`,
-                  bg: 'bg-white',
-                  badgeBg: 'bg-brand-green text-white',
-                  computed: true,
-                },
-                {
-                  value: `${stats.totalTeams}`,
-                  unit: 'Teams',
-                  label: 'Youth, Senior & Over 35s',
-                  badge: `${CLUB_SEASON.currentSeason} Season`,
-                  bg: 'bg-brand-neon',
-                  badgeBg: 'bg-brand-charcoal text-white',
-                  computed: true,
-                },
-                {
-                  value: `${Math.floor(stats.estimatedPlayers / 10) * 10}+`,
-                  unit: '',
-                  label: 'Players across all squads',
-                  badge: 'Estimated',
-                  bg: 'bg-white',
-                  badgeBg: 'bg-brand-navy text-white',
-                  computed: true,
-                },
-                {
-                  value: `${CLUB_SEASON.foundingYear}`,
-                  unit: '',
-                  label: 'Founded in Swords',
-                  badge: `${CLUB_SEASON.anniversaryEdition} Anniversary`,
-                  bg: 'bg-white',
-                  badgeBg: 'bg-brand-maroon text-white',
-                  computed: false,
-                },
-              ].map((stat) => (
-                <div
-                  key={stat.label}
-                  className={`p-6 flex flex-col gap-3 rounded-2xl border-4 ${stat.bg} ${
-                    stat.computed
-                      ? 'border-brand-green shadow-[6px_6px_0_#005C39]'
-                      : 'border-brand-charcoal shadow-[6px_6px_0_#121212]'
-                  }`}
-                >
-                  <span
-                    className={`inline-block font-display font-black text-[10px] uppercase tracking-wider px-3 py-1 rounded-full border-2 border-brand-charcoal ${stat.badgeBg}`}
-                  >
-                    {stat.badge}
-                  </span>
-                  <div className="mt-auto">
-                    <p className="font-display font-black text-4xl md:text-5xl lg:text-6xl tracking-tighter italic leading-none">
-                      {stat.value}
-                      {stat.unit && (
-                        <span className="text-2xl ml-1 not-italic font-bold text-zinc-500">
-                          {stat.unit}
-                        </span>
-                      )}
-                    </p>
-                    <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500 mt-2">
-                      {stat.label}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
 
         {/* ── 4. Teams Grid ────────────────────────────────────────────────── */}
         <section className="bg-white py-20 border-t border-b border-brand-navy/10">
@@ -301,11 +224,13 @@ export default async function Home() {
                   href="/teams"
                   className="group block bg-brand-charcoal border-2 border-brand-neon hover:border-brand-maroon rounded-2xl p-6 transition-colors min-h-[44px]"
                 >
-                  <div className="flex items-center gap-3 mb-3">
-                    <span className="text-3xl" aria-hidden="true">{cat.badge}</span>
-                    <span className="font-display font-black text-lg uppercase text-brand-cream group-hover:text-brand-neon transition-colors">
+                  <div className="mb-4">
+                    <div className="inline-flex items-center justify-center w-11 h-11 rounded-xl bg-brand-neon/10 border border-brand-neon/30 group-hover:bg-brand-neon/20 transition-colors mb-3">
+                      <cat.Icon className="w-6 h-6 text-brand-neon" aria-hidden="true" />
+                    </div>
+                    <p className="font-display font-black text-lg uppercase text-brand-cream group-hover:text-brand-neon transition-colors">
                       {cat.label}
-                    </span>
+                    </p>
                   </div>
                   <p className="text-brand-sky text-sm leading-relaxed mb-4">
                     {cat.copy}
@@ -352,52 +277,6 @@ export default async function Home() {
           </div>
         </section>
 
-        {/* ── 7. Instagram ─────────────────────────────────────────────────── */}
-        <section className="bg-brand-navy py-16 border-b border-brand-sky/20">
-          <div className="max-w-6xl mx-auto px-6">
-            <div className="text-center mb-10">
-              <h2 className="font-display font-black text-3xl md:text-4xl uppercase tracking-tight italic text-brand-cream mb-2">
-                Follow the Journey
-              </h2>
-              <p className="text-brand-sky/60 text-sm">
-                Match day moments, training highlights, and club news.
-              </p>
-            </div>
-
-            <a
-              href="https://www.instagram.com/rvrfc1981"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group flex flex-col md:flex-row items-center justify-between gap-6 border-2 border-brand-sky/20 hover:border-brand-neon rounded-2xl p-6 md:p-8 bg-brand-charcoal/40 hover:bg-brand-charcoal/60 transition-all max-w-2xl mx-auto"
-            >
-              <div className="flex items-center gap-5">
-                {/* Instagram wordmark icon */}
-                <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl border-2 border-brand-sky/20 bg-gradient-to-br from-[#833ab4] via-[#fd1d1d] to-[#fcb045]">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="white"
-                    className="w-8 h-8"
-                    aria-hidden="true"
-                  >
-                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
-                  </svg>
-                </div>
-                <div>
-                  <p className="font-display font-black text-xl text-brand-cream group-hover:text-brand-neon transition-colors">
-                    @rvrfc1981
-                  </p>
-                  <p className="text-brand-sky/60 text-sm mt-1">
-                    See our latest from the pitches of Swords
-                  </p>
-                </div>
-              </div>
-              <span className="w-full md:w-auto min-h-[44px] inline-flex items-center justify-center font-display font-black text-xs uppercase tracking-wider text-brand-neon border border-brand-neon/40 rounded-full px-6 group-hover:bg-brand-neon group-hover:text-brand-charcoal transition-all">
-                Follow us →
-              </span>
-            </a>
-          </div>
-        </section>
 
       </main>
 
@@ -434,10 +313,21 @@ export default async function Home() {
             </ul>
           </div>
         </div>
-        <div className="max-w-6xl mx-auto px-6 mt-12 pt-8 border-t border-zinc-800 flex flex-col md:flex-row items-center justify-between text-xs text-zinc-500">
+        <div className="max-w-6xl mx-auto px-6 mt-12 pt-8 border-t border-zinc-800 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-zinc-500">
           <p>&copy; {new Date().getFullYear()} Rivervalley Rangers AFC. All rights reserved.</p>
-          <p>Dublin Football Pride Since {CLUB_SEASON.foundingYear}</p>
-          <p className="text-xs text-brand-sky/50 mt-2 md:mt-0">
+          <a
+            href="https://www.instagram.com/rvrfc1981"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 text-zinc-400 hover:text-brand-neon transition-colors"
+            aria-label="Follow Rivervalley Rangers on Instagram"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4" aria-hidden="true">
+              <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+            </svg>
+            @rvrfc1981
+          </a>
+          <p className="text-xs text-brand-sky/50">
             RVR2026 v{APP_VERSION} · {APP_VERSION_DATE}
             {' · '}
             <a
