@@ -64,7 +64,8 @@ export default async function AdminLoginPage({
             action={async (formData: FormData) => {
               'use server';
               const email = formData.get('email') as string;
-              await signIn('resend', { email, redirectTo: '/admin' });
+              await signIn('resend', { email, redirectTo: '/admin', redirect: false });
+              redirect('/admin/login?verify=1');
             }}
             className="space-y-4"
           >
