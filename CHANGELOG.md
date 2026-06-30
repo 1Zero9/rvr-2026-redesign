@@ -4,6 +4,40 @@ All notable changes to RVR2026 are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 Versioning follows [Semantic Versioning](https://semver.org/).
 
+## [1.2.0] — 2026-06-30
+
+### Added
+
+#### PWA support
+- `app/icon.png` and `app/apple-icon.png` — RVR crest used as browser favicon and Apple touch icon (replaces default Next.js icon)
+- `app/manifest.ts` — updated icons to use `icon-new.png` (1000×1000) with separate `purpose: 'any'` and `purpose: 'maskable'` entries for Android adaptive icons
+- `appleWebApp` metadata in `app/layout.tsx` — enables standalone mode on iOS, dark status bar, app title "RVR AFC"
+- Site is now fully installable as a PWA on iOS and Android
+
+#### Site-wide search
+- `lib/search/index.ts` — expanded from team-only to full site index: 21 page entries + all team entries (DDSL boys/girls, seniors, over-35s)
+- Keyword synonyms for common search terms (fees→membership, boots→boot room, disability→football for all, etc.)
+- `SearchOverlay` refactored: results grouped into Pages / Teams sections, Escape key closes, lighter backdrop (no full-screen takeover)
+
+#### Spam protection — Cloudflare Turnstile
+- `lib/turnstile.ts` — server-side `verifyTurnstile(token, ip?)` helper calling CF siteverify API
+- `components/TurnstileWidget.tsx` — invisible client widget; loads CF script once per page, uses explicit render API
+- Protection added to all three public forms: `PublicEnquiryForm`, `BootRoomSubmissionForm`, `PlayerRecruitmentWizard`
+- `/api/enquiries` and `/api/boot-room` — verify Turnstile token before DB write, return 403 on failure
+- `registerPlayer` server action — verify token via `next/headers` IP extraction
+- Removed broken in-memory rate limiters from both API routes (ineffective on Vercel serverless)
+- Env vars: `NEXT_PUBLIC_TURNSTILE_SITE_KEY` (public) and `TURNSTILE_SECRET_KEY` (server-only)
+
+#### Privacy policy
+- `app/privacy/page.tsx` — GDPR-compliant privacy policy covering player registration, enquiries, boot room, Vercel hosting, and Cloudflare Turnstile
+- References [Cloudflare Customer Privacy Addendum](https://www.cloudflare.com/cloudflare-customer-privacy-addendum/) as required for Turnstile invisible mode
+- Links to Data Protection Commission of Ireland for complaints
+- Footer link added to homepage; page added to site search index
+
+### Changed
+- `app/page.tsx` — emoji category badges replaced with Lucide icons; Club in Numbers stats section removed; standalone Instagram section replaced with footer link; Instagram icon added to desktop header and mobile drawer
+- `components/SearchOverlay` — backdrop changed from full-screen navy takeover to light `bg-black/30` overlay
+
 ## [1.1.0] — 2026-06-27
 
 feat: Competition Management System — auth, schema, upload pipeline, public view, squad card generation

@@ -39,6 +39,17 @@ STRIPE_WEBHOOK_SECRET=
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=
 ```
 
+### Cloudflare Turnstile (spam protection)
+```
+NEXT_PUBLIC_TURNSTILE_SITE_KEY=   # public — safe to expose in client bundles
+TURNSTILE_SECRET_KEY=             # server-only — never commit or expose
+```
+Both vars are required for form submissions on `/register`, `/get-involved`, `/sponsorship`,
+`/walking-football`, `/football-for-all`, and `/boot-room` to pass server-side bot verification.
+In local development the server helper logs a warning and passes through if `TURNSTILE_SECRET_KEY`
+is unset — set it from `.env.local` to test end-to-end.
+Obtain keys from the [Cloudflare Turnstile dashboard](https://dash.cloudflare.com/?to=/:account/turnstile).
+
 ### Email (SMTP)
 ```
 SMTP_HOST=
