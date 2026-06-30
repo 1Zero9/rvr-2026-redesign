@@ -196,6 +196,16 @@ const SITE_PAGES: SearchEntry[] = [
     keywords: ['child welfare', 'garda vetting', 'dbs', 'policy', 'designated officer', 'cpd'],
   },
   {
+    id: 'privacy',
+    label: 'Privacy Policy',
+    subLabel: 'Data protection and GDPR information',
+    href: '/privacy',
+    category: 'page',
+    badge: 'PAGE',
+    badgeColour: 'bg-brand-charcoal text-brand-cream',
+    keywords: ['gdpr', 'data', 'cookies', 'personal information', 'turnstile'],
+  },
+  {
     id: 'club-anniversary',
     label: 'Club Anniversary',
     subLabel: '45 years of Rivervalley Rangers AFC',

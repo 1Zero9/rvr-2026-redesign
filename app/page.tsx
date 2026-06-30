@@ -314,7 +314,11 @@ export default async function Home() {
           </div>
         </div>
         <div className="max-w-6xl mx-auto px-6 mt-12 pt-8 border-t border-zinc-800 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-zinc-500">
-          <p>&copy; {new Date().getFullYear()} Rivervalley Rangers AFC. All rights reserved.</p>
+          <p>
+            &copy; {new Date().getFullYear()} Rivervalley Rangers AFC. All rights reserved.
+            {' · '}
+            <a href="/privacy" className="hover:text-brand-neon transition-colors">Privacy Policy</a>
+          </p>
           <a
             href="https://www.instagram.com/rvrfc1981"
             target="_blank"
