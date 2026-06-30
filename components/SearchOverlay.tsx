@@ -49,42 +49,48 @@ export default function SearchOverlay({ isOpen, onClose }: Props) {
   if (!isOpen) return null;
 
   return (
+    /* Backdrop */
     <div
-      aria-modal="true"
-      role="dialog"
-      aria-label="Search teams"
-      className="fixed inset-0 z-50 bg-brand-navy/95 backdrop-blur-sm"
+      className="fixed inset-0 z-50 bg-brand-navy/70 backdrop-blur-sm flex items-start justify-center px-4 pt-20"
+      onClick={onClose}
     >
-      {/* Close button */}
-      <button
-        type="button"
-        onClick={onClose}
-        className="absolute top-4 right-4 text-brand-sky text-sm min-h-[44px] min-w-[44px] flex items-center justify-center px-3 hover:text-brand-neon transition-colors"
+      {/* Panel */}
+      <div
+        aria-modal="true"
+        role="dialog"
+        aria-label="Search teams"
+        className="w-full max-w-2xl bg-brand-navy border border-brand-sky/20 rounded-2xl shadow-2xl flex flex-col max-h-[70vh]"
+        onClick={(e) => e.stopPropagation()}
       >
-        ✕ Close
-      </button>
+        {/* Search input row */}
+        <div className="flex items-center gap-2 p-3 border-b border-brand-sky/20">
+          <input
+            ref={inputRef}
+            type="search"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search teams, age groups..."
+            className="flex-1 bg-transparent text-brand-cream text-base p-2 placeholder:text-brand-sky/50 focus:outline-none"
+          />
+          <button
+            type="button"
+            onClick={onClose}
+            className="text-brand-sky text-sm min-h-[44px] min-w-[44px] flex items-center justify-center px-3 hover:text-brand-neon transition-colors shrink-0"
+          >
+            ✕
+          </button>
+        </div>
 
-      <div className="max-w-2xl mx-auto pt-20 px-4">
-        {/* Search input */}
-        <input
-          ref={inputRef}
-          type="search"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search teams, age groups..."
-          className="w-full bg-white/10 border-2 border-brand-sky/30 text-brand-cream text-lg p-4 placeholder:text-brand-sky/50 focus:outline-none focus:border-brand-neon transition-colors"
-        />
-
-        <div className="mt-4 space-y-2">
-          {/* Search results */}
+        {/* Results */}
+        <div className="overflow-y-auto p-3 space-y-1.5">
           {results.length > 0 && results.map((entry) => (
             <Link
               key={entry.id}
               href={entry.href}
               onClick={onClose}
-              className="flex items-center gap-3 min-h-[44px] p-3 bg-white/5 hover:bg-white/10 border border-brand-sky/20 transition-colors"
+              className="flex items-center gap-3 min-h-[44px] p-3 bg-white/5 hover:bg-white/10 border border-brand-sky/20 rounded-lg transition-colors"
             >
-              <span className={`${entry.colour} ${TYPE_TEXT[entry.type]} text-[10px] font-bold uppercase px-2 py-1 shrink-0`}>
+              <span className={`${entry.colour} ${TYPE_TEXT[entry.type]} text-[10px] font-bold uppercase px-2 py-1 shrink-0 rounded`}>
                 {TYPE_LABELS[entry.type]}
               </span>
               <span className="flex-1 min-w-0">
@@ -97,18 +103,16 @@ export default function SearchOverlay({ isOpen, onClose }: Props) {
             </Link>
           ))}
 
-          {/* Empty state */}
           {showEmpty && (
-            <p className="text-brand-sky text-sm mt-4">
+            <p className="text-brand-sky text-sm p-2">
               No teams found for &ldquo;{query}&rdquo;
             </p>
           )}
 
-          {/* Favourites section — shown when query is empty */}
           {query.trim().length < 2 && (
             favouriteEntries.length > 0 ? (
               <>
-                <p className="text-brand-neon text-xs font-bold uppercase tracking-wide mb-2">
+                <p className="text-brand-neon text-xs font-bold uppercase tracking-wide px-1 pb-1">
                   YOUR TEAMS
                 </p>
                 {favouriteEntries.map((entry) => (
@@ -116,9 +120,9 @@ export default function SearchOverlay({ isOpen, onClose }: Props) {
                     key={entry.id}
                     href={entry.href}
                     onClick={onClose}
-                    className="flex items-center gap-3 min-h-[44px] p-3 bg-white/5 hover:bg-white/10 border border-brand-sky/20 transition-colors"
+                    className="flex items-center gap-3 min-h-[44px] p-3 bg-white/5 hover:bg-white/10 border border-brand-sky/20 rounded-lg transition-colors"
                   >
-                    <span className={`${entry.colour} ${TYPE_TEXT[entry.type]} text-[10px] font-bold uppercase px-2 py-1 shrink-0`}>
+                    <span className={`${entry.colour} ${TYPE_TEXT[entry.type]} text-[10px] font-bold uppercase px-2 py-1 shrink-0 rounded`}>
                       {TYPE_LABELS[entry.type]}
                     </span>
                     <span className="flex-1 min-w-0">
@@ -130,7 +134,7 @@ export default function SearchOverlay({ isOpen, onClose }: Props) {
                 ))}
               </>
             ) : (
-              <p className="text-brand-sky/60 text-sm">
+              <p className="text-brand-sky/60 text-sm p-2">
                 Search for a team to get started
               </p>
             )
