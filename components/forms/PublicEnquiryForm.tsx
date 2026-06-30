@@ -2,6 +2,7 @@
 
 import { FormEvent, useState } from 'react';
 import { CheckCircle2, Send } from 'lucide-react';
+import TurnstileWidget from '@/components/TurnstileWidget';
 
 type EnquiryType =
   | 'VOLUNTEER_INTEREST'
@@ -29,6 +30,7 @@ export default function PublicEnquiryForm({
 }: PublicEnquiryFormProps) {
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success'>('idle');
   const [error, setError] = useState('');
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
 
   async function submitEnquiry(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -50,6 +52,7 @@ export default function PublicEnquiryForm({
           phone: data.get('phone'),
           details: data.get('details'),
           website: data.get('website'),
+          turnstileToken,
         }),
       });
 
@@ -166,6 +169,8 @@ export default function PublicEnquiryForm({
           Website
           <input name="website" tabIndex={-1} autoComplete="off" />
         </label>
+
+        <TurnstileWidget onToken={setTurnstileToken} action="enquiry" />
       </div>
 
       {error && (

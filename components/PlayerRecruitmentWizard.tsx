@@ -3,6 +3,7 @@
 import { useState, useTransition } from 'react';
 import { CheckCircle2, AlertCircle, Loader2, Send } from 'lucide-react';
 import { registerPlayer, type PlayerGender } from '@/app/actions/registerPlayer';
+import TurnstileWidget from '@/components/TurnstileWidget';
 
 const CURRENT_YEAR = new Date().getFullYear();
 
@@ -42,6 +43,7 @@ export default function PlayerRecruitmentWizard() {
   const [submittedName, setSubmittedName] = useState('');
   const [error, setError]                 = useState<string | null>(null);
   const [isPending, startTransition]      = useTransition();
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
 
   function set<K extends keyof FormState>(field: K, value: FormState[K]) {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -66,15 +68,16 @@ export default function PlayerRecruitmentWizard() {
     setError(null);
     startTransition(async () => {
       const result = await registerPlayer({
-        firstName:   form.firstName,
-        lastName:    form.lastName,
-        yearOfBirth: parseInt(form.yearOfBirth, 10),
-        gender:      form.gender as PlayerGender,
-        parentName:  form.parentName,
-        parentEmail: form.email,
-        parentPhone: form.phone,
-        notes:       form.notes,
-        gdprConsent: form.gdprConsent,
+        firstName:      form.firstName,
+        lastName:       form.lastName,
+        yearOfBirth:    parseInt(form.yearOfBirth, 10),
+        gender:         form.gender as PlayerGender,
+        parentName:     form.parentName,
+        parentEmail:    form.email,
+        parentPhone:    form.phone,
+        notes:          form.notes,
+        gdprConsent:    form.gdprConsent,
+        turnstileToken: turnstileToken ?? '',
       });
       if (result.ok) { setSubmittedName(result.firstName); setSubmitted(true); }
       else setError(result.error);
@@ -275,6 +278,8 @@ export default function PlayerRecruitmentWizard() {
             <p className="text-xs font-semibold text-red-700">{error}</p>
           </div>
         )}
+
+        <TurnstileWidget onToken={setTurnstileToken} action="player-registration" />
 
         <button
           type="submit"

@@ -2,10 +2,12 @@
 
 import { FormEvent, useState } from 'react';
 import { CheckCircle2, PackagePlus } from 'lucide-react';
+import TurnstileWidget from '@/components/TurnstileWidget';
 
 export default function BootRoomSubmissionForm() {
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success'>('idle');
   const [error, setError] = useState('');
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
 
   async function submitListing(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -20,7 +22,7 @@ export default function BootRoomSubmissionForm() {
       const response = await fetch('/api/boot-room', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(Object.fromEntries(data)),
+        body: JSON.stringify({ ...Object.fromEntries(data), turnstileToken }),
       });
       const result = (await response.json()) as { error?: string };
       if (!response.ok) {
@@ -198,6 +200,8 @@ export default function BootRoomSubmissionForm() {
           Website
           <input name="website" tabIndex={-1} autoComplete="off" />
         </label>
+
+        <TurnstileWidget onToken={setTurnstileToken} action="boot-room" />
       </div>
 
       {error && (

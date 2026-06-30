@@ -2,19 +2,22 @@
 
 import { prisma } from '@/lib/prisma';
 import { createHash } from 'crypto';
+import { headers } from 'next/headers';
+import { verifyTurnstile } from '@/lib/turnstile';
 
 export type PlayerGender = 'MALE' | 'FEMALE';
 
 export interface RegistrationInput {
-  firstName:   string;
-  lastName:    string;
-  yearOfBirth: number;
-  gender:      PlayerGender;
-  parentName:  string;
-  parentEmail: string;
-  parentPhone: string;
-  notes:       string;
-  gdprConsent: boolean;
+  firstName:      string;
+  lastName:       string;
+  yearOfBirth:    number;
+  gender:         PlayerGender;
+  parentName:     string;
+  parentEmail:    string;
+  parentPhone:    string;
+  notes:          string;
+  gdprConsent:    boolean;
+  turnstileToken: string;
 }
 
 export type RegistrationResult =
@@ -64,6 +67,11 @@ export async function registerPlayer(
     return { ok: false, error: 'A valid phone number is required.' };
   if (!input.gdprConsent)
     return { ok: false, error: 'Consent is required to submit.' };
+
+  const ip = (await headers()).get('x-forwarded-for')?.split(',')[0]?.trim();
+  const tokenOk = await verifyTurnstile(input.turnstileToken, ip);
+  if (!tokenOk)
+    return { ok: false, error: 'Bot check failed. Please refresh the page and try again.' };
 
   const yearOfBirth   = Math.trunc(input.yearOfBirth);
   const displayName   = `${firstName} ${lastName}`;

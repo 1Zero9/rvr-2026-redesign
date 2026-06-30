@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { verifyTurnstile } from '@/lib/turnstile';
 
 const categories = new Set([
   'BOOTS',
@@ -10,19 +11,6 @@ const categories = new Set([
   'OTHER',
 ]);
 const conditions = new Set(['EXCELLENT', 'VERY_GOOD', 'GOOD', 'FAIR']);
-const recentRequests = new Map<string, number[]>();
-
-function isRateLimited(request: NextRequest): boolean {
-  const ip =
-    request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
-  const now = Date.now();
-  const recent = (recentRequests.get(ip) ?? []).filter(
-    (time) => time > now - 10 * 60 * 1000,
-  );
-  recent.push(now);
-  recentRequests.set(ip, recent);
-  return recent.length > 5;
-}
 
 export async function GET() {
   const listings = await prisma.bootRoomListing.findMany({
@@ -44,13 +32,6 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
-  if (isRateLimited(request)) {
-    return NextResponse.json(
-      { error: 'Too many submissions. Please try again later.' },
-      { status: 429 },
-    );
-  }
-
   let body: Record<string, unknown>;
   try {
     body = (await request.json()) as Record<string, unknown>;
@@ -60,6 +41,15 @@ export async function POST(request: NextRequest) {
 
   if (String(body.website ?? '')) {
     return NextResponse.json({ success: true }, { status: 201 });
+  }
+
+  const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim();
+  const tokenOk = await verifyTurnstile(String(body.turnstileToken ?? ''), ip);
+  if (!tokenOk) {
+    return NextResponse.json(
+      { error: 'Bot check failed. Please refresh the page and try again.' },
+      { status: 403 },
+    );
   }
 
   const title = String(body.title ?? '').trim();

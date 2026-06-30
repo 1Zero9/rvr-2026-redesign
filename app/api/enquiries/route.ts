@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { verifyTurnstile } from '@/lib/turnstile';
 
 const allowedTypes = new Set([
   'FOOTBALL_FOR_ALL_CALLBACK',
@@ -8,27 +9,8 @@ const allowedTypes = new Set([
   'COACHING_INTEREST',
   'SPONSORSHIP_INTEREST',
 ]);
-const recentRequests = new Map<string, number[]>();
-
-function isRateLimited(request: NextRequest): boolean {
-  const forwarded = request.headers.get('x-forwarded-for');
-  const ip = forwarded?.split(',')[0]?.trim() || 'unknown';
-  const now = Date.now();
-  const windowStart = now - 10 * 60 * 1000;
-  const recent = (recentRequests.get(ip) ?? []).filter((time) => time > windowStart);
-  recent.push(now);
-  recentRequests.set(ip, recent);
-  return recent.length > 5;
-}
 
 export async function POST(request: NextRequest) {
-  if (isRateLimited(request)) {
-    return NextResponse.json(
-      { error: 'Too many submissions. Please try again later.' },
-      { status: 429 },
-    );
-  }
-
   let body: {
     type?: string;
     name?: string;
@@ -36,6 +18,7 @@ export async function POST(request: NextRequest) {
     phone?: string;
     details?: string;
     website?: string;
+    turnstileToken?: string;
   };
 
   try {
@@ -48,10 +31,19 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: true }, { status: 201 });
   }
 
-  const type = body.type?.trim() ?? '';
-  const name = body.name?.trim() ?? '';
-  const email = body.email?.trim().toLowerCase() || null;
-  const phone = body.phone?.trim() || null;
+  const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim();
+  const tokenOk = await verifyTurnstile(body.turnstileToken ?? '', ip);
+  if (!tokenOk) {
+    return NextResponse.json(
+      { error: 'Bot check failed. Please refresh the page and try again.' },
+      { status: 403 },
+    );
+  }
+
+  const type    = body.type?.trim() ?? '';
+  const name    = body.name?.trim() ?? '';
+  const email   = body.email?.trim().toLowerCase() || null;
+  const phone   = body.phone?.trim() || null;
   const details = body.details?.trim() || null;
 
   if (!allowedTypes.has(type) || name.length < 2 || (!email && !phone)) {
@@ -68,9 +60,9 @@ export async function POST(request: NextRequest) {
   const enquiry = await prisma.publicEnquiry.create({
     data: {
       type,
-      name: name.slice(0, 120),
-      email: email?.slice(0, 254) ?? null,
-      phone: phone?.slice(0, 40) ?? null,
+      name:    name.slice(0, 120),
+      email:   email?.slice(0, 254) ?? null,
+      phone:   phone?.slice(0, 40) ?? null,
       details: details?.slice(0, 2000) ?? null,
     },
     select: { id: true },
