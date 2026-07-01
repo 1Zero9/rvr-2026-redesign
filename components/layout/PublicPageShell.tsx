@@ -29,7 +29,7 @@ export default function PublicPageShell({
               alt="1Zero9Studio"
               width={16}
               height={16}
-              className="h-4 w-4 opacity-50 hover:opacity-80 transition-opacity"
+              className="h-7 w-7 opacity-50 hover:opacity-80 transition-opacity"
             />
             <span className="font-bold animate-pulse">Built by 1Zero9Studio</span>
           </a>
