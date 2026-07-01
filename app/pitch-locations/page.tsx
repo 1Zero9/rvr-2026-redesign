@@ -2,12 +2,12 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import PublicPageShell from "@/components/layout/PublicPageShell";
 import PageHeroNavy from "@/components/layout/PageHeroNavy";
-import { MapPin, Car, Clock, CalendarDays, Footprints, ExternalLink } from "lucide-react";
+import { MapPin, Car, Footprints, ExternalLink } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Pitch Locations | Rivervalley Rangers AFC",
   description:
-    "Find Rivervalley Rangers AFC pitches in Swords, Co. Dublin. Ward Rivervalley Park grass pitches and St Finian's astroturf.",
+    "Find Rivervalley Rangers AFC pitches in Swords, Co. Dublin. Ward Rivervalley Park — our home ground for training and fixtures.",
 };
 
 const pitches = [
@@ -21,20 +21,8 @@ const pitches = [
     use: ["Youth training", "League matches", "Blitzes & tournaments"],
     notes: "Parking available at the park entrance. Facilities include changing rooms on site.",
     directionsUrl: "https://maps.google.com/?q=Ward+Rivervalley+Park,+Swords,+Co.+Dublin,+D17+W2X3",
+    bookingUrl: undefined as string | undefined,
     icon: Footprints,
-  },
-  {
-    id: "st-finians",
-    name: "St Finian's Astroturf",
-    type: "All-Weather Pitch",
-    address: ["St Finian's Community College", "Seatown Road", "Swords, K67 X264"],
-    description:
-      "An all-weather 3G astroturf pitch available to book for training and small-sided games. 5 minutes from Swords town centre — ideal when the grass pitches are unavailable.",
-    use: ["Astro bookings", "Small-sided training", "Evening sessions"],
-    notes: "Bookable online via SportsKey. Car parking on site.",
-    directionsUrl: "https://maps.google.com/?q=St+Finians+Community+College,+Seatown+Road,+Swords,+K67+X264",
-    bookingUrl: "/astro-booking",
-    icon: CalendarDays,
   },
 ];
 
@@ -44,7 +32,7 @@ export default function PitchLocationsPage() {
       <PageHeroNavy
         eyebrow="Rivervalley Rangers AFC"
         title="Pitch Locations"
-        description="Find us in Swords, Co. Dublin — grass pitches at Ward Rivervalley Park and an all-weather astroturf at St Finian's."
+        description="Find us in Swords, Co. Dublin — Ward Rivervalley Park is our home ground for training, fixtures, and blitzes."
       />
 
       <section className="bg-brand-cream">
@@ -120,15 +108,6 @@ export default function PitchLocationsPage() {
                       <ExternalLink className="w-4 h-4" aria-hidden="true" />
                       Get Directions
                     </a>
-                    {pitch.bookingUrl && (
-                      <Link
-                        href={pitch.bookingUrl}
-                        className="inline-flex items-center justify-center gap-2 min-h-[44px] px-5 bg-brand-neon text-brand-charcoal font-display font-black italic uppercase text-sm border-3 border-brand-charcoal shadow-brutalist hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all"
-                      >
-                        <Clock className="w-4 h-4" aria-hidden="true" />
-                        Book Astro
-                      </Link>
-                    )}
                   </div>
                 </div>
 

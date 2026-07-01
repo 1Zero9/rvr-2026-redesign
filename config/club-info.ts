@@ -117,11 +117,6 @@ export const clubFacilities = {
   mapsUrl: 'https://www.google.com/maps/search/?api=1&query=53.458,-6.221',
   features: [
     {
-      label: 'All-weather pitch',
-      value: 'Ward Rivervalley All-Weather Pitch',
-      status: 'verified' as const,
-    },
-    {
       label: 'Community hire',
       value: 'Astro booking information is available online.',
       status: 'verified' as const,

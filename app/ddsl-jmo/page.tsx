@@ -473,7 +473,6 @@ export default function JMOPage() {
             </h4>
             <ul className="space-y-2 text-zinc-400 text-sm">
               <li>📍 Ward Rivervalley Park, Swords, Co. Dublin</li>
-              <li>🏟️ Ward Rivervalley All-Weather Astro Pitch</li>
             </ul>
           </div>
           <div>

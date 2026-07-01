@@ -3,19 +3,19 @@ import PageHeroNavy from '@/components/layout/PageHeroNavy';
 
 export const metadata = {
   title: 'Book the Astro | Rivervalley Rangers AFC',
-  description: "Book the St Finian's Community College astroturf pitch in Swords via SportsKey.",
+  description: "Book the astro pitch in Swords, Co. Dublin via SportsKey. Suitable for 5-a-side, 7-a-side, and 11-a-side formats.",
 };
 
 const CARDS = [
   {
     title: 'The Pitch',
-    body: 'Full-size 3G astroturf surface. Floodlit. Suitable for 5-a-side, 7-a-side, and 11-a-side formats.',
+    body: 'Full-size 3G surface. Floodlit. Suitable for 5-a-side, 7-a-side, and 11-a-side formats.',
     extra: null,
   },
   {
     title: 'Location',
-    body: "St Finian's Community College, Swords, Co. Dublin. 5 minutes from Swords town centre.",
-    extra: 'Seatown Road, Swords, K67 X264',
+    body: 'Swords, Co. Dublin. 5 minutes from Swords town centre.',
+    extra: null,
   },
   {
     title: 'How to Book',
@@ -30,7 +30,7 @@ export default function AstroBookingPage() {
 
       <PageHeroNavy
         title="Book the Astro"
-        description="St Finian's Community College Astroturf · Swords, Co. Dublin"
+        description="Astro Pitch · Swords, Co. Dublin"
       />
 
       {/* ── 2. Info cards ────────────────────────────────────────────── */}
@@ -75,7 +75,7 @@ export default function AstroBookingPage() {
       {/* ── 4. Notice strip ──────────────────────────────────────────── */}
       <div className="bg-brand-cream border-y-3 border-brand-navy px-4 py-4">
         <p className="text-sm text-brand-charcoal text-center">
-          Booking is managed by St Finian&apos;s Community College via SportsKey.
+          Booking is managed via SportsKey.
           Rivervalley Rangers AFC is not responsible for availability or payment processing.
         </p>
       </div>
