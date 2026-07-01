@@ -595,14 +595,14 @@ export default function Header() {
           role="dialog"
           aria-modal="true"
           aria-label="Site information"
-          className={`absolute inset-y-0 left-0 flex w-3/4 max-w-sm flex-col border-r-4 border-blue-600 bg-blue-50 shadow-[18px_0_40px_rgba(0,0,0,0.25)] transition-transform duration-300 ease-out ${
+          className={`absolute inset-y-0 left-0 flex w-3/4 max-w-sm flex-col border-r-4 border-blue-400 bg-blue-700 shadow-[18px_0_40px_rgba(0,0,0,0.35)] transition-transform duration-300 ease-out ${
             infoOpen ? 'translate-x-0' : '-translate-x-full'
           }`}
         >
-          <div className="flex h-16 shrink-0 items-center justify-between px-5 border-b border-blue-200">
+          <div className="flex h-16 shrink-0 items-center justify-between px-5 border-b border-blue-600">
             <div className="flex items-center gap-2">
-              <Info className="h-4 w-4 text-blue-600" />
-              <span className="font-display font-black italic uppercase text-blue-700 tracking-wide">
+              <Info className="h-4 w-4 text-blue-200" />
+              <span className="font-display font-black italic uppercase text-white tracking-wide">
                 Club Update
               </span>
             </div>
@@ -610,7 +610,7 @@ export default function Header() {
               type="button"
               aria-label="Close info panel"
               onClick={() => setInfoOpen(false)}
-              className="flex h-9 w-9 items-center justify-center rounded-xl border-2 border-blue-300 text-blue-400 hover:border-blue-600 hover:text-blue-600 transition-colors"
+              className="flex h-9 w-9 items-center justify-center rounded-xl border-2 border-blue-500 text-blue-200 hover:border-white hover:text-white transition-colors"
             >
               <X className="h-5 w-5" />
             </button>
@@ -618,21 +618,21 @@ export default function Header() {
 
           <div className="flex flex-col gap-6 px-5 py-6">
             <div>
-              <p className="font-display font-black italic text-2xl uppercase text-blue-900 leading-tight">
+              <p className="font-display font-black italic text-2xl uppercase text-white leading-tight">
                 We&apos;re upgrading
               </p>
-              <div className="mt-1 h-1 w-10 bg-blue-500" />
+              <div className="mt-1 h-1 w-10 bg-blue-300" />
             </div>
-            <p className="text-sm text-blue-900/60 leading-relaxed">
+            <p className="text-sm text-blue-100/80 leading-relaxed">
               This site is currently undergoing an upgrade — please be patient as we get everything ready for the season ahead.
             </p>
-            <p className="font-display font-black italic text-lg uppercase text-blue-600">
+            <p className="font-display font-black italic text-lg uppercase text-blue-200">
               Up the Valley! 🏆
             </p>
             <Link
               href="/register"
               onClick={() => setInfoOpen(false)}
-              className="inline-flex items-center justify-center gap-2 min-h-[44px] px-5 bg-blue-600 text-white font-display font-black uppercase text-sm border-3 border-blue-800 shadow-brutalist hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all"
+              className="inline-flex items-center justify-center gap-2 min-h-[44px] px-5 bg-white text-blue-700 font-display font-black uppercase text-sm border-3 border-blue-900 shadow-brutalist hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all"
             >
               Join the Club
             </Link>
