@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import Image from 'next/image';
 import Link from 'next/link';
 import {
   CalendarDays,
@@ -71,22 +70,6 @@ export default function AcademyPage() {
           </>
         }
       />
-
-      {/* ── Marketing image ───────────────────────────────────────────────── */}
-      <section className="bg-brand-cream border-b border-brand-navy/10">
-        <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6">
-          <div className="relative overflow-hidden border-4 border-brand-navy shadow-[8px_8px_0_#0B1F3B]">
-            <Image
-              src="/marketing/IMG_2635.png"
-              alt="Rivervalley Rangers Development Academy — we are back!"
-              width={1200}
-              height={900}
-              className="w-full h-auto"
-              priority
-            />
-          </div>
-        </div>
-      </section>
 
       {/* ── Programmes ───────────────────────────────────────────────────── */}
       <section className="bg-brand-cream border-b border-brand-navy/10">

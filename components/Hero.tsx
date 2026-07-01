@@ -7,10 +7,10 @@ import { CLUB_SEASON } from '@/config/club-season';
 import { computeClubStats } from '@/lib/club-stats';
 
 const HERO_CTAS = [
-  { label: 'Join RVR Academy', sub: 'Register for 2026/27',    href: '/register',      icon: UserPlus    },
+  { label: 'Join the Club',   sub: 'Register for 2026/27',    href: '/register',      icon: UserPlus    },
+  { label: 'Match Day',       sub: 'Fixtures & results',       href: '/fixtures',      icon: Trophy       },
+  { label: 'Club News',       sub: 'Latest updates',           href: '/news',          icon: Newspaper    },
   { label: 'Book Astro Pitch', sub: 'Reserve your slot online', href: '/astro-booking', icon: CalendarDays },
-  { label: 'Match Day',        sub: 'Fixtures & results',       href: '/fixtures',      icon: Trophy       },
-  { label: 'Club News',        sub: 'Latest updates',           href: '/news',          icon: Newspaper    },
 ] as const;
 
 const { yearsActive, totalTeams, estimatedPlayers } = computeClubStats();
