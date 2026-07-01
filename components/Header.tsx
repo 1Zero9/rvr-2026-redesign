@@ -465,7 +465,7 @@ export default function Header() {
               type="button"
               aria-label="Site information"
               onClick={() => setInfoOpen(true)}
-              className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-brand-sky hover:text-brand-neon transition-colors"
+              className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-blue-400 hover:text-blue-300 transition-colors"
             >
               <Info className="h-5 w-5" />
             </button>
@@ -538,7 +538,7 @@ export default function Header() {
               type="button"
               aria-label="Site information"
               onClick={() => setInfoOpen(true)}
-              className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-brand-sky/40 text-brand-sky hover:border-brand-neon hover:text-brand-neon transition-colors"
+              className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-blue-400/60 text-blue-400 hover:border-blue-300 hover:text-blue-300 transition-colors"
             >
               <Info className="h-4 w-4" />
             </button>
