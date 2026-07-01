@@ -309,6 +309,12 @@ export default function ClubPage() {
             >
               Book the Astro
             </Link>
+            <Link
+              href="/pitch-locations"
+              className="inline-flex min-h-11 items-center justify-center rounded-full border-3 border-brand-navy bg-white px-4 font-display text-xs font-black uppercase text-brand-navy transition hover:bg-brand-neon"
+            >
+              All Pitch Locations
+            </Link>
           </div>
         </article>
 
