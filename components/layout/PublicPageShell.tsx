@@ -21,7 +21,7 @@ export default function PublicPageShell({
             href="https://www.1zero9.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 text-zinc-600 hover:text-zinc-400 transition-colors"
+            className="inline-flex items-center gap-1.5 text-brand-neon hover:text-white transition-colors"
             aria-label="Built by 1Zero9Studio"
           >
             <img
@@ -29,7 +29,7 @@ export default function PublicPageShell({
               alt="1Zero9Studio"
               width={16}
               height={16}
-              className="h-7 w-7 opacity-50 hover:opacity-80 transition-opacity"
+              className="h-7 w-7 opacity-90 transition-opacity"
             />
             <span className="font-bold animate-pulse">Built by 1Zero9Studio</span>
           </a>
