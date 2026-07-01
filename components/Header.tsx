@@ -549,21 +549,18 @@ export default function Header() {
       <SearchOverlay isOpen={searchOpen} onClose={closeSearch} />
 
       {/* Bookmark tab — fixed to left viewport edge, opens info panel */}
-      <button
-        type="button"
-        aria-label="Open club update"
-        onClick={() => setInfoOpen(true)}
-        className={`fixed left-0 top-1/2 z-[55] flex flex-col items-center gap-2 bg-brand-neon text-brand-charcoal rounded-r-2xl border-r-4 border-y-2 border-brand-charcoal px-2 py-5 shadow-[4px_2px_0_rgba(0,0,0,0.2)] transition-all duration-300 ${
-          infoOpen ? 'opacity-0 pointer-events-none' : 'opacity-100 hover:translate-x-0.5'
-        }`}
-        style={{
-          writingMode: 'vertical-lr',
-          transform: infoOpen ? 'translateY(-50%) translateX(-110%)' : 'translateY(-50%)',
-        }}
-      >
-        <Info className="h-4 w-4 shrink-0" />
-        <span className="font-display font-black text-[9px] uppercase tracking-widest">Club Update</span>
-      </button>
+      {!infoOpen && (
+        <button
+          type="button"
+          aria-label="Open club update"
+          onClick={() => setInfoOpen(true)}
+          className="fixed left-0 z-[55] flex flex-col items-center gap-1 bg-brand-navy rounded-r-lg border-r-2 border-y border-blue-400/50 px-1.5 py-2.5 shadow-md hover:border-blue-400 transition-colors"
+          style={{ writingMode: 'vertical-lr', top: '50%', transform: 'translateY(-50%)' }}
+        >
+          <Info className="h-3.5 w-3.5 shrink-0 text-blue-400" />
+          <span className="font-display font-black text-[8px] uppercase tracking-widest text-blue-300/70">info</span>
+        </button>
+      )}
 
       {/* Info panel — slides in from the left */}
       <div
