@@ -23,11 +23,11 @@ const heroStats = [
 ];
 
 const explodeProps = [
-  { x: '-60px', y: '-40px', r: '-8deg', delay: '0.1s' },
-  { x: '40px',  y: '-60px', r: '6deg',  delay: '0.25s' },
-  { x: '80px',  y: '20px',  r: '-5deg', delay: '0.4s' },
-  { x: '-40px', y: '60px',  r: '10deg', delay: '0.55s' },
-  { x: '0px',   y: '-80px', r: '-12deg', delay: '0.7s' },
+  { x: '-60px', y: '-40px', r: '-8deg', delay: '0.5s' },
+  { x: '40px',  y: '-60px', r: '6deg',  delay: '0.65s' },
+  { x: '80px',  y: '20px',  r: '-5deg', delay: '0.8s' },
+  { x: '-40px', y: '60px',  r: '10deg', delay: '0.95s' },
+  { x: '0px',   y: '-80px', r: '-12deg', delay: '1.1s' },
 ];
 
 export default function Hero() {
