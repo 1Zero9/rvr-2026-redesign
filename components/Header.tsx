@@ -4,7 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { ArrowRight, ChevronDown, ChevronRight, Menu, X } from 'lucide-react';
+import { ArrowRight, ChevronDown, ChevronRight, Info, Menu, X } from 'lucide-react';
 import { ASSET_PATHS } from '@/config/assets';
 import SearchOverlay from './SearchOverlay';
 
@@ -233,6 +233,7 @@ export default function Header() {
   const [openSection, setOpenSection] = useState<string | null>(null);
   const [mobileSection, setMobileSection] = useState<string | null>(null);
   const [searchOpen,  setSearchOpen]  = useState(false);
+  const [infoOpen,    setInfoOpen]    = useState(false);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const searchButtonRef = useRef<HTMLButtonElement>(null);
   const pathname = usePathname();
@@ -250,11 +251,11 @@ export default function Header() {
     requestAnimationFrame(() => searchButtonRef.current?.focus());
   }, []);
 
-  // Body scroll lock for mobile overlay
+  // Body scroll lock for mobile overlay and info panel
   useEffect(() => {
-    document.body.style.overflow = open ? 'hidden' : '';
+    document.body.style.overflow = (open || infoOpen) ? 'hidden' : '';
     return () => { document.body.style.overflow = ''; };
-  }, [open]);
+  }, [open, infoOpen]);
 
   // Close mega menu and search on Escape
   useEffect(() => {
@@ -262,6 +263,7 @@ export default function Header() {
       if (e.key === 'Escape') {
         setOpenSection(null);
         if (open) setOpen(false);
+        if (infoOpen) setInfoOpen(false);
         if (searchOpen) closeSearch();
       }
     };
@@ -283,25 +285,35 @@ export default function Header() {
       >
         <div className="relative max-w-7xl mx-auto flex items-center justify-between h-16 px-4 md:px-6 lg:grid lg:grid-cols-[auto_1fr_auto] lg:items-center">
 
-          {/* Logo */}
-          <Link href="/" className="flex shrink-0 items-center gap-3" onClick={close}>
-            <Image
-              src="/river-valley-rangers-logo-pack-v2/RVR-New-White2.png"
-              alt="Rivervalley Rangers AFC crest"
-              width={44}
-              height={44}
-              className="block"
-              priority
-            />
-            <span className="grid leading-none">
-              <span className="font-display text-lg font-black uppercase italic tracking-tight text-white md:text-xl">
-                Rivervalley
+          {/* Logo + mobile info button */}
+          <div className="flex items-center gap-2">
+            <Link href="/" className="flex shrink-0 items-center gap-3" onClick={close}>
+              <Image
+                src="/river-valley-rangers-logo-pack-v2/RVR-New-White2.png"
+                alt="Rivervalley Rangers AFC crest"
+                width={44}
+                height={44}
+                className="block"
+                priority
+              />
+              <span className="grid leading-none">
+                <span className="font-display text-lg font-black uppercase italic tracking-tight text-white md:text-xl">
+                  Rivervalley
+                </span>
+                <span className="font-display text-xs font-bold uppercase tracking-wider text-brand-neon">
+                  Rangers AFC
+                </span>
               </span>
-              <span className="font-display text-xs font-bold uppercase tracking-wider text-brand-neon">
-                Rangers AFC
-              </span>
-            </span>
-          </Link>
+            </Link>
+            <button
+              type="button"
+              aria-label="Site information"
+              onClick={() => setInfoOpen(true)}
+              className="lg:hidden flex h-9 w-9 items-center justify-center rounded-full border-2 border-brand-sky/40 text-brand-sky hover:border-brand-neon hover:text-brand-neon transition-colors"
+            >
+              <Info className="h-4 w-4" />
+            </button>
+          </div>
 
           <div className="hidden lg:flex flex-1 items-center justify-center gap-8 lg:justify-self-center">
             {/* Desktop mega-menu trigger buttons */}
@@ -416,6 +428,14 @@ export default function Header() {
           {/* Search + Instagram + Affiliation logos + Desktop CTA */}
           <div className="hidden lg:flex items-center gap-2 lg:justify-self-end">
             <button
+              type="button"
+              aria-label="Site information"
+              onClick={() => setInfoOpen(true)}
+              className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-brand-sky hover:text-brand-neon transition-colors"
+            >
+              <Info className="h-5 w-5" />
+            </button>
+            <button
               ref={searchButtonRef}
               type="button"
               onClick={() => setSearchOpen(true)}
@@ -499,6 +519,67 @@ export default function Header() {
 
       {/* Search overlay */}
       <SearchOverlay isOpen={searchOpen} onClose={closeSearch} />
+
+      {/* Info panel — slides in from the left */}
+      <div
+        className={`fixed inset-0 z-[60] transition ${
+          infoOpen ? 'pointer-events-auto' : 'pointer-events-none'
+        }`}
+        aria-hidden={!infoOpen}
+      >
+        <button
+          type="button"
+          aria-label="Close info panel"
+          onClick={() => setInfoOpen(false)}
+          className={`absolute inset-0 bg-brand-charcoal/40 transition-opacity duration-300 ease-out ${
+            infoOpen ? 'opacity-100' : 'opacity-0'
+          }`}
+        />
+        <aside
+          role="dialog"
+          aria-modal="true"
+          aria-label="Site information"
+          className={`absolute inset-y-0 left-0 flex w-72 max-w-[85vw] flex-col border-r border-brand-sky/20 bg-brand-navy shadow-[18px_0_40px_rgba(0,0,0,0.35)] transition-transform duration-300 ease-out ${
+            infoOpen ? 'translate-x-0' : '-translate-x-full'
+          }`}
+        >
+          <div className="flex h-16 shrink-0 items-center justify-between px-5">
+            <span className="font-display font-black text-xs uppercase tracking-widest text-brand-sky/60">
+              Club Update
+            </span>
+            <button
+              type="button"
+              aria-label="Close info panel"
+              onClick={() => setInfoOpen(false)}
+              className="flex h-9 w-9 items-center justify-center rounded-xl border-2 border-brand-sky/30 text-brand-sky hover:border-brand-neon hover:text-brand-neon transition-colors"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
+
+          <div className="flex flex-col gap-6 px-5 py-6 border-t border-brand-sky/15">
+            <div>
+              <p className="font-display font-black italic text-2xl uppercase text-brand-cream leading-tight">
+                We&apos;re upgrading
+              </p>
+              <div className="mt-1 h-1 w-10 bg-brand-neon" />
+            </div>
+            <p className="text-sm text-brand-sky/80 leading-relaxed">
+              This site is currently undergoing an upgrade — please be patient as we get everything ready for the season ahead.
+            </p>
+            <p className="font-display font-black italic text-lg uppercase text-brand-neon">
+              Up the Valley! 🏆
+            </p>
+            <Link
+              href="/register"
+              onClick={() => setInfoOpen(false)}
+              className="inline-flex items-center justify-center gap-2 min-h-[44px] px-5 bg-brand-neon text-brand-charcoal font-display font-black uppercase text-sm border-3 border-brand-charcoal shadow-brutalist hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all"
+            >
+              Join the Club
+            </Link>
+          </div>
+        </aside>
+      </div>
 
       {/* Mobile slide-out drawer */}
       <div
