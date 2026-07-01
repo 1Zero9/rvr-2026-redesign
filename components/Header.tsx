@@ -301,7 +301,7 @@ export default function Header() {
       >
         <div className="relative max-w-7xl mx-auto flex items-center justify-between h-16 px-4 md:px-6 lg:grid lg:grid-cols-[auto_1fr_auto] lg:items-center">
 
-          {/* Logo + mobile news button */}
+          {/* Logo */}
           <div className="flex items-center gap-2">
             <Link href="/" className="flex shrink-0 items-center gap-3" onClick={close}>
               <Image
@@ -321,19 +321,6 @@ export default function Header() {
                 </span>
               </span>
             </Link>
-            {newsLoaded && announcements.length > 0 && (
-              <button
-                type="button"
-                aria-label={`Club news — ${announcements.length} update${announcements.length !== 1 ? 's' : ''}`}
-                onClick={openNews}
-                className="lg:hidden relative flex h-9 w-9 items-center justify-center rounded-full border-2 border-brand-neon/60 text-brand-neon hover:border-brand-neon transition-colors"
-              >
-                <Megaphone className="h-4 w-4" />
-                <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-brand-neon text-[9px] font-black text-brand-charcoal animate-pulse">
-                  {announcements.length}
-                </span>
-              </button>
-            )}
           </div>
 
           <div className="hidden lg:flex flex-1 items-center justify-center gap-8 lg:justify-self-center">
@@ -448,19 +435,6 @@ export default function Header() {
 
           {/* Search + Instagram + Affiliation logos + Desktop CTA */}
           <div className="hidden lg:flex items-center gap-2 lg:justify-self-end">
-            {newsLoaded && announcements.length > 0 && (
-              <button
-                type="button"
-                aria-label={`Club news — ${announcements.length} update${announcements.length !== 1 ? 's' : ''}`}
-                onClick={openNews}
-                className="relative p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-brand-neon hover:text-white transition-colors"
-              >
-                <Megaphone className="h-5 w-5" />
-                <span className="absolute top-1.5 right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-brand-neon text-[9px] font-black text-brand-charcoal animate-pulse">
-                  {announcements.length}
-                </span>
-              </button>
-            )}
             <button
               ref={searchButtonRef}
               type="button"
@@ -640,6 +614,34 @@ export default function Header() {
         </aside>
       </div>
 
+      {/* News bookmark tab — fixed to right viewport edge */}
+      {!newsOpen && newsLoaded && announcements.length > 0 && (
+        <>
+          {/* Mobile */}
+          <button
+            type="button"
+            aria-label="Open club news"
+            onClick={openNews}
+            className="lg:hidden fixed right-0 z-[55] flex flex-col items-center gap-0.5 bg-emerald-600 hover:bg-emerald-500 rounded-l-lg px-2 py-2.5 shadow-md transition-colors"
+            style={{ top: '50%', transform: 'translateY(-50%)' }}
+          >
+            <Megaphone className="h-5 w-5 text-white" strokeWidth={2.5} />
+            <span className="font-display font-black text-[8px] uppercase tracking-wide text-white">news</span>
+          </button>
+          {/* Desktop */}
+          <button
+            type="button"
+            aria-label="Open club news"
+            onClick={openNews}
+            className="hidden lg:flex fixed right-0 z-[55] flex-col items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 rounded-l-lg px-2 shadow-md transition-colors h-44"
+            style={{ writingMode: 'vertical-lr', top: '50%', transform: 'translateY(-50%)' }}
+          >
+            <Megaphone className="h-3.5 w-3.5 shrink-0 text-white" />
+            <span className="font-display font-black text-[8px] uppercase tracking-widest text-white">news</span>
+          </button>
+        </>
+      )}
+
       {/* News panel — slides in from the right */}
       <div
         className={`fixed inset-0 z-[65] transition ${
@@ -659,14 +661,14 @@ export default function Header() {
           role="dialog"
           aria-modal="true"
           aria-label="Club news"
-          className={`absolute inset-y-0 right-0 flex w-3/4 max-w-sm flex-col border-l-4 border-brand-charcoal bg-brand-neon shadow-[-18px_0_40px_rgba(0,0,0,0.4)] transition-transform duration-300 ease-out ${
+          className={`absolute inset-y-0 right-0 flex w-3/4 max-w-sm flex-col border-l-4 border-emerald-800 bg-emerald-600 shadow-[-18px_0_40px_rgba(0,0,0,0.4)] transition-transform duration-300 ease-out ${
             newsOpen ? 'translate-x-0' : 'translate-x-full'
           }`}
         >
-          <div className="flex h-16 shrink-0 items-center justify-between px-5 border-b border-brand-charcoal/20">
+          <div className="flex h-16 shrink-0 items-center justify-between px-5 border-b border-white/20">
             <div className="flex items-center gap-2">
-              <Megaphone className="h-4 w-4 text-brand-charcoal" />
-              <span className="font-display font-black italic uppercase text-brand-charcoal tracking-wide">
+              <Megaphone className="h-4 w-4 text-white" />
+              <span className="font-display font-black italic uppercase text-white tracking-wide">
                 Club News
               </span>
             </div>
@@ -674,7 +676,7 @@ export default function Header() {
               type="button"
               aria-label="Close news panel"
               onClick={() => setNewsOpen(false)}
-              className="flex h-9 w-9 items-center justify-center rounded-xl border-2 border-brand-charcoal/30 text-brand-charcoal hover:border-brand-charcoal hover:bg-brand-charcoal/10 transition-colors"
+              className="flex h-9 w-9 items-center justify-center rounded-xl border-2 border-white/30 text-white hover:border-white hover:bg-white/10 transition-colors"
             >
               <X className="h-5 w-5" />
             </button>
@@ -688,18 +690,18 @@ export default function Header() {
                   <span className={`inline-block font-display font-black uppercase text-[10px] tracking-widest px-2 py-0.5 mb-3 ${cat.colour} ${cat.textColour}`}>
                     {cat.label}
                   </span>
-                  <p className="font-display font-black italic uppercase text-brand-navy text-xl leading-tight">
+                  <p className="font-display font-black italic uppercase text-white text-xl leading-tight">
                     {a.title}
                   </p>
-                  <div className="mt-1.5 h-0.5 w-8 bg-brand-charcoal" />
-                  <p className="mt-3 text-sm text-brand-charcoal/70 leading-relaxed">
+                  <div className="mt-1.5 h-0.5 w-8 bg-white/60" />
+                  <p className="mt-3 text-sm text-white/80 leading-relaxed">
                     {a.body}
                   </p>
                   {a.ctaUrl && a.ctaLabel && (
                     <Link
                       href={a.ctaUrl}
                       onClick={() => setNewsOpen(false)}
-                      className="inline-block mt-3 font-display font-black italic uppercase text-sm text-brand-navy hover:text-brand-charcoal transition-colors"
+                      className="inline-block mt-3 font-display font-black italic uppercase text-sm text-white/90 hover:text-white underline transition-colors"
                     >
                       {a.ctaLabel} →
                     </Link>
@@ -709,11 +711,11 @@ export default function Header() {
             })}
           </div>
 
-          <div className="shrink-0 border-t border-brand-charcoal/20 p-5">
+          <div className="shrink-0 border-t border-white/20 p-5">
             <Link
               href="/news"
               onClick={() => setNewsOpen(false)}
-              className="flex items-center justify-center min-h-[52px] w-full bg-brand-navy text-white font-display font-black uppercase text-sm border-3 border-brand-charcoal shadow-brutalist hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all"
+              className="flex items-center justify-center min-h-[52px] w-full bg-white text-emerald-700 font-display font-black uppercase text-sm border-3 border-emerald-900 shadow-brutalist hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all"
             >
               All News & Updates →
             </Link>
