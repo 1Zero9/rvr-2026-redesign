@@ -643,8 +643,8 @@ export default function Header() {
           role="dialog"
           aria-modal="true"
           aria-label="Club news"
-          className={`absolute inset-y-0 right-0 flex w-3/4 max-w-sm flex-col border-l-4 border-emerald-800 bg-emerald-600 shadow-[-18px_0_40px_rgba(0,0,0,0.4)] transition-transform duration-300 ease-out ${
-            newsOpen ? 'translate-x-0' : 'translate-x-full'
+          className={`absolute inset-y-0 left-0 flex w-3/4 max-w-sm flex-col border-r-4 border-emerald-800 bg-emerald-600 shadow-[18px_0_40px_rgba(0,0,0,0.4)] transition-transform duration-300 ease-out ${
+            newsOpen ? 'translate-x-0' : '-translate-x-full'
           }`}
         >
           <div className="flex h-16 shrink-0 items-center justify-between px-5 border-b border-white/20">
