@@ -3,7 +3,6 @@
 import React from 'react';
 import Link from 'next/link';
 import { UserPlus, CalendarDays, Trophy, Newspaper } from 'lucide-react';
-import { CLUB_SEASON } from '@/config/club-season';
 import { computeClubStats } from '@/lib/club-stats';
 
 const HERO_CTAS = [
@@ -57,16 +56,6 @@ export default function Hero() {
         />
       </div>
 
-      <div className="absolute top-12 left-10 hidden lg:block rotate-12 scale-90 animate-pulse z-20">
-        <div className="bg-brand-neon text-brand-charcoal font-display font-black text-xs px-4 py-2 border-3 border-brand-charcoal rounded-xl shadow-brutalist">
-          EST. {CLUB_SEASON.foundingYear}
-        </div>
-      </div>
-      <div className="absolute bottom-16 right-12 hidden lg:block -rotate-6 scale-95 hover:rotate-2 transition-transform duration-300 z-20">
-        <div className="bg-white text-brand-green font-display font-black text-sm px-5 py-3 border-3 border-brand-charcoal rounded-2xl shadow-brutalist-green">
-          DUBLIN&apos;S BEST Astro Pitch
-        </div>
-      </div>
 
       <div className="relative z-20 max-w-5xl mx-auto px-6 text-center py-10 md:py-20 flex flex-col items-center">
         <span className="inline-block bg-brand-neon text-brand-charcoal font-display font-black text-xs md:text-sm px-5 py-2 rounded-full uppercase tracking-wider mb-5 md:mb-8 border-3 border-brand-charcoal shadow-brutalist rotate-[-2deg] hover:rotate-0 transition-transform cursor-default">
