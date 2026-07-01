@@ -583,25 +583,28 @@ export default function Header() {
           role="dialog"
           aria-modal="true"
           aria-label="Site information"
-          className={`absolute inset-y-0 left-0 flex w-72 max-w-[85vw] flex-col border-r border-brand-sky/20 bg-brand-navy shadow-[18px_0_40px_rgba(0,0,0,0.35)] transition-transform duration-300 ease-out ${
+          className={`absolute inset-y-0 left-0 flex w-72 max-w-[85vw] flex-col border-r-4 border-brand-neon bg-brand-navy shadow-[18px_0_40px_rgba(0,0,0,0.35)] transition-transform duration-300 ease-out ${
             infoOpen ? 'translate-x-0' : '-translate-x-full'
           }`}
         >
-          <div className="flex h-16 shrink-0 items-center justify-between px-5">
-            <span className="font-display font-black text-xs uppercase tracking-widest text-brand-sky/60">
-              Club Update
-            </span>
+          <div className="flex h-16 shrink-0 items-center justify-between px-5 border-b border-brand-neon/20">
+            <div className="flex items-center gap-2">
+              <Info className="h-4 w-4 text-brand-neon" />
+              <span className="font-display font-black italic uppercase text-brand-neon tracking-wide">
+                Club Update
+              </span>
+            </div>
             <button
               type="button"
               aria-label="Close info panel"
               onClick={() => setInfoOpen(false)}
-              className="flex h-9 w-9 items-center justify-center rounded-xl border-2 border-brand-sky/30 text-brand-sky hover:border-brand-neon hover:text-brand-neon transition-colors"
+              className="flex h-9 w-9 items-center justify-center rounded-xl border-2 border-brand-neon/30 text-brand-sky hover:border-brand-neon hover:text-brand-neon transition-colors"
             >
               <X className="h-5 w-5" />
             </button>
           </div>
 
-          <div className="flex flex-col gap-6 px-5 py-6 border-t border-brand-sky/15">
+          <div className="flex flex-col gap-6 px-5 py-6">
             <div>
               <p className="font-display font-black italic text-2xl uppercase text-brand-cream leading-tight">
                 We&apos;re upgrading
@@ -644,14 +647,14 @@ export default function Header() {
           role="dialog"
           aria-modal="true"
           aria-label="Club news"
-          className={`absolute inset-y-0 right-0 flex w-80 max-w-[90vw] flex-col border-l-4 border-brand-neon bg-brand-navy shadow-[-18px_0_40px_rgba(0,0,0,0.4)] transition-transform duration-300 ease-out ${
+          className={`absolute inset-y-0 right-0 flex w-80 max-w-[90vw] flex-col border-l border-brand-sky/20 bg-brand-navy shadow-[-18px_0_40px_rgba(0,0,0,0.4)] transition-transform duration-300 ease-out ${
             newsOpen ? 'translate-x-0' : 'translate-x-full'
           }`}
         >
-          <div className="flex h-16 shrink-0 items-center justify-between px-5 border-b border-brand-neon/20">
+          <div className="flex h-16 shrink-0 items-center justify-between px-5 border-b border-brand-sky/15">
             <div className="flex items-center gap-2">
-              <Megaphone className="h-4 w-4 text-brand-neon" />
-              <span className="font-display font-black italic uppercase text-brand-neon tracking-wide">
+              <Megaphone className="h-4 w-4 text-brand-sky" />
+              <span className="font-display font-black italic uppercase text-brand-sky/80 tracking-wide">
                 Club News
               </span>
             </div>
@@ -659,7 +662,7 @@ export default function Header() {
               type="button"
               aria-label="Close news panel"
               onClick={() => setNewsOpen(false)}
-              className="flex h-9 w-9 items-center justify-center rounded-xl border-2 border-brand-neon/30 text-brand-sky hover:border-brand-neon hover:text-brand-neon transition-colors"
+              className="flex h-9 w-9 items-center justify-center rounded-xl border-2 border-brand-sky/30 text-brand-sky hover:border-brand-neon hover:text-brand-neon transition-colors"
             >
               <X className="h-5 w-5" />
             </button>
@@ -679,7 +682,7 @@ export default function Header() {
                     </span>
                   </div>
                   <div className="p-3">
-                    <p className="font-display font-black italic uppercase text-brand-neon text-base leading-tight">
+                    <p className="font-display font-black italic uppercase text-brand-cream text-base leading-tight">
                       {a.title}
                     </p>
                     <p className="mt-1 text-brand-sky/70 text-xs leading-relaxed line-clamp-3">
@@ -689,7 +692,7 @@ export default function Header() {
                       <Link
                         href={a.ctaUrl}
                         onClick={() => setNewsOpen(false)}
-                        className="inline-block mt-2 text-[10px] font-black uppercase tracking-wider text-brand-neon border border-brand-neon/50 px-2 py-1 hover:bg-brand-neon hover:text-brand-charcoal transition-colors"
+                        className="inline-block mt-2 text-[10px] font-black uppercase tracking-wider text-brand-sky border border-brand-sky/50 px-2 py-1 hover:bg-brand-sky hover:text-brand-charcoal transition-colors"
                       >
                         {a.ctaLabel} →
                       </Link>
@@ -700,11 +703,11 @@ export default function Header() {
             })}
           </div>
 
-          <div className="shrink-0 border-t border-brand-neon/20 p-4">
+          <div className="shrink-0 border-t border-brand-sky/15 p-4">
             <Link
               href="/news"
               onClick={() => setNewsOpen(false)}
-              className="flex items-center justify-center gap-2 min-h-[44px] w-full bg-brand-neon text-brand-charcoal font-display font-black italic uppercase text-sm border-3 border-brand-charcoal shadow-brutalist hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all"
+              className="flex items-center justify-center gap-2 min-h-[44px] w-full bg-brand-charcoal text-brand-cream font-display font-black italic uppercase text-sm border-3 border-brand-sky/30 shadow-brutalist hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all"
             >
               All News & Updates →
             </Link>
