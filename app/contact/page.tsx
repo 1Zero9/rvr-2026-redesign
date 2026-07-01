@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import PublicPageShell from "@/components/layout/PublicPageShell";
 import PageHeroNavy from "@/components/layout/PageHeroNavy";
-import { Mail, MapPin, ShieldCheck } from "lucide-react";
+import { AlertTriangle, Mail, MapPin, ShieldCheck } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Contact | Rivervalley Rangers AFC",
@@ -30,6 +30,16 @@ const contacts = [
 export default function ContactPage() {
   return (
     <PublicPageShell>
+      <div className="bg-brand-neon border-b-3 border-brand-charcoal">
+        <div className="max-w-6xl mx-auto px-6 py-3 flex items-start gap-3">
+          <AlertTriangle className="w-4 h-4 text-brand-charcoal shrink-0 mt-0.5" aria-hidden="true" />
+          <p className="text-sm font-bold text-brand-charcoal">
+            <span className="font-black uppercase">Sample data only.</span>{' '}
+            Contact details shown are placeholder content pending confirmation from the club committee.
+          </p>
+        </div>
+      </div>
+
       <PageHeroNavy
         eyebrow={<><Mail className="h-4 w-4" aria-hidden="true" /> Get in Touch</>}
         title="Contact Us"

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import {
+  AlertTriangle,
   ArrowRight,
   Building2,
   CheckCircle2,
@@ -67,6 +68,16 @@ function StatusLabel({
 export default function ClubPage() {
   return (
     <PublicPageShell>
+      <div className="bg-brand-neon border-b-3 border-brand-charcoal">
+        <div className="max-w-6xl mx-auto px-6 py-3 flex items-start gap-3">
+          <AlertTriangle className="w-4 h-4 text-brand-charcoal shrink-0 mt-0.5" aria-hidden="true" />
+          <p className="text-sm font-bold text-brand-charcoal">
+            <span className="font-black uppercase">Sample data only.</span>{' '}
+            Committee contacts, timeline, facilities, and policies on this page are placeholder content pending confirmation from the club.
+          </p>
+        </div>
+      </div>
+
       <PageHeroNavy
         eyebrow={`Est. ${clubOverview.foundingYear}`}
         title="Club Information"

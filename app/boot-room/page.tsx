@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
-import { ArrowRight, PackageCheck, Recycle, ShieldCheck } from 'lucide-react';
-import BootRoomSubmissionForm from '@/components/boot-room/BootRoomSubmissionForm';
+import { AlertTriangle, ArrowRight, Clock, PackageCheck, Recycle, ShieldCheck } from 'lucide-react';
 import ContentSection from '@/components/layout/ContentSection';
 import PageHeroNavy from '@/components/layout/PageHeroNavy';
 import PublicPageShell from '@/components/layout/PublicPageShell';
@@ -33,6 +32,16 @@ export default async function BootRoomPage() {
 
   return (
     <PublicPageShell>
+      <div className="bg-brand-navy border-b-3 border-brand-sky/30">
+        <div className="max-w-6xl mx-auto px-6 py-3 flex items-start gap-3">
+          <Clock className="w-4 h-4 text-brand-neon shrink-0 mt-0.5" aria-hidden="true" />
+          <p className="text-sm font-bold text-brand-cream">
+            <span className="font-black uppercase text-brand-neon">Coming soon.</span>{' '}
+            The Boot Room exchange is not yet open. Submissions are currently closed.
+          </p>
+        </div>
+      </div>
+
       <PageHeroNavy
         eyebrow="Reuse football equipment"
         title="Boot Room Exchange"
@@ -128,10 +137,18 @@ export default async function BootRoomPage() {
 
       <ContentSection
         title="Donate equipment"
-        description="Items should be clean, usable, and safe. The club may reject unsuitable or incomplete listings."
+        description="Submissions will open once the exchange is confirmed by the club."
         width="4xl"
       >
-        <BootRoomSubmissionForm />
+        <div className="site-surface flex flex-col items-center gap-4 p-10 text-center">
+          <AlertTriangle className="h-10 w-10 text-brand-neon" aria-hidden="true" />
+          <h3 className="font-display text-2xl font-black uppercase text-brand-navy">
+            Submissions currently closed
+          </h3>
+          <p className="max-w-sm text-sm font-semibold leading-6 text-zinc-600">
+            The Boot Room exchange is coming soon. Check back once the club has confirmed the service is active.
+          </p>
+        </div>
       </ContentSection>
     </PublicPageShell>
   );

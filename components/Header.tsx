@@ -64,7 +64,6 @@ const NAV_SECTIONS: NavSection[] = [
         links: [
           { href: '/football-for-all',   label: 'Football For All' },
           { href: '/walking-football',   label: 'Walking Football'  },
-          { href: '/football-for-all',   label: 'Sensory Sessions'  },
         ],
       },
     ],
