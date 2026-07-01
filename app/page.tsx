@@ -15,6 +15,7 @@ const COMMUNITY_CATEGORIES: Array<{
   label: string;
   copy: string;
   href: string;
+  pink?: boolean;
 }> = [
   {
     Icon: GraduationCap,
@@ -33,6 +34,7 @@ const COMMUNITY_CATEGORIES: Array<{
     label: 'Girls',
     copy: 'DDSL Girls teams across multiple age groups and divisions.',
     href: '/teams?filter=girls',
+    pink: true,
   },
   {
     Icon: Trophy,
@@ -150,10 +152,20 @@ export default async function Home() {
                 <Link
                   key={cat.label}
                   href={cat.href}
-                  className="group flex flex-col items-center text-center gap-3 rounded-2xl border-2 border-brand-navy/15 hover:border-brand-navy/40 px-4 py-6 bg-white hover:bg-brand-navy/5 transition-all duration-200 min-h-[44px]"
+                  className={`group flex flex-col items-center text-center gap-3 rounded-2xl border-2 px-4 py-6 transition-all duration-200 min-h-[44px] ${
+                    cat.pink
+                      ? 'border-pink-300/50 bg-pink-50 hover:border-pink-400 hover:bg-pink-100'
+                      : 'border-brand-navy/15 bg-white hover:border-brand-navy/40 hover:bg-brand-navy/5'
+                  }`}
                 >
-                  <div className="inline-flex items-center justify-center w-11 h-11 rounded-xl bg-brand-navy/5 border border-brand-navy/15 group-hover:bg-brand-neon/15 group-hover:border-brand-neon/40 transition-colors">
-                    <cat.Icon className="w-6 h-6 text-brand-navy group-hover:text-brand-neon transition-colors" aria-hidden="true" />
+                  <div className={`inline-flex items-center justify-center w-11 h-11 rounded-xl border transition-colors ${
+                    cat.pink
+                      ? 'bg-pink-100 border-pink-200 group-hover:bg-pink-200 group-hover:border-pink-300'
+                      : 'bg-brand-navy/5 border-brand-navy/15 group-hover:bg-brand-neon/15 group-hover:border-brand-neon/40'
+                  }`}>
+                    <cat.Icon className={`w-6 h-6 transition-colors ${
+                      cat.pink ? 'text-pink-500 group-hover:text-pink-600' : 'text-brand-navy group-hover:text-brand-neon'
+                    }`} aria-hidden="true" />
                   </div>
                   <p className="font-display font-black text-sm uppercase tracking-wide text-brand-charcoal group-hover:text-brand-navy transition-colors">
                     {cat.label}
@@ -161,7 +173,9 @@ export default async function Home() {
                   <p className="text-brand-charcoal/50 text-xs leading-relaxed flex-1">
                     {cat.copy}
                   </p>
-                  <span className="text-[11px] font-display font-black uppercase tracking-wide text-brand-navy/50 group-hover:text-brand-navy group-hover:underline transition-colors">
+                  <span className={`text-[11px] font-display font-black uppercase tracking-wide group-hover:underline transition-colors ${
+                    cat.pink ? 'text-pink-400/70 group-hover:text-pink-500' : 'text-brand-navy/50 group-hover:text-brand-navy'
+                  }`}>
                     Find Out More →
                   </span>
                 </Link>
