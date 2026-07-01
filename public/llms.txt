@@ -1,0 +1,54 @@
+# Rivervalley Rangers AFC
+
+> Community football club based in Swords, North Dublin, Ireland. Founded 1981. FAI Club Mark accredited. Shelbourne FC partner club.
+
+Rivervalley Rangers AFC (RVR AFC) is a grassroots football club serving the Swords community in North Dublin since 1981. The club runs a youth development academy, DDSL-registered boys and girls teams from U7 through U17, adult competitive football, Over 35s teams in the AFL, walking football, Mams' Football, and an inclusive football programme.
+
+## Site map
+
+- [Home](https://rivervalleyrangers.ie/) — Main hub with fixtures, news, and club overview
+- [Academy](https://rivervalleyrangers.ie/academy) — Pre-U7 development programme for children aged 4–6 (Little Rangers and Academy)
+- [Teams](https://rivervalleyrangers.ie/teams) — All DDSL youth teams, senior, and Over 35s
+- [Fixtures](https://rivervalleyrangers.ie/fixtures) — Live fixtures and results across all teams
+- [Register](https://rivervalleyrangers.ie/register) — Player registration and membership
+- [Membership Calculator](https://rivervalleyrangers.ie/membership-calculator) — Family fee calculator
+- [Seniors](https://rivervalleyrangers.ie/seniors) — Senior football hub
+- [Walking Football](https://rivervalleyrangers.ie/walking-football) — Open adult walking football sessions
+- [Football For All](https://rivervalleyrangers.ie/football-for-all) — Inclusive programme for players of every ability
+- [Club Information](https://rivervalleyrangers.ie/club) — History, committee, facilities, and policies
+- [Safeguarding](https://rivervalleyrangers.ie/club/safeguarding) — Child welfare, Garda vetting, and compliance documents
+- [Contact](https://rivervalleyrangers.ie/contact) — Committee and welfare officer contact details
+- [Get Involved](https://rivervalleyrangers.ie/get-involved) — Volunteer, coach, and sponsor opportunities
+- [News](https://rivervalleyrangers.ie/news) — Club announcements and updates
+- [Astro Booking](https://rivervalleyrangers.ie/astro-booking) — Book the all-weather astro pitch
+- [Pitch Locations](https://rivervalleyrangers.ie/pitch-locations) — Map and directions for all pitches
+
+## Club programmes
+
+- **Academy (U6 & Under)**: Little Rangers (ages 4–5) and Pre-U7 (age 6). Saturday mornings at Rivervalley Park.
+- **DDSL Boys**: U7 through U17 across multiple Sunday divisions (development U7–U11, competitive U12–U17).
+- **DDSL Girls**: U8 through U15 across multiple Sunday divisions.
+- **Senior — First Team**: LSL Senior 1B Sunday.
+- **Senior — Div 3B**: LSL Division 3B Saturday.
+- **Senior — Div 3C**: LSL Division 3C Saturday.
+- **Over 35s A & B**: AFL leagues, two teams.
+- **Walking Football**: Open adult sessions, no running required.
+- **Mams' Football**: Social football for women connected to the club.
+- **Football For All**: Inclusive programme for players of all abilities.
+
+## Key facts
+
+- Founded: 1981
+- Location: Rivervalley Park, Swords, Co. Dublin, Ireland
+- DDSL affiliation: Dublin & District Schoolboys/Girls League
+- Accreditations: FAI Club Mark, 100% Garda Vetted Coaches
+- Partner club: Shelbourne FC
+- Instagram: @rvrfc1981
+- Season: 2025/26
+- Estimated active players: 400+
+
+## Technical
+
+- Built with Next.js (App Router), Tailwind CSS v4, Prisma, Vercel
+- Designer and developer: 1Zero9Studio (https://www.1zero9.com)
+- Live data: DDSL fixtures and tables sync from ddsl.ie via SportLoMo API

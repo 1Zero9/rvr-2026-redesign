@@ -8,7 +8,7 @@ import { CLUB_SEASON } from '@/config/club-season';
 import { APP_VERSION, APP_VERSION_DATE } from '@/config/version';
 import { prisma } from '@/lib/prisma';
 import { getFeatureAvailability } from '@/lib/features';
-import { GraduationCap, Trophy, Users, Heart, type LucideIcon } from 'lucide-react';
+import { GraduationCap, Trophy, Users, Heart, User, type LucideIcon } from 'lucide-react';
 
 const COMMUNITY_CATEGORIES: Array<{
   Icon: LucideIcon;
@@ -19,8 +19,20 @@ const COMMUNITY_CATEGORIES: Array<{
   {
     Icon: GraduationCap,
     label: 'Academy',
-    copy: 'Little Rangers to U-age groups — where players develop from day one.',
-    href: '/teams',
+    copy: 'Little Rangers (ages 4–6) — the first step before DDSL age-group football.',
+    href: '/academy',
+  },
+  {
+    Icon: Users,
+    label: 'Boys',
+    copy: 'DDSL Boys teams from U7 through U17, development and competitive.',
+    href: '/teams?filter=boys',
+  },
+  {
+    Icon: User,
+    label: 'Girls',
+    copy: 'DDSL Girls teams across multiple age groups and divisions.',
+    href: '/teams?filter=girls',
   },
   {
     Icon: Trophy,
@@ -122,7 +134,7 @@ export default async function Home() {
                   More Than A Football Club
                 </h2>
                 <p className="text-brand-charcoal/50 text-sm font-bold uppercase tracking-wider">
-                  Academy · Adult · Community · Inclusive
+                  Academy · Boys · Girls · Adult · Community · Inclusive
                 </p>
               </div>
               <Link
@@ -133,7 +145,7 @@ export default async function Home() {
               </Link>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
               {COMMUNITY_CATEGORIES.map((cat) => (
                 <Link
                   key={cat.label}
@@ -258,11 +270,30 @@ export default async function Home() {
             </svg>
             @rvrfc1981
           </a>
-          <p className="text-brand-sky/40">
-            RVR2026 v{APP_VERSION} · {APP_VERSION_DATE}
-            {' · '}
-            <a href="/admin/login" className="hover:text-brand-sky/70 transition-colors">Admin</a>
-          </p>
+          <div className="flex items-center gap-4">
+            <p className="text-brand-sky/40">
+              RVR2026 v{APP_VERSION} · {APP_VERSION_DATE}
+              {' · '}
+              <a href="/admin/login" className="hover:text-brand-sky/70 transition-colors">Admin</a>
+            </p>
+            <span className="h-3 w-px bg-zinc-700" aria-hidden="true" />
+            <a
+              href="https://www.1zero9.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 text-zinc-600 hover:text-zinc-400 transition-colors"
+              aria-label="Built by 1Zero9Studio"
+            >
+              <img
+                src="/marketing/109-logo-circle-white2.png"
+                alt="1Zero9Studio"
+                width={16}
+                height={16}
+                className="h-4 w-4 opacity-50 hover:opacity-80 transition-opacity"
+              />
+              <span>Built by 1Zero9Studio</span>
+            </a>
+          </div>
         </div>
       </footer>
     </div>

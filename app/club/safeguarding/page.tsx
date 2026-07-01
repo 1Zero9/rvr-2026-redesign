@@ -69,7 +69,7 @@ export default function SafeguardingPage() {
   return (
     <PublicPageShell>
       {/* Under construction notice */}
-      <div className="bg-brand-neon border-b-3 border-brand-charcoal">
+      <div className="sticky top-16 z-40 bg-brand-neon border-b-3 border-brand-charcoal">
         <div className="max-w-6xl mx-auto px-6 py-3 flex items-start gap-3">
           <AlertTriangle className="w-4 h-4 text-brand-charcoal shrink-0 mt-0.5" aria-hidden="true" />
           <p className="text-sm font-bold text-brand-charcoal">

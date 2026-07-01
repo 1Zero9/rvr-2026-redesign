@@ -53,8 +53,9 @@ const navItems: NavItem[] = [
       {
         heading: 'Youth',
         links: [
+          { label: 'Academy (U6 & Under)', path: '/academy' },
           { label: 'All Teams',            path: '/teams' },
-          { label: 'U8–U11 Academy',       path: '/teams#development' },
+          { label: 'U8–U11 Development',   path: '/teams#development' },
           { label: 'U12–U17 Competitive',  path: '/teams#competitive' },
         ],
       },

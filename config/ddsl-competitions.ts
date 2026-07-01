@@ -32,6 +32,9 @@ export interface KnownDivision {
 
 export const KNOWN_DIVISIONS: KnownDivision[] = [
 
+  // ── U7 (internal/festival — no DDSL ID confirmed yet) ──────────────────
+  { sportlomoId: 0, officialName: 'U7 Boys', competitionName: 'DDSL U7 Boys Development', ageGroup: 'U7', slug: 'u7-boys' },
+
   // ── U8 (development — no standings published) ───────────────────────────
   { sportlomoId: 208624, officialName: '8.6 Boys Sun',  competitionName: 'DDSL U8 Boys Sunday Division 6',  ageGroup: 'U8',  slug: 'u8-boys-sunday-division-6',  leagueUrl: 'https://ddsl.ie/league/208624/' },
   { sportlomoId: 209250, officialName: '8.9 Boys Sun',  competitionName: 'DDSL U8 Boys Sunday Division 9',  ageGroup: 'U8',  slug: 'u8-boys-sunday-division-9',  leagueUrl: 'https://ddsl.ie/league/209250/' },

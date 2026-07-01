@@ -88,11 +88,6 @@ const nextConfig: NextConfig = {
         permanent: true,
       },
       {
-        source: '/academy',
-        destination: '/teams',
-        permanent: false,
-      },
-      {
         source: '/adult',
         destination: '/seniors',
         permanent: false,

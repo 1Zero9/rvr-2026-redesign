@@ -32,7 +32,7 @@ export default async function BootRoomPage() {
 
   return (
     <PublicPageShell>
-      <div className="bg-brand-navy border-b-3 border-brand-sky/30">
+      <div className="sticky top-16 z-40 bg-brand-navy border-b-3 border-brand-sky/30">
         <div className="max-w-6xl mx-auto px-6 py-3 flex items-start gap-3">
           <Clock className="w-4 h-4 text-brand-neon shrink-0 mt-0.5" aria-hidden="true" />
           <p className="text-sm font-bold text-brand-cream">

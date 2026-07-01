@@ -12,10 +12,10 @@ type Filter = 'ALL' | 'BOYS' | 'GIRLS' | 'SENIOR' | 'OVER35S';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-const DEVELOPMENT_AGES = new Set(['U8', 'U9', 'U10', 'U11']);
+const DEVELOPMENT_AGES = new Set(['U7', 'U8', 'U9', 'U10', 'U11']);
 
 const AGE_ORDER: Record<string, number> = {
-  U8: 0, U9: 1, U10: 2, U11: 3, U12: 4, U13: 5, U14: 6, U15: 7, U17: 8,
+  U7: 0, U8: 1, U9: 2, U10: 3, U11: 4, U12: 5, U13: 6, U14: 7, U15: 8, U17: 9,
 };
 
 const PILLS: { id: Filter; label: string; activeClass: string }[] = [

@@ -22,6 +22,7 @@ const NAV_SECTIONS: NavSection[] = [
     columns: [
       {
         links: [
+          { href: '/academy',                    label: 'Academy (U6 & Under)' },
           { href: '/teams',                      label: 'All Teams'       },
           { href: '/teams?filter=boys',          label: 'DDSL Boys'       },
           { href: '/teams?filter=girls',         label: 'DDSL Girls'      },
@@ -117,6 +118,10 @@ type MobileNavSection = {
 };
 
 const MOBILE_NAV_SECTIONS: MobileNavSection[] = [
+  {
+    label: 'Academy',
+    href: '/academy',
+  },
   {
     label: 'All Teams',
     href: '/teams',

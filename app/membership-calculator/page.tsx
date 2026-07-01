@@ -129,7 +129,7 @@ export default function MembershipCalculatorPage() {
 
   return (
     <PublicPageShell>
-      <div className="bg-brand-neon border-b-3 border-brand-charcoal">
+      <div className="sticky top-16 z-40 bg-brand-neon border-b-3 border-brand-charcoal">
         <div className="max-w-6xl mx-auto px-6 py-3 flex items-start gap-3">
           <span className="text-brand-charcoal font-black text-sm shrink-0 mt-0.5">⚠</span>
           <p className="text-sm font-bold text-brand-charcoal">

@@ -46,7 +46,7 @@ type TeamType = 'boys' | 'girls' | 'senior' | 'development';
 function getTeamType(competitionName: string, ageGroup: string): TeamType {
   if (competitionName.includes('Girls')) return 'girls';
   if (competitionName.includes('Senior')) return 'senior';
-  if (['U8', 'U9', 'U10', 'U11'].includes(ageGroup)) return 'development';
+  if (['U7', 'U8', 'U9', 'U10', 'U11'].includes(ageGroup)) return 'development';
   return 'boys';
 }
 
