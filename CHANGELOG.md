@@ -4,6 +4,54 @@ All notable changes to RVR2026 are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 Versioning follows [Semantic Versioning](https://semver.org/).
 
+## [1.3.0] — 2026-07-01
+
+### Added
+
+#### Unified admin authentication
+- Single magic-link login at `/admin/login` for all admin areas; removed `/competitions/login`
+- `GlobalRole` enum: `SUPER_ADMIN` (full access) and `SITE_ADMIN` (content only)
+- `AdminNav` server component: shows logged-in user name, role badge, and sign-out button
+- 8-hour idle sessions (`maxAge: 8h`, `updateAge: 60s`) with single-session enforcement in `AdminPrismaAdapter.createSession`
+- `lib/actions/sign-out.ts` — extracted `signOutAction` server action (fixes Turbopack inline `'use server'` error)
+- `/app/competitions/admin/layout.tsx` — layout-level auth gate and `AdminNav` injection for competitions admin
+- `app/admin/login/page.tsx` — universal login page with `?callbackUrl=` pass-through and role-based redirect on already-authed users
+
+#### New pages
+- `/trials` — open training registration page with embedded Google Form (primary intake path for new trialists)
+- `/pitch-locations` — Ward Rivervalley Park (D17 W2X3) and St Finian's astroturf (K67 X264) with addresses, facility tags, Get Directions and Book Astro CTAs
+- Added "Pitch Locations" to the Club nav dropdown (desktop and mobile)
+
+#### Register page redesign
+- `components/JoinPathSelector.tsx` — two-path fork: "Interested in a Trial" (UserPlus icon, reveals Google Form with mobile direct-link fallback) and "Join the Club" (ClipboardList icon, reveals `PlayerRecruitmentWizard`)
+- Mobile: iframe replaced with direct-link CTA card (Google Forms iframes are unreliable on touch devices)
+
+#### Header — affiliation logos
+- FAI Clubmark (`clumark.png`) and Shelbourne FC crest added to desktop header toolbar (beside Instagram icon) and mobile drawer footer
+- CSP `frame-src` updated to include `https://docs.google.com` for Google Forms iframe embed
+
+### Changed
+
+#### Homepage
+- Latest News section: `bg-zinc-50` → `bg-brand-cream`; heading scaled to `text-3xl md:text-4xl`
+- Matchday section: now `bg-brand-navy` (dark band); heading switches to `text-brand-cream`; ⚽ emoji replaced with `Trophy` Lucide icon
+- More Than A Football Club: alternates between dark (glassmorphism cards matching hero) and light (white cards on cream) depending on pass; each card links to its own section page
+- Registration banner removed — Register, Fees, and Book Astro links accessible via Join nav menu
+- Teams Grid section removed (duplicated MTAFC + `/teams` page); MTAFC header has "All teams →" link
+- MTAFC category cards now link to individual destination pages (Academy→/teams, Adult→/seniors, Community→/walking-football, Inclusive→/football-for-all)
+- Footer rebuilt as 4-column grid: Club info / Play / Club / Legal & Safety; Pitch Locations linked
+
+#### Mobile nav
+- Home button always neon-tinted (`text-brand-neon/60`) as a persistent visual anchor
+- Home button pulses (`animate-pulse`) when active on the home page
+
+#### News / announcements
+- `AnnouncementCard`: removed `rounded-2xl shadow-sm`; sharp corners, branded `border-brand-charcoal/15` border, no shadow, hover → `border-brand-navy/50`
+- Mobile news: vertical stack (`sm:hidden`); desktop keeps horizontal snap carousel
+
+#### Safeguarding
+- Under-construction banner added at top of `/club/safeguarding` (neon strip with `AlertTriangle`): warns that officer names, contacts, and documents are placeholder content
+
 ## [1.2.0] — 2026-06-30
 
 ### Added

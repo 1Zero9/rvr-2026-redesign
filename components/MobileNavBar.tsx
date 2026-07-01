@@ -41,17 +41,20 @@ export default function MobileNavBar() {
     >
       {navItems.map(({ label, path, ariaLabel, icon: Icon }) => {
         const isActive = pathname === path;
+        const isHome   = path === '/';
 
         return (
           <Link
             key={path}
             href={path}
             aria-label={ariaLabel}
-            className={`tap-target-comfort flex flex-col items-center justify-center rounded-xl transition-all focus:ring-4 focus:ring-brand-neon focus:outline-none ${
+            className={`tap-target-comfort relative flex flex-col items-center justify-center rounded-xl transition-all focus:ring-4 focus:ring-brand-neon focus:outline-none ${
               isActive
                 ? 'text-brand-neon bg-white/10 scale-105'
+                : isHome
+                ? 'text-brand-neon/60 hover:text-brand-neon'
                 : 'text-zinc-400 hover:text-white'
-            }`}
+            } ${isActive && isHome ? 'animate-pulse' : ''}`}
           >
             <Icon className="w-6 h-6" aria-hidden="true" />
             <span className="text-[10px] font-display font-bold uppercase tracking-wider mt-1 select-none">

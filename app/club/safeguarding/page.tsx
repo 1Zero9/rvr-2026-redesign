@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import {
+  AlertTriangle,
   ArrowUpRight,
   CheckCircle2,
   ClipboardCheck,
@@ -67,6 +68,17 @@ const vettingSteps = [
 export default function SafeguardingPage() {
   return (
     <PublicPageShell>
+      {/* Under construction notice */}
+      <div className="bg-brand-neon border-b-3 border-brand-charcoal">
+        <div className="max-w-6xl mx-auto px-6 py-3 flex items-start gap-3">
+          <AlertTriangle className="w-4 h-4 text-brand-charcoal shrink-0 mt-0.5" aria-hidden="true" />
+          <p className="text-sm font-bold text-brand-charcoal">
+            <span className="font-black uppercase">Sample data only.</span>{' '}
+            This page is under construction — officer names, contact details, and documents shown are placeholder content and not yet live.
+          </p>
+        </div>
+      </div>
+
       <PageHeroNavy
         eyebrow={<><ShieldCheck className="h-4 w-4" aria-hidden="true" /> FAI Club Mark Charter</>}
         title="Safeguarding & Child Welfare"
