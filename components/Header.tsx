@@ -647,14 +647,14 @@ export default function Header() {
           role="dialog"
           aria-modal="true"
           aria-label="Club news"
-          className={`absolute inset-y-0 right-0 flex w-80 max-w-[90vw] flex-col border-l border-brand-sky/20 bg-brand-navy shadow-[-18px_0_40px_rgba(0,0,0,0.4)] transition-transform duration-300 ease-out ${
+          className={`absolute inset-y-0 right-0 flex w-80 max-w-[90vw] flex-col border-l-4 border-brand-neon bg-brand-navy shadow-[-18px_0_40px_rgba(0,0,0,0.4)] transition-transform duration-300 ease-out ${
             newsOpen ? 'translate-x-0' : 'translate-x-full'
           }`}
         >
-          <div className="flex h-16 shrink-0 items-center justify-between px-5 border-b border-brand-sky/15">
+          <div className="flex h-16 shrink-0 items-center justify-between px-5 border-b border-brand-neon/20">
             <div className="flex items-center gap-2">
-              <Megaphone className="h-4 w-4 text-brand-sky" />
-              <span className="font-display font-black italic uppercase text-brand-sky/80 tracking-wide">
+              <Megaphone className="h-4 w-4 text-brand-neon" />
+              <span className="font-display font-black italic uppercase text-brand-neon tracking-wide">
                 Club News
               </span>
             </div>
@@ -662,52 +662,46 @@ export default function Header() {
               type="button"
               aria-label="Close news panel"
               onClick={() => setNewsOpen(false)}
-              className="flex h-9 w-9 items-center justify-center rounded-xl border-2 border-brand-sky/30 text-brand-sky hover:border-brand-neon hover:text-brand-neon transition-colors"
+              className="flex h-9 w-9 items-center justify-center rounded-xl border-2 border-brand-neon/30 text-brand-sky hover:border-brand-neon hover:text-brand-neon transition-colors"
             >
               <X className="h-5 w-5" />
             </button>
           </div>
 
-          <div className="flex-1 overflow-y-auto p-4 space-y-3">
+          <div className="flex-1 overflow-y-auto px-5 py-6 space-y-6">
             {announcements.map((a) => {
               const cat = CATEGORY_CONFIG[a.category];
               return (
-                <div
-                  key={a.id}
-                  className="border-2 border-brand-sky/20 bg-brand-charcoal"
-                >
-                  <div className={`${cat.colour} ${cat.textColour} px-3 py-1.5 flex items-center gap-2`}>
-                    <span className="font-display font-black uppercase text-[10px] tracking-widest">
-                      {cat.label}
-                    </span>
-                  </div>
-                  <div className="p-3">
-                    <p className="font-display font-black italic uppercase text-brand-cream text-base leading-tight">
-                      {a.title}
-                    </p>
-                    <p className="mt-1 text-brand-sky/70 text-xs leading-relaxed line-clamp-3">
-                      {a.body}
-                    </p>
-                    {a.ctaUrl && a.ctaLabel && (
-                      <Link
-                        href={a.ctaUrl}
-                        onClick={() => setNewsOpen(false)}
-                        className="inline-block mt-2 text-[10px] font-black uppercase tracking-wider text-brand-sky border border-brand-sky/50 px-2 py-1 hover:bg-brand-sky hover:text-brand-charcoal transition-colors"
-                      >
-                        {a.ctaLabel} →
-                      </Link>
-                    )}
-                  </div>
+                <div key={a.id}>
+                  <span className={`inline-block font-display font-black uppercase text-[10px] tracking-widest px-2 py-0.5 mb-3 ${cat.colour} ${cat.textColour}`}>
+                    {cat.label}
+                  </span>
+                  <p className="font-display font-black italic uppercase text-brand-cream text-xl leading-tight">
+                    {a.title}
+                  </p>
+                  <div className="mt-1.5 h-0.5 w-8 bg-brand-neon" />
+                  <p className="mt-3 text-sm text-brand-sky/70 leading-relaxed">
+                    {a.body}
+                  </p>
+                  {a.ctaUrl && a.ctaLabel && (
+                    <Link
+                      href={a.ctaUrl}
+                      onClick={() => setNewsOpen(false)}
+                      className="inline-block mt-3 font-display font-black italic uppercase text-sm text-brand-neon hover:underline"
+                    >
+                      {a.ctaLabel} →
+                    </Link>
+                  )}
                 </div>
               );
             })}
           </div>
 
-          <div className="shrink-0 border-t border-brand-sky/15 p-4">
+          <div className="shrink-0 border-t border-brand-neon/20 p-5">
             <Link
               href="/news"
               onClick={() => setNewsOpen(false)}
-              className="flex items-center justify-center gap-2 min-h-[44px] w-full bg-brand-charcoal text-brand-cream font-display font-black italic uppercase text-sm border-3 border-brand-sky/30 shadow-brutalist hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all"
+              className="flex items-center justify-center min-h-[52px] w-full bg-brand-neon text-brand-charcoal font-display font-black uppercase text-sm border-3 border-brand-charcoal shadow-brutalist hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all"
             >
               All News & Updates →
             </Link>
