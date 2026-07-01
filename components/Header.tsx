@@ -85,12 +85,13 @@ const NAV_SECTIONS: NavSection[] = [
       {
         heading: 'Club Services',
         links: [
-          { href: '/get-involved', label: 'Volunteer & Coach' },
-          { href: '/sponsorship',  label: 'Sponsorship'       },
-          { href: '/boot-room',    label: 'Boot Room'         },
-          { href: '/news',         label: 'News'              },
-          { href: '/contact',      label: 'Contact Us'        },
-          { href: '/shop',         label: 'Club Shop'         },
+          { href: '/get-involved',     label: 'Volunteer & Coach' },
+          { href: '/sponsorship',      label: 'Sponsorship'       },
+          { href: '/boot-room',        label: 'Boot Room'         },
+          { href: '/pitch-locations',  label: 'Pitch Locations'   },
+          { href: '/news',             label: 'News'              },
+          { href: '/contact',          label: 'Contact Us'        },
+          { href: '/shop',             label: 'Club Shop'         },
         ],
       },
       {
@@ -182,6 +183,7 @@ const MOBILE_NAV_SECTIONS: MobileNavSection[] = [
       { href: '/club/safeguarding',  label: 'Safeguarding'      },
       { href: '/get-involved',       label: 'Volunteer & Coach' },
       { href: '/sponsorship',        label: 'Sponsorship'       },
+      { href: '/pitch-locations',    label: 'Pitch Locations'   },
       { href: '/contact',            label: 'Contact Us'        },
       { href: '/shop',               label: 'Club Shop'         },
     ],
