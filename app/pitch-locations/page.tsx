@@ -10,6 +10,9 @@ export const metadata: Metadata = {
     "Find Rivervalley Rangers AFC pitches in Swords, Co. Dublin — Ward Rivervalley Park, Rathingle, and Ridgewood.",
 };
 
+const NEIGHBOUR_NOTE =
+  "These pitches are in a residential area. Please park only in designated areas, do not block driveways, and be considerate of local residents. We are a community club and take pride in being good neighbours.";
+
 const pitches = [
   {
     id: "ward-rivervalley",
@@ -22,6 +25,7 @@ const pitches = [
     notes: "Parking available at the park entrance. Changing rooms on site.",
     directionsUrl: "https://maps.google.com/?q=53.455815,-6.244440",
     bookingUrl: undefined as string | undefined,
+    neighbourNote: false,
     icon: Footprints,
   },
   {
@@ -35,6 +39,7 @@ const pitches = [
     notes: "Book online in advance. Floodlit for evening use.",
     directionsUrl: "https://maps.google.com/?q=53.455815,-6.244440",
     bookingUrl: "/astro-booking",
+    neighbourNote: false,
     icon: Zap,
   },
   {
@@ -48,7 +53,22 @@ const pitches = [
     notes: "Located within Ward Rivervalley Park, adjacent to the main astro.",
     directionsUrl: "https://maps.google.com/?q=53.455065,-6.244060",
     bookingUrl: undefined,
+    neighbourNote: false,
     icon: Zap,
+  },
+  {
+    id: "brookdale",
+    name: "Brookdale Pitches",
+    type: "Grass Pitches",
+    address: ["Brookdale", "Swords, Co. Dublin"],
+    description:
+      "Grass pitches located behind the main astro at Rivervalley Park, used by Rivervalley Rangers for youth training and fixtures.",
+    use: ["Youth fixtures", "Training"],
+    notes: "Access via Rivervalley Park. Use the official car park — do not park on residential streets.",
+    directionsUrl: "https://maps.google.com/?q=53.455741,-6.248670",
+    bookingUrl: undefined,
+    neighbourNote: true,
+    icon: Footprints,
   },
   {
     id: "rathingle",
@@ -58,9 +78,10 @@ const pitches = [
     description:
       "Community grass pitches at Rathingle used by Rivervalley Rangers for youth fixtures and training.",
     use: ["Youth fixtures", "Training"],
-    notes: "Street parking available nearby.",
+    notes: "Use designated parking areas only — do not park on residential streets or block driveways.",
     directionsUrl: "https://maps.google.com/?q=CQX4%2BWP+Swords,+County+Dublin",
     bookingUrl: undefined,
+    neighbourNote: true,
     icon: Footprints,
   },
   {
@@ -71,9 +92,10 @@ const pitches = [
     description:
       "Grass pitches with changing room facilities at Ridgewood, used by Rivervalley Rangers for fixtures and training.",
     use: ["Youth fixtures", "Training"],
-    notes: "Changing rooms available on site. Parking at the facility.",
+    notes: "Changing rooms available on site. Use the designated car park only.",
     directionsUrl: "https://maps.google.com/?q=53.448597,-6.254139",
     bookingUrl: undefined,
+    neighbourNote: true,
     icon: Footprints,
   },
 ];
@@ -173,6 +195,14 @@ export default function PitchLocationsPage() {
                 </div>
 
               </div>
+
+              {/* Neighbour notice */}
+              {pitch.neighbourNote && (
+                <div className="mx-6 mb-6 flex gap-3 border border-amber-300 bg-amber-50 px-4 py-3">
+                  <span className="text-amber-500 shrink-0 mt-0.5" aria-hidden="true">⚠</span>
+                  <p className="text-xs text-amber-800 leading-relaxed">{NEIGHBOUR_NOTE}</p>
+                </div>
+              )}
             </div>
           ))}
 
