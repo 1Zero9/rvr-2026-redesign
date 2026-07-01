@@ -4,7 +4,9 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { ArrowRight, ChevronDown, ChevronRight, Info, Menu, X } from 'lucide-react';
+import { ArrowRight, ChevronDown, ChevronRight, Info, Megaphone, Menu, X } from 'lucide-react';
+import type { PublicAnnouncement } from '@/lib/announcements/types';
+import { CATEGORY_CONFIG } from '@/lib/announcements/types';
 import { ASSET_PATHS } from '@/config/assets';
 import SearchOverlay from './SearchOverlay';
 
@@ -234,6 +236,9 @@ export default function Header() {
   const [mobileSection, setMobileSection] = useState<string | null>(null);
   const [searchOpen,  setSearchOpen]  = useState(false);
   const [infoOpen,    setInfoOpen]    = useState(false);
+  const [newsOpen,    setNewsOpen]    = useState(false);
+  const [announcements, setAnnouncements] = useState<PublicAnnouncement[]>([]);
+  const [newsLoaded,  setNewsLoaded]  = useState(false);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const searchButtonRef = useRef<HTMLButtonElement>(null);
   const pathname = usePathname();
@@ -243,19 +248,29 @@ export default function Header() {
   const toggleMobileNav = () => {
     if (!open) {
       setMobileSection(activeMobileSection?.links?.length ? activeMobileSection.label : null);
+      setNewsOpen(false);
     }
     setOpen((current) => !current);
   };
+  const openNews = () => { setNewsOpen(true); setOpen(false); };
+
+  // Fetch announcements for header news panel
+  useEffect(() => {
+    fetch('/api/announcements')
+      .then((r) => r.json())
+      .then((data: PublicAnnouncement[]) => { setAnnouncements(data); setNewsLoaded(true); })
+      .catch(() => setNewsLoaded(true));
+  }, []);
   const closeSearch = useCallback(() => {
     setSearchOpen(false);
     requestAnimationFrame(() => searchButtonRef.current?.focus());
   }, []);
 
-  // Body scroll lock for mobile overlay and info panel
+  // Body scroll lock for mobile overlay and panels
   useEffect(() => {
-    document.body.style.overflow = (open || infoOpen) ? 'hidden' : '';
+    document.body.style.overflow = (open || infoOpen || newsOpen) ? 'hidden' : '';
     return () => { document.body.style.overflow = ''; };
-  }, [open, infoOpen]);
+  }, [open, infoOpen, newsOpen]);
 
   // Close mega menu and search on Escape
   useEffect(() => {
@@ -264,6 +279,7 @@ export default function Header() {
         setOpenSection(null);
         if (open) setOpen(false);
         if (infoOpen) setInfoOpen(false);
+        if (newsOpen) setNewsOpen(false);
         if (searchOpen) closeSearch();
       }
     };
@@ -435,6 +451,19 @@ export default function Header() {
             >
               <Info className="h-5 w-5" />
             </button>
+            {newsLoaded && announcements.length > 0 && (
+              <button
+                type="button"
+                aria-label={`Club news — ${announcements.length} update${announcements.length !== 1 ? 's' : ''}`}
+                onClick={openNews}
+                className="relative p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-brand-neon hover:text-white transition-colors"
+              >
+                <Megaphone className="h-5 w-5" />
+                <span className="absolute top-1.5 right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-brand-neon text-[9px] font-black text-brand-charcoal animate-pulse">
+                  {announcements.length}
+                </span>
+              </button>
+            )}
             <button
               ref={searchButtonRef}
               type="button"
@@ -498,20 +527,35 @@ export default function Header() {
             </Link>
           </div>
 
-          {/* Mobile hamburger */}
-          <button
-            type="button"
-            aria-label={open ? 'Close navigation' : 'Open navigation'}
-            aria-expanded={open}
-            onClick={toggleMobileNav}
-            className="rounded-xl border-2 border-brand-sky/30 bg-brand-neon p-2 shadow-[3px_3px_0_rgba(184,205,238,0.3)] transition active:translate-y-0.5 active:shadow-none lg:hidden"
-          >
-            {open ? (
-              <X className="h-6 w-6 text-brand-charcoal" />
-            ) : (
-              <Menu className="h-6 w-6 text-brand-charcoal" />
+          {/* Mobile right group: news + hamburger */}
+          <div className="flex items-center gap-2 lg:hidden">
+            {newsLoaded && announcements.length > 0 && (
+              <button
+                type="button"
+                aria-label={`Club news — ${announcements.length} update${announcements.length !== 1 ? 's' : ''}`}
+                onClick={openNews}
+                className="relative flex h-9 w-9 items-center justify-center rounded-full border-2 border-brand-neon/60 text-brand-neon hover:border-brand-neon transition-colors"
+              >
+                <Megaphone className="h-4 w-4" />
+                <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-brand-neon text-[9px] font-black text-brand-charcoal animate-pulse">
+                  {announcements.length}
+                </span>
+              </button>
             )}
-          </button>
+            <button
+              type="button"
+              aria-label={open ? 'Close navigation' : 'Open navigation'}
+              aria-expanded={open}
+              onClick={toggleMobileNav}
+              className="rounded-xl border-2 border-brand-sky/30 bg-brand-neon p-2 shadow-[3px_3px_0_rgba(184,205,238,0.3)] transition active:translate-y-0.5 active:shadow-none"
+            >
+              {open ? (
+                <X className="h-6 w-6 text-brand-charcoal" />
+              ) : (
+                <Menu className="h-6 w-6 text-brand-charcoal" />
+              )}
+            </button>
+          </div>
 
         </div>
 
@@ -576,6 +620,93 @@ export default function Header() {
               className="inline-flex items-center justify-center gap-2 min-h-[44px] px-5 bg-brand-neon text-brand-charcoal font-display font-black uppercase text-sm border-3 border-brand-charcoal shadow-brutalist hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all"
             >
               Join the Club
+            </Link>
+          </div>
+        </aside>
+      </div>
+
+      {/* News panel — slides in from the right */}
+      <div
+        className={`fixed inset-0 z-[65] transition ${
+          newsOpen ? 'pointer-events-auto' : 'pointer-events-none'
+        }`}
+        aria-hidden={!newsOpen}
+      >
+        <button
+          type="button"
+          aria-label="Close news panel"
+          onClick={() => setNewsOpen(false)}
+          className={`absolute inset-0 bg-brand-charcoal/40 transition-opacity duration-300 ease-out ${
+            newsOpen ? 'opacity-100' : 'opacity-0'
+          }`}
+        />
+        <aside
+          role="dialog"
+          aria-modal="true"
+          aria-label="Club news"
+          className={`absolute inset-y-0 right-0 flex w-80 max-w-[90vw] flex-col border-l-4 border-brand-neon bg-brand-navy shadow-[-18px_0_40px_rgba(0,0,0,0.4)] transition-transform duration-300 ease-out ${
+            newsOpen ? 'translate-x-0' : 'translate-x-full'
+          }`}
+        >
+          <div className="flex h-16 shrink-0 items-center justify-between px-5 border-b border-brand-neon/20">
+            <div className="flex items-center gap-2">
+              <Megaphone className="h-4 w-4 text-brand-neon" />
+              <span className="font-display font-black italic uppercase text-brand-neon tracking-wide">
+                Club News
+              </span>
+            </div>
+            <button
+              type="button"
+              aria-label="Close news panel"
+              onClick={() => setNewsOpen(false)}
+              className="flex h-9 w-9 items-center justify-center rounded-xl border-2 border-brand-neon/30 text-brand-sky hover:border-brand-neon hover:text-brand-neon transition-colors"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
+
+          <div className="flex-1 overflow-y-auto p-4 space-y-3">
+            {announcements.map((a) => {
+              const cat = CATEGORY_CONFIG[a.category];
+              return (
+                <div
+                  key={a.id}
+                  className="border-2 border-brand-sky/20 bg-brand-charcoal"
+                >
+                  <div className={`${cat.colour} ${cat.textColour} px-3 py-1.5 flex items-center gap-2`}>
+                    <span className="font-display font-black uppercase text-[10px] tracking-widest">
+                      {cat.label}
+                    </span>
+                  </div>
+                  <div className="p-3">
+                    <p className="font-display font-black italic uppercase text-brand-neon text-base leading-tight">
+                      {a.title}
+                    </p>
+                    <p className="mt-1 text-brand-sky/70 text-xs leading-relaxed line-clamp-3">
+                      {a.body}
+                    </p>
+                    {a.ctaUrl && a.ctaLabel && (
+                      <Link
+                        href={a.ctaUrl}
+                        onClick={() => setNewsOpen(false)}
+                        className="inline-block mt-2 text-[10px] font-black uppercase tracking-wider text-brand-neon border border-brand-neon/50 px-2 py-1 hover:bg-brand-neon hover:text-brand-charcoal transition-colors"
+                      >
+                        {a.ctaLabel} →
+                      </Link>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="shrink-0 border-t border-brand-neon/20 p-4">
+            <Link
+              href="/news"
+              onClick={() => setNewsOpen(false)}
+              className="flex items-center justify-center gap-2 min-h-[44px] w-full bg-brand-neon text-brand-charcoal font-display font-black italic uppercase text-sm border-3 border-brand-charcoal shadow-brutalist hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all"
+            >
+              All News & Updates →
             </Link>
           </div>
         </aside>
