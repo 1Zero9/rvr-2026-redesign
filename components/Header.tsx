@@ -239,6 +239,7 @@ export default function Header() {
   const [newsOpen,    setNewsOpen]    = useState(false);
   const [announcements, setAnnouncements] = useState<PublicAnnouncement[]>([]);
   const [newsLoaded,  setNewsLoaded]  = useState(false);
+  const [tabsVisible, setTabsVisible] = useState(true);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const searchButtonRef = useRef<HTMLButtonElement>(null);
   const pathname = usePathname();
@@ -253,6 +254,12 @@ export default function Header() {
     setOpen((current) => !current);
   };
   const openNews = () => { setNewsOpen(true); setOpen(false); };
+
+  // Auto-hide side tabs after 10 seconds
+  useEffect(() => {
+    const timer = setTimeout(() => setTabsVisible(false), 10000);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Fetch announcements for header news panel
   useEffect(() => {
@@ -523,7 +530,7 @@ export default function Header() {
       <SearchOverlay isOpen={searchOpen} onClose={closeSearch} />
 
       {/* Left bookmark tabs — mobile */}
-      <div className="lg:hidden fixed left-0 z-[55] flex flex-col gap-1.5" style={{ top: '50%', transform: 'translateY(-50%)' }}>
+      <div className={`lg:hidden fixed left-0 z-[55] flex flex-col gap-1.5 transition-opacity duration-700 ${tabsVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'}`} style={{ top: '50%', transform: 'translateY(-50%)' }}>
         {!infoOpen && (
           <button type="button" aria-label="Open club update" onClick={() => setInfoOpen(true)}
             className="flex flex-col items-center gap-0.5 bg-blue-600 hover:bg-blue-500 rounded-r-lg px-2 py-2.5 shadow-md transition-colors">
@@ -541,7 +548,7 @@ export default function Header() {
       </div>
 
       {/* Left bookmark tabs — desktop */}
-      <div className="hidden lg:flex fixed left-0 z-[55] flex-col gap-2" style={{ top: '50%', transform: 'translateY(-50%)' }}>
+      <div className={`hidden lg:flex fixed left-0 z-[55] flex-col gap-2 transition-opacity duration-700 ${tabsVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'}`} style={{ top: '50%', transform: 'translateY(-50%)' }}>
         {!infoOpen && (
           <button type="button" aria-label="Open club update" onClick={() => setInfoOpen(true)}
             className="flex flex-col items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 rounded-r-lg px-2 shadow-md transition-colors h-44"
