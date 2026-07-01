@@ -7,7 +7,6 @@ import AnnouncementTrigger from '@/components/announcements/AnnouncementTrigger'
 import InstagramFeed from '@/components/InstagramFeed';
 import { CLUB_SEASON } from '@/config/club-season';
 import { APP_VERSION, APP_VERSION_DATE } from '@/config/version';
-import { KNOWN_DIVISIONS } from '@/config/ddsl-competitions';
 import { prisma } from '@/lib/prisma';
 import { getFeatureAvailability } from '@/lib/features';
 import { GraduationCap, Trophy, Users, Heart, type LucideIcon } from 'lucide-react';
@@ -39,40 +38,11 @@ const COMMUNITY_CATEGORIES: Array<{
   },
 ];
 
-interface AgeGroupSummary {
-  ageGroup: string;
-  hasGirls: boolean;
-  hasBoys: boolean;
-  divisionCount: number;
-}
-
-function getAgeGroupSummaries(): AgeGroupSummary[] {
-  const seen = new Set<string>();
-  const order: string[] = [];
-  for (const d of KNOWN_DIVISIONS) {
-    if (!seen.has(d.ageGroup)) {
-      seen.add(d.ageGroup);
-      order.push(d.ageGroup);
-    }
-  }
-  return order.map((ag) => ({
-    ageGroup: ag,
-    hasGirls: KNOWN_DIVISIONS.some(
-      (d) => d.ageGroup === ag && d.competitionName.includes('Girls'),
-    ),
-    hasBoys: KNOWN_DIVISIONS.some(
-      (d) => d.ageGroup === ag && d.competitionName.includes('Boys'),
-    ),
-    divisionCount: KNOWN_DIVISIONS.filter((d) => d.ageGroup === ag).length,
-  }));
-}
-
 // ─────────────────────────────────────────────────────────────────────────────
 // Page
 // ─────────────────────────────────────────────────────────────────────────────
 
 export default async function Home() {
-  const ageGroups = getAgeGroupSummaries();
   const features  = await getFeatureAvailability();
 
   const now = new Date();
@@ -124,15 +94,15 @@ export default async function Home() {
 
         {/* ── 2. Announcements strip ───────────────────────────────────────── */}
         {announcements.length > 0 && (
-          <section className="py-10 bg-zinc-50 border-b border-zinc-200">
+          <section className="py-14 bg-brand-cream border-b border-brand-navy/10">
             <div className="max-w-6xl mx-auto px-6">
-              <div className="flex items-center justify-between mb-5">
-                <h2 className="font-display font-black italic text-2xl uppercase tracking-tight text-brand-charcoal">
+              <div className="flex items-center justify-between mb-8">
+                <h2 className="font-display font-black italic text-3xl md:text-4xl uppercase tracking-tight text-brand-charcoal">
                   Latest News
                 </h2>
                 <Link
                   href="/news"
-                  className="min-h-[44px] inline-flex items-center text-xs font-display font-black uppercase tracking-wide text-zinc-400 hover:text-brand-navy transition-colors"
+                  className="min-h-[44px] inline-flex items-center px-2 -mr-2 text-xs font-display font-black uppercase tracking-wide text-brand-charcoal/40 hover:text-brand-navy transition-colors"
                 >
                   See all →
                 </Link>
@@ -143,12 +113,12 @@ export default async function Home() {
         )}
 
         {/* ── 3. Upcoming Fixtures ─────────────────────────────────────────── */}
-        <section className="py-14 border-b border-brand-navy/10">
+        <section className="py-14 bg-brand-navy border-b border-brand-sky/10">
           <div className="max-w-6xl mx-auto px-6">
             <div className="flex items-center justify-between mb-8">
-              <h2 className="font-display font-black text-3xl md:text-4xl uppercase tracking-tight italic text-brand-charcoal">
+              <h2 className="font-display font-black text-3xl md:text-4xl uppercase tracking-tight italic text-brand-cream flex items-center gap-3">
                 Matchday
-                <span className="text-brand-neon ml-2">⚽</span>
+                <Trophy className="w-8 h-8 text-brand-neon shrink-0" aria-hidden="true" />
               </h2>
             </div>
             <TeletextFixtures />
@@ -159,62 +129,24 @@ export default async function Home() {
         {features.instagramFeed && <InstagramFeed />}
 
 
-        {/* ── 4. Teams Grid ────────────────────────────────────────────────── */}
-        <section className="bg-white py-20 border-t border-b border-brand-navy/10">
-          <div className="max-w-6xl mx-auto px-6">
-            <div className="flex items-center justify-between mb-10">
-              <h2 className="font-display font-black text-4xl md:text-5xl uppercase tracking-tight italic text-brand-charcoal">
-                Our Teams
-              </h2>
-              <Link
-                href="/teams"
-                className="min-h-[44px] inline-flex items-center px-2 -mr-2 text-xs font-display font-black uppercase tracking-wide text-brand-charcoal/40 hover:text-brand-navy transition-colors"
-              >
-                Full directory →
-              </Link>
-            </div>
-
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {ageGroups.map((ag) => (
-                <Link
-                  key={ag.ageGroup}
-                  href="/teams"
-                  className="group relative border-2 border-brand-navy/20 hover:border-brand-neon rounded-2xl p-5 flex flex-col gap-2 bg-brand-cream hover:bg-brand-navy transition-all"
-                >
-                  <span className="font-display font-black text-5xl tracking-tighter italic leading-none text-brand-navy group-hover:text-brand-neon transition-colors">
-                    {ag.ageGroup}
-                  </span>
-                  <div className="flex gap-1.5 mt-1 flex-wrap">
-                    {ag.hasBoys && (
-                      <span className="text-[10px] font-display font-black uppercase tracking-wider bg-brand-navy/10 text-brand-navy group-hover:bg-brand-sky/20 group-hover:text-brand-sky px-2 py-0.5 rounded-full transition-colors">
-                        Boys
-                      </span>
-                    )}
-                    {ag.hasGirls && (
-                      <span className="text-[10px] font-display font-black uppercase tracking-wider bg-brand-maroon/10 text-brand-maroon group-hover:bg-brand-maroon/30 group-hover:text-brand-cream px-2 py-0.5 rounded-full transition-colors">
-                        Girls
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-xs text-brand-charcoal/40 group-hover:text-brand-sky/50 mt-auto transition-colors">
-                    {ag.divisionCount} division{ag.divisionCount !== 1 ? 's' : ''}
-                  </p>
-                </Link>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* ── 5. More Than A Football Club ─────────────────────────────────── */}
+        {/* ── 4. More Than A Football Club ─────────────────────────────────── */}
         <section className="bg-brand-cream py-20 border-t border-brand-navy/10">
           <div className="max-w-6xl mx-auto px-4 md:px-6">
-            <div className="mb-12">
-              <h2 className="font-display font-black italic text-4xl md:text-6xl uppercase tracking-tight leading-none text-brand-charcoal mb-3">
-                More Than A Football Club
-              </h2>
-              <p className="text-brand-green text-lg font-semibold">
-                Academy · Adult · Community · Inclusive
-              </p>
+            <div className="flex items-start justify-between mb-12">
+              <div>
+                <h2 className="font-display font-black italic text-4xl md:text-6xl uppercase tracking-tight leading-none text-brand-charcoal mb-3">
+                  More Than A Football Club
+                </h2>
+                <p className="text-brand-charcoal/50 text-sm font-bold uppercase tracking-wider">
+                  Academy · Adult · Community · Inclusive
+                </p>
+              </div>
+              <Link
+                href="/teams"
+                className="min-h-[44px] inline-flex items-center px-2 -mr-2 text-xs font-display font-black uppercase tracking-wide text-brand-charcoal/40 hover:text-brand-navy transition-colors shrink-0 mt-2"
+              >
+                All teams →
+              </Link>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -244,7 +176,7 @@ export default async function Home() {
           </div>
         </section>
 
-        {/* ── 6. Registration Banner ───────────────────────────────────────── */}
+        {/* ── 5. Registration Banner ───────────────────────────────────────── */}
         <section className="bg-brand-neon border-b-4 border-brand-charcoal">
           <div className="max-w-6xl mx-auto px-6 py-14 flex flex-col md:flex-row items-center justify-between gap-8">
             <div>
@@ -262,13 +194,13 @@ export default async function Home() {
             <div className="flex flex-col md:flex-row gap-4 shrink-0 w-full md:w-auto">
               <Link
                 href="/register"
-                className="bg-brand-charcoal text-white border-3 border-brand-charcoal font-display font-black uppercase tracking-wide text-sm px-8 py-4 rounded-2xl shadow-brutalist hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all text-center"
+                className="bg-brand-charcoal text-white border-3 border-brand-charcoal font-display font-black uppercase tracking-wide text-sm px-8 py-4 shadow-brutalist hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all text-center"
               >
                 Register Now
               </Link>
               <Link
                 href="/membership-calculator"
-                className="bg-white text-brand-charcoal border-3 border-brand-charcoal font-display font-black uppercase tracking-wide text-sm px-8 py-4 rounded-2xl shadow-brutalist hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all text-center"
+                className="bg-white text-brand-charcoal border-3 border-brand-charcoal font-display font-black uppercase tracking-wide text-sm px-8 py-4 shadow-brutalist hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all text-center"
               >
                 Check Fees
               </Link>
