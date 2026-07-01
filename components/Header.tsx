@@ -647,14 +647,14 @@ export default function Header() {
           role="dialog"
           aria-modal="true"
           aria-label="Club news"
-          className={`absolute inset-y-0 right-0 flex w-3/4 max-w-sm flex-col border-l-4 border-brand-neon bg-brand-navy shadow-[-18px_0_40px_rgba(0,0,0,0.4)] transition-transform duration-300 ease-out ${
+          className={`absolute inset-y-0 right-0 flex w-3/4 max-w-sm flex-col border-l-4 border-brand-neon bg-brand-cream shadow-[-18px_0_40px_rgba(0,0,0,0.4)] transition-transform duration-300 ease-out ${
             newsOpen ? 'translate-x-0' : 'translate-x-full'
           }`}
         >
-          <div className="flex h-16 shrink-0 items-center justify-between px-5 border-b border-brand-neon/20">
+          <div className="flex h-16 shrink-0 items-center justify-between px-5 border-b border-brand-neon/30">
             <div className="flex items-center gap-2">
-              <Megaphone className="h-4 w-4 text-brand-neon" />
-              <span className="font-display font-black italic uppercase text-brand-neon tracking-wide">
+              <Megaphone className="h-4 w-4 text-brand-navy" />
+              <span className="font-display font-black italic uppercase text-brand-navy tracking-wide">
                 Club News
               </span>
             </div>
@@ -662,7 +662,7 @@ export default function Header() {
               type="button"
               aria-label="Close news panel"
               onClick={() => setNewsOpen(false)}
-              className="flex h-9 w-9 items-center justify-center rounded-xl border-2 border-brand-neon/30 text-brand-sky hover:border-brand-neon hover:text-brand-neon transition-colors"
+              className="flex h-9 w-9 items-center justify-center rounded-xl border-2 border-brand-navy/30 text-brand-navy hover:border-brand-navy hover:text-brand-navy transition-colors"
             >
               <X className="h-5 w-5" />
             </button>
@@ -676,18 +676,18 @@ export default function Header() {
                   <span className={`inline-block font-display font-black uppercase text-[10px] tracking-widest px-2 py-0.5 mb-3 ${cat.colour} ${cat.textColour}`}>
                     {cat.label}
                   </span>
-                  <p className="font-display font-black italic uppercase text-brand-cream text-xl leading-tight">
+                  <p className="font-display font-black italic uppercase text-brand-navy text-xl leading-tight">
                     {a.title}
                   </p>
                   <div className="mt-1.5 h-0.5 w-8 bg-brand-neon" />
-                  <p className="mt-3 text-sm text-brand-sky/70 leading-relaxed">
+                  <p className="mt-3 text-sm text-brand-charcoal/70 leading-relaxed">
                     {a.body}
                   </p>
                   {a.ctaUrl && a.ctaLabel && (
                     <Link
                       href={a.ctaUrl}
                       onClick={() => setNewsOpen(false)}
-                      className="inline-block mt-3 font-display font-black italic uppercase text-sm text-brand-neon hover:underline"
+                      className="inline-block mt-3 font-display font-black italic uppercase text-sm text-brand-navy hover:text-brand-neon transition-colors"
                     >
                       {a.ctaLabel} →
                     </Link>
@@ -697,7 +697,7 @@ export default function Header() {
             })}
           </div>
 
-          <div className="shrink-0 border-t border-brand-neon/20 p-5">
+          <div className="shrink-0 border-t border-brand-navy/10 p-5">
             <Link
               href="/news"
               onClick={() => setNewsOpen(false)}
