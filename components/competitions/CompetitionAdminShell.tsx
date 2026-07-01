@@ -1,6 +1,5 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
-import AdminNav from "@/components/admin/AdminNav";
 
 interface NavItem {
   href: string;
@@ -24,9 +23,6 @@ export function CompetitionAdminShell({
 
   return (
     <div className="min-h-screen bg-brand-cream flex flex-col">
-      {/* Unified admin nav — shared with /admin section */}
-      <AdminNav />
-
       <div className="flex flex-1 max-w-7xl mx-auto w-full">
         {/* Sidebar — desktop */}
         <aside className="hidden md:flex flex-col w-52 shrink-0 border-r-3 border-brand-navy/20 pt-6 px-4 gap-1">

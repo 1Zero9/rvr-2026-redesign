@@ -1,7 +1,8 @@
 import Link from 'next/link';
 import { prisma } from '@/lib/prisma';
-import { auth, signOut } from '@/auth';
+import { auth } from '@/auth';
 import { GlobalRole } from '@prisma/client';
+import { signOutAction } from '@/lib/actions/sign-out';
 
 const SITE_LINKS = [
   { href: '/admin/announcements', label: 'Announcements', badge: 'ann' as const },
@@ -115,12 +116,7 @@ export default async function AdminNav() {
               <span className="text-xs text-white/60 max-w-[120px] truncate hidden md:block" title={user.email ?? ''}>
                 {displayName}
               </span>
-              <form
-                action={async () => {
-                  'use server';
-                  await signOut({ redirectTo: '/admin/login' });
-                }}
-              >
+              <form action={signOutAction}>
                 <button
                   type="submit"
                   className="text-xs font-bold text-white/40 hover:text-brand-maroon transition-colors whitespace-nowrap"
