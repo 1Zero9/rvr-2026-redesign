@@ -104,9 +104,10 @@ const navItems: NavItem[] = [
     groups: [
       {
         links: [
-          { label: 'About the Club', path: '/club' },
-          { label: 'Contact Us',     path: '/contact' },
-          { label: 'Safeguarding',   path: '/club/safeguarding' },
+          { label: 'About the Club',   path: '/club' },
+          { label: 'Contact Us',       path: '/contact' },
+          { label: 'Pitch Locations',  path: '/pitch-locations' },
+          { label: 'Safeguarding',     path: '/club/safeguarding' },
           { label: 'Football For All', path: '/football-for-all' },
         ],
       },

@@ -15,26 +15,31 @@ const COMMUNITY_CATEGORIES: Array<{
   Icon: LucideIcon;
   label: string;
   copy: string;
+  href: string;
 }> = [
   {
     Icon: GraduationCap,
     label: 'Academy',
     copy: 'Little Rangers to U-age groups — where players develop from day one.',
+    href: '/teams',
   },
   {
     Icon: Trophy,
     label: 'Adult',
     copy: 'Seniors and Over 35s competing in North Dublin leagues.',
+    href: '/seniors',
   },
   {
     Icon: Users,
     label: 'Community',
     copy: "Walking Football and Mams' Football, open to all.",
+    href: '/walking-football',
   },
   {
     Icon: Heart,
     label: 'Inclusive',
     copy: 'A welcoming programme for players of every ability.',
+    href: '/football-for-all',
   },
 ];
 
@@ -153,8 +158,8 @@ export default async function Home() {
               {COMMUNITY_CATEGORIES.map((cat) => (
                 <Link
                   key={cat.label}
-                  href="/teams"
-                  className="group block bg-brand-charcoal border-2 border-brand-neon hover:border-brand-maroon rounded-2xl p-6 transition-colors min-h-[44px]"
+                  href={cat.href}
+                  className="group block bg-brand-charcoal border-2 border-brand-neon hover:border-brand-sky rounded-2xl p-6 transition-colors min-h-[44px]"
                 >
                   <div className="mb-4">
                     <div className="inline-flex items-center justify-center w-11 h-11 rounded-xl bg-brand-neon/10 border border-brand-neon/30 group-hover:bg-brand-neon/20 transition-colors mb-3">
@@ -212,45 +217,91 @@ export default async function Home() {
 
       </main>
 
-      {/* ── 8. Footer ──────────────────────────────────────────────────────── */}
-      <footer className="bg-brand-navy text-white border-t border-brand-sky/20 py-12">
-        <div className="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div>
-            <h4 className="font-display font-black text-xl italic uppercase tracking-tight text-brand-neon mb-4">
-              RIVERVALLEY RANGERS AFC
+      {/* ── Footer ─────────────────────────────────────────────────────────── */}
+      <footer className="bg-brand-navy text-white border-t border-brand-sky/20">
+        <div className="max-w-6xl mx-auto px-6 py-12 grid grid-cols-2 md:grid-cols-4 gap-8">
+
+          {/* Club info */}
+          <div className="col-span-2 md:col-span-1">
+            <h4 className="font-display font-black text-base italic uppercase tracking-tight text-brand-neon mb-3">
+              Rivervalley Rangers AFC
             </h4>
-            <p className="text-zinc-400 text-sm leading-relaxed max-w-xs">
+            <p className="text-zinc-400 text-sm leading-relaxed">
               Swords&apos; leading community football club, established in{' '}
               {CLUB_SEASON.foundingYear}. Dedicated to equality, youth development,
-              and inclusive sports.
+              and inclusive sport.
             </p>
           </div>
+
+          {/* Play */}
           <div>
-            <h4 className="font-display font-bold text-sm uppercase tracking-wider text-white mb-4">
-              Our Locations
+            <h4 className="font-display font-bold text-[10px] uppercase tracking-widest text-brand-sky/60 mb-3">
+              Play
             </h4>
-            <ul className="space-y-2 text-zinc-400 text-sm">
-              <li>Ward Rivervalley Park, Swords, Co. Dublin</li>
-              <li>Ward Rivervalley All-Weather Astro Pitch</li>
+            <ul className="space-y-2 text-sm">
+              {[
+                { label: 'All Teams',    href: '/teams' },
+                { label: 'Fixtures',     href: '/fixtures' },
+                { label: 'Senior Hub',   href: '/seniors' },
+                { label: 'Register',     href: '/register' },
+                { label: 'Book Astro',   href: '/astro-booking' },
+              ].map((l) => (
+                <li key={l.href}>
+                  <Link href={l.href} className="text-zinc-400 hover:text-brand-neon transition-colors">
+                    {l.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
+
+          {/* Club */}
           <div>
-            <h4 className="font-display font-bold text-sm uppercase tracking-wider text-white mb-4">
+            <h4 className="font-display font-bold text-[10px] uppercase tracking-widest text-brand-sky/60 mb-3">
+              Club
+            </h4>
+            <ul className="space-y-2 text-sm">
+              {[
+                { label: 'About',            href: '/club' },
+                { label: 'Contact',          href: '/contact' },
+                { label: 'Pitch Locations',  href: '/pitch-locations' },
+                { label: 'Safeguarding',     href: '/club/safeguarding' },
+                { label: 'Football For All', href: '/football-for-all' },
+              ].map((l) => (
+                <li key={l.href}>
+                  <Link href={l.href} className="text-zinc-400 hover:text-brand-neon transition-colors">
+                    {l.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Legal */}
+          <div>
+            <h4 className="font-display font-bold text-[10px] uppercase tracking-widest text-brand-sky/60 mb-3">
               Legal &amp; Safety
             </h4>
-            <ul className="space-y-2 text-zinc-400 text-sm">
+            <ul className="space-y-2 text-sm text-zinc-400">
               <li>100% Garda Vetted Coaches</li>
-              <li>Child Safeguarding Statement</li>
               <li>FAI Club Mark Accredited</li>
+              <li>
+                <Link href="/privacy" className="hover:text-brand-neon transition-colors">
+                  Privacy Policy
+                </Link>
+              </li>
+              <li>
+                <Link href="/club/safeguarding" className="hover:text-brand-neon transition-colors">
+                  Child Safeguarding
+                </Link>
+              </li>
             </ul>
           </div>
+
         </div>
-        <div className="max-w-6xl mx-auto px-6 mt-12 pt-8 border-t border-zinc-800 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-zinc-500">
-          <p>
-            &copy; {new Date().getFullYear()} Rivervalley Rangers AFC. All rights reserved.
-            {' · '}
-            <a href="/privacy" className="hover:text-brand-neon transition-colors">Privacy Policy</a>
-          </p>
+
+        <div className="max-w-6xl mx-auto px-6 py-6 border-t border-zinc-800 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-zinc-500">
+          <p>&copy; {new Date().getFullYear()} Rivervalley Rangers AFC. All rights reserved.</p>
           <a
             href="https://www.instagram.com/rvrfc1981"
             target="_blank"
@@ -263,15 +314,10 @@ export default async function Home() {
             </svg>
             @rvrfc1981
           </a>
-          <p className="text-xs text-brand-sky/50">
+          <p className="text-brand-sky/40">
             RVR2026 v{APP_VERSION} · {APP_VERSION_DATE}
             {' · '}
-            <a
-              href="/admin/login"
-              className="inline-flex min-h-11 items-center transition-colors hover:text-brand-sky/80"
-            >
-              Admin
-            </a>
+            <a href="/admin/login" className="hover:text-brand-sky/70 transition-colors">Admin</a>
           </p>
         </div>
       </footer>
