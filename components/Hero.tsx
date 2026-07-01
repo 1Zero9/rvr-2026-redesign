@@ -113,7 +113,7 @@ export default function Hero() {
             return (
               <div
                 key={i}
-                className="animate-explode-in bg-white text-brand-charcoal border-3 border-brand-charcoal rounded-2xl shadow-brutalist p-4 flex flex-col gap-1 text-left"
+                className={`animate-explode-in bg-white text-brand-charcoal border-3 border-brand-charcoal rounded-2xl shadow-brutalist p-4 flex flex-col gap-1 text-left${i === 4 ? ' hidden md:flex' : ''}`}
                 style={{
                   '--explode-x': ep.x,
                   '--explode-y': ep.y,
