@@ -522,33 +522,43 @@ export default function Header() {
       {/* Search overlay */}
       <SearchOverlay isOpen={searchOpen} onClose={closeSearch} />
 
-      {/* Bookmark tab — fixed to left viewport edge, opens info panel */}
-      {!infoOpen && (
-        <>
-          {/* Mobile: compact, horizontal layout */}
-          <button
-            type="button"
-            aria-label="Open club update"
-            onClick={() => setInfoOpen(true)}
-            className="lg:hidden fixed left-0 z-[55] flex flex-col items-center gap-0.5 bg-blue-600 hover:bg-blue-500 rounded-r-lg px-2 py-2.5 shadow-md transition-colors"
-            style={{ top: '50%', transform: 'translateY(-50%)' }}
-          >
+      {/* Left bookmark tabs — mobile */}
+      <div className="lg:hidden fixed left-0 z-[55] flex flex-col gap-1.5" style={{ top: '50%', transform: 'translateY(-50%)' }}>
+        {!infoOpen && (
+          <button type="button" aria-label="Open club update" onClick={() => setInfoOpen(true)}
+            className="flex flex-col items-center gap-0.5 bg-blue-600 hover:bg-blue-500 rounded-r-lg px-2 py-2.5 shadow-md transition-colors">
             <Info className="h-5 w-5 text-white" strokeWidth={2.5} />
             <span className="font-display font-black text-[8px] uppercase tracking-wide text-white">info</span>
           </button>
-          {/* Desktop: taller, vertical writing */}
-          <button
-            type="button"
-            aria-label="Open club update"
-            onClick={() => setInfoOpen(true)}
-            className="hidden lg:flex fixed left-0 z-[55] flex-col items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 rounded-r-lg px-2 shadow-md transition-colors h-44"
-            style={{ writingMode: 'vertical-lr', top: '50%', transform: 'translateY(-50%)' }}
-          >
+        )}
+        {!newsOpen && newsLoaded && announcements.length > 0 && (
+          <button type="button" aria-label="Open club news" onClick={openNews}
+            className="flex flex-col items-center gap-0.5 bg-emerald-600 hover:bg-emerald-500 rounded-r-lg px-2 py-2.5 shadow-md transition-colors">
+            <Megaphone className="h-5 w-5 text-white" strokeWidth={2.5} />
+            <span className="font-display font-black text-[8px] uppercase tracking-wide text-white">news</span>
+          </button>
+        )}
+      </div>
+
+      {/* Left bookmark tabs — desktop */}
+      <div className="hidden lg:flex fixed left-0 z-[55] flex-col gap-2" style={{ top: '50%', transform: 'translateY(-50%)' }}>
+        {!infoOpen && (
+          <button type="button" aria-label="Open club update" onClick={() => setInfoOpen(true)}
+            className="flex flex-col items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 rounded-r-lg px-2 shadow-md transition-colors h-44"
+            style={{ writingMode: 'vertical-lr' }}>
             <Info className="h-3.5 w-3.5 shrink-0 text-white" />
             <span className="font-display font-black text-[8px] uppercase tracking-widest text-white">info</span>
           </button>
-        </>
-      )}
+        )}
+        {!newsOpen && newsLoaded && announcements.length > 0 && (
+          <button type="button" aria-label="Open club news" onClick={openNews}
+            className="flex flex-col items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 rounded-r-lg px-2 shadow-md transition-colors h-44"
+            style={{ writingMode: 'vertical-lr' }}>
+            <Megaphone className="h-3.5 w-3.5 shrink-0 text-white" />
+            <span className="font-display font-black text-[8px] uppercase tracking-widest text-white">news</span>
+          </button>
+        )}
+      </div>
 
       {/* Info panel — slides in from the left */}
       <div
@@ -613,34 +623,6 @@ export default function Header() {
           </div>
         </aside>
       </div>
-
-      {/* News bookmark tab — fixed to right viewport edge */}
-      {!newsOpen && newsLoaded && announcements.length > 0 && (
-        <>
-          {/* Mobile */}
-          <button
-            type="button"
-            aria-label="Open club news"
-            onClick={openNews}
-            className="lg:hidden fixed right-0 z-[55] flex flex-col items-center gap-0.5 bg-emerald-600 hover:bg-emerald-500 rounded-l-lg px-2 py-2.5 shadow-md transition-colors"
-            style={{ top: '50%', transform: 'translateY(-50%)' }}
-          >
-            <Megaphone className="h-5 w-5 text-white" strokeWidth={2.5} />
-            <span className="font-display font-black text-[8px] uppercase tracking-wide text-white">news</span>
-          </button>
-          {/* Desktop */}
-          <button
-            type="button"
-            aria-label="Open club news"
-            onClick={openNews}
-            className="hidden lg:flex fixed right-0 z-[55] flex-col items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 rounded-l-lg px-2 shadow-md transition-colors h-44"
-            style={{ writingMode: 'vertical-lr', top: '50%', transform: 'translateY(-50%)' }}
-          >
-            <Megaphone className="h-3.5 w-3.5 shrink-0 text-white" />
-            <span className="font-display font-black text-[8px] uppercase tracking-widest text-white">news</span>
-          </button>
-        </>
-      )}
 
       {/* News panel — slides in from the right */}
       <div
