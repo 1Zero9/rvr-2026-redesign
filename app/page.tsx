@@ -3,7 +3,6 @@ import Hero from '@/components/Hero';
 import Link from 'next/link';
 import TeletextFixtures from '@/components/TeletextFixtures';
 import NewsCarousel from '@/components/NewsCarousel';
-import AnnouncementTrigger from '@/components/announcements/AnnouncementTrigger';
 import InstagramFeed from '@/components/InstagramFeed';
 import { CLUB_SEASON } from '@/config/club-season';
 import { APP_VERSION, APP_VERSION_DATE } from '@/config/version';
@@ -52,22 +51,6 @@ export default async function Home() {
 
   const now = new Date();
 
-  const pinnedAnnouncement = await prisma.announcement.findFirst({
-    where: {
-      isPublished: true,
-      pinned:      true,
-      OR: [{ expiresAt: null }, { expiresAt: { gt: now } }],
-    },
-    select: {
-      id:       true,
-      title:    true,
-      category: true,
-      ctaLabel: true,
-      ctaUrl:   true,
-    },
-    orderBy: { publishedAt: 'desc' },
-  });
-
   const announcements = await prisma.announcement.findMany({
     where: {
       isPublished: true,
@@ -76,10 +59,6 @@ export default async function Home() {
     orderBy: [{ pinned: 'desc' }, { publishedAt: 'desc' }],
     take: 6,
   });
-
-  const [startStr] = CLUB_SEASON.currentSeason.split('/');
-  const nextStartYear = +startStr + 1;
-  const nextSeason = `${nextStartYear}/${String(nextStartYear + 1).slice(-2)}`;
 
   return (
     <div
@@ -135,27 +114,20 @@ export default async function Home() {
 
 
         {/* ── 4. More Than A Football Club ─────────────────────────────────── */}
-        <section
-          className="py-20 bg-brand-navy border-t border-brand-sky/20"
-          style={{
-            backgroundImage: `linear-gradient(rgba(184,205,238,0.04) 1px, transparent 1px),
-                              linear-gradient(90deg, rgba(184,205,238,0.04) 1px, transparent 1px)`,
-            backgroundSize: '40px 40px',
-          }}
-        >
+        <section className="py-20 bg-brand-cream border-t border-brand-navy/10">
           <div className="max-w-6xl mx-auto px-4 md:px-6">
             <div className="flex items-start justify-between mb-10">
               <div>
-                <h2 className="font-display font-black italic text-4xl md:text-6xl uppercase tracking-tight leading-none text-brand-cream mb-2">
+                <h2 className="font-display font-black italic text-4xl md:text-6xl uppercase tracking-tight leading-none text-brand-charcoal mb-2">
                   More Than A Football Club
                 </h2>
-                <p className="text-brand-sky/60 text-sm font-bold uppercase tracking-wider">
+                <p className="text-brand-charcoal/50 text-sm font-bold uppercase tracking-wider">
                   Academy · Adult · Community · Inclusive
                 </p>
               </div>
               <Link
                 href="/teams"
-                className="min-h-[44px] inline-flex items-center px-2 -mr-2 text-xs font-display font-black uppercase tracking-wide text-brand-sky/40 hover:text-brand-neon transition-colors shrink-0 mt-2"
+                className="min-h-[44px] inline-flex items-center px-2 -mr-2 text-xs font-display font-black uppercase tracking-wide text-brand-charcoal/40 hover:text-brand-navy transition-colors shrink-0 mt-2"
               >
                 All teams →
               </Link>
@@ -166,55 +138,22 @@ export default async function Home() {
                 <Link
                   key={cat.label}
                   href={cat.href}
-                  className="group flex flex-col items-center text-center gap-3 rounded-2xl border-2 border-white/20 px-4 py-6 bg-white/10 hover:bg-white/20 backdrop-blur-sm transition-all duration-200 min-h-[44px]"
+                  className="group flex flex-col items-center text-center gap-3 rounded-2xl border-2 border-brand-navy/15 hover:border-brand-navy/40 px-4 py-6 bg-white hover:bg-brand-navy/5 transition-all duration-200 min-h-[44px]"
                 >
-                  <div className="inline-flex items-center justify-center w-11 h-11 rounded-xl bg-white/10 border border-white/20 group-hover:bg-brand-neon/20 group-hover:border-brand-neon/40 transition-colors">
-                    <cat.Icon className="w-6 h-6 text-brand-neon" aria-hidden="true" />
+                  <div className="inline-flex items-center justify-center w-11 h-11 rounded-xl bg-brand-navy/5 border border-brand-navy/15 group-hover:bg-brand-neon/15 group-hover:border-brand-neon/40 transition-colors">
+                    <cat.Icon className="w-6 h-6 text-brand-navy group-hover:text-brand-neon transition-colors" aria-hidden="true" />
                   </div>
-                  <p className="font-display font-black text-sm uppercase tracking-wide text-white group-hover:text-brand-neon transition-colors">
+                  <p className="font-display font-black text-sm uppercase tracking-wide text-brand-charcoal group-hover:text-brand-navy transition-colors">
                     {cat.label}
                   </p>
-                  <p className="text-white/60 text-xs leading-relaxed flex-1">
+                  <p className="text-brand-charcoal/50 text-xs leading-relaxed flex-1">
                     {cat.copy}
                   </p>
-                  <span className="text-[11px] font-display font-black uppercase tracking-wide text-brand-neon/70 group-hover:text-brand-neon group-hover:underline transition-colors">
+                  <span className="text-[11px] font-display font-black uppercase tracking-wide text-brand-navy/50 group-hover:text-brand-navy group-hover:underline transition-colors">
                     Find Out More →
                   </span>
                 </Link>
               ))}
-            </div>
-          </div>
-        </section>
-
-        {/* ── 5. Registration Banner ───────────────────────────────────────── */}
-        <section className="bg-brand-neon border-b-4 border-brand-charcoal">
-          <div className="max-w-6xl mx-auto px-6 py-14 flex flex-col md:flex-row items-center justify-between gap-8">
-            <div>
-              <p className="font-display font-black text-sm uppercase tracking-widest text-brand-charcoal/60 mb-1">
-                Registration Open
-              </p>
-              <h2 className="font-display font-black text-4xl md:text-6xl uppercase tracking-tight italic leading-none text-brand-charcoal">
-                {nextSeason} Season
-              </h2>
-              <p className="text-brand-charcoal/70 font-semibold mt-3 max-w-sm">
-                Secure your place in Swords&apos; largest community football club.
-                All ages, all abilities welcome.
-              </p>
-            </div>
-            <div className="flex flex-col md:flex-row gap-4 shrink-0 w-full md:w-auto">
-              <Link
-                href="/register"
-                className="bg-brand-charcoal text-white border-3 border-brand-charcoal font-display font-black uppercase tracking-wide text-sm px-8 py-4 shadow-brutalist hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all text-center"
-              >
-                Register Now
-              </Link>
-              <Link
-                href="/membership-calculator"
-                className="bg-white text-brand-charcoal border-3 border-brand-charcoal font-display font-black uppercase tracking-wide text-sm px-8 py-4 shadow-brutalist hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all text-center"
-              >
-                Check Fees
-              </Link>
-              <AnnouncementTrigger pinnedAnnouncement={pinnedAnnouncement} />
             </div>
           </div>
         </section>
