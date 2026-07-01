@@ -567,7 +567,7 @@ export default function Header() {
             type="button"
             aria-label="Open club update"
             onClick={() => setInfoOpen(true)}
-            className="hidden lg:flex fixed left-0 z-[55] flex-col items-center gap-2 bg-blue-600 hover:bg-blue-500 rounded-r-lg px-2 py-10 shadow-md transition-colors"
+            className="hidden lg:flex fixed left-0 z-[55] flex-col items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 rounded-r-lg px-2 shadow-md transition-colors h-44"
             style={{ writingMode: 'vertical-lr', top: '50%', transform: 'translateY(-50%)' }}
           >
             <Info className="h-3.5 w-3.5 shrink-0 text-white" />
