@@ -30,7 +30,7 @@ export default function TrialsPage() {
               src={GOOGLE_FORM_URL}
               title="Open Training Registration"
               width="100%"
-              height="900"
+              height="640"
               frameBorder="0"
               marginHeight={0}
               marginWidth={0}
@@ -44,9 +44,7 @@ export default function TrialsPage() {
           <p className="mt-4 text-center text-xs text-brand-charcoal/40">
             Form not showing?{" "}
             <a
-              href="https://docs.google.com/forms/d/1UwtC7hNz3_sgn5IJd6i3-asmMqiD4CAIjA0-RciycAo/viewform"
-              target="_blank"
-              rel="noopener noreferrer"
+              href={GOOGLE_FORM_URL}
               className="underline hover:text-brand-navy transition-colors"
             >
               Open it directly →
