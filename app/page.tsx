@@ -135,44 +135,49 @@ export default async function Home() {
 
 
         {/* ── 4. More Than A Football Club ─────────────────────────────────── */}
-        <section className="bg-brand-cream py-20 border-t border-brand-navy/10">
+        <section
+          className="py-20 bg-brand-navy border-t border-brand-sky/20"
+          style={{
+            backgroundImage: `linear-gradient(rgba(184,205,238,0.04) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(184,205,238,0.04) 1px, transparent 1px)`,
+            backgroundSize: '40px 40px',
+          }}
+        >
           <div className="max-w-6xl mx-auto px-4 md:px-6">
-            <div className="flex items-start justify-between mb-12">
+            <div className="flex items-start justify-between mb-10">
               <div>
-                <h2 className="font-display font-black italic text-4xl md:text-6xl uppercase tracking-tight leading-none text-brand-charcoal mb-3">
+                <h2 className="font-display font-black italic text-4xl md:text-6xl uppercase tracking-tight leading-none text-brand-cream mb-2">
                   More Than A Football Club
                 </h2>
-                <p className="text-brand-charcoal/50 text-sm font-bold uppercase tracking-wider">
+                <p className="text-brand-sky/60 text-sm font-bold uppercase tracking-wider">
                   Academy · Adult · Community · Inclusive
                 </p>
               </div>
               <Link
                 href="/teams"
-                className="min-h-[44px] inline-flex items-center px-2 -mr-2 text-xs font-display font-black uppercase tracking-wide text-brand-charcoal/40 hover:text-brand-navy transition-colors shrink-0 mt-2"
+                className="min-h-[44px] inline-flex items-center px-2 -mr-2 text-xs font-display font-black uppercase tracking-wide text-brand-sky/40 hover:text-brand-neon transition-colors shrink-0 mt-2"
               >
                 All teams →
               </Link>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {COMMUNITY_CATEGORIES.map((cat) => (
                 <Link
                   key={cat.label}
                   href={cat.href}
-                  className="group block bg-brand-charcoal border-2 border-brand-neon hover:border-brand-sky rounded-2xl p-6 transition-colors min-h-[44px]"
+                  className="group flex flex-col items-center text-center gap-3 rounded-2xl border-2 border-white/20 px-4 py-6 bg-white/10 hover:bg-white/20 backdrop-blur-sm transition-all duration-200 min-h-[44px]"
                 >
-                  <div className="mb-4">
-                    <div className="inline-flex items-center justify-center w-11 h-11 rounded-xl bg-brand-neon/10 border border-brand-neon/30 group-hover:bg-brand-neon/20 transition-colors mb-3">
-                      <cat.Icon className="w-6 h-6 text-brand-neon" aria-hidden="true" />
-                    </div>
-                    <p className="font-display font-black text-lg uppercase text-brand-cream group-hover:text-brand-neon transition-colors">
-                      {cat.label}
-                    </p>
+                  <div className="inline-flex items-center justify-center w-11 h-11 rounded-xl bg-white/10 border border-white/20 group-hover:bg-brand-neon/20 group-hover:border-brand-neon/40 transition-colors">
+                    <cat.Icon className="w-6 h-6 text-brand-neon" aria-hidden="true" />
                   </div>
-                  <p className="text-brand-sky text-sm leading-relaxed mb-4">
+                  <p className="font-display font-black text-sm uppercase tracking-wide text-white group-hover:text-brand-neon transition-colors">
+                    {cat.label}
+                  </p>
+                  <p className="text-white/60 text-xs leading-relaxed flex-1">
                     {cat.copy}
                   </p>
-                  <span className="text-xs font-display font-black uppercase tracking-wide text-brand-neon group-hover:underline">
+                  <span className="text-[11px] font-display font-black uppercase tracking-wide text-brand-neon/70 group-hover:text-brand-neon group-hover:underline transition-colors">
                     Find Out More →
                   </span>
                 </Link>
