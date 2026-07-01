@@ -1,10 +1,13 @@
 'use client';
 
 import { useState } from 'react';
+import { UserPlus, ClipboardList } from 'lucide-react';
 import PlayerRecruitmentWizard from '@/components/PlayerRecruitmentWizard';
 
 const GOOGLE_FORM_URL =
   'https://docs.google.com/forms/d/1UwtC7hNz3_sgn5IJd6i3-asmMqiD4CAIjA0-RciycAo/viewform?embedded=true';
+const GOOGLE_FORM_DIRECT =
+  'https://docs.google.com/forms/d/1UwtC7hNz3_sgn5IJd6i3-asmMqiD4CAIjA0-RciycAo/viewform';
 
 type Path = 'trial' | 'join';
 
@@ -22,13 +25,18 @@ export default function JoinPathSelector() {
           <button
             type="button"
             onClick={() => setPath('trial')}
-            className={`group text-left p-6 border-3 transition-all shadow-brutalist hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none ${
+            className={`group flex flex-col items-center text-center p-6 border-3 transition-all shadow-brutalist hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none ${
               path === 'trial'
                 ? 'bg-brand-navy border-brand-charcoal'
                 : 'bg-white border-brand-charcoal hover:bg-brand-navy'
             }`}
           >
-            <span className="text-3xl mb-3 block">🏃</span>
+            <UserPlus
+              className={`w-8 h-8 mb-3 transition-colors ${
+                path === 'trial' ? 'text-brand-neon' : 'text-brand-navy group-hover:text-brand-neon'
+              }`}
+              aria-hidden="true"
+            />
             <h2 className={`font-display font-black italic text-xl uppercase leading-tight mb-2 transition-colors ${
               path === 'trial' ? 'text-brand-neon' : 'text-brand-navy group-hover:text-brand-neon'
             }`}>
@@ -45,13 +53,18 @@ export default function JoinPathSelector() {
           <button
             type="button"
             onClick={() => setPath('join')}
-            className={`group text-left p-6 border-3 transition-all shadow-brutalist hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none ${
+            className={`group flex flex-col items-center text-center p-6 border-3 transition-all shadow-brutalist hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none ${
               path === 'join'
                 ? 'bg-brand-navy border-brand-charcoal'
                 : 'bg-white border-brand-charcoal hover:bg-brand-navy'
             }`}
           >
-            <span className="text-3xl mb-3 block">⚽</span>
+            <ClipboardList
+              className={`w-8 h-8 mb-3 transition-colors ${
+                path === 'join' ? 'text-brand-neon' : 'text-brand-navy group-hover:text-brand-neon'
+              }`}
+              aria-hidden="true"
+            />
             <h2 className={`font-display font-black italic text-xl uppercase leading-tight mb-2 transition-colors ${
               path === 'join' ? 'text-brand-neon' : 'text-brand-navy group-hover:text-brand-neon'
             }`}>
@@ -71,7 +84,28 @@ export default function JoinPathSelector() {
       {path === 'trial' && (
         <section className="border-t-3 border-brand-neon bg-brand-cream px-4 pb-12">
           <div className="max-w-2xl mx-auto pt-8">
-            <div className="w-full overflow-hidden border-3 border-brand-charcoal shadow-brutalist bg-white">
+
+            {/* Mobile: open directly — iframe scrolling is unreliable on mobile */}
+            <div className="sm:hidden flex flex-col items-center gap-4 py-8 border-3 border-brand-charcoal shadow-brutalist bg-white px-6 text-center">
+              <UserPlus className="w-10 h-10 text-brand-navy" aria-hidden="true" />
+              <p className="font-display font-black italic text-lg uppercase text-brand-navy leading-tight">
+                Open Training Registration
+              </p>
+              <p className="text-sm text-zinc-500">
+                Tap below to open the form — it works best in your browser on mobile.
+              </p>
+              <a
+                href={GOOGLE_FORM_DIRECT}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center min-h-[48px] px-6 bg-brand-navy text-brand-neon font-display font-black italic uppercase text-sm border-3 border-brand-charcoal shadow-brutalist hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all"
+              >
+                Open Form →
+              </a>
+            </div>
+
+            {/* Desktop: embedded iframe */}
+            <div className="hidden sm:block w-full overflow-hidden border-3 border-brand-charcoal shadow-brutalist bg-white">
               <iframe
                 src={GOOGLE_FORM_URL}
                 title="Open Training Registration"
@@ -83,10 +117,11 @@ export default function JoinPathSelector() {
                 Loading form…
               </iframe>
             </div>
+
             <p className="mt-4 text-center text-xs text-brand-charcoal/40">
               Form not showing?{' '}
               <a
-                href="https://docs.google.com/forms/d/1UwtC7hNz3_sgn5IJd6i3-asmMqiD4CAIjA0-RciycAo/viewform"
+                href={GOOGLE_FORM_DIRECT}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="underline hover:text-brand-navy transition-colors"
