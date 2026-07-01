@@ -2,12 +2,12 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import PublicPageShell from "@/components/layout/PublicPageShell";
 import PageHeroNavy from "@/components/layout/PageHeroNavy";
-import { MapPin, Car, Footprints, ExternalLink } from "lucide-react";
+import { MapPin, Car, Footprints, ExternalLink, Zap, CalendarCheck } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Pitch Locations | Rivervalley Rangers AFC",
   description:
-    "Find Rivervalley Rangers AFC pitches in Swords, Co. Dublin. Ward Rivervalley Park — our home ground for training and fixtures.",
+    "Find Rivervalley Rangers AFC pitches in Swords, Co. Dublin — Ward Rivervalley Park, Rathingle, and Ridgewood.",
 };
 
 const pitches = [
@@ -15,13 +15,65 @@ const pitches = [
     id: "ward-rivervalley",
     name: "Ward Rivervalley Park",
     type: "Grass Pitches",
-    address: ["Ward Rivervalley Park", "Swords, Co. Dublin", "D17 W2X3"],
+    address: ["Ward Rivervalley Park", "Swords, Co. Dublin"],
     description:
       "Our home ground and the heart of the club. Ward Rivervalley Park hosts youth training sessions, league fixtures, and blitzes across multiple grass pitches.",
     use: ["Youth training", "League matches", "Blitzes & tournaments"],
-    notes: "Parking available at the park entrance. Facilities include changing rooms on site.",
-    directionsUrl: "https://maps.google.com/?q=Ward+Rivervalley+Park,+Swords,+Co.+Dublin,+D17+W2X3",
+    notes: "Parking available at the park entrance. Changing rooms on site.",
+    directionsUrl: "https://maps.google.com/?q=53.455815,-6.244440",
     bookingUrl: undefined as string | undefined,
+    icon: Footprints,
+  },
+  {
+    id: "rivervalley-main-astro",
+    name: "Rivervalley Park — Main Astro",
+    type: "All-Weather Pitch",
+    address: ["Ward Rivervalley Park", "Swords, Co. Dublin"],
+    description:
+      "Full-size all-weather synthetic pitch at Rivervalley Park. Floodlit for evening sessions and available to book online.",
+    use: ["Pitch hire", "Training", "Small-sided games"],
+    notes: "Book online in advance. Floodlit for evening use.",
+    directionsUrl: "https://maps.google.com/?q=53.455815,-6.244440",
+    bookingUrl: "/astro-booking",
+    icon: Zap,
+  },
+  {
+    id: "rivervalley-small-astro",
+    name: "Rivervalley Park — Small Astro",
+    type: "All-Weather Pitch",
+    address: ["Ward Rivervalley Park", "Swords, Co. Dublin"],
+    description:
+      "Smaller all-weather synthetic pitch within the same park as the main astro. Used by the club for training and small-sided sessions.",
+    use: ["Training", "Academy sessions", "Small blitzes"],
+    notes: "Located within Ward Rivervalley Park, adjacent to the main astro.",
+    directionsUrl: "https://maps.google.com/?q=53.455065,-6.244060",
+    bookingUrl: undefined,
+    icon: Zap,
+  },
+  {
+    id: "rathingle",
+    name: "Rathingle Pitches",
+    type: "Grass Pitches",
+    address: ["Rathingle", "Swords, Co. Dublin"],
+    description:
+      "Community grass pitches at Rathingle used by Rivervalley Rangers for youth fixtures and training.",
+    use: ["Youth fixtures", "Training"],
+    notes: "Street parking available nearby.",
+    directionsUrl: "https://maps.google.com/?q=CQX4%2BWP+Swords,+County+Dublin",
+    bookingUrl: undefined,
+    icon: Footprints,
+  },
+  {
+    id: "ridgewood",
+    name: "Ridgewood",
+    type: "Pitches & Changing Rooms",
+    address: ["Ridgewood", "Swords, Co. Dublin"],
+    description:
+      "Grass pitches with changing room facilities at Ridgewood, used by Rivervalley Rangers for fixtures and training.",
+    use: ["Youth fixtures", "Training"],
+    notes: "Changing rooms available on site. Parking at the facility.",
+    directionsUrl: "https://maps.google.com/?q=53.448597,-6.254139",
+    bookingUrl: undefined,
     icon: Footprints,
   },
 ];
@@ -32,7 +84,7 @@ export default function PitchLocationsPage() {
       <PageHeroNavy
         eyebrow="Rivervalley Rangers AFC"
         title="Pitch Locations"
-        description="Find us in Swords, Co. Dublin — Ward Rivervalley Park is our home ground for training, fixtures, and blitzes."
+        description="Find us across Swords, Co. Dublin — Ward Rivervalley Park, Rathingle, and Ridgewood."
       />
 
       <section className="bg-brand-cream">
@@ -108,6 +160,15 @@ export default function PitchLocationsPage() {
                       <ExternalLink className="w-4 h-4" aria-hidden="true" />
                       Get Directions
                     </a>
+                    {pitch.bookingUrl && (
+                      <Link
+                        href={pitch.bookingUrl}
+                        className="inline-flex items-center justify-center gap-2 min-h-[44px] px-5 bg-brand-neon text-brand-charcoal font-display font-black italic uppercase text-sm border-3 border-brand-charcoal shadow-brutalist hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all"
+                      >
+                        <CalendarCheck className="w-4 h-4" aria-hidden="true" />
+                        Book Now
+                      </Link>
+                    )}
                   </div>
                 </div>
 
