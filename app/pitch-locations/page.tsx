@@ -15,20 +15,6 @@ const NEIGHBOUR_NOTE =
 
 const pitches = [
   {
-    id: "ward-rivervalley",
-    name: "Ward Rivervalley Park",
-    type: "Grass Pitches",
-    address: ["Ward Rivervalley Park", "Swords, Co. Dublin"],
-    description:
-      "Our home ground and the heart of the club. Ward Rivervalley Park hosts youth training sessions, league fixtures, and blitzes across multiple grass pitches.",
-    use: ["Youth training", "League matches", "Blitzes & tournaments"],
-    notes: "Parking available at the park entrance. Changing rooms on site.",
-    directionsUrl: "https://maps.google.com/?q=53.455815,-6.244440",
-    bookingUrl: undefined as string | undefined,
-    neighbourNote: false,
-    icon: Footprints,
-  },
-  {
     id: "rivervalley-main-astro",
     name: "Rivervalley Park — Main Astro",
     type: "All-Weather Pitch",
