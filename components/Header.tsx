@@ -301,7 +301,7 @@ export default function Header() {
       >
         <div className="relative max-w-7xl mx-auto flex items-center justify-between h-16 px-4 md:px-6 lg:grid lg:grid-cols-[auto_1fr_auto] lg:items-center">
 
-          {/* Logo + mobile info button */}
+          {/* Logo + mobile news button */}
           <div className="flex items-center gap-2">
             <Link href="/" className="flex shrink-0 items-center gap-3" onClick={close}>
               <Image
@@ -321,14 +321,19 @@ export default function Header() {
                 </span>
               </span>
             </Link>
-            <button
-              type="button"
-              aria-label="Site information"
-              onClick={() => setInfoOpen(true)}
-              className="lg:hidden flex h-9 w-9 items-center justify-center rounded-full border-2 border-brand-sky/40 text-brand-sky hover:border-brand-neon hover:text-brand-neon transition-colors"
-            >
-              <Info className="h-4 w-4" />
-            </button>
+            {newsLoaded && announcements.length > 0 && (
+              <button
+                type="button"
+                aria-label={`Club news — ${announcements.length} update${announcements.length !== 1 ? 's' : ''}`}
+                onClick={openNews}
+                className="lg:hidden relative flex h-9 w-9 items-center justify-center rounded-full border-2 border-brand-neon/60 text-brand-neon hover:border-brand-neon transition-colors"
+              >
+                <Megaphone className="h-4 w-4" />
+                <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-brand-neon text-[9px] font-black text-brand-charcoal animate-pulse">
+                  {announcements.length}
+                </span>
+              </button>
+            )}
           </div>
 
           <div className="hidden lg:flex flex-1 items-center justify-center gap-8 lg:justify-self-center">
@@ -443,14 +448,6 @@ export default function Header() {
 
           {/* Search + Instagram + Affiliation logos + Desktop CTA */}
           <div className="hidden lg:flex items-center gap-2 lg:justify-self-end">
-            <button
-              type="button"
-              aria-label="Site information"
-              onClick={() => setInfoOpen(true)}
-              className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-brand-sky hover:text-brand-neon transition-colors"
-            >
-              <Info className="h-5 w-5" />
-            </button>
             {newsLoaded && announcements.length > 0 && (
               <button
                 type="button"
@@ -464,6 +461,14 @@ export default function Header() {
                 </span>
               </button>
             )}
+            <button
+              type="button"
+              aria-label="Site information"
+              onClick={() => setInfoOpen(true)}
+              className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-brand-sky hover:text-brand-neon transition-colors"
+            >
+              <Info className="h-5 w-5" />
+            </button>
             <button
               ref={searchButtonRef}
               type="button"
@@ -527,21 +532,16 @@ export default function Header() {
             </Link>
           </div>
 
-          {/* Mobile right group: news + hamburger */}
+          {/* Mobile right group: info + hamburger */}
           <div className="flex items-center gap-2 lg:hidden">
-            {newsLoaded && announcements.length > 0 && (
-              <button
-                type="button"
-                aria-label={`Club news — ${announcements.length} update${announcements.length !== 1 ? 's' : ''}`}
-                onClick={openNews}
-                className="relative flex h-9 w-9 items-center justify-center rounded-full border-2 border-brand-neon/60 text-brand-neon hover:border-brand-neon transition-colors"
-              >
-                <Megaphone className="h-4 w-4" />
-                <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-brand-neon text-[9px] font-black text-brand-charcoal animate-pulse">
-                  {announcements.length}
-                </span>
-              </button>
-            )}
+            <button
+              type="button"
+              aria-label="Site information"
+              onClick={() => setInfoOpen(true)}
+              className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-brand-sky/40 text-brand-sky hover:border-brand-neon hover:text-brand-neon transition-colors"
+            >
+              <Info className="h-4 w-4" />
+            </button>
             <button
               type="button"
               aria-label={open ? 'Close navigation' : 'Open navigation'}
