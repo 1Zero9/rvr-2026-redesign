@@ -184,9 +184,9 @@ export default function PitchLocationsPage() {
 
               {/* Neighbour notice */}
               {pitch.neighbourNote && (
-                <div className="mx-6 mb-6 flex gap-3 border border-amber-300 bg-amber-50 px-4 py-3">
-                  <span className="text-amber-500 shrink-0 mt-0.5" aria-hidden="true">⚠</span>
-                  <p className="text-xs text-amber-800 leading-relaxed">{NEIGHBOUR_NOTE}</p>
+                <div className="mx-6 mb-6 flex gap-3 border-2 border-orange-400 bg-orange-50 px-4 py-3">
+                  <span className="text-orange-500 shrink-0 mt-0.5 text-base leading-none" aria-hidden="true">⚠</span>
+                  <p className="text-xs text-orange-900 font-semibold leading-relaxed">{NEIGHBOUR_NOTE}</p>
                 </div>
               )}
             </div>
