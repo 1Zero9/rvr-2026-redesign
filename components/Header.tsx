@@ -462,14 +462,6 @@ export default function Header() {
               </button>
             )}
             <button
-              type="button"
-              aria-label="Site information"
-              onClick={() => setInfoOpen(true)}
-              className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-blue-400 hover:text-blue-300 transition-colors"
-            >
-              <Info className="h-5 w-5" />
-            </button>
-            <button
               ref={searchButtonRef}
               type="button"
               onClick={() => setSearchOpen(true)}
@@ -532,16 +524,8 @@ export default function Header() {
             </Link>
           </div>
 
-          {/* Mobile right group: info + hamburger */}
+          {/* Mobile right group: hamburger only */}
           <div className="flex items-center gap-2 lg:hidden">
-            <button
-              type="button"
-              aria-label="Site information"
-              onClick={() => setInfoOpen(true)}
-              className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-blue-400/60 text-blue-400 hover:border-blue-300 hover:text-blue-300 transition-colors"
-            >
-              <Info className="h-4 w-4" />
-            </button>
             <button
               type="button"
               aria-label={open ? 'Close navigation' : 'Open navigation'}
@@ -563,6 +547,23 @@ export default function Header() {
 
       {/* Search overlay */}
       <SearchOverlay isOpen={searchOpen} onClose={closeSearch} />
+
+      {/* Bookmark tab — fixed to left viewport edge, opens info panel */}
+      <button
+        type="button"
+        aria-label="Open club update"
+        onClick={() => setInfoOpen(true)}
+        className={`fixed left-0 top-1/2 z-[55] flex flex-col items-center gap-2 bg-brand-neon text-brand-charcoal rounded-r-2xl border-r-4 border-y-2 border-brand-charcoal px-2 py-5 shadow-[4px_2px_0_rgba(0,0,0,0.2)] transition-all duration-300 ${
+          infoOpen ? 'opacity-0 pointer-events-none' : 'opacity-100 hover:translate-x-0.5'
+        }`}
+        style={{
+          writingMode: 'vertical-lr',
+          transform: infoOpen ? 'translateY(-50%) translateX(-110%)' : 'translateY(-50%)',
+        }}
+      >
+        <Info className="h-4 w-4 shrink-0" />
+        <span className="font-display font-black text-[9px] uppercase tracking-widest">Club Update</span>
+      </button>
 
       {/* Info panel — slides in from the left */}
       <div
