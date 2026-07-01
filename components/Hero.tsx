@@ -74,14 +74,16 @@ export default function Hero() {
         </span>
 
         <div className="flex flex-col md:flex-row items-center gap-6 md:gap-10 mb-8 w-full justify-center">
+
           <img
             src="/river-valley-rangers-logo-pack-v2/RVR-New-White2.png"
             alt="Rivervalley Rangers AFC crest"
             width={288}
             height={288}
-            className="w-20 h-20 md:w-36 md:h-36 lg:w-48 lg:h-48 object-contain shrink-0 select-none"
+            className="w-28 h-28 md:w-36 md:h-36 lg:w-48 lg:h-48 object-contain shrink-0 select-none"
           />
-          <h1 className="font-display font-black text-5xl md:text-7xl lg:text-8xl tracking-tighter uppercase leading-none italic select-none skew-x-[-4deg] text-center md:text-left">
+
+          <h1 className="font-display font-black text-5xl md:text-7xl lg:text-8xl tracking-tighter uppercase leading-none italic select-none skew-x-[-4deg] text-center md:text-left flex-1">
             FEEL THE <span className="text-brand-neon">RVR</span> ENERGY
           </h1>
         </div>

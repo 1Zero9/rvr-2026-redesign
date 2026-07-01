@@ -8,14 +8,20 @@ export const metadata = { title: 'Admin Login | RVR' };
 export default async function AdminLoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ verify?: string; error?: string }>;
+  searchParams: Promise<{ verify?: string; error?: string; callbackUrl?: string }>;
 }) {
   const [session, params] = await Promise.all([auth(), searchParams]);
 
   const role = (session?.user as { globalRole?: string | null } | undefined)?.globalRole;
   if (role === GlobalRole.SITE_ADMIN || role === GlobalRole.SUPER_ADMIN) {
-    redirect('/admin');
+    redirect(params.callbackUrl ?? '/admin');
   }
+  if (session) {
+    // Authenticated but no admin role — redirect to competitions admin
+    redirect(params.callbackUrl ?? '/competitions/admin');
+  }
+
+  const callbackUrl = params.callbackUrl;
 
   if (params.verify) {
     return (
@@ -64,11 +70,13 @@ export default async function AdminLoginPage({
             action={async (formData: FormData) => {
               'use server';
               const email = formData.get('email') as string;
-              await signIn('resend', { email, redirectTo: '/admin', redirect: false });
+              const destination = (formData.get('callbackUrl') as string | null) || '/admin';
+              await signIn('resend', { email, redirectTo: destination, redirect: false });
               redirect('/admin/login?verify=1');
             }}
             className="space-y-4"
           >
+            <input type="hidden" name="callbackUrl" value={callbackUrl ?? '/admin'} />
             <div>
               <label htmlFor="email" className="block text-xs font-black uppercase tracking-wider text-brand-navy/60 mb-1">
                 Email address

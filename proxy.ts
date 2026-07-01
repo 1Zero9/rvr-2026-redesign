@@ -19,7 +19,7 @@ export function proxy(req: NextRequest): NextResponse {
 
   // NextAuth session gate for competitions admin
   if (pathname.startsWith('/competitions/admin') && !getSessionToken(req)) {
-    return NextResponse.redirect(new URL('/competitions/login', req.url));
+    return NextResponse.redirect(new URL('/admin/login', req.url));
   }
 
   // Forward pathname so the layout can read it without client hooks

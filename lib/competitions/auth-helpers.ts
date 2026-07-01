@@ -6,7 +6,7 @@ import type { SessionUser } from "./types";
 
 export async function requireCompetitionSession(): Promise<SessionUser> {
   const session = await auth();
-  if (!session?.user?.email) redirect("/competitions/login");
+  if (!session?.user?.email) redirect("/admin/login");
   return session.user as SessionUser;
 }
 
@@ -56,7 +56,7 @@ export async function requirePitchAdmin(
       pitchId,
     },
   });
-  if (!assignment) redirect("/competitions/login");
+  if (!assignment) redirect("/admin/login");
   return user;
 }
 

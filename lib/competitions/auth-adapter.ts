@@ -94,6 +94,8 @@ export function AdminPrismaAdapter(): Adapter {
     },
 
     async createSession(session) {
+      // Enforce single session per user — invalidate all other sessions on new sign-in
+      await prisma.authSession.deleteMany({ where: { userId: session.userId } });
       const s = await prisma.authSession.create({ data: session });
       return s as AdapterSession;
     },

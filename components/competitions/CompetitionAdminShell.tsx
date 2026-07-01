@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
+import AdminNav from "@/components/admin/AdminNav";
 
 interface NavItem {
   href: string;
@@ -23,23 +24,8 @@ export function CompetitionAdminShell({
 
   return (
     <div className="min-h-screen bg-brand-cream flex flex-col">
-      {/* Top bar */}
-      <header className="bg-brand-navy border-b-3 border-brand-charcoal sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-4 h-14 flex items-center justify-between gap-4">
-          <Link
-            href="/competitions/admin"
-            className="font-display font-black italic text-brand-neon uppercase text-lg leading-none"
-          >
-            RVR Competitions
-          </Link>
-          <Link
-            href="/api/auth/signout"
-            className="text-brand-sky text-xs hover:text-brand-neon transition-colors min-h-[44px] flex items-center"
-          >
-            Sign out
-          </Link>
-        </div>
-      </header>
+      {/* Unified admin nav — shared with /admin section */}
+      <AdminNav />
 
       <div className="flex flex-1 max-w-7xl mx-auto w-full">
         {/* Sidebar — desktop */}

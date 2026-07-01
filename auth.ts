@@ -12,8 +12,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     }),
   ],
   pages: {
-    signIn: "/competitions/login",
-    verifyRequest: "/competitions/login?verify=1",
+    signIn: "/admin/login",
+    verifyRequest: "/admin/login?verify=1",
+  },
+  session: {
+    // 8-hour idle timeout: session expires 8h after last activity
+    maxAge: 8 * 60 * 60,
+    // Refresh session expiry on every request (so idle = no requests for 8h)
+    updateAge: 60,
   },
   callbacks: {
     session({ session, user }) {

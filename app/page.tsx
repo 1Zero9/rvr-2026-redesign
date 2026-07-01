@@ -280,7 +280,7 @@ export default async function Home() {
 
       </main>
 
-      {/* ── 7. Footer ──────────────────────────────────────────────────────── */}
+      {/* ── 8. Footer ──────────────────────────────────────────────────────── */}
       <footer className="bg-brand-navy text-white border-t border-brand-sky/20 py-12">
         <div className="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>

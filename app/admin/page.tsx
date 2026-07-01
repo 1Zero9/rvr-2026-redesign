@@ -13,6 +13,8 @@ import {
   Shirt,
 } from 'lucide-react';
 import { prisma } from '@/lib/prisma';
+import { auth } from '@/auth';
+import { GlobalRole } from '@prisma/client';
 
 export const metadata: Metadata = {
   title: 'Admin Dashboard | RVR',
@@ -37,7 +39,6 @@ interface NavCard {
   description: string;
   icon: React.ElementType;
   badge?: number;
-  external?: boolean;
 }
 
 // ── Sub-components ────────────────────────────────────────────────────────────
@@ -74,7 +75,13 @@ function SectionCard({ card }: { card: NavCard }) {
 // ── Page ──────────────────────────────────────────────────────────────────────
 
 export default async function AdminDashboardPage() {
-  const { newRegs, newEnquiries, publishedAnnouncements } = await getDashboardStats();
+  const [{ newRegs, newEnquiries, publishedAnnouncements }, session] = await Promise.all([
+    getDashboardStats(),
+    auth(),
+  ]);
+
+  const role = (session?.user as { globalRole?: string | null } | undefined)?.globalRole;
+  const isSuperAdmin = role === GlobalRole.SUPER_ADMIN;
 
   const SITE_CARDS: NavCard[] = [
     {
@@ -121,7 +128,7 @@ export default async function AdminDashboardPage() {
     {
       href: '/competitions/admin/users',
       label: 'Users',
-      description: 'Manage competition admin accounts and role assignments.',
+      description: 'Manage admin accounts and role assignments.',
       icon: Users,
     },
     {
@@ -149,21 +156,13 @@ export default async function AdminDashboardPage() {
       <div className="mx-auto max-w-4xl space-y-12">
 
         {/* Header */}
-        <div className="flex items-end justify-between border-b-2 border-brand-navy/10 pb-6">
-          <div>
-            <p className="font-display text-xs font-black uppercase tracking-widest text-brand-green mb-1">
-              Rivervalley Rangers
-            </p>
-            <h1 className="font-display font-black italic text-4xl uppercase text-brand-navy leading-none">
-              Admin
-            </h1>
-          </div>
-          <Link
-            href="/"
-            className="text-xs font-bold text-zinc-400 hover:text-brand-navy transition-colors"
-          >
-            ← Back to site
-          </Link>
+        <div className="border-b-2 border-brand-navy/10 pb-6">
+          <p className="font-display text-xs font-black uppercase tracking-widest text-brand-green mb-1">
+            Rivervalley Rangers
+          </p>
+          <h1 className="font-display font-black italic text-4xl uppercase text-brand-navy leading-none">
+            Admin Dashboard
+          </h1>
         </div>
 
         {/* ── Site Admin ─────────────────────────────────────────────────── */}
@@ -183,22 +182,24 @@ export default async function AdminDashboardPage() {
           </div>
         </section>
 
-        {/* ── Super Admin ────────────────────────────────────────────────── */}
-        <section>
-          <div className="flex items-baseline gap-3 mb-5">
-            <h2 className="font-display font-black italic text-xl uppercase text-brand-navy">
-              Super Admin
-            </h2>
-            <span className="text-xs font-bold text-zinc-400 uppercase tracking-wider">
-              Platform, competitions &amp; users
-            </span>
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-            {SUPER_CARDS.map((card) => (
-              <SectionCard key={card.label} card={card} />
-            ))}
-          </div>
-        </section>
+        {/* ── Super Admin — only visible to SUPER_ADMIN ──────────────────── */}
+        {isSuperAdmin && (
+          <section>
+            <div className="flex items-baseline gap-3 mb-5">
+              <h2 className="font-display font-black italic text-xl uppercase text-brand-navy">
+                Super Admin
+              </h2>
+              <span className="text-xs font-bold text-zinc-400 uppercase tracking-wider">
+                Platform, competitions &amp; users
+              </span>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+              {SUPER_CARDS.map((card) => (
+                <SectionCard key={card.label} card={card} />
+              ))}
+            </div>
+          </section>
+        )}
 
       </div>
     </main>
