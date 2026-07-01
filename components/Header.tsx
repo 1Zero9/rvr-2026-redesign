@@ -554,11 +554,11 @@ export default function Header() {
           type="button"
           aria-label="Open club update"
           onClick={() => setInfoOpen(true)}
-          className="fixed left-0 z-[55] flex flex-col items-center gap-1 bg-brand-navy rounded-r-lg border-r-2 border-y border-blue-400/50 px-1.5 py-2.5 shadow-md hover:border-blue-400 transition-colors"
+          className="fixed left-0 z-[55] flex flex-col items-center gap-1.5 bg-blue-600 hover:bg-blue-500 rounded-r-lg px-2 py-3 shadow-md transition-colors"
           style={{ writingMode: 'vertical-lr', top: '50%', transform: 'translateY(-50%)' }}
         >
-          <Info className="h-3.5 w-3.5 shrink-0 text-blue-400" />
-          <span className="font-display font-black text-[8px] uppercase tracking-widest text-blue-300/70">info</span>
+          <Info className="h-3.5 w-3.5 shrink-0 text-white" />
+          <span className="font-display font-black text-[8px] uppercase tracking-widest text-white">info</span>
         </button>
       )}
 
