@@ -117,6 +117,15 @@ export default function RootLayout({
                 name: "Dublin & District Schoolboys/Girls League",
                 alternateName: "DDSL",
               },
+              mainEntityOfPage: {
+                "@type": "WebSite",
+                url: "https://www.rivervalleyrangers.ie",
+                creator: {
+                  "@type": "Organization",
+                  name: "1Zero9",
+                  url: "https://www.1zero9.com",
+                },
+              },
             }),
           }}
         />

@@ -1,0 +1,10 @@
+/* TEAM */
+  Design & Build: 1Zero9
+  Site: https://www.1zero9.com
+  Location: Dublin, Ireland
+
+/* SITE */
+  Client: Rivervalley Rangers AFC
+  Site: https://www.rivervalleyrangers.ie
+  Stack: Next.js, Vercel
+  Launched: 2026
