@@ -30,13 +30,13 @@ export default function JoinPathSelector() {
 
       {/* Choice cards */}
       <section className="max-w-3xl mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-start">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-stretch">
 
           {/* Join — primary action */}
           <button
             type="button"
             onClick={() => setPath('join')}
-            className={`group flex flex-col items-center text-center p-6 border-3 transition-all shadow-brutalist hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none order-first ${
+            className={`group flex flex-col items-center text-center p-6 border-3 transition-all shadow-brutalist hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none order-first w-full ${
               path === 'join'
                 ? 'bg-brand-navy border-brand-charcoal'
                 : 'bg-brand-navy border-brand-charcoal hover:bg-brand-charcoal'
@@ -61,7 +61,7 @@ export default function JoinPathSelector() {
           <button
             type="button"
             onClick={() => setPath('trial')}
-            className={`group flex flex-col items-center text-center p-6 border-2 transition-all ${
+            className={`group flex flex-col items-center text-center p-6 border-2 transition-all w-full ${
               path === 'trial'
                 ? 'bg-brand-navy border-brand-navy'
                 : 'bg-white border-brand-navy/25 hover:border-brand-navy/60 hover:bg-brand-navy/3'
