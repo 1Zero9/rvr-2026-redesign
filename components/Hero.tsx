@@ -98,7 +98,7 @@ export default function Hero() {
             className="w-28 h-28 md:w-36 md:h-36 lg:w-48 lg:h-48 object-contain shrink-0 select-none"
           />
 
-          <h1 className="font-display font-black text-5xl md:text-7xl lg:text-8xl tracking-tighter uppercase leading-none italic select-none skew-x-[-4deg] text-center md:text-left flex-1">
+          <h1 className="font-display font-black text-4xl md:text-5xl lg:text-6xl tracking-tighter uppercase leading-none italic select-none skew-x-[-4deg] text-center md:text-left flex-1">
             SWORDS FOOTBALL<br className="hidden md:block" /> <span className="text-brand-neon">SINCE 1981.</span>
           </h1>
         </div>

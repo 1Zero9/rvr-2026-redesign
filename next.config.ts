@@ -92,11 +92,7 @@ const nextConfig: NextConfig = {
         destination: '/seniors',
         permanent: false,
       },
-      {
-        source: '/community',
-        destination: '/club',
-        permanent: false,
-      },
+
       {
         source: '/inclusive',
         destination: '/football-for-all',
