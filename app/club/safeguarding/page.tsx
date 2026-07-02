@@ -23,14 +23,14 @@ const welfareOfficers = [
   {
     role: "Club Children's Officer",
     name: "Sarah Kelly",
-    email: "childrensofficer@rvrafc.ie",
+    email: "rivervalleyrangers+welfare@outlook.com",
     summary:
       "First contact for child welfare questions, parent concerns, and support for young players.",
   },
   {
     role: "Designated Liaison Person",
     name: "Michael Byrne",
-    email: "dlp@rvrafc.ie",
+    email: "rivervalleyrangers+safeguarding@outlook.com",
     summary:
       "Lead contact for formal reporting pathways, safeguarding concerns, and statutory liaison.",
   },

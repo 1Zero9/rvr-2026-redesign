@@ -12,17 +12,17 @@ export const metadata: Metadata = {
 const contacts = [
   {
     role: "General Enquiries",
-    email: "info@rvrafc.ie",
+    email: "rivervalleyrangers+info@outlook.com",
     note: "Membership, registration, and general questions.",
   },
   {
     role: "Club Secretary",
-    email: "secretary@rvrafc.ie",
+    email: "rivervalleyrangers+secretary@outlook.com",
     note: "Committee matters, documentation, and official correspondence.",
   },
   {
     role: "Children's Welfare Officer",
-    email: "childrensofficer@rvrafc.ie",
+    email: "rivervalleyrangers+welfare@outlook.com",
     note: "Safeguarding concerns and child welfare queries.",
   },
 ];

@@ -214,10 +214,10 @@ export default function FootballForAllPage() {
                     Inclusive programme enquiries
                   </span>
                   <a
-                    href="mailto:info@rvrafc.ie?subject=Football%20For%20All"
+                    href="mailto:rivervalleyrangers+footballforall@outlook.com?subject=Football%20For%20All"
                     className="inline-flex min-h-11 items-center gap-1.5 rounded text-sm font-bold text-brand-green hover:underline focus:outline-none focus:ring-2 focus:ring-brand-green"
                   >
-                    Email info@rvrafc.ie
+                    Email rivervalleyrangers+footballforall@outlook.com
                   </a>
                 </div>
               </div>

@@ -78,7 +78,7 @@ export const clubContacts: ClubContact[] = [
     role: 'Club Secretary',
     summary:
       'Committee matters, official correspondence, and club documentation.',
-    email: 'secretary@rvrafc.ie',
+    email: 'rivervalleyrangers+secretary@outlook.com',
     actionLabel: 'Email the secretary',
     status: 'verified',
   },
@@ -101,7 +101,7 @@ export const clubContacts: ClubContact[] = [
     role: 'General Enquiries',
     summary:
       'Membership, registration, coaching, and general club questions.',
-    email: 'info@rvrafc.ie',
+    email: 'rivervalleyrangers+info@outlook.com',
     actionLabel: 'Email the club',
     status: 'verified',
   },

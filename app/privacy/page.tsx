@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 };
 
 const EFFECTIVE_DATE = '1 July 2025';
-const CONTACT_EMAIL = 'info@rvrafc.ie';
+const CONTACT_EMAIL = 'rivervalleyrangers+privacy@outlook.com';
 
 export default function PrivacyPolicyPage() {
   return (
