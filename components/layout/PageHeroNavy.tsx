@@ -25,15 +25,6 @@ export default function PageHeroNavy({
   return (
     <>
       <div className="relative overflow-hidden bg-brand-navy">
-        {/* Grid texture */}
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            backgroundImage: `linear-gradient(rgba(133,227,32,0.08) 1px, transparent 1px),
-                              linear-gradient(90deg, rgba(133,227,32,0.08) 1px, transparent 1px)`,
-            backgroundSize: '40px 40px',
-          }}
-        />
         {/* Bottom fade */}
         <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-brand-navy/60 to-transparent pointer-events-none" />
 

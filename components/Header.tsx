@@ -776,8 +776,8 @@ export default function Header() {
           role="dialog"
           aria-modal="true"
           aria-label="Mobile navigation"
-          className={`absolute inset-y-0 right-0 flex w-3/4 max-w-sm flex-col border-l border-brand-sky/20 bg-brand-navy shadow-[-18px_0_40px_rgba(0,0,0,0.35)] transition-transform duration-300 ease-out ${
-            open ? 'translate-x-0' : 'translate-x-full'
+          className={`absolute inset-y-0 right-0 flex w-3/4 max-w-sm flex-col border-l border-brand-sky/20 bg-brand-navy transition-transform duration-300 ease-out ${
+            open ? 'translate-x-0 shadow-[-18px_0_40px_rgba(0,0,0,0.35)]' : 'translate-x-full shadow-none'
           }`}
         >
           <div className="flex h-16 shrink-0 items-center justify-end px-4">
