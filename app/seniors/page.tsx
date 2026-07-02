@@ -145,7 +145,7 @@ export default async function SeniorsPage() {
             src="/images/RVRSNR_Newtown_2026_05_1319_05_019999_2_DxO.jpg"
             alt="Rivervalley Rangers senior player driving forward with the ball"
             fill
-            className="object-cover object-center"
+            className="object-cover object-top"
             sizes="100vw"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-brand-navy/30 to-brand-navy/10" />
