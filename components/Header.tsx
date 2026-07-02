@@ -85,6 +85,7 @@ const NAV_SECTIONS: NavSection[] = [
           { href: '/club/anniversary',  label: '45th Anniversary'  },
           { href: '/club#committee',    label: 'Committee'         },
           { href: '/club/safeguarding', label: 'Safeguarding'      },
+          { href: '/swords',            label: 'About Swords'      },
         ],
       },
       {

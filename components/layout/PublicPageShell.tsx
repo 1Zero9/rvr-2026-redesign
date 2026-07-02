@@ -14,6 +14,7 @@ const FOOTER_LINKS = [
   { label: 'Book Astro',      href: '/astro-booking'      },
   { label: 'Pitch Locations', href: '/pitch-locations'    },
   { label: 'About the Club',  href: '/club'               },
+  { label: 'About Swords',   href: '/swords'             },
   { label: 'Safeguarding',    href: '/club/safeguarding'  },
   { label: 'Contact',         href: '/contact'            },
   { label: 'News',            href: '/news'               },
