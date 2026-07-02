@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import FixturesPageClient from '@/components/fixtures/FixturesPageClient';
 import PublicPageShell from '@/components/layout/PublicPageShell';
 import PageHeroNavy from '@/components/layout/PageHeroNavy';
+import { RefreshCw } from 'lucide-react';
 import type { SyncResponse, NormalisedMatch, LeagueTable } from '@/lib/ddsl/types';
 import { prisma } from '@/lib/prisma';
 import { CLUB_SEASON } from '@/config/club-season';
@@ -68,6 +69,18 @@ export default async function FixturesPage() {
         title="Fixtures & Results"
         description="Youth, senior, and Over 35s fixtures, results, and standings in one consistent match centre."
       />
+
+      {fixtures.length === 0 && results.length === 0 && (
+        <div className="mx-auto max-w-4xl px-4 pt-6 sm:px-6">
+          <div className="flex items-start gap-3 border-2 border-brand-navy/20 bg-white px-5 py-4 shadow-[3px_3px_0_#0B1F3B]">
+            <RefreshCw className="h-4 w-4 shrink-0 text-brand-navy mt-0.5" aria-hidden="true" />
+            <p className="text-sm font-semibold text-brand-charcoal/70 leading-relaxed">
+              Fixtures will appear here automatically as they are published by the DDSL and senior leagues — no action needed. Check back as the season gets underway.
+            </p>
+          </div>
+        </div>
+      )}
+
       <FixturesPageClient
         fixtures={fixtures}
         results={results}

@@ -47,7 +47,21 @@ export const clubTimeline = [
     year: '1981',
     title: 'Rivervalley Rangers AFC founded',
     description:
-      'The club begins serving the Rivervalley and wider Swords community.',
+      'The club was established to serve the Rivervalley housing estate and the wider Swords community — starting with a handful of teams and a group of local volunteers determined to bring football to the area.',
+    status: 'verified' as const,
+  },
+  {
+    year: 'Early 2000s',
+    title: 'Development Academy launched',
+    description:
+      'The Saturday morning Development Academy was introduced for children aged 4–7, offering their first structured introduction to football in a fun, relaxed environment. It has run continuously for over 20 years, making it one of the longest-running youth academies in Swords.',
+    status: 'verified' as const,
+  },
+  {
+    year: '2006',
+    title: '25th Anniversary — FAI Club of the Year',
+    description:
+      "In the club's 25th year, Rivervalley Rangers received a Club of the Month nomination, which qualified the club for the prestigious FAI Club of the Year award — a significant community recognition of what the volunteers and players had built over a quarter century.",
     status: 'verified' as const,
   },
   {
@@ -58,10 +72,10 @@ export const clubTimeline = [
     status: 'verified' as const,
   },
   {
-    year: 'Archive',
-    title: 'Club milestones being compiled',
+    year: 'Ongoing',
+    title: 'More milestones being compiled',
     description:
-      'Championships, team launches, facility developments, and community milestones will be added after the club archive is verified.',
+      'Championships, team launches, facility developments, international tours, and community milestones are being gathered from the club archive and will be added as they are confirmed.',
     status: 'pending' as const,
   },
 ];

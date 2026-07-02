@@ -77,7 +77,7 @@ const NAV_SECTIONS: NavSection[] = [
         heading: 'Club Information',
         links: [
           { href: '/club',            label: 'Club Overview' },
-          { href: '/club#history',    label: 'History'       },
+          { href: '/club/history',    label: 'Club History'  },
           { href: '/club#committee',  label: 'Committee'     },
           { href: '/club#facilities', label: 'Facilities'    },
           { href: '/club#policies',   label: 'Policies'      },
@@ -176,7 +176,7 @@ const MOBILE_NAV_SECTIONS: MobileNavSection[] = [
     href: '/club',
     topLinkLabel: 'View club overview',
     links: [
-      { href: '/club#history',       label: 'History'           },
+      { href: '/club/history',        label: 'History'           },
       { href: '/club#committee',     label: 'Committee'         },
       { href: '/club#facilities',    label: 'Facilities'        },
       { href: '/club#policies',      label: 'Policies'          },
