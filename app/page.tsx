@@ -52,8 +52,8 @@ const COMMUNITY_CATEGORIES: Array<{
   {
     Icon: Users,
     label: 'Community',
-    copy: "Walking Football and Mams' Football, open to all.",
-    href: '/walking-football',
+    copy: 'Walking Football and Ladies Football — open to all adults in Swords.',
+    href: '/ladies-football',
   },
   {
     Icon: Heart,

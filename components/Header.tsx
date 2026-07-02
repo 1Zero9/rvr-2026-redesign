@@ -64,8 +64,9 @@ const NAV_SECTIONS: NavSection[] = [
       {
         heading: 'Programmes',
         links: [
-          { href: '/football-for-all',   label: 'Football For All' },
+          { href: '/football-for-all',   label: 'Football For All'  },
           { href: '/walking-football',   label: 'Walking Football'  },
+          { href: '/ladies-football',    label: 'Ladies Football'   },
         ],
       },
     ],
@@ -167,8 +168,9 @@ const MOBILE_NAV_SECTIONS: MobileNavSection[] = [
     links: [
       { href: '/membership-calculator', label: 'Calculate Fees'   },
       { href: '/astro-booking',         label: 'Book Astro Pitch' },
-      { href: '/football-for-all',      label: 'Football For All' },
-      { href: '/walking-football',       label: 'Walking Football' },
+      { href: '/football-for-all',      label: 'Football For All'  },
+      { href: '/walking-football',      label: 'Walking Football'  },
+      { href: '/ladies-football',       label: 'Ladies Football'   },
     ],
   },
   {
