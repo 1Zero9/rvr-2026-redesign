@@ -7,7 +7,10 @@
  * Exit code 0 = clean, 1 = integrity issues found
  */
 
+import { config } from "dotenv";
 import { prisma } from "@/lib/prisma";
+
+config({ path: ".env.local", quiet: true });
 
 // ---------------------------------------------------------------------------
 // Helpers

@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Junior Match Officials | Rivervalley Rangers AFC',
+  title: 'Junior Match Officials',
   description:
     'Register interest in Junior Match Official training and referee development with Rivervalley Rangers AFC.',
 };

@@ -7,7 +7,6 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { ArrowRight, ChevronDown, ChevronRight, Info, Megaphone, Menu, X } from 'lucide-react';
 import type { PublicAnnouncement } from '@/lib/announcements/types';
 import { CATEGORY_CONFIG } from '@/lib/announcements/types';
-import { ASSET_PATHS } from '@/config/assets';
 import SearchOverlay from './SearchOverlay';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -292,7 +291,7 @@ export default function Header() {
     };
     document.addEventListener('keydown', handler);
     return () => document.removeEventListener('keydown', handler);
-  }, [closeSearch, open, searchOpen]);
+  }, [closeSearch, infoOpen, newsOpen, open, searchOpen]);
 
   useEffect(() => {
     return () => {
@@ -475,7 +474,7 @@ export default function Header() {
               aria-label="FAI Club Mark"
               className="flex items-center"
             >
-              <img
+              <Image
                 src="/river-valley-rangers-logo-pack-v2/clumark.png"
                 alt="FAI Club Mark"
                 width={500}
@@ -490,7 +489,7 @@ export default function Header() {
               aria-label="Shelbourne Football Club"
               className="flex items-center"
             >
-              <img
+              <Image
                 src="/river-valley-rangers-logo-pack-v2/Shelbourne-Football-Club-Crest.webp"
                 alt="Shelbourne Football Club"
                 width={512}
@@ -845,10 +844,10 @@ export default function Header() {
             </a>
             <div className="ml-auto flex items-center gap-2">
               <a href="https://www.fai.ie/clubmark/" target="_blank" rel="noopener noreferrer" aria-label="FAI Club Mark">
-                <img src="/river-valley-rangers-logo-pack-v2/clumark.png" alt="FAI Club Mark" className="h-6 w-auto" />
+                <Image src="/river-valley-rangers-logo-pack-v2/clumark.png" alt="FAI Club Mark" width={500} height={250} className="h-6 w-auto" />
               </a>
               <a href="https://shelbournefc.ie/" target="_blank" rel="noopener noreferrer" aria-label="Shelbourne Football Club">
-                <img src="/river-valley-rangers-logo-pack-v2/Shelbourne-Football-Club-Crest.webp" alt="Shelbourne FC" className="h-6 w-auto" />
+                <Image src="/river-valley-rangers-logo-pack-v2/Shelbourne-Football-Club-Crest.webp" alt="Shelbourne FC" width={512} height={512} className="h-6 w-auto" />
               </a>
             </div>
           </div>

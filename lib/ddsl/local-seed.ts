@@ -37,6 +37,9 @@ const stub = (competitionId: number, competitionName: string, teamId: number): S
 
 const STANDINGS: SportLoMoStandingsTable[] = [
 
+  // ── U7 internal festival registration stub ──────────────────────────────
+  stub(0, 'DDSL U7 Boys Development', 87109),
+
   // ── U12 Boys Major Saturday — real 2025/26 season standings ────────────
   // Source: ddsl.ie/league/208581/ scraped 17 Jun 2026.
   // GF/GA/GD = 0 (DDSL public page does not publish goal data).

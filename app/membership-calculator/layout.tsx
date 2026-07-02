@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Membership Fee Calculator | Rivervalley Rangers AFC',
+  title: 'Membership Fee Calculator',
   description:
     'Estimate Rivervalley Rangers AFC individual and family membership fees before registration.',
 };

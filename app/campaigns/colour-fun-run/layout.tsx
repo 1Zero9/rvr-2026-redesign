@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Colour Fun Run | Rivervalley Rangers AFC',
+  title: 'Colour Fun Run',
   description:
     'Rivervalley Rangers AFC family colour fun run information, event details, and registration options.',
 };

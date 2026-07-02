@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import PublicPageShell from '@/components/layout/PublicPageShell';
 import PageHeroNavy from '@/components/layout/PageHeroNavy';
@@ -7,6 +6,7 @@ import TeamPageTabs from '@/components/TeamPageTabs';
 import FavouriteButton from '@/components/FavouriteButton';
 import { findAflDivision } from '@/config/afl-competitions';
 import { scrapeAflStandings } from '@/lib/afl/scraper';
+import { CLUB_SEASON } from '@/config/club-season';
 
 // ─── Static params ────────────────────────────────────────────────────────────
 
@@ -25,8 +25,8 @@ export async function generateMetadata({
   const division = findAflDivision(id);
   return {
     title: division
-      ? `${division.competitionName} | Rivervalley Rangers AFC`
-      : 'Over 35s | Rivervalley Rangers AFC',
+      ? division.competitionName
+      : 'Over 35s',
     description: division
       ? `AFL standings for ${division.competitionName} — Rivervalley Rangers AFC.`
       : undefined,
@@ -45,7 +45,7 @@ export default async function Over35sTeamPage({
   const division = findAflDivision(id);
   if (!division) notFound();
 
-  const aflTable = await scrapeAflStandings(division, '2025/26');
+  const aflTable = await scrapeAflStandings(division, CLUB_SEASON.currentSeason);
 
   // ── Table panel ───────────────────────────────────────────────────────────
 
@@ -122,7 +122,7 @@ export default async function Over35sTeamPage({
         backHref="/seniors/over-35s"
         backLabel="Over 35s"
         title={division.officialName}
-        description="Over 35s · AFL 2025/26 Season"
+        description={`Over 35s · AFL ${CLUB_SEASON.currentSeason} Season`}
         actions={
           <>
             <span className="inline-block px-3 py-1 text-xs font-display font-black uppercase tracking-wider bg-brand-neon text-brand-charcoal">

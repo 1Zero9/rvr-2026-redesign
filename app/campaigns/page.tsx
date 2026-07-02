@@ -5,7 +5,7 @@ import PageHeroNavy from '@/components/layout/PageHeroNavy';
 import { getFeatureAvailability } from '@/lib/features';
 
 export const metadata: Metadata = {
-  title: 'Campaigns | Rivervalley Rangers AFC',
+  title: 'Campaigns',
   description: 'Fundraising campaigns, community competitions, and club initiatives from Rivervalley Rangers AFC.',
 };
 

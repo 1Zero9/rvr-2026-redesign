@@ -1,8 +1,11 @@
 export async function verifyTurnstile(token: string, ip?: string): Promise<boolean> {
   const secret = process.env.TURNSTILE_SECRET_KEY;
   if (!secret) {
-    console.warn('[turnstile] TURNSTILE_SECRET_KEY not set — skipping verification');
-    return true;
+    const canBypass = process.env.NODE_ENV !== 'production';
+    console.warn(
+      `[turnstile] TURNSTILE_SECRET_KEY not set — verification ${canBypass ? 'bypassed outside production' : 'rejected'}`,
+    );
+    return canBypass;
   }
   if (!token) return false;
 

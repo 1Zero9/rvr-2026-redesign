@@ -3,7 +3,7 @@ import PublicPageShell from '@/components/layout/PublicPageShell';
 import PageHeroNavy from '@/components/layout/PageHeroNavy';
 
 export const metadata: Metadata = {
-  title: 'Privacy Policy | Rivervalley Rangers AFC',
+  title: 'Privacy Policy',
   description: 'How Rivervalley Rangers AFC collects, uses, and protects your personal data.',
 };
 

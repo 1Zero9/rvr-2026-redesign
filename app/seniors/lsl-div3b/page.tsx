@@ -1,28 +1,17 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import PublicPageShell from '@/components/layout/PublicPageShell';
 import PageHeroNavy from '@/components/layout/PageHeroNavy';
 import TeamPageTabs from '@/components/TeamPageTabs';
 import FavouriteButton from '@/components/FavouriteButton';
-import type { SeniorMatch, SeniorSyncResponse } from '@/lib/finalwhistle/types';
+import type { SeniorMatch } from '@/lib/finalwhistle/types';
+import { getSeniorSyncData } from '@/lib/finalwhistle/service';
 
 export const metadata: Metadata = {
-  title: 'LSL Division 3B Saturday | Rivervalley Rangers AFC',
+  title: 'LSL Division 3B Saturday',
   description: 'LSL Division 3B Saturday results and fixtures for Rivervalley Rangers AFC.',
 };
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
-
-async function getSeniorData(): Promise<SeniorSyncResponse | null> {
-  try {
-    const base = process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000';
-    const res = await fetch(`${base}/api/senior/sync`, { next: { revalidate: 900 } });
-    if (!res.ok) return null;
-    return res.json() as Promise<SeniorSyncResponse>;
-  } catch {
-    return null;
-  }
-}
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -129,7 +118,7 @@ function FixtureCard({ match }: { match: SeniorMatch }) {
 export default async function Div3BPage() {
   const COMPETITION = 'LSL Division 3B Saturday';
 
-  const data = await getSeniorData();
+  const data = await getSeniorSyncData();
 
   const allResults = (data?.results ?? [])
     .filter(m => m.competition === COMPETITION)

@@ -66,9 +66,9 @@ function renderBody(body: string) {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
   const a = await prisma.announcement.findUnique({ where: { id } });
-  if (!a || !a.isPublished) return { title: 'News | Rivervalley Rangers AFC' };
+  if (!a || !a.isPublished) return { title: 'News' };
   return {
-    title: `${a.title} | Rivervalley Rangers AFC`,
+    title: a.title,
     description: a.body.replace(/[#*`_>\[\]()]/g, '').slice(0, 160),
   };
 }

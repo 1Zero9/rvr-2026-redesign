@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { VettingStatus } from "@prisma/client";
+import { GlobalRole, VettingStatus } from "@prisma/client";
+import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
@@ -16,6 +17,22 @@ const COMET_ID_PATTERN = /^\d{6,12}$/;
 
 // Renewal submissions are accepted up to 90 days before expiry.
 const RENEWAL_WINDOW_MS = 90 * 24 * 60 * 60 * 1000;
+
+async function requireVettingAdmin(): Promise<NextResponse | null> {
+  const session = await auth();
+  if (!session?.user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  if (
+    session.user.globalRole !== GlobalRole.SITE_ADMIN &&
+    session.user.globalRole !== GlobalRole.SUPER_ADMIN
+  ) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
+  return null;
+}
 
 // ---------------------------------------------------------------------------
 // Pure helpers
@@ -72,6 +89,9 @@ interface StaffVettingSummary {
 // ---------------------------------------------------------------------------
 
 export async function GET(): Promise<NextResponse> {
+  const authError = await requireVettingAdmin();
+  if (authError) return authError;
+
   try {
     // ---- CoachProfile sweep ------------------------------------------------
     const coaches = await prisma.coachProfile.findMany({
@@ -241,6 +261,9 @@ interface VettingPostBody {
 }
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
+  const authError = await requireVettingAdmin();
+  if (authError) return authError;
+
   let body: VettingPostBody;
 
   try {

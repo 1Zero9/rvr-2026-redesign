@@ -60,9 +60,13 @@ type Tab = 'Upcoming' | 'Results';
 
 export default function FixtureList({ fixtures, results }: FixtureListProps) {
   const [activeTab, setActiveTab] = useState<Tab>('Upcoming');
+  const today = new Date().toLocaleDateString('en-CA');
+  const currentFixtures = fixtures.filter(
+    (fixture) => fixture.status === 'upcoming' && fixture.date >= today,
+  );
 
   const upcomingGroups = groupAndSort(
-    fixtures.filter((f) => f.status === 'upcoming'),
+    currentFixtures,
     'asc',
   );
   const resultGroups = groupAndSort(
@@ -89,7 +93,7 @@ export default function FixtureList({ fixtures, results }: FixtureListProps) {
           >
             {tab}
             <span className="ml-1.5 text-xs font-bold opacity-60">
-              ({tab === 'Upcoming' ? fixtures.length : results.length})
+              ({tab === 'Upcoming' ? currentFixtures.length : results.length})
             </span>
           </button>
         ))}

@@ -58,6 +58,11 @@ const SENSITIVE_PUBLIC_SUFFIXES = [
   "COMET", "WEBHOOK", "PRIVATE",
 ];
 
+// Browser-facing identifiers that are explicitly designed to be public.
+const ALLOWED_PUBLIC_VARS = new Set([
+  "NEXT_PUBLIC_TURNSTILE_SITE_KEY",
+]);
+
 // ---------------------------------------------------------------------------
 // File walker
 // ---------------------------------------------------------------------------
@@ -119,7 +124,11 @@ function auditSourceFile(filePath: string): void {
     const publicMatches = [...line.matchAll(/NEXT_PUBLIC_([A-Z0-9_]+)/g)];
     for (const m of publicMatches) {
       const suffix = m[1];
-      if (SENSITIVE_PUBLIC_SUFFIXES.some((s) => suffix.includes(s))) {
+      const fullName = `NEXT_PUBLIC_${suffix}`;
+      if (
+        !ALLOWED_PUBLIC_VARS.has(fullName) &&
+        SENSITIVE_PUBLIC_SUFFIXES.some((s) => suffix.includes(s))
+      ) {
         error(rel, `NEXT_PUBLIC_${suffix} would be exposed to the browser — use a server-only variable name`, lineNum);
       }
     }

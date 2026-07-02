@@ -16,6 +16,7 @@ import type {
   SportLoMoStandingsTable,
   TablesResponse,
 } from "@/lib/ddsl/types";
+import { CLUB_SEASON } from "@/config/club-season";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -79,7 +80,7 @@ const MOCK_STANDINGS: SportLoMoStandingsTable[] = [
   {
     competitionId: 3001,
     competitionName: "DDSL U10 Boys Division 1",
-    season: "2025-2026",
+    season: CLUB_SEASON.currentSeason,
     standings: [
       {
         position: 1,
@@ -104,7 +105,7 @@ const MOCK_STANDINGS: SportLoMoStandingsTable[] = [
   {
     competitionId: 3002,
     competitionName: "DDSL U15 Boys Division 2",
-    season: "2025-2026",
+    season: CLUB_SEASON.currentSeason,
     standings: [
       {
         position: 1,
@@ -129,7 +130,7 @@ const MOCK_STANDINGS: SportLoMoStandingsTable[] = [
   {
     competitionId: 3003,
     competitionName: "DDSL Senior Men Division 1",
-    season: "2025-2026",
+    season: CLUB_SEASON.currentSeason,
     standings: [
       {
         position: 1,

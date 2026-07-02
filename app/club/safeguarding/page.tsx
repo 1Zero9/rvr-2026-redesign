@@ -14,7 +14,7 @@ import PublicPageShell from "@/components/layout/PublicPageShell";
 import PageHeroNavy from "@/components/layout/PageHeroNavy";
 
 export const metadata: Metadata = {
-  title: "Safeguarding and Child Welfare | Rivervalley Rangers AFC",
+  title: "Safeguarding and Child Welfare",
   description:
     "Public child welfare page for Rivervalley Rangers AFC with officer contacts, compliance documents, and online Garda Vetting guidance.",
 };

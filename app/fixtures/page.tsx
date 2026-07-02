@@ -5,24 +5,12 @@ import PageHeroNavy from '@/components/layout/PageHeroNavy';
 import type { SyncResponse, NormalisedMatch, LeagueTable } from '@/lib/ddsl/types';
 import { prisma } from '@/lib/prisma';
 import { CLUB_SEASON } from '@/config/club-season';
+import { getFixtureSyncData } from '@/lib/ddsl/sync-service';
 
 export const metadata: Metadata = {
-  title: 'Fixtures & Results | Rivervalley Rangers AFC',
+  title: 'Fixtures & Results',
   description: `Upcoming fixtures and recent results for all RVR DDSL teams — ${CLUB_SEASON.currentSeason} season.`,
 };
-
-async function getSyncData(): Promise<SyncResponse | null> {
-  try {
-    const base = process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000';
-    const res = await fetch(`${base}/api/fixtures/sync`, {
-      next: { revalidate: 900 },
-    });
-    if (!res.ok) return null;
-    return res.json() as Promise<SyncResponse>;
-  } catch {
-    return null;
-  }
-}
 
 export type HistoricalStandingEntry = {
   divisionName: string;
@@ -36,7 +24,7 @@ export type HistoricalStandingEntry = {
 };
 
 export default async function FixturesPage() {
-  const data = await getSyncData();
+  const data: SyncResponse = await getFixtureSyncData();
 
   const fixtures: NormalisedMatch[] = data?.fixtures ?? [];
   const results:  NormalisedMatch[] = data?.results  ?? [];

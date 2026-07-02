@@ -4,6 +4,34 @@ All notable changes to RVR2026 are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 Versioning follows [Semantic Versioning](https://semver.org/).
 
+## [2.0.1] — 2026-07-02
+
+### Security
+- Protected the Garda vetting read/write API with Auth.js site-admin authorization.
+- Removed sensitive database diagnostics from the public health response.
+- Removed unused public mutation endpoints and restricted Stripe return URLs to this site.
+- Replaced vulnerable `xlsx` parsing with bounded CSV/XLSX readers; added 5 MB, row, and column limits.
+- Upgraded direct dependencies and pinned patched transitive packages; `npm audit` is clean.
+- Turnstile now fails closed when its secret is missing in production.
+
+### Fixed
+- Cleared all ESLint errors and warnings, including the Turnstile render-time ref mutation.
+- Fixed multi-day competition scheduling, which previously placed every fixture on the first date.
+- Hid stale, past-dated fixtures from upcoming-fixture surfaces.
+- Removed duplicated club-name suffixes from generated page titles and corrected inherited canonical metadata.
+- Added separate active-playing and registration season labels.
+- Replaced Server Component loopback API requests with shared cached fixture services, reducing repeated upstream scrapes during builds and page generation.
+
+### Added
+- Regression tests for competition scheduling, membership pricing, and competition upload parsing.
+- Dedicated `test` and `typecheck` package scripts.
+
+## [2.0.0] — 2026-07-01
+
+### Changed
+- Introduced the redesigned homepage hero, side-tab update/news panels, refreshed campaign styling, and version 2 visual system.
+- Consolidated the public navigation and responsive mobile experience around registration, fixtures, teams, and safeguarding.
+
 ## [1.3.0] — 2026-07-01
 
 ### Added

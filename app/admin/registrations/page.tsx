@@ -2,6 +2,7 @@ import { revalidatePath } from 'next/cache';
 import type { Metadata } from 'next';
 import { requireAdmin } from '@/lib/admin/require-admin';
 import { prisma } from '@/lib/prisma';
+import { RegistrationStatus } from '@prisma/client';
 
 export const metadata: Metadata = {
   title: 'Registrations | RVR Admin',
@@ -16,7 +17,7 @@ const STATUS_STYLES: Record<string, string> = {
   DECLINED:  'bg-zinc-300 text-zinc-600',
 };
 
-const ALL_STATUSES = ['NEW', 'CONTACTED', 'WAITLISTED', 'ENROLLED', 'DECLINED'];
+const ALL_STATUSES = Object.values(RegistrationStatus);
 
 function inferAgeGroup(yearOfBirth: number): string {
   const age = new Date().getFullYear() - yearOfBirth;
@@ -27,10 +28,13 @@ async function updateStatus(formData: FormData) {
   'use server';
   await requireAdmin();
   const id     = formData.get('id') as string;
-  const status = formData.get('status') as string;
+  const status = formData.get('status');
+  if (typeof status !== 'string' || !ALL_STATUSES.includes(status as RegistrationStatus)) {
+    throw new Error('Invalid registration status.');
+  }
   await prisma.playerProfile.update({
     where: { id },
-    data:  { registrationStatus: status as any },
+    data:  { registrationStatus: status as RegistrationStatus },
   });
   revalidatePath('/admin/registrations');
 }
@@ -50,7 +54,7 @@ export default async function RegistrationsPage() {
   });
 
   const newCount = registrations.filter(
-    (r: any) => r.registrationStatus === 'NEW',
+    (r) => r.registrationStatus === RegistrationStatus.NEW,
   ).length;
 
   return (
@@ -77,7 +81,7 @@ export default async function RegistrationsPage() {
           </p>
         ) : (
           <div className="grid gap-4">
-            {registrations.map((reg: any) => {
+            {registrations.map((reg) => {
               const consent = reg.parentConsents[0];
               const ageGroup = inferAgeGroup(reg.yearOfBirth);
               const statusStyle = STATUS_STYLES[reg.registrationStatus] ?? STATUS_STYLES.NEW;

@@ -1,13 +1,16 @@
 import type { ParsedPlayerRow } from "./types";
+import { parse as parseCsv } from "csv-parse/sync";
+import { readSheet } from "read-excel-file/node";
 
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const XLSX = require("xlsx") as typeof import("xlsx");
-
-const NAME_KEYWORDS = ["first", "last", "name", "firstname", "lastname", "fullname", "full name"];
 const AGE_KEYWORDS = ["age", "agegroup", "age group", "year", "dob"];
 const CLUB_KEYWORDS = ["club", "school", "team", "organisation", "organization"];
 const NOTES_KEYWORDS = ["note", "notes", "comment", "comments", "info"];
 const DAYS_KEYWORDS = ["day", "days", "available", "availability", "session"];
+
+export const MAX_UPLOAD_BYTES = 5 * 1024 * 1024;
+const MAX_UPLOAD_ROWS = 5_000;
+const MAX_UPLOAD_COLUMNS = 100;
+const SUPPORTED_EXTENSIONS = new Set(["csv", "xlsx"]);
 
 function normalize(s: string): string {
   return s
@@ -59,17 +62,33 @@ export async function parseUpload(
   filename: string,
   competitionAgeGroup?: string,
 ): Promise<ParsedPlayerRow[]> {
-  const isCSV = filename.toLowerCase().endsWith(".csv");
-  const workbook = isCSV
-    ? XLSX.read(buffer.toString("utf-8"), { type: "string" })
-    : XLSX.read(buffer, { type: "buffer" });
+  const extension = filename.toLowerCase().split(".").pop() ?? "";
+  if (!SUPPORTED_EXTENSIONS.has(extension)) {
+    throw new Error("Unsupported file type. Upload a CSV or XLSX file.");
+  }
+  if (buffer.byteLength > MAX_UPLOAD_BYTES) {
+    throw new Error("File is too large. Maximum upload size is 5 MB.");
+  }
 
-  const sheet = workbook.Sheets[workbook.SheetNames[0]];
-  const rawRows: string[][] = XLSX.utils.sheet_to_json(sheet, {
-    header: 1,
-    defval: "",
-    raw: false,
-  }) as string[][];
+  const parsedRows = extension === "csv"
+    ? parseCsv(buffer, {
+        bom: true,
+        maxRecordSize: 100_000,
+        relaxColumnCount: true,
+        skipEmptyLines: false,
+      }) as unknown[][]
+    : await readSheet(buffer);
+
+  if (parsedRows.length > MAX_UPLOAD_ROWS) {
+    throw new Error(`Upload contains too many rows. Maximum is ${MAX_UPLOAD_ROWS}.`);
+  }
+
+  const rawRows = parsedRows.map((row) => {
+    if (row.length > MAX_UPLOAD_COLUMNS) {
+      throw new Error(`Upload contains too many columns. Maximum is ${MAX_UPLOAD_COLUMNS}.`);
+    }
+    return row.map((cell) => String(cell ?? ""));
+  });
 
   if (rawRows.length < 2) return [];
 

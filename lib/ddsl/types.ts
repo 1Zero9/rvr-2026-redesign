@@ -211,8 +211,8 @@ export interface DevelopmentDivision {
 }
 
 export interface SyncResponse {
-  /** 'live' — data fetched from SportLoMo. 'empty' — feed unavailable, graceful empty payload. */
-  source: 'live' | 'empty';
+  /** 'live' — SportLoMo data. 'fallback' — locally verified seed data. */
+  source: 'live' | 'fallback';
   syncedAt: string;
   cacheExpiresAt: string;
   divisions: DiscoveredDivision[];

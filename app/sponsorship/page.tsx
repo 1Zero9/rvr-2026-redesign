@@ -13,7 +13,7 @@ import PageHeroNavy from '@/components/layout/PageHeroNavy';
 import PublicPageShell from '@/components/layout/PublicPageShell';
 
 export const metadata: Metadata = {
-  title: 'Sponsorship | Rivervalley Rangers AFC',
+  title: 'Sponsorship',
   description:
     'Partner with Rivervalley Rangers AFC through team, equipment, facility, event, or community programme sponsorship.',
 };

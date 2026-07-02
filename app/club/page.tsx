@@ -27,7 +27,7 @@ import {
 } from '@/config/club-info';
 
 export const metadata: Metadata = {
-  title: 'Club Information | Rivervalley Rangers AFC',
+  title: 'Club Information',
   description:
     'Rivervalley Rangers AFC club history, committee contacts, facilities, policies, governance, and community information.',
 };

@@ -8,21 +8,23 @@
 
 ## Environment variables
 
-Copy `.env.local.example` to `.env.local` and fill in the values below.
-`prisma.config.ts` reads from `.env` (via `dotenv/config`), not `.env.local` —
-for local dev, export `DATABASE_URL` in your shell or create a `.env` file
-alongside `.env.local`.
+Copy `.env.example` to `.env.local` and fill in the values below.
+`prisma.config.ts`, Next.js, and the project scripts all read `.env.local`.
 
 ### Database
 ```
 DATABASE_URL=postgresql://user:password@localhost:5432/rvr2026
 ```
 
-### Admin
+### Admin authentication
 ```
-ADMIN_SECRET=your-long-random-secret
+AUTH_SECRET=your-long-random-secret
+AUTH_RESEND_KEY=re_...
+EMAIL_FROM=noreply@rivervalleyrangers.ie
 ```
-All `/admin/*` routes require `Authorization: Bearer $ADMIN_SECRET`.
+Administrators sign in by email magic link at `/admin/login`. Access is granted by
+the `GlobalRole` stored on the matching `AdminUser` record. `SITE_ADMIN` can manage
+site content; `SUPER_ADMIN` can also manage competitions and administrator access.
 
 ### Cron
 ```
@@ -65,13 +67,13 @@ unset — local development does not require a live SMTP connection.
 
 1. Clone the repo and `cd` into it
 2. Run `npm install`
-3. Set `DATABASE_URL` in `.env` (or export it in your shell)
-4. Run `npx prisma migrate dev` to apply all migrations
+3. Set `DATABASE_URL` in `.env.local`
+4. Run `npx prisma migrate deploy` to apply committed migrations
 5. Run `npm run dev` to start the development server on `http://localhost:3000`
 
 ## Season rollover (every August)
 
-1. Update `currentSeason` and `anniversaryYears` in `config/club-season.ts`
+1. Update `currentSeason`, `registrationSeason`, and `anniversaryYears` in `config/club-season.ts`
 2. Replace all `sportlomoId` values in `config/ddsl-competitions.ts` with the
    new season's competition IDs from the DDSL admin panel
 3. Update stub data in `lib/ddsl/local-seed.ts`
@@ -89,39 +91,15 @@ Both are configured in `vercel.json`. Auth: `Authorization: Bearer $CRON_SECRET`
 
 ## Admin access
 
-`/admin/moderation` requires `Authorization: Bearer $ADMIN_SECRET` — enforced
-by `middleware.ts` at the edge. There is no login UI by design; this is an
-internal tool. In production, access it via:
-
-```bash
-curl https://rvr2026.vercel.app/admin/moderation \
-  -H "Authorization: Bearer $ADMIN_SECRET"
-```
-
-Or use a browser extension such as ModHeader to inject the header.
-
-## Approving / rejecting shirt submissions
-
-```bash
-# Approve
-curl -X POST https://rvr2026.vercel.app/api/admin/moderation/shirts/<id>/approve \
-  -H "Authorization: Bearer $ADMIN_SECRET" \
-  -H "Content-Type: application/json" \
-  -d '{"reviewedBy":"admin"}'
-
-# Reject
-curl -X POST https://rvr2026.vercel.app/api/admin/moderation/shirts/<id>/reject \
-  -H "Authorization: Bearer $ADMIN_SECRET" \
-  -H "Content-Type: application/json" \
-  -d '{"reviewedBy":"admin","notes":"Does not meet design guidelines."}'
-```
+Open `/admin/login`, request a magic link using an email already present in the
+`AdminUser` table, and follow the link from that mailbox. Admin sessions expire
+after eight hours of inactivity and only one session per administrator is retained.
 
 ## Terms acceptance
 
 Every public submission form must record a `TermsAcceptance` row in the same
 transaction as the parent record. Use `buildTermsAcceptanceCreate()` from
-`lib/terms/record-acceptance.ts` inside `prisma.$transaction([])`. See
-`app/api/shirts/submit/route.ts` for the reference implementation.
+`lib/terms/record-acceptance.ts` inside `prisma.$transaction([])`.
 
 When terms wording changes for a given form type, bump the version string in
 `lib/terms/versions.ts`. Old acceptance records retain the version they were

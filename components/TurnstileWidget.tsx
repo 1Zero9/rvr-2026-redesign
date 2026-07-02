@@ -28,7 +28,10 @@ const SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? '';
 export default function TurnstileWidget({ onToken, onError, action }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const callbackRef  = useRef(onToken);
-  callbackRef.current = onToken;
+
+  useEffect(() => {
+    callbackRef.current = onToken;
+  }, [onToken]);
 
   useEffect(() => {
     if (!SITE_KEY || !containerRef.current) return;

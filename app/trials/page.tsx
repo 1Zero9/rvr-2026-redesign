@@ -4,7 +4,7 @@ import PageHeroNavy from "@/components/layout/PageHeroNavy";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Open Training Trials | Rivervalley Rangers AFC",
+  title: "Open Training Trials",
   description:
     "Register your interest for Rivervalley Rangers AFC open training sessions. All ages welcome — complete the form to secure your place.",
 };

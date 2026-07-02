@@ -1,6 +1,7 @@
 import Header from '@/components/Header';
 import Hero from '@/components/Hero';
 import Link from 'next/link';
+import Image from 'next/image';
 import TeletextFixtures from '@/components/TeletextFixtures';
 import NewsCarousel from '@/components/NewsCarousel';
 import InstagramFeed from '@/components/InstagramFeed';
@@ -9,6 +10,11 @@ import { APP_VERSION, APP_VERSION_DATE } from '@/config/version';
 import { prisma } from '@/lib/prisma';
 import { getFeatureAvailability } from '@/lib/features';
 import { GraduationCap, Trophy, Users, Heart, User, type LucideIcon } from 'lucide-react';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  alternates: { canonical: '/' },
+};
 
 const COMMUNITY_CATEGORIES: Array<{
   Icon: LucideIcon;
@@ -298,7 +304,7 @@ export default async function Home() {
               className="inline-flex items-center gap-1.5 text-brand-neon hover:text-white transition-colors"
               aria-label="Built by 1Zero9Studio"
             >
-              <img
+              <Image
                 src="/marketing/109-logo-circle-white2.png"
                 alt="1Zero9Studio"
                 width={16}

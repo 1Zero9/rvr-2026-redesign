@@ -32,6 +32,7 @@ export async function GET(): Promise<NextResponse> {
     dbStatus = 'connected';
   } catch (err) {
     dbError = err instanceof Error ? err.message : String(err);
+    console.error('[api/health] Database check failed:', dbError);
   }
 
   const healthy = missing.length === 0 && dbStatus === 'connected';
@@ -41,8 +42,6 @@ export async function GET(): Promise<NextResponse> {
       status: healthy ? 'ok' : 'degraded',
       db: dbStatus,
       features,
-      ...(dbError ? { dbError } : {}),
-      ...(missing.length > 0 ? { missingEnvVars: missing } : {}),
     },
     { status: healthy ? 200 : 503 },
   );

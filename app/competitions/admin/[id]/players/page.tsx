@@ -103,12 +103,12 @@ export default function PlayersPage({
           <div className="space-y-4">
             <div>
               <label className="block font-bold text-sm text-brand-charcoal mb-2">
-                Upload player list (.csv, .xlsx, .xls)
+                Upload player list (.csv or .xlsx)
               </label>
               <input
                 ref={fileRef}
                 type="file"
-                accept=".csv,.xlsx,.xls"
+                accept=".csv,.xlsx"
                 onChange={handleFile}
                 disabled={parsing || importing}
                 className="block w-full text-sm text-zinc-500 file:mr-3 file:min-h-[44px] file:px-4 file:border-3 file:border-brand-charcoal file:bg-brand-navy file:text-brand-neon file:font-bold file:uppercase file:text-xs file:cursor-pointer"

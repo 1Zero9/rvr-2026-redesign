@@ -6,7 +6,7 @@ import PublicPageShell from '@/components/layout/PublicPageShell';
 import { prisma } from '@/lib/prisma';
 
 export const metadata: Metadata = {
-  title: 'Boot Room Exchange | Rivervalley Rangers AFC',
+  title: 'Boot Room Exchange',
   description:
     'Donate and reuse clean football boots, kit, and equipment through the moderated Rivervalley Rangers AFC Boot Room exchange.',
 };

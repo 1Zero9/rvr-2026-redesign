@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import { shufflePlayers, distributeToTeams, suggestTeamCount } from "@/lib/competitions/randomiser";
+import { distributeToTeams, suggestTeamCount } from "@/lib/competitions/randomiser";
 import { getThemeNames } from "@/lib/competitions/theme-pools";
 import { GlobalRole, AssignmentRole } from "@prisma/client";
 import { createId } from "@paralleldrive/cuid2";

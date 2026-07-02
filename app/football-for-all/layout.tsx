@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Football For All | Rivervalley Rangers AFC',
+  title: 'Football For All',
   description:
     'Inclusive, adaptive, mixed-ability, and walking football programmes at Rivervalley Rangers AFC in Swords.',
 };

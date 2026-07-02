@@ -4,7 +4,7 @@ import PageHeroNavy from "@/components/layout/PageHeroNavy";
 import { AlertTriangle, Mail, MapPin, ShieldCheck } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Contact | Rivervalley Rangers AFC",
+  title: "Contact",
   description:
     "Contact Rivervalley Rangers AFC — committee, coaching staff, welfare officers, and general enquiries.",
 };

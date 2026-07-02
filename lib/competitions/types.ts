@@ -70,9 +70,9 @@ export interface ParsedPlayerRow {
 
 // ---------- Scheduler types ----------
 export interface SchedulerConfig {
-  teams: CompetitionTeam[];
+  teams: Array<Pick<CompetitionTeam, "id">>;
   competitionType: CompetitionType;
-  venues: CompetitionVenue[];
+  venues: Array<Pick<CompetitionVenue, "name" | "pitches">>;
   startTime: string;
   gameDuration: number;
   breakDuration: number;

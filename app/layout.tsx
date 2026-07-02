@@ -44,9 +44,6 @@ export const metadata: Metadata = {
   authors: [{ name: "1Zero9Studio", url: "https://www.1zero9.com" }],
   creator: "1Zero9Studio",
   publisher: "Rivervalley Rangers AFC",
-  alternates: {
-    canonical: "https://rivervalleyrangers.ie",
-  },
   appleWebApp: {
     capable: true,
     title: "RVR AFC",
@@ -55,7 +52,6 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_IE",
-    url: "https://rivervalleyrangers.ie",
     siteName: "Rivervalley Rangers AFC",
     title: "Rivervalley Rangers AFC | Swords Football Club",
     description:

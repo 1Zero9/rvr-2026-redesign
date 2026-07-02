@@ -4,6 +4,7 @@ import { useState } from 'react';
 import FixtureList from './FixtureList';
 import SeniorFixtureList from './SeniorFixtureList';
 import Over35sFixtureList from './Over35sFixtureList';
+import { CLUB_SEASON } from '@/config/club-season';
 import type { NormalisedMatch, LeagueTable } from '@/lib/ddsl/types';
 import type { HistoricalStandingEntry } from '@/app/fixtures/page';
 import { useFavourites } from '@/lib/favourites/context';
@@ -224,7 +225,7 @@ export default function FixturesPageClient({ fixtures, results }: Props) {
                 Youth Teams
               </h2>
               <p className="text-zinc-500 text-xs font-mono uppercase tracking-wide mb-4">
-                DDSL 2025/26 · U8 – U15
+                DDSL {CLUB_SEASON.currentSeason} · U8 – U15
               </p>
             </>
           )}
@@ -267,7 +268,7 @@ export default function FixturesPageClient({ fixtures, results }: Props) {
                   Over 35s
                 </h2>
                 <p className="mt-1 font-mono text-sm uppercase tracking-wide text-zinc-500">
-                  AFL · 2025/26
+                  AFL · {CLUB_SEASON.currentSeason}
                 </p>
               </div>
             )}

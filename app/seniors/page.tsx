@@ -2,25 +2,15 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import PublicPageShell from '@/components/layout/PublicPageShell';
 import PageHeroNavy from '@/components/layout/PageHeroNavy';
-import type { SeniorMatch, SeniorSyncResponse } from '@/lib/finalwhistle/types';
+import type { SeniorMatch } from '@/lib/finalwhistle/types';
+import { getSeniorSyncData } from '@/lib/finalwhistle/service';
 
 export const metadata: Metadata = {
-  title: 'Senior Football | Rivervalley Rangers AFC',
+  title: 'Senior Football',
   description: 'Senior football at Rivervalley Rangers AFC — First Team and Over 35s results, fixtures, and teams.',
 };
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
-
-async function getSeniorData(): Promise<SeniorSyncResponse | null> {
-  try {
-    const base = process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000';
-    const res = await fetch(`${base}/api/senior/sync`, { next: { revalidate: 900 } });
-    if (!res.ok) return null;
-    return res.json() as Promise<SeniorSyncResponse>;
-  } catch {
-    return null;
-  }
-}
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -119,7 +109,7 @@ function FixtureCard({ match }: { match: SeniorMatch }) {
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default async function SeniorsPage() {
-  const data     = await getSeniorData();
+  const data     = await getSeniorSyncData();
   const results  = (data?.results  ?? []).sort((a, b) => b.date.localeCompare(a.date)).slice(0, 5);
   const fixtures = data?.fixtures ?? [];
 

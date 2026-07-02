@@ -11,6 +11,8 @@
 interface ClubSeasonConfig {
   /** Active DDSL season displayed across the platform, e.g. "2025/26". */
   currentSeason: string;
+  /** Membership season currently accepting registrations. */
+  registrationSeason: string;
   /** Display range for the Junior Academy pathway (non-competitive tiers). */
   juniorAcademyAges: string;
   /** Display range for the Youth Competitive pathway (league teams). */
@@ -28,6 +30,7 @@ interface ClubSeasonConfig {
 
 export const CLUB_SEASON = {
   currentSeason:        "2025/26",
+  registrationSeason:   "2026/27",
   juniorAcademyAges:    "U7 – U12",
   youthCompetitiveAges: "U13 – U18",
   foundingYear:         1981,

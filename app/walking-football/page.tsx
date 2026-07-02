@@ -1,11 +1,10 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import PublicPageShell from '@/components/layout/PublicPageShell';
 import PageHeroNavy from '@/components/layout/PageHeroNavy';
 import PublicEnquiryForm from '@/components/forms/PublicEnquiryForm';
 
 export const metadata: Metadata = {
-  title: 'Walking Football | Rivervalley Rangers AFC',
+  title: 'Walking Football',
   description: 'Walking Football at Rivervalley Rangers AFC — open to all adults. No running required. Stay active, social, and connected to the game in Swords, Dublin.',
 };
 

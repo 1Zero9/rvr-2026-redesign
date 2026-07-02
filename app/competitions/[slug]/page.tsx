@@ -16,7 +16,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     where: { OR: [{ slug }, { publicSlug: slug }] },
     select: { name: true },
   });
-  return { title: competition ? `${competition.name} | RVR Competitions` : "Competition Not Found" };
+  return { title: competition ? `${competition.name} Competition` : "Competition Not Found" };
 }
 
 export default async function CompetitionPublicPage({

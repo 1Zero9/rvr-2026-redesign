@@ -2,11 +2,13 @@
 
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { UserPlus, CalendarDays, Trophy, Newspaper } from 'lucide-react';
 import { computeClubStats } from '@/lib/club-stats';
+import { CLUB_SEASON } from '@/config/club-season';
 
 const HERO_CTAS = [
-  { label: 'Join the Club',   sub: 'Register for 2026/27',    href: '/register',      icon: UserPlus    },
+  { label: 'Join the Club',   sub: `Register for ${CLUB_SEASON.registrationSeason}`, href: '/register', icon: UserPlus },
   { label: 'Match Day',       sub: 'Fixtures & results',       href: '/fixtures',      icon: Trophy       },
   { label: 'Club News',       sub: 'Latest updates',           href: '/news',          icon: Newspaper    },
   { label: 'Book Astro Pitch', sub: 'Reserve your slot online', href: '/astro-booking', icon: CalendarDays },
@@ -64,7 +66,7 @@ export default function Hero() {
 
         <div className="flex flex-col md:flex-row items-center gap-6 md:gap-10 mb-8 w-full justify-center">
 
-          <img
+          <Image
             src="/river-valley-rangers-logo-pack-v2/RVR-New-White2.png"
             alt="Rivervalley Rangers AFC crest"
             width={288}

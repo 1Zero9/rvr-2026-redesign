@@ -2,7 +2,7 @@ import PublicPageShell from '@/components/layout/PublicPageShell';
 import PageHeroNavy from '@/components/layout/PageHeroNavy';
 
 export const metadata = {
-  title: 'Book the Astro | Rivervalley Rangers AFC',
+  title: 'Book the Astro',
   description: "Book the astro pitch in Swords, Co. Dublin via SportsKey. Suitable for 5-a-side, 7-a-side, and 11-a-side formats.",
 };
 

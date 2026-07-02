@@ -5,7 +5,7 @@ import PageHeroNavy from '@/components/layout/PageHeroNavy';
 import { AFL_DIVISIONS } from '@/config/afl-competitions';
 
 export const metadata: Metadata = {
-  title: 'Over 35s | Rivervalley Rangers AFC',
+  title: 'Over 35s',
   description: 'Over 35s squads at Rivervalley Rangers AFC competing in the Amateur Football League.',
 };
 

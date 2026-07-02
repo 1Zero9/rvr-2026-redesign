@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import { parseUpload } from "@/lib/competitions/upload-parser";
+import { MAX_UPLOAD_BYTES, parseUpload } from "@/lib/competitions/upload-parser";
 import { GlobalRole, AssignmentRole } from "@prisma/client";
 import { createId } from "@paralleldrive/cuid2";
 
@@ -36,9 +36,18 @@ export async function POST(
   const previewOnly = formData.get("preview") === "1";
 
   if (!file) return NextResponse.json({ error: "No file provided" }, { status: 400 });
+  if (file.size > MAX_UPLOAD_BYTES) {
+    return NextResponse.json({ error: "File is too large. Maximum upload size is 5 MB." }, { status: 413 });
+  }
 
-  const buffer = Buffer.from(await file.arrayBuffer());
-  const rows = await parseUpload(buffer, file.name, competition.ageGroup);
+  let rows;
+  try {
+    const buffer = Buffer.from(await file.arrayBuffer());
+    rows = await parseUpload(buffer, file.name, competition.ageGroup);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Unable to parse upload.";
+    return NextResponse.json({ error: message }, { status: 400 });
+  }
 
   if (previewOnly) {
     return NextResponse.json({ rows });

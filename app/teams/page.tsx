@@ -10,7 +10,7 @@ import TeamsClient from './TeamsClient';
 const totalTeams = KNOWN_DIVISIONS.length + 1 + AFL_DIVISIONS.length;
 
 export const metadata: Metadata = {
-  title: 'Our Teams | Rivervalley Rangers AFC',
+  title: 'Our Teams',
   description: `All ${totalTeams} teams at Rivervalley Rangers AFC — DDSL Youth, Senior, and Over 35s, ${CLUB_SEASON.currentSeason} season.`,
 };
 

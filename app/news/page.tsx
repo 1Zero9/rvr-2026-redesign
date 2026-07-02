@@ -7,7 +7,7 @@ import { prisma } from '@/lib/prisma';
 import type { AnnouncementCategory } from '@prisma/client';
 
 export const metadata: Metadata = {
-  title: 'Club News | Rivervalley Rangers AFC',
+  title: 'Club News',
   description: 'Latest news, events, recruitment drives and volunteer opportunities from Rivervalley Rangers AFC.',
 };
 

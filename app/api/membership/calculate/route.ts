@@ -13,6 +13,15 @@ function badRequest(errors: ValidationError[] | string) {
   return NextResponse.json(body, { status: 400 });
 }
 
+function isAllowedRedirect(value: unknown, requestOrigin: string): value is string {
+  if (typeof value !== 'string') return false;
+  try {
+    return new URL(value).origin === requestOrigin;
+  } catch {
+    return false;
+  }
+}
+
 export async function POST(req: NextRequest): Promise<NextResponse> {
   if (!(await isFeatureEnabled('stripePayments'))) {
     return NextResponse.json(
@@ -43,11 +52,11 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   // -------------------------------------------------------------------------
   const topErrors: ValidationError[] = [];
 
-  if (typeof successUrl !== 'string' || !successUrl.startsWith('http')) {
-    topErrors.push({ field: 'successUrl', message: 'successUrl must be a valid absolute URL' });
+  if (!isAllowedRedirect(successUrl, req.nextUrl.origin)) {
+    topErrors.push({ field: 'successUrl', message: 'successUrl must be an absolute URL on this site' });
   }
-  if (typeof cancelUrl !== 'string' || !cancelUrl.startsWith('http')) {
-    topErrors.push({ field: 'cancelUrl', message: 'cancelUrl must be a valid absolute URL' });
+  if (!isAllowedRedirect(cancelUrl, req.nextUrl.origin)) {
+    topErrors.push({ field: 'cancelUrl', message: 'cancelUrl must be an absolute URL on this site' });
   }
   if (contactEmail !== undefined && (typeof contactEmail !== 'string' || !contactEmail.includes('@'))) {
     topErrors.push({ field: 'contactEmail', message: 'contactEmail must be a valid email address' });

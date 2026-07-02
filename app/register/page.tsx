@@ -4,7 +4,7 @@ import PageHeroNavy from "@/components/layout/PageHeroNavy";
 import JoinPathSelector from "@/components/JoinPathSelector";
 
 export const metadata: Metadata = {
-  title: "Join Rivervalley Rangers AFC",
+  title: "Join the Club",
   description:
     "Register a player with Rivervalley Rangers AFC or sign up for an open training trial. All ages and abilities welcome in Swords, Co. Dublin.",
 };

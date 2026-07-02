@@ -13,7 +13,7 @@ import PageHeroNavy from '@/components/layout/PageHeroNavy';
 import PublicPageShell from '@/components/layout/PublicPageShell';
 
 export const metadata: Metadata = {
-  title: 'Volunteer and Coach | Rivervalley Rangers AFC',
+  title: 'Volunteer and Coach',
   description:
     'Volunteer or coach with Rivervalley Rangers AFC. Explore practical club roles, safeguarding requirements, and submit an expression of interest.',
 };

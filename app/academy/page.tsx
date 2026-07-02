@@ -11,7 +11,7 @@ import PublicPageShell from '@/components/layout/PublicPageShell';
 import PageHeroNavy from '@/components/layout/PageHeroNavy';
 
 export const metadata: Metadata = {
-  title: 'RVR Academy | Rivervalley Rangers AFC',
+  title: 'RVR Academy',
   description:
     "The Rivervalley Rangers Academy — Swords' dedicated football programme for children aged 4–6. Fun, structured Saturday sessions with qualified coaches.",
 };
@@ -102,7 +102,7 @@ export default function AcademyPage() {
           <div className="mt-6 border-2 border-brand-navy/20 bg-white p-5">
             <p className="text-sm text-brand-charcoal/60 leading-relaxed">
               <span className="font-black text-brand-charcoal">No experience needed.</span>{' '}
-              The Academy is open to all children in the age range — whether it's their first time touching a football or they've been kicking one in the garden for years.
+              The Academy is open to all children in the age range — whether it’s their first time touching a football or they’ve been kicking one in the garden for years.
             </p>
           </div>
         </div>

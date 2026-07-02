@@ -3,7 +3,7 @@ import PublicPageShell from "@/components/layout/PublicPageShell";
 import PageHeroNavy from "@/components/layout/PageHeroNavy";
 
 export const metadata = {
-  title: "Club Shop | Rivervalley Rangers AFC",
+  title: "Club Shop",
   description:
     "Official Rivervalley Rangers AFC kit and merchandise, available now through our partner Balon Sports.",
 };

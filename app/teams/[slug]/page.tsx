@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import PublicPageShell from '@/components/layout/PublicPageShell';
 import PageHeroNavy from '@/components/layout/PageHeroNavy';
@@ -7,12 +6,7 @@ import TeamPageTabs from '@/components/TeamPageTabs';
 import FavouriteButton from '@/components/FavouriteButton';
 import { KNOWN_DIVISIONS } from '@/config/ddsl-competitions';
 import { prisma } from '@/lib/prisma';
-import {
-  scrapeClubAjax,
-  discoverCompetitionId,
-  RVR_CLUB_ID,
-  FALLBACK_AJAX_COMPETITION_ID,
-} from '@/lib/ddsl/scraper';
+import { getClubMatchFeed } from '@/lib/ddsl/club-feed';
 import { transformAll } from '@/lib/ddsl/transform';
 import type { NormalisedMatch } from '@/lib/ddsl/types';
 import { CLUB_SEASON } from '@/config/club-season';
@@ -165,16 +159,10 @@ export default async function TeamPage({
   let divisionFixtures: NormalisedMatch[] = [];
   let divisionResults:  NormalisedMatch[] = [];
   try {
-    const competitionId =
-      (await discoverCompetitionId(RVR_CLUB_ID)) ?? FALLBACK_AJAX_COMPETITION_ID;
-
-    const [fixtureData, resultData] = await Promise.all([
-      scrapeClubAjax(RVR_CLUB_ID, competitionId, 'fixtures'),
-      scrapeClubAjax(RVR_CLUB_ID, competitionId, 'results'),
-    ]);
+    const matchFeed = await getClubMatchFeed();
 
     divisionFixtures = transformAll(
-      fixtureData.fixtures.filter(
+      matchFeed.fixtures.filter(
         (f) => f.competition.competitionName === division.competitionName,
       ),
     )
@@ -182,7 +170,7 @@ export default async function TeamPage({
       .sort((a, b) => a.date.localeCompare(b.date));
 
     divisionResults = transformAll(
-      resultData.fixtures.filter(
+      matchFeed.results.filter(
         (f) => f.competition.competitionName === division.competitionName,
       ),
     )

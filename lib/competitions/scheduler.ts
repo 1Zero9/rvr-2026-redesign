@@ -55,36 +55,26 @@ function assignTimeslots(
   const slotDuration = gameDuration + breakDuration;
   const result: GeneratedFixture[] = [];
 
-  // Track when each pitch is next free, per day
-  const pitchFreeAt: Date[] = allPitches.map((_, i) => {
-    const d = dates[0] ?? new Date();
-    return parseStartTime(d, startTime);
-  });
+  const eventDates = dates.length > 0 ? dates : [new Date()];
+  const resources = eventDates.flatMap((date) =>
+    allPitches.map((pitch) => ({
+      ...pitch,
+      startsAt: parseStartTime(date, startTime),
+    })),
+  );
 
-  let fixtureIdx = 0;
-  let dayIdx = 0;
-
-  for (const f of fixtures) {
-    if (dayIdx >= dates.length) dayIdx = 0;
-
-    // Find earliest free pitch
-    let bestPitch = 0;
-    for (let p = 1; p < allPitches.length; p++) {
-      if (pitchFreeAt[p] < pitchFreeAt[bestPitch]) bestPitch = p;
-    }
-
-    const scheduledAt = new Date(pitchFreeAt[bestPitch]);
-    pitchFreeAt[bestPitch] = addMinutes(scheduledAt, slotDuration);
+  for (const [fixtureIndex, f] of fixtures.entries()) {
+    const resource = resources[fixtureIndex % resources.length];
+    const slotIndex = Math.floor(fixtureIndex / resources.length);
+    const scheduledAt = addMinutes(resource.startsAt, slotIndex * slotDuration);
 
     result.push({
       ...f,
       scheduledAt,
-      venueName: allPitches[bestPitch].venue,
-      pitchLabel: allPitches[bestPitch].pitch,
+      venueName: resource.venue,
+      pitchLabel: resource.pitch,
       duration: gameDuration,
     });
-
-    fixtureIdx++;
   }
 
   return result.sort((a, b) => a.scheduledAt.getTime() - b.scheduledAt.getTime());

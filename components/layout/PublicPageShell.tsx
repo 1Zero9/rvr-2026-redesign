@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import Image from 'next/image';
 import Header from '@/components/Header';
 
 interface PublicPageShellProps {
@@ -24,7 +25,7 @@ export default function PublicPageShell({
             className="inline-flex items-center gap-1.5 text-brand-neon hover:text-white transition-colors"
             aria-label="Built by 1Zero9Studio"
           >
-            <img
+            <Image
               src="/marketing/109-logo-circle-white2.png"
               alt="1Zero9Studio"
               width={16}

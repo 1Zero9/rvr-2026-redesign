@@ -47,6 +47,7 @@ export default function SeniorFixtureList({ filter }: Props) {
       })
       .then((data) => {
         if (!active) return;
+        const today = new Date().toLocaleDateString('en-CA');
         setAllResults(
           data.results
             .filter((m) => m.status === 'Result' || m.status === 'Postponed')
@@ -55,7 +56,7 @@ export default function SeniorFixtureList({ filter }: Props) {
         );
         setAllFixtures(
           data.fixtures
-            .filter((m) => m.status === 'Fixture')
+            .filter((m) => m.status === 'Fixture' && m.date >= today)
             .sort((a, b) => a.date.localeCompare(b.date))
             .slice(0, 10),
         );

@@ -117,6 +117,7 @@ export default function TeletextFixtures() {
 
   useEffect(() => {
     let active = true;
+    const today = new Date().toLocaleDateString('en-CA');
 
     const fetchDdsl = fetch('/api/fixtures/sync', { cache: 'no-store' })
       .then((r) => {
@@ -125,7 +126,7 @@ export default function TeletextFixtures() {
       })
       .then((data) =>
         data.fixtures
-          .filter((f) => f.status === 'upcoming')
+          .filter((f) => f.status === 'upcoming' && f.date >= today)
           .map(fromDDSL),
       )
       .catch(() => [] as UnifiedMatch[]);
@@ -135,7 +136,7 @@ export default function TeletextFixtures() {
         if (!r.ok) throw new Error('senior sync failed');
         return r.json() as Promise<SeniorSyncResponse>;
       })
-      .then((data) => data.fixtures.map(fromSenior))
+      .then((data) => data.fixtures.filter((fixture) => fixture.date >= today).map(fromSenior))
       .catch(() => [] as UnifiedMatch[]);
 
     Promise.all([fetchDdsl, fetchSenior]).then(([ddsl, senior]) => {

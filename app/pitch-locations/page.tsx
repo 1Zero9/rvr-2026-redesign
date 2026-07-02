@@ -5,7 +5,7 @@ import PageHeroNavy from "@/components/layout/PageHeroNavy";
 import { MapPin, Car, Footprints, ExternalLink, Zap, CalendarCheck } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Pitch Locations | Rivervalley Rangers AFC",
+  title: "Pitch Locations",
   description:
     "Find Rivervalley Rangers AFC pitches in Swords, Co. Dublin — Ward Rivervalley Park, Rathingle, and Ridgewood.",
 };
