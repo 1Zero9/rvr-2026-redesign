@@ -27,7 +27,7 @@ const COMMUNITY_CATEGORIES: Array<{
   {
     Icon: GraduationCap,
     label: 'Academy',
-    copy: 'Development Academy (born 2019–2021) — Saturday sessions at Rivervalley Park.',
+    copy: 'Development Academy (born 2020–2022, ages 4–6) — Saturday sessions at Rivervalley Park.',
     href: '/academy',
   },
   {

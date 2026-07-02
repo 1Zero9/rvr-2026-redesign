@@ -15,7 +15,7 @@ import PageHeroNavy from '@/components/layout/PageHeroNavy';
 export const metadata: Metadata = {
   title: 'Development Academy | Rivervalley Rangers AFC',
   description:
-    "The Rivervalley Rangers Development Academy — Swords' fun, welcoming Saturday football programme for children born 2019, 2020 & 2021. Over 20 years in the community.",
+    "The Rivervalley Rangers Development Academy — Swords' fun, welcoming Saturday football programme for children born 2020, 2021 & 2022 (ages 4–6). Over 20 years in the community.",
 };
 
 const highlights = [
@@ -30,14 +30,16 @@ const highlights = [
 const sessions = [
   {
     time: '10:00am',
-    born: '2020 & 2021',
+    born: '2021 & 2022',
+    ages: 'Ages 4–5',
     accentClass: 'bg-brand-neon',
     labelClass: 'text-brand-neon',
     borderClass: 'border-brand-neon',
   },
   {
     time: '11:30am',
-    born: '2019',
+    born: '2020',
+    ages: 'Age 6',
     accentClass: 'bg-brand-sky',
     labelClass: 'text-brand-sky',
     borderClass: 'border-brand-sky',
@@ -114,6 +116,9 @@ export default function AcademyPage() {
                     <p className="font-display font-black italic text-xl text-brand-cream uppercase leading-tight">
                       {s.born}
                     </p>
+                    <p className={`font-display font-black text-xs uppercase tracking-widest mt-1 ${s.labelClass}`}>
+                      {s.ages}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -167,8 +172,8 @@ export default function AcademyPage() {
             <div className="brutalist-card bg-white p-5 flex flex-col gap-2">
               <Users className="h-6 w-6 text-brand-navy" aria-hidden="true" />
               <p className="font-display font-black text-sm uppercase tracking-wide text-brand-charcoal">Age Groups</p>
-              <p className="text-brand-charcoal/70 text-sm">Born 2019, 2020 &amp; 2021</p>
-              <p className="text-xs text-brand-charcoal/50 mt-1">Boys and girls welcome</p>
+              <p className="text-brand-charcoal/70 text-sm">Born 2020, 2021 &amp; 2022</p>
+              <p className="text-xs text-brand-charcoal/50 mt-1">Ages 4–6 · Boys and girls welcome</p>
             </div>
             <div className="brutalist-card bg-white p-5 flex flex-col gap-2">
               <MapPin className="h-6 w-6 text-brand-navy" aria-hidden="true" />
@@ -191,7 +196,7 @@ export default function AcademyPage() {
           </p>
           <div className="flex flex-col sm:flex-row items-stretch gap-0">
             {[
-              { label: 'Academy', sub: 'Born 2019–2021', active: true },
+              { label: 'Academy', sub: 'Born 2020–2022 · Ages 4–6', active: true },
               { label: 'U7 – U11', sub: 'Development', active: false },
               { label: 'U12 – U17', sub: 'Competitive', active: false },
               { label: 'Senior', sub: '17+', active: false },
