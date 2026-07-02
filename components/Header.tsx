@@ -532,14 +532,16 @@ export default function Header() {
       <div className={`lg:hidden fixed left-0 z-[55] flex flex-col gap-1.5 transition-opacity duration-700 ${tabsVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'}`} style={{ top: '50%', transform: 'translateY(-50%)' }}>
         {!infoOpen && (
           <button type="button" aria-label="Open club update" onClick={() => setInfoOpen(true)}
-            className="flex flex-col items-center gap-0.5 bg-blue-600 hover:bg-blue-500 rounded-r-lg px-2 py-2.5 shadow-md transition-colors">
+            className="flex flex-col items-center gap-0.5 bg-blue-600 hover:bg-blue-500 rounded-r-lg px-2 py-2.5 transition-colors"
+            style={{ boxShadow: '3px 2px 8px rgba(0,0,0,0.18)' }}>
             <Info className="h-5 w-5 text-white" strokeWidth={2.5} />
             <span className="font-display font-black text-[8px] uppercase tracking-wide text-white">info</span>
           </button>
         )}
         {!newsOpen && newsLoaded && announcements.length > 0 && (
           <button type="button" aria-label="Open club news" onClick={openNews}
-            className="flex flex-col items-center gap-0.5 bg-emerald-600 hover:bg-emerald-500 rounded-r-lg px-2 py-2.5 shadow-md transition-colors">
+            className="flex flex-col items-center gap-0.5 bg-emerald-600 hover:bg-emerald-500 rounded-r-lg px-2 py-2.5 transition-colors"
+            style={{ boxShadow: '3px 2px 8px rgba(0,0,0,0.18)' }}>
             <Megaphone className="h-5 w-5 text-white" strokeWidth={2.5} />
             <span className="font-display font-black text-[8px] uppercase tracking-wide text-white">news</span>
           </button>

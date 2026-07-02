@@ -20,45 +20,51 @@ export default function PageHeroNavy({
   backLabel,
   actions,
   links,
-  accentColor = 'bg-brand-green',
+  accentColor = 'bg-brand-neon',
 }: PageHeroNavyProps) {
   return (
     <>
       <div className="relative overflow-hidden bg-brand-navy">
+        {/* Grid texture */}
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
-            backgroundImage: `linear-gradient(rgba(133,227,32,0.12) 1px, transparent 1px),
-                              linear-gradient(90deg, rgba(133,227,32,0.12) 1px, transparent 1px)`,
+            backgroundImage: `linear-gradient(rgba(133,227,32,0.08) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(133,227,32,0.08) 1px, transparent 1px)`,
             backgroundSize: '40px 40px',
           }}
         />
-        <div className="relative mx-auto max-w-2xl px-4 pt-6 pb-8">
+        {/* Bottom fade */}
+        <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-brand-navy/60 to-transparent pointer-events-none" />
+
+        <div className="relative mx-auto max-w-4xl px-5 pt-10 pb-14 md:pt-14 md:pb-18">
           {backHref && backLabel && (
             <Link
               href={backHref}
-              className="inline-block text-brand-sky text-sm mb-5 hover:text-brand-neon transition-colors"
+              className="inline-flex items-center gap-1.5 text-brand-sky/70 text-sm mb-6 hover:text-brand-neon transition-colors font-semibold"
             >
               ← {backLabel}
             </Link>
           )}
           {eyebrow && (
-            <div className="mb-2 inline-flex items-center gap-1.5 font-display text-xs font-black uppercase tracking-widest text-brand-sky/80">
+            <div className="mb-3 inline-flex items-center gap-1.5 font-display text-[11px] font-black uppercase tracking-widest text-brand-sky/60">
               {eyebrow}
             </div>
           )}
-          <h1 className="font-display font-black italic text-4xl md:text-5xl uppercase tracking-tight leading-none text-brand-neon mb-2">
+          <h1 className="font-display font-black italic text-5xl md:text-6xl lg:text-7xl uppercase tracking-tight leading-none text-brand-neon mb-4">
             {title}
           </h1>
           {description && (
-            <p className="text-brand-sky text-sm mb-3">{description}</p>
+            <p className="text-brand-sky/80 text-base md:text-lg leading-relaxed max-w-2xl font-medium">
+              {description}
+            </p>
           )}
           {actions && (
-            <div className="mt-3 flex flex-wrap items-center gap-3">
+            <div className="mt-6 flex flex-wrap items-center gap-3">
               {actions}
             </div>
           )}
-          {links && <div className="mt-4">{links}</div>}
+          {links && <div className="mt-5">{links}</div>}
         </div>
       </div>
       <div className={`h-1 w-full ${accentColor}`} />
