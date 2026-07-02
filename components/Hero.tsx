@@ -108,19 +108,19 @@ export default function Hero() {
         </p>
 
         {/* Age-group quick-find */}
-        <div className="flex flex-wrap items-center justify-center gap-2 mb-8 md:mb-10">
-          <span className="text-zinc-400 text-xs font-bold uppercase tracking-widest shrink-0">Find your team:</span>
+        <div className="flex flex-wrap items-center justify-center gap-1.5 mb-6 md:mb-8">
+          <span className="text-zinc-500 text-[10px] font-bold uppercase tracking-widest shrink-0 mr-1">Find your team:</span>
           {[
-            { label: 'Ages 4–6',   href: '/academy'             },
-            { label: 'U7–U17',     href: '/teams'               },
-            { label: 'Girls',      href: '/teams?filter=girls'  },
-            { label: 'Adult',      href: '/seniors'             },
-            { label: 'Community',  href: '/ladies-football'     },
+            { label: 'Ages 4–6',  href: '/academy'            },
+            { label: 'U7–U17',    href: '/teams'              },
+            { label: 'Girls',     href: '/teams?filter=girls' },
+            { label: 'Adult',     href: '/seniors'            },
+            { label: 'Community', href: '/community'          },
           ].map(({ label, href }) => (
             <Link
               key={label}
               href={href}
-              className="px-3 py-1.5 rounded-full border border-white/25 bg-white/10 text-white text-xs font-display font-black uppercase tracking-wide hover:bg-brand-neon hover:text-brand-charcoal hover:border-brand-neon transition-all"
+              className="px-2.5 py-1 rounded-full border border-white/20 bg-white/8 text-white/80 text-[10px] font-display font-black uppercase tracking-wide hover:bg-brand-neon hover:text-brand-charcoal hover:border-brand-neon transition-all"
             >
               {label}
             </Link>

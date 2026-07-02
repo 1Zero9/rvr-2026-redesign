@@ -53,7 +53,7 @@ const COMMUNITY_CATEGORIES: Array<{
     Icon: Users,
     label: 'Community',
     copy: 'Walking Football and Ladies Football — open to all adults in Swords.',
-    href: '/ladies-football',
+    href: '/community',
   },
   {
     Icon: Heart,
