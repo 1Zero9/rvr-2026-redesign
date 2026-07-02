@@ -30,7 +30,7 @@ export default function RegisterPage() {
           <div className="flex items-center gap-3 text-sm text-brand-charcoal/70 sm:ml-auto">
             <Calculator className="h-5 w-5 text-brand-navy shrink-0" aria-hidden="true" />
             <span>
-              Fees from <strong className="text-brand-charcoal">€120/season</strong> · {' '}
+              From <strong className="text-brand-charcoal">€115 half-season</strong> · Academy from <strong className="text-brand-charcoal">€120</strong> · {' '}
               <Link href="/membership-calculator" className="font-black text-brand-navy underline underline-offset-4 hover:text-brand-neon transition-colors">
                 Calculate your cost →
               </Link>
