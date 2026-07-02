@@ -59,12 +59,13 @@ export default function ContactPage() {
           {contacts.map((c) => (
             <article
               key={c.mailbox}
+              aria-labelledby={`contact-heading-${c.mailbox}`}
               className="brutalist-card flex flex-col bg-white p-6"
             >
               <div className="flex items-start gap-3 mb-1">
                 <c.icon className="h-4 w-4 text-brand-neon shrink-0 mt-0.5" aria-hidden="true" />
                 <div>
-                  <p className="font-display text-xs font-black uppercase tracking-wide text-brand-charcoal">
+                  <p id={`contact-heading-${c.mailbox}`} className="font-display text-xs font-black uppercase tracking-wide text-brand-charcoal">
                     {c.role}
                   </p>
                   <p className="mt-1 text-sm leading-relaxed text-zinc-500 font-semibold">

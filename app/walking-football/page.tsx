@@ -120,7 +120,7 @@ export default function WalkingFootballPage() {
             <ul className="space-y-3">
               {RULES.map((rule) => (
                 <li key={rule} className="flex items-start gap-3 text-sm font-semibold text-brand-sky">
-                  <span className="text-brand-neon font-black mt-0.5 shrink-0">✓</span>
+                  <span className="text-brand-neon font-black mt-0.5 shrink-0" aria-hidden="true">✓</span>
                   {rule}
                 </li>
               ))}

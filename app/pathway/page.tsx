@@ -51,7 +51,7 @@ function StepCard({
           <span className={`font-display font-black text-[10px] uppercase tracking-widest ${labelColor}`}>{ages}</span>
           <span className="font-display font-black text-sm uppercase text-brand-navy leading-tight">{label}</span>
           <span className="text-brand-charcoal/50 text-[11px] leading-relaxed font-medium mt-0.5 flex-1">{detail}</span>
-          <span className={`mt-2 text-[10px] font-display font-black uppercase tracking-wide ${labelColor} opacity-0 group-hover:opacity-100 transition-opacity`}>
+          <span className={`mt-2 text-[10px] font-display font-black uppercase tracking-wide ${labelColor} opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity`}>
             View →
           </span>
         </div>

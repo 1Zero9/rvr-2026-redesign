@@ -86,6 +86,7 @@ export default function RootLayout({
       className={`${inter.variable} ${jakarta.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-brand-cream text-brand-charcoal">
+        <a href="#main-content" className="skip-to-content">Skip to main content</a>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{

@@ -10,7 +10,7 @@ import { CLUB_SEASON } from '@/config/club-season';
 import { APP_VERSION, APP_VERSION_DATE } from '@/config/version';
 import { prisma } from '@/lib/prisma';
 import { getFeatureAvailability } from '@/lib/features';
-import { GraduationCap, Trophy, Users, Heart, User, type LucideIcon } from 'lucide-react';
+import { GraduationCap, Trophy, Users, Heart, User, Calculator, type LucideIcon } from 'lucide-react';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -97,7 +97,7 @@ export default async function Home() {
               <div className="flex items-end justify-between mb-8 gap-4">
                 <div>
                   <p className="font-display font-black text-[10px] uppercase tracking-widest text-brand-green mb-1">
-                    Fresh off the pitch
+                    Club Updates
                   </p>
                   <h2 className="font-display font-black italic text-3xl md:text-4xl uppercase tracking-tight text-brand-charcoal leading-none">
                     Latest News
@@ -134,7 +134,45 @@ export default async function Home() {
         {/* ── 2.7. Instagram Feed ──────────────────────────────────────────── */}
         {features.instagramFeed && <InstagramFeed />}
 
+        {/* ── 3.5. 45th Anniversary strip ──────────────────────────────────── */}
+        <section className="bg-brand-neon border-y border-brand-charcoal/10">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <span className="font-display font-black text-4xl md:text-5xl italic text-brand-charcoal leading-none">1981</span>
+              <div className="h-8 w-px bg-brand-charcoal/20 shrink-0" aria-hidden="true" />
+              <div>
+                <p className="font-display font-black text-xs uppercase tracking-widest text-brand-charcoal/60">Rivervalley Rangers AFC</p>
+                <p className="font-display font-black italic text-lg uppercase text-brand-charcoal leading-tight">45 Years of Swords Football</p>
+              </div>
+            </div>
+            <Link
+              href="/club/anniversary"
+              className="shrink-0 inline-flex items-center gap-2 border-3 border-brand-charcoal bg-brand-charcoal px-5 py-2.5 text-xs font-display font-black uppercase tracking-wide text-brand-neon hover:bg-brand-charcoal/80 transition-colors"
+            >
+              Our Story →
+            </Link>
+          </div>
+        </section>
 
+        {/* ── 3.7. Membership cost callout ─────────────────────────────────── */}
+        <section className="bg-white border-b border-brand-navy/10">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-6">
+            <div>
+              <p className="font-display font-black text-[10px] uppercase tracking-widest text-brand-green mb-1">Transparent pricing</p>
+              <p className="font-display font-black italic text-2xl md:text-3xl uppercase text-brand-charcoal leading-tight">
+                From <span className="text-brand-green">€115</span> per half-season
+              </p>
+              <p className="text-brand-muted text-sm mt-1">Academy from €120 · Sibling discounts applied automatically</p>
+            </div>
+            <Link
+              href="/membership-calculator"
+              className="shrink-0 inline-flex items-center gap-2 min-h-[48px] border-3 border-brand-charcoal bg-brand-navy px-6 py-3 text-sm font-display font-black uppercase text-brand-neon shadow-[4px_4px_0_#121212] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all"
+            >
+              <Calculator className="h-4 w-4 shrink-0" aria-hidden="true" />
+              Calculate Your Cost
+            </Link>
+          </div>
+        </section>
 
         {/* ── 4. More Than A Football Club ─────────────────────────────────── */}
         <section className="py-20 bg-brand-cream border-t border-brand-navy/10">
@@ -150,7 +188,7 @@ export default async function Home() {
                   More Than A<br className="md:hidden" /> Football Club
                 </h2>
               </div>
-              <p className="mt-3 text-brand-charcoal/55 text-base md:text-lg max-w-xl leading-relaxed">
+              <p className="mt-3 text-brand-muted text-base md:text-lg max-w-xl leading-relaxed">
                 From a toddler&apos;s first touch to senior league football — we have a team for every player in Swords.
               </p>
             </div>
@@ -180,7 +218,7 @@ export default async function Home() {
                     <p className="font-display font-black text-base uppercase tracking-wide text-brand-charcoal group-hover:text-brand-navy transition-colors leading-tight">
                       {cat.label}
                     </p>
-                    <p className="text-brand-charcoal/50 text-xs md:text-sm leading-relaxed mt-0.5 md:mt-1">
+                    <p className="text-brand-muted text-xs md:text-sm leading-relaxed mt-0.5 md:mt-1">
                       {cat.copy}
                     </p>
                   </div>

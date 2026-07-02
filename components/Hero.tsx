@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { UserPlus, CalendarDays, Trophy, Newspaper, Pause, Play } from 'lucide-react';
@@ -35,6 +35,16 @@ const explodeProps = [
 export default function Hero() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [videoPaused, setVideoPaused] = useState(false);
+
+  useEffect(() => {
+    const v = videoRef.current;
+    if (!v) return;
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduced) {
+      v.pause();
+      setVideoPaused(true);
+    }
+  }, []);
 
   const toggleVideo = () => {
     const v = videoRef.current;
@@ -89,13 +99,33 @@ export default function Hero() {
           />
 
           <h1 className="font-display font-black text-5xl md:text-7xl lg:text-8xl tracking-tighter uppercase leading-none italic select-none skew-x-[-4deg] text-center md:text-left flex-1">
-            EVERY PLAYER<br className="hidden md:block" /> <span className="text-brand-neon">STARTS</span> HERE
+            SWORDS FOOTBALL<br className="hidden md:block" /> <span className="text-brand-neon">SINCE 1981.</span>
           </h1>
         </div>
 
-        <p className="font-sans text-lg md:text-2xl text-zinc-200 max-w-2xl mx-auto mb-6 md:mb-12 leading-relaxed font-medium">
-          Swords&apos; community football club since 1981. From a child&apos;s first kick on the Academy pitch to senior league football — your family is welcome here.
+        <p className="font-sans text-lg md:text-2xl text-zinc-200 max-w-2xl mx-auto mb-4 md:mb-6 leading-relaxed font-medium">
+          22 teams. Ages 4 to 55+. Boys, girls, adults, and community programmes — all in Swords. From €115 per season.
         </p>
+
+        {/* Age-group quick-find */}
+        <div className="flex flex-wrap items-center justify-center gap-2 mb-8 md:mb-10">
+          <span className="text-zinc-400 text-xs font-bold uppercase tracking-widest shrink-0">Find your team:</span>
+          {[
+            { label: 'Ages 4–6',   href: '/academy'             },
+            { label: 'U7–U17',     href: '/teams'               },
+            { label: 'Girls',      href: '/teams?filter=girls'  },
+            { label: 'Adult',      href: '/seniors'             },
+            { label: 'Community',  href: '/ladies-football'     },
+          ].map(({ label, href }) => (
+            <Link
+              key={label}
+              href={href}
+              className="px-3 py-1.5 rounded-full border border-white/25 bg-white/10 text-white text-xs font-display font-black uppercase tracking-wide hover:bg-brand-neon hover:text-brand-charcoal hover:border-brand-neon transition-all"
+            >
+              {label}
+            </Link>
+          ))}
+        </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 w-full max-w-xl mb-16">
           {HERO_CTAS.map(({ label, sub, href, icon: Icon }) => (

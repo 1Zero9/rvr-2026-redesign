@@ -19,97 +19,87 @@ type NavSection = { label: string; columns: NavColumn[]; twoColumn?: boolean };
 
 const NAV_SECTIONS: NavSection[] = [
   {
-    label: 'Teams',
+    label: 'Play',
+    twoColumn: true,
     columns: [
       {
+        heading: 'Teams',
         links: [
-          { href: '/academy',                    label: 'Development Academy'  },
-          { href: '/teams',                      label: 'All Teams'       },
-          { href: '/teams?filter=boys',          label: 'DDSL Boys'       },
-          { href: '/teams?filter=girls',         label: 'DDSL Girls'      },
-          { href: '---',                         label: 'SENIORS'         },
-          { href: '/seniors/first-team',         label: 'First Team'      },
-          { href: '/seniors/lsl-div3b',          label: 'Div 3B Saturday' },
-          { href: '/seniors/lsl-div3c',          label: 'Div 3C Saturday' },
-          { href: '---',                         label: 'OVER 35s'        },
-          { href: '/seniors/over-35s/over35s-a', label: 'Over 35s A'      },
-          { href: '/seniors/over-35s/over35s-b', label: 'Over 35s B'      },
+          { href: '/academy',                    label: 'Development Academy' },
+          { href: '/teams',                      label: 'All Teams'           },
+          { href: '/teams?filter=boys',          label: 'DDSL Boys'           },
+          { href: '/teams?filter=girls',         label: 'DDSL Girls'          },
+          { href: '---',                         label: 'SENIORS'             },
+          { href: '/seniors/first-team',         label: 'First Team'          },
+          { href: '/seniors/lsl-div3b',          label: 'Div 3B Saturday'     },
+          { href: '/seniors/lsl-div3c',          label: 'Div 3C Saturday'     },
+          { href: '---',                         label: 'OVER 35s'            },
+          { href: '/seniors/over-35s/over35s-a', label: 'Over 35s A'          },
+          { href: '/seniors/over-35s/over35s-b', label: 'Over 35s B'          },
         ],
       },
-    ],
-  },
-  {
-    label: 'Fixtures',
-    columns: [
       {
+        heading: 'Matchday',
         links: [
           { href: '/fixtures',               label: 'Fixtures & Results' },
           { href: '/fixtures?filter=youth',  label: 'Youth Fixtures'     },
           { href: '/fixtures?filter=senior', label: 'Senior Fixtures'    },
+          { href: '/pitch-locations',        label: 'Pitch Locations'    },
+          { href: '/astro-booking',          label: 'Book Astro Pitch'   },
         ],
       },
     ],
   },
   {
     label: 'Join',
+    twoColumn: true,
     columns: [
       {
-        heading: 'Membership',
+        heading: 'Register',
         links: [
           { href: '/register',              label: 'Register a Player' },
           { href: '/pathway',               label: 'Player Pathway'    },
           { href: '/membership-calculator', label: 'Calculate Fees'    },
-          { href: '/astro-booking',         label: 'Book Astro Pitch'  },
         ],
       },
       {
-        heading: 'Programmes',
+        heading: 'Community',
         links: [
-          { href: '/football-for-all',   label: 'Football For All'  },
-          { href: '/walking-football',   label: 'Walking Football'  },
-          { href: '/ladies-football',    label: 'Ladies Football'   },
+          { href: '/football-for-all', label: 'Football For All' },
+          { href: '/walking-football', label: 'Walking Football'  },
+          { href: '/ladies-football',  label: 'Ladies Football'   },
         ],
       },
     ],
   },
   {
     label: 'Club',
+    twoColumn: true,
     columns: [
       {
-        heading: 'Club Information',
+        heading: 'About RVR',
         links: [
-          { href: '/club',            label: 'Club Overview' },
-          { href: '/club/history',    label: 'Club History'  },
-          { href: '/club#committee',  label: 'Committee'     },
-          { href: '/club#facilities', label: 'Facilities'    },
-          { href: '/club#policies',   label: 'Policies'      },
+          { href: '/club',              label: 'Club Overview'     },
+          { href: '/club/history',      label: 'Our History'       },
+          { href: '/club/anniversary',  label: '45th Anniversary'  },
+          { href: '/club#committee',    label: 'Committee'         },
+          { href: '/club/safeguarding', label: 'Safeguarding'      },
         ],
       },
       {
-        heading: 'Club Services',
+        heading: 'Get Involved',
         links: [
-          { href: '/get-involved',     label: 'Volunteer & Coach' },
-          { href: '/sponsorship',      label: 'Sponsorship'       },
-          { href: '/boot-room',        label: 'Boot Room'         },
-          { href: '/pitch-locations',  label: 'Pitch Locations'   },
-          { href: '/news',             label: 'News'              },
-          { href: '/contact',          label: 'Contact Us'        },
-          { href: '/shop',             label: 'Club Shop'         },
-        ],
-      },
-      {
-        heading: 'Safeguarding',
-        links: [
-          { href: '/club/safeguarding', label: 'Safeguarding Hub'  },
-          { href: '/contact',           label: 'Welfare Contact'   },
+          { href: '/news',          label: 'Club News'         },
+          { href: '/get-involved',  label: 'Volunteer & Coach' },
+          { href: '/sponsorship',   label: 'Sponsorship'       },
+          { href: '/boot-room',     label: 'Boot Room'         },
+          { href: '/contact',       label: 'Contact Us'        },
+          { href: '/shop',          label: 'Club Shop'         },
         ],
       },
     ],
   },
 ];
-
-// Campaigns — rendered as a direct top-level link, no dropdown
-const CAMPAIGNS_LINK = { label: 'Campaigns', href: '/campaigns' };
 
 // ─── Mobile overlay links ─────────────────────────────────────────────────────
 
@@ -122,54 +112,27 @@ type MobileNavSection = {
 
 const MOBILE_NAV_SECTIONS: MobileNavSection[] = [
   {
-    label: 'Academy',
-    href: '/academy',
-  },
-  {
-    label: 'All Teams',
+    label: 'Play',
     href: '/teams',
-    topLinkLabel: 'View all teams',
+    topLinkLabel: 'All teams',
     links: [
-      { href: '/teams?filter=boys',  label: 'DDSL Boys'  },
-      { href: '/teams?filter=girls', label: 'DDSL Girls' },
+      { href: '/academy',                    label: 'Development Academy' },
+      { href: '/teams?filter=boys',          label: 'DDSL Boys'           },
+      { href: '/teams?filter=girls',         label: 'DDSL Girls'          },
+      { href: '/seniors',                    label: 'Seniors'             },
+      { href: '/seniors/over-35s',           label: 'Over 35s'            },
+      { href: '/fixtures',                   label: 'Fixtures & Results'  },
+      { href: '/astro-booking',              label: 'Book Astro Pitch'    },
+      { href: '/pitch-locations',            label: 'Pitch Locations'     },
     ],
   },
   {
-    label: 'Seniors',
-    href: '/seniors',
-    topLinkLabel: 'View senior football',
-    links: [
-      { href: '/seniors/first-team', label: 'First Team'      },
-      { href: '/seniors/lsl-div3b',  label: 'Div 3B Saturday' },
-      { href: '/seniors/lsl-div3c',  label: 'Div 3C Saturday' },
-    ],
-  },
-  {
-    label: 'Over 35s',
-    href: '/seniors/over-35s',
-    topLinkLabel: 'View Over 35s hub',
-    links: [
-      { href: '/seniors/over-35s/over35s-a', label: 'Over 35s A' },
-      { href: '/seniors/over-35s/over35s-b', label: 'Over 35s B' },
-    ],
-  },
-  {
-    label: 'Fixtures',
-    href: '/fixtures',
-    topLinkLabel: 'View all fixtures',
-    links: [
-      { href: '/fixtures?filter=youth',  label: 'Youth Fixtures'  },
-      { href: '/fixtures?filter=senior', label: 'Senior Fixtures' },
-    ],
-  },
-  {
-    label: 'Join Us',
+    label: 'Join',
     href: '/register',
     topLinkLabel: 'Register a player',
     links: [
       { href: '/pathway',               label: 'Player Pathway'    },
       { href: '/membership-calculator', label: 'Calculate Fees'    },
-      { href: '/astro-booking',         label: 'Book Astro Pitch'  },
       { href: '/football-for-all',      label: 'Football For All'  },
       { href: '/walking-football',      label: 'Walking Football'  },
       { href: '/ladies-football',       label: 'Ladies Football'   },
@@ -178,37 +141,45 @@ const MOBILE_NAV_SECTIONS: MobileNavSection[] = [
   {
     label: 'Club',
     href: '/club',
-    topLinkLabel: 'View club overview',
+    topLinkLabel: 'Club overview',
     links: [
-      { href: '/club/history',        label: 'History'           },
-      { href: '/club#committee',     label: 'Committee'         },
-      { href: '/club#facilities',    label: 'Facilities'        },
-      { href: '/club#policies',      label: 'Policies'          },
-      { href: '/club/safeguarding',  label: 'Safeguarding'      },
-      { href: '/get-involved',       label: 'Volunteer & Coach' },
-      { href: '/sponsorship',        label: 'Sponsorship'       },
-      { href: '/pitch-locations',    label: 'Pitch Locations'   },
-      { href: '/contact',            label: 'Contact Us'        },
-      { href: '/shop',               label: 'Club Shop'         },
+      { href: '/club/history',      label: 'Our History'       },
+      { href: '/club/anniversary',  label: '45th Anniversary'  },
+      { href: '/club/safeguarding', label: 'Safeguarding'      },
+      { href: '/news',              label: 'Club News'         },
+      { href: '/get-involved',      label: 'Volunteer & Coach' },
+      { href: '/sponsorship',       label: 'Sponsorship'       },
+      { href: '/boot-room',         label: 'Boot Room'         },
+      { href: '/contact',           label: 'Contact Us'        },
+      { href: '/campaigns',         label: 'Campaigns'         },
     ],
   },
-  { label: 'News',      href: '/news'      },
-  { label: 'Campaigns', href: '/campaigns' },
 ];
 
 // ─── Active-section helper ────────────────────────────────────────────────────
 
 function isNavActive(label: string, pathname: string): boolean {
-  if (label === 'Teams')    return pathname === '/teams' ||
-                                   pathname.startsWith('/seniors') ||
-                                   pathname.startsWith('/teams');
-  if (label === 'Fixtures') return pathname === '/fixtures';
-  if (label === 'Join')     return pathname === '/register';
-  if (label === 'Club')     return pathname.startsWith('/club') ||
-                                   pathname === '/news' ||
-                                   pathname === '/get-involved' ||
-                                   pathname === '/sponsorship' ||
-                                   pathname === '/boot-room';
+  if (label === 'Play') return pathname === '/teams' ||
+                               pathname.startsWith('/teams') ||
+                               pathname.startsWith('/seniors') ||
+                               pathname.startsWith('/academy') ||
+                               pathname === '/fixtures' ||
+                               pathname.startsWith('/fixtures') ||
+                               pathname === '/pitch-locations' ||
+                               pathname === '/astro-booking';
+  if (label === 'Join') return pathname === '/register' ||
+                               pathname === '/pathway' ||
+                               pathname === '/membership-calculator' ||
+                               pathname === '/football-for-all' ||
+                               pathname === '/walking-football' ||
+                               pathname === '/ladies-football';
+  if (label === 'Club') return pathname.startsWith('/club') ||
+                               pathname === '/news' ||
+                               pathname === '/get-involved' ||
+                               pathname === '/sponsorship' ||
+                               pathname === '/boot-room' ||
+                               pathname === '/contact' ||
+                               pathname === '/shop';
   return false;
 }
 
@@ -218,13 +189,22 @@ function hrefMatchesPath(href: string, pathname: string): boolean {
 }
 
 function isMobileSectionActive(section: MobileNavSection, pathname: string): boolean {
-  if (section.label === 'Seniors') {
-    return pathname === '/seniors' ||
-           pathname.startsWith('/seniors/first-team') ||
-           pathname.startsWith('/seniors/lsl-');
+  if (section.label === 'Play') {
+    return pathname === '/teams' || pathname.startsWith('/teams') ||
+           pathname.startsWith('/seniors') || pathname.startsWith('/academy') ||
+           pathname.startsWith('/fixtures') || pathname === '/astro-booking' ||
+           pathname === '/pitch-locations';
   }
-  if (section.label === 'Over 35s') {
-    return pathname.startsWith('/seniors/over-35s');
+  if (section.label === 'Join') {
+    return pathname === '/register' || pathname === '/pathway' ||
+           pathname === '/membership-calculator' || pathname === '/football-for-all' ||
+           pathname === '/walking-football' || pathname === '/ladies-football';
+  }
+  if (section.label === 'Club') {
+    return pathname.startsWith('/club') || pathname === '/news' ||
+           pathname === '/get-involved' || pathname === '/sponsorship' ||
+           pathname === '/boot-room' || pathname === '/contact' ||
+           pathname === '/campaigns' || pathname === '/shop';
   }
   return hrefMatchesPath(section.href, pathname) ||
          Boolean(section.links?.some((link) => hrefMatchesPath(link.href, pathname)));
@@ -444,25 +424,6 @@ export default function Header() {
                   </div>
                 );
               })}
-
-              {/* Campaigns — direct link, no dropdown */}
-              <div
-                onMouseEnter={() => {
-                  if (closeTimer.current) clearTimeout(closeTimer.current);
-                  setOpenSection(null);
-                }}
-              >
-                <Link
-                  href={CAMPAIGNS_LINK.href}
-                  className={`min-h-[44px] px-4 flex items-center font-display font-black uppercase text-sm tracking-wide rounded-lg transition-all ${
-                    pathname.startsWith('/campaigns')
-                      ? 'text-brand-neon hover:bg-white/5'
-                      : 'text-white/80 hover:text-brand-neon hover:bg-white/5'
-                  }`}
-                >
-                  {CAMPAIGNS_LINK.label}
-                </Link>
-              </div>
 
             </nav>
 
