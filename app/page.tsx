@@ -27,7 +27,7 @@ const COMMUNITY_CATEGORIES: Array<{
   {
     Icon: GraduationCap,
     label: 'Academy',
-    copy: 'Little Rangers (ages 4–6) — the first step before DDSL age-group football.',
+    copy: 'Development Academy (born 2019–2021) — Saturday sessions at Rivervalley Park.',
     href: '/academy',
   },
   {

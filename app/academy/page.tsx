@@ -3,7 +3,9 @@ import Link from 'next/link';
 import {
   CalendarDays,
   CheckCircle2,
+  Clock,
   MapPin,
+  Phone,
   Star,
   Users,
 } from 'lucide-react';
@@ -11,38 +13,34 @@ import PublicPageShell from '@/components/layout/PublicPageShell';
 import PageHeroNavy from '@/components/layout/PageHeroNavy';
 
 export const metadata: Metadata = {
-  title: 'RVR Academy',
+  title: 'Development Academy | Rivervalley Rangers AFC',
   description:
-    "The Rivervalley Rangers Academy — Swords' dedicated football programme for children aged 4–6. Fun, structured Saturday sessions with qualified coaches.",
+    "The Rivervalley Rangers Development Academy — Swords' fun, welcoming Saturday football programme for children born 2019, 2020 & 2021. Over 20 years in the community.",
 };
 
 const highlights = [
   'Dedicated and committed qualified coaches',
-  'Emphasis on fun, confidence, and learning',
-  'Develops social skills, teamwork, and fitness',
-  'Safe, welcoming environment for first-time players',
+  'Fun, relaxed and friendly environment',
+  'Develops social skills, teamwork, and confidence',
+  'Safe, welcoming space for first-time players',
   'Structured pathway into DDSL age-group football',
-  'Operating in Swords for over 20 years',
+  'Over 20 years serving the Swords community',
 ];
 
-const programmes = [
+const sessions = [
   {
-    name: 'Little Rangers',
-    ages: 'Ages 4–5',
-    description:
-      'First steps on the pitch. Focused purely on movement, ball-play, and enjoyment. No experience required — just enthusiasm.',
-    colour: 'border-brand-neon bg-brand-navy',
-    accent: 'bg-brand-neon',
-    labelColour: 'text-brand-neon',
+    time: '10:00am',
+    born: '2020 & 2021',
+    accentClass: 'bg-brand-neon',
+    labelClass: 'text-brand-neon',
+    borderClass: 'border-brand-neon',
   },
   {
-    name: 'Academy (Pre-U7)',
-    ages: 'Age 6',
-    description:
-      'A structured, age-appropriate programme that builds the foundations before the DDSL pathway begins at U7. Teamwork, technique, and fun.',
-    colour: 'border-brand-sky bg-brand-navy',
-    accent: 'bg-brand-sky',
-    labelColour: 'text-brand-sky',
+    time: '11:30am',
+    born: '2019',
+    accentClass: 'bg-brand-sky',
+    labelClass: 'text-brand-sky',
+    borderClass: 'border-brand-sky',
   },
 ];
 
@@ -51,8 +49,8 @@ export default function AcademyPage() {
     <PublicPageShell>
       <PageHeroNavy
         eyebrow={<><Star className="h-4 w-4" aria-hidden="true" /> RVR Development Academy</>}
-        title="Academy"
-        description="Swords' dedicated grassroots football programme for children aged 4–6. Saturday sessions at Rivervalley Park with qualified, Garda-vetted coaches."
+        title="Development Academy"
+        description="Swords' biggest and best football academy — over 20 years introducing children to the beautiful game. Fun, relaxed Saturday sessions with Ginny and the Academy Team at Rivervalley Park."
         actions={
           <>
             <Link
@@ -71,29 +69,52 @@ export default function AcademyPage() {
         }
       />
 
-      {/* ── Programmes ───────────────────────────────────────────────────── */}
+      {/* ── Season return banner ─────────────────────────────────────────── */}
+      <div className="bg-brand-neon border-b-4 border-brand-charcoal">
+        <div className="mx-auto max-w-4xl px-4 py-5 sm:px-6 flex flex-col sm:flex-row items-center gap-3 justify-between">
+          <p className="font-display font-black italic uppercase text-brand-charcoal text-xl md:text-2xl tracking-tight">
+            Academy returns Saturday 6th September
+          </p>
+          <Link
+            href="/register"
+            className="shrink-0 inline-flex min-h-[44px] items-center justify-center gap-2 border-3 border-brand-charcoal bg-brand-charcoal px-6 py-2.5 text-sm font-display font-black uppercase text-brand-neon shadow-[4px_4px_0_rgba(11,31,59,0.3)] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all"
+          >
+            Sign Up Now
+          </Link>
+        </div>
+      </div>
+
+      {/* ── Session times ────────────────────────────────────────────────── */}
       <section className="bg-brand-cream border-b border-brand-navy/10">
         <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6">
-          <h2 className="font-display font-black italic text-3xl md:text-4xl uppercase tracking-tight text-brand-charcoal mb-8">
-            Our Programmes
+          <h2 className="font-display font-black italic text-3xl md:text-4xl uppercase tracking-tight text-brand-charcoal mb-2">
+            Saturday Sessions
           </h2>
+          <p className="text-brand-charcoal/60 text-sm mb-8">
+            Small Astro pitch, Rivervalley Park — sessions split by year of birth.
+          </p>
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-            {programmes.map((p) => (
+            {sessions.map((s) => (
               <div
-                key={p.name}
-                className={`flex flex-col border-2 ${p.colour} shadow-[4px_4px_0_#0B1F3B]`}
+                key={s.born}
+                className={`flex flex-col border-2 border-brand-navy bg-brand-navy shadow-[4px_4px_0_#0B1F3B]`}
               >
-                <div className={`h-1.5 w-full shrink-0 ${p.accent}`} />
-                <div className="flex flex-1 flex-col gap-2 p-5">
-                  <p className={`font-display text-xs font-black uppercase tracking-widest ${p.labelColour}`}>
-                    {p.ages}
-                  </p>
-                  <p className="font-display font-black italic text-xl text-brand-cream uppercase leading-tight">
-                    {p.name}
-                  </p>
-                  <p className="text-sm text-brand-sky/80 leading-relaxed mt-1">
-                    {p.description}
-                  </p>
+                <div className={`h-1.5 w-full shrink-0 ${s.accentClass}`} />
+                <div className="flex flex-1 flex-col gap-3 p-6">
+                  <div className="flex items-center gap-2">
+                    <Clock className={`h-5 w-5 shrink-0 ${s.labelClass}`} aria-hidden="true" />
+                    <p className={`font-display font-black text-2xl italic uppercase ${s.labelClass}`}>
+                      {s.time}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="font-display font-black text-sm uppercase tracking-widest text-brand-sky/60 mb-0.5">
+                      Born in
+                    </p>
+                    <p className="font-display font-black italic text-xl text-brand-cream uppercase leading-tight">
+                      {s.born}
+                    </p>
+                  </div>
                 </div>
               </div>
             ))}
@@ -102,7 +123,7 @@ export default function AcademyPage() {
           <div className="mt-6 border-2 border-brand-navy/20 bg-white p-5">
             <p className="text-sm text-brand-charcoal/60 leading-relaxed">
               <span className="font-black text-brand-charcoal">No experience needed.</span>{' '}
-              The Academy is open to all children in the age range — whether it’s their first time touching a football or they’ve been kicking one in the garden for years.
+              The Academy is open to all children in the age range — whether it&apos;s their first time touching a football or they&apos;ve been kicking one in the garden for years. Boys and girls equally welcome.
             </p>
           </div>
         </div>
@@ -115,7 +136,7 @@ export default function AcademyPage() {
             What We Offer
           </h2>
           <p className="text-brand-sky/70 text-sm mb-8">
-            A successful grassroots academy operating in Swords for over 20 years.
+            Over 20 years providing a fantastic, fun introduction to football in Swords.
           </p>
           <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {highlights.map((item) => (
@@ -132,30 +153,30 @@ export default function AcademyPage() {
       <section className="bg-brand-cream border-b border-brand-navy/10">
         <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6">
           <h2 className="font-display font-black italic text-3xl md:text-4xl uppercase tracking-tight text-brand-charcoal mb-8">
-            Training
+            Where &amp; When
           </h2>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             <div className="brutalist-card bg-white p-5 flex flex-col gap-2">
               <CalendarDays className="h-6 w-6 text-brand-navy" aria-hidden="true" />
               <p className="font-display font-black text-sm uppercase tracking-wide text-brand-charcoal">Day</p>
               <p className="text-brand-charcoal/70 text-sm">Saturday mornings</p>
-              {/* TODO: Add confirmed time when available from club e.g. "10:00am – 11:00am" */}
-              <p className="text-xs text-brand-charcoal/45 mt-1">Contact us to confirm current session time</p>
+              <p className="text-xs text-brand-charcoal/50 mt-1">
+                From Saturday 6th September
+              </p>
             </div>
             <div className="brutalist-card bg-white p-5 flex flex-col gap-2">
               <Users className="h-6 w-6 text-brand-navy" aria-hidden="true" />
               <p className="font-display font-black text-sm uppercase tracking-wide text-brand-charcoal">Age Groups</p>
-              <p className="text-brand-charcoal/70 text-sm">Ages 4–6 (pre-U7)</p>
+              <p className="text-brand-charcoal/70 text-sm">Born 2019, 2020 &amp; 2021</p>
+              <p className="text-xs text-brand-charcoal/50 mt-1">Boys and girls welcome</p>
             </div>
             <div className="brutalist-card bg-white p-5 flex flex-col gap-2">
               <MapPin className="h-6 w-6 text-brand-navy" aria-hidden="true" />
               <p className="font-display font-black text-sm uppercase tracking-wide text-brand-charcoal">Venue</p>
-              <p className="text-brand-charcoal/70 text-sm">Rivervalley Park, Swords</p>
+              <p className="text-brand-charcoal/70 text-sm">Small Astro Pitch</p>
+              <p className="text-xs text-brand-charcoal/50 mt-1">Rivervalley Park, Swords</p>
             </div>
           </div>
-          <p className="mt-5 text-xs text-brand-charcoal/40">
-            Exact session times are confirmed at the start of each season. Contact us for current schedule details.
-          </p>
         </div>
       </section>
 
@@ -166,11 +187,11 @@ export default function AcademyPage() {
             The RVR Pathway
           </h2>
           <p className="text-brand-charcoal/60 text-sm leading-relaxed mb-8 max-w-2xl">
-            The Academy is the first step in a long-term player pathway at Rivervalley Rangers. Players progress through age groups into DDSL-registered competitive and development football.
+            The Academy is the first step on a long-term player pathway. Players progress through age groups into DDSL-registered competitive and development football — from their very first kick to senior league.
           </p>
           <div className="flex flex-col sm:flex-row items-stretch gap-0">
             {[
-              { label: 'Academy', sub: 'Ages 4–6', active: true },
+              { label: 'Academy', sub: 'Born 2019–2021', active: true },
               { label: 'U7 – U11', sub: 'Development', active: false },
               { label: 'U12 – U17', sub: 'Competitive', active: false },
               { label: 'Senior', sub: '17+', active: false },
@@ -198,18 +219,34 @@ export default function AcademyPage() {
         </div>
       </section>
 
-      {/* ── CTA ──────────────────────────────────────────────────────────── */}
+      {/* ── Contact / CTA ────────────────────────────────────────────────── */}
       <section className="bg-brand-neon border-b border-brand-charcoal/10">
-        <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-6">
+        <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
           <div>
             <p className="font-display font-black italic text-2xl uppercase text-brand-charcoal">
-              Ready to join?
+              Don&apos;t miss out — sign up today
             </p>
-            <p className="text-brand-charcoal/70 text-sm mt-1">
-              Register your child for the upcoming Academy season.
+            <p className="text-brand-charcoal/70 text-sm mt-1 mb-4">
+              Drop us a message, register online, or call us directly.
             </p>
+            <div className="flex flex-col gap-1.5">
+              <a
+                href="tel:0871311093"
+                className="inline-flex items-center gap-2 text-sm font-bold text-brand-charcoal hover:underline"
+              >
+                <Phone className="h-4 w-4 shrink-0" aria-hidden="true" />
+                087 131 1093
+              </a>
+              <a
+                href="tel:0876174453"
+                className="inline-flex items-center gap-2 text-sm font-bold text-brand-charcoal hover:underline"
+              >
+                <Phone className="h-4 w-4 shrink-0" aria-hidden="true" />
+                087 617 4453
+              </a>
+            </div>
           </div>
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap gap-3 shrink-0">
             <Link
               href="/register"
               className="inline-flex min-h-[44px] items-center justify-center gap-2 border-3 border-brand-charcoal bg-brand-charcoal px-6 py-3 text-sm font-display font-black uppercase text-brand-neon shadow-[4px_4px_0_rgba(11,31,59,0.4)] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all"
@@ -217,10 +254,10 @@ export default function AcademyPage() {
               Register Now
             </Link>
             <Link
-              href="/teams"
+              href="/contact"
               className="inline-flex min-h-[44px] items-center justify-center gap-2 border-3 border-brand-charcoal px-6 py-3 text-sm font-display font-black uppercase text-brand-charcoal hover:bg-brand-charcoal/10 transition-colors"
             >
-              View All Teams →
+              Message Us →
             </Link>
           </div>
         </div>
