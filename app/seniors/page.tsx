@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import Image from 'next/image';
 import PublicPageShell from '@/components/layout/PublicPageShell';
 import PageHeroNavy from '@/components/layout/PageHeroNavy';
 import type { SeniorMatch } from '@/lib/finalwhistle/types';
@@ -137,6 +138,18 @@ export default async function SeniorsPage() {
           </div>
         }
       />
+
+        {/* Senior action photo */}
+        <div className="relative h-52 sm:h-64 md:h-80 overflow-hidden">
+          <Image
+            src="/images/RVRSNR_Newtown_2026_05_1319_05_019999_2_DxO.jpg"
+            alt="Rivervalley Rangers senior player driving forward with the ball"
+            fill
+            className="object-cover object-center"
+            sizes="100vw"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-brand-navy/30 to-brand-navy/10" />
+        </div>
 
         <div className="max-w-2xl mx-auto px-4 py-8 space-y-10">
 

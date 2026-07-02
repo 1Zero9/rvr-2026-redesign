@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import Header from '@/components/Header';
 import Hero from '@/components/Hero';
 import Link from 'next/link';
@@ -132,6 +133,18 @@ export default async function Home() {
 
         {/* ── 2.7. Instagram Feed ──────────────────────────────────────────── */}
         {features.instagramFeed && <InstagramFeed />}
+
+        {/* ── 3.3. Club moment ─────────────────────────────────────────────── */}
+        <div className="relative h-56 sm:h-72 md:h-96 overflow-hidden">
+          <Image
+            src="/images/U11-win.jpg"
+            alt="Rivervalley Rangers U11s celebrating a trophy win with coaches and the RVR banner"
+            fill
+            className="object-cover object-center"
+            sizes="100vw"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-brand-navy/50 via-transparent to-brand-navy/50" />
+        </div>
 
         {/* ── 3.5. 45th Anniversary strip ──────────────────────────────────── */}
         <section className="bg-brand-neon border-y border-brand-charcoal/10">

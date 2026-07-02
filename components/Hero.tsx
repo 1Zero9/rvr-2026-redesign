@@ -76,6 +76,7 @@ export default function Hero() {
           loop
           muted
           playsInline
+          poster="/images/home2.jpg"
           className="w-full h-full object-cover opacity-35 scale-105"
         >
           <source src="/videos/hero.mp4" type="video/mp4" />
