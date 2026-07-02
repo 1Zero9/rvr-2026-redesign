@@ -1,6 +1,6 @@
 import type { MetadataRoute } from 'next';
 
-const SITE_URL = 'https://rivervalleyrangers.ie';
+const SITE_URL = 'https://www.rivervalleyrangers.ie';
 
 export default function robots(): MetadataRoute.Robots {
   return {

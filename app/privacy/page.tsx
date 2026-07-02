@@ -99,14 +99,33 @@ export default function PrivacyPolicyPage() {
           </a>.
         </p>
 
-        <h2>4. How Long We Keep Your Data</h2>
+        <h2>4. Photography and Images of Children</h2>
+        <p>
+          Photographs taken at club matches, blitzes, and events may appear on this website and
+          on our official social media channels. Where images include identifiable children, they
+          are published only in line with our safeguarding procedures and the photography consent
+          given at player registration.
+        </p>
+        <ul>
+          <li>We do not publish a child&rsquo;s full name alongside their photograph.</li>
+          <li>Parents and guardians may withdraw photography consent at any time.</li>
+          <li>
+            To request the removal of any image, contact our Children&rsquo;s Welfare Officer via
+            the <a href="/club/safeguarding">safeguarding page</a> or email{' '}
+            <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a> — images are removed promptly
+            and without question.
+          </li>
+        </ul>
+        <p><strong>Lawful basis:</strong> Consent (given at registration and revocable at any time).</p>
+
+        <h2>5. How Long We Keep Your Data</h2>
         <ul>
           <li><strong>Player registrations</strong> — retained for the duration of a player&rsquo;s membership and up to 2 years after the last contact, then deleted.</li>
           <li><strong>General enquiries</strong> — retained for 12 months, then deleted unless a relationship develops.</li>
           <li><strong>Boot Room listings</strong> — retained until the listing is removed or the item is taken, then deleted.</li>
         </ul>
 
-        <h2>5. Who We Share Data With</h2>
+        <h2>6. Who We Share Data With</h2>
         <p>
           We do not sell your data. We may share data with:
         </p>
@@ -120,7 +139,7 @@ export default function PrivacyPolicyPage() {
           your data as instructed.
         </p>
 
-        <h2>6. Your Rights</h2>
+        <h2>7. Your Rights</h2>
         <p>Under GDPR, you have the right to:</p>
         <ul>
           <li><strong>Access</strong> the personal data we hold about you.</li>
@@ -138,20 +157,20 @@ export default function PrivacyPolicyPage() {
           </a>.
         </p>
 
-        <h2>7. Cookies</h2>
+        <h2>8. Cookies</h2>
         <p>
           This site uses a single session cookie for authenticated admin users. No tracking or
           advertising cookies are set for public visitors.
         </p>
 
-        <h2>8. Changes to This Policy</h2>
+        <h2>9. Changes to This Policy</h2>
         <p>
           We may update this policy from time to time. The effective date at the top of this page
           will reflect the most recent revision. Continued use of the site constitutes acceptance
           of the updated policy.
         </p>
 
-        <h2>9. Contact</h2>
+        <h2>10. Contact</h2>
         <p>
           For any privacy-related questions, contact us at{' '}
           <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.

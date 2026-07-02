@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { Phone } from 'lucide-react';
+import { Phone, Footprints, HeartPulse, Heart, ShieldCheck, ClipboardCheck, MapPin, HeartHandshake, type LucideIcon } from 'lucide-react';
 import PublicPageShell from '@/components/layout/PublicPageShell';
 import PageHeroNavy from '@/components/layout/PageHeroNavy';
 
@@ -24,7 +24,7 @@ export default function CommunityPage() {
         {/* ── Walking Football ───────────────────────────────────────────── */}
         <section className="bg-white rounded-2xl border-2 border-brand-navy overflow-hidden">
           <div className="bg-brand-navy px-6 py-4 flex items-center gap-3">
-            <span className="text-2xl select-none" aria-hidden="true">🚶</span>
+            <Footprints className="w-7 h-7 text-brand-neon shrink-0" aria-hidden="true" />
             <div>
               <h2 className="font-display font-black italic text-xl uppercase text-brand-neon leading-none">
                 Walking Football
@@ -74,7 +74,7 @@ export default function CommunityPage() {
         {/* ── Ladies Football Fit ────────────────────────────────────────── */}
         <section className="bg-white rounded-2xl border-2 border-pink-400 overflow-hidden">
           <div className="bg-pink-600 px-6 py-4 flex items-center gap-3">
-            <span className="text-2xl select-none" aria-hidden="true">⚽</span>
+            <HeartPulse className="w-7 h-7 text-white shrink-0" aria-hidden="true" />
             <div>
               <h2 className="font-display font-black italic text-xl uppercase text-white leading-none">
                 Ladies Football Fit
@@ -122,7 +122,7 @@ export default function CommunityPage() {
         {/* ── Football For All ───────────────────────────────────────────── */}
         <section className="bg-white rounded-2xl border-2 border-brand-green overflow-hidden">
           <div className="bg-brand-green px-6 py-4 flex items-center gap-3">
-            <span className="text-2xl select-none" aria-hidden="true">💚</span>
+            <Heart className="w-7 h-7 text-brand-neon shrink-0" aria-hidden="true" />
             <div>
               <h2 className="font-display font-black italic text-xl uppercase text-brand-neon leading-none">
                 Football For All
@@ -172,14 +172,14 @@ export default function CommunityPage() {
             All Programmes Are
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {[
-              { icon: '🛡️', text: '100% Garda vetted coaches' },
-              { icon: '📋', text: 'FAI Club Mark accredited'  },
-              { icon: '📍', text: 'Based in Rivervalley Park, Swords' },
-              { icon: '🤝', text: 'Open to all — no trials, no pressure' },
-            ].map((item) => (
+            {([
+              { Icon: ShieldCheck,    text: '100% Garda vetted coaches' },
+              { Icon: ClipboardCheck, text: 'FAI Club Mark accredited'  },
+              { Icon: MapPin,         text: 'Based in Rivervalley Park, Swords' },
+              { Icon: HeartHandshake, text: 'Open to all — no trials, no pressure' },
+            ] as Array<{ Icon: LucideIcon; text: string }>).map((item) => (
               <div key={item.text} className="flex items-center gap-3 text-sm font-semibold text-brand-sky">
-                <span className="text-xl select-none shrink-0" role="img" aria-hidden="true">{item.icon}</span>
+                <item.Icon className="w-5 h-5 text-brand-neon shrink-0" aria-hidden="true" />
                 {item.text}
               </div>
             ))}

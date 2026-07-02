@@ -121,12 +121,6 @@ export default function Footer() {
           <Link href="/club/safeguarding" className="text-xs text-zinc-500 hover:text-brand-neon transition-colors">Child Safeguarding</Link>
           <Link href="/boot-room"         className="text-xs text-zinc-500 hover:text-brand-neon transition-colors">Boot Room</Link>
           <Link href="/shop"              className="text-xs text-zinc-500 hover:text-brand-neon transition-colors">Club Shop</Link>
-          <a
-            href="/admin/login"
-            className="text-xs text-zinc-600 hover:text-zinc-400 transition-colors"
-          >
-            Admin
-          </a>
         </div>
       </div>
 

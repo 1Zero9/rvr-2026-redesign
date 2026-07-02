@@ -79,6 +79,15 @@
   top: 1rem;
 }
 
+/* Global visible focus indicator (WCAG 2.4.7) — two-layer ring stays
+   visible on both cream and navy backgrounds */
+:focus-visible {
+  outline: 2px solid #121212;
+  outline-offset: 1px;
+  box-shadow: 0 0 0 5px #85E320;
+  border-radius: 2px;
+}
+
 /* Stagger delay for explode-in cards via CSS custom property */
 .animate-explode-in {
   animation-delay: var(--explode-delay, 0s);

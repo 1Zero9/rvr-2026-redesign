@@ -32,6 +32,7 @@ const securityHeaders = [
       "connect-src 'self' https://api.stripe.com https://hooks.stripe.com https://api.sportlomo.com https://widgets.sportlomo.com https://ddsl.ie",
       "frame-src https://js.stripe.com https://hooks.stripe.com https://docs.google.com",
       "form-action 'self'",
+      "frame-ancestors 'none'",
       "base-uri 'self'",
       "object-src 'none'",
       "media-src 'self'",

@@ -7,7 +7,6 @@ import NewsCarousel from '@/components/NewsCarousel';
 import InstagramFeed from '@/components/InstagramFeed';
 import PlayerPathway from '@/components/PlayerPathway';
 import Footer from '@/components/layout/Footer';
-import { CLUB_SEASON } from '@/config/club-season';
 import { prisma } from '@/lib/prisma';
 import { getFeatureAvailability } from '@/lib/features';
 import { GraduationCap, Trophy, Users, Heart, User, Calculator, type LucideIcon } from 'lucide-react';
@@ -135,7 +134,7 @@ export default async function Home() {
         {features.instagramFeed && <InstagramFeed />}
 
         {/* ── 3.3. Club moment ─────────────────────────────────────────────── */}
-        <div className="relative h-56 md:h-[700px] overflow-hidden">
+        <section className="relative h-80 md:h-[700px] overflow-hidden">
           <Image
             src="/images/U11-win.jpg"
             alt="Rivervalley Rangers U11s celebrating a trophy win with coaches and the RVR banner"
@@ -143,8 +142,24 @@ export default async function Home() {
             className="object-cover object-top"
             sizes="100vw"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-brand-navy/50 via-transparent to-brand-navy/50" />
-        </div>
+          <div className="absolute inset-0 bg-gradient-to-t from-brand-navy/85 via-brand-navy/20 to-transparent" />
+          <div className="absolute inset-x-0 bottom-0">
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 pb-8 md:pb-12">
+              <p className="font-display font-black text-[10px] md:text-xs uppercase tracking-widest text-brand-neon mb-2">
+                U11s · Cup Winners
+              </p>
+              <h2 className="font-display font-black italic text-3xl md:text-5xl uppercase tracking-tight text-brand-cream leading-none max-w-2xl">
+                Your Saturday could look like this
+              </h2>
+              <Link
+                href="/register"
+                className="mt-5 inline-flex items-center gap-2 min-h-[48px] px-6 bg-brand-neon text-brand-charcoal font-display font-black italic uppercase text-sm border-3 border-brand-charcoal shadow-brutalist-charcoal hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all"
+              >
+                Join Us →
+              </Link>
+            </div>
+          </div>
+        </section>
 
         {/* ── 3.5. 45th Anniversary strip ──────────────────────────────────── */}
         <section className="bg-brand-neon border-y border-brand-charcoal/10">

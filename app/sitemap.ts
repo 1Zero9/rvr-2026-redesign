@@ -1,7 +1,7 @@
 import type { MetadataRoute } from 'next';
 import { getFeatureAvailability } from '@/lib/features';
 
-const SITE_URL = 'https://rivervalleyrangers.ie';
+const SITE_URL = 'https://www.rivervalleyrangers.ie';
 
 type RouteConfig = {
   path: string;

@@ -21,7 +21,7 @@ const jakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://rivervalleyrangers.ie"),
+  metadataBase: new URL("https://www.rivervalleyrangers.ie"),
   title: {
     default: "Rivervalley Rangers AFC | Swords Football Club",
     template: "%s | Rivervalley Rangers AFC",
@@ -96,9 +96,9 @@ export default function RootLayout({
               name: "Rivervalley Rangers AFC",
               alternateName: "RVR AFC",
               sport: "Soccer",
-              url: "https://rivervalleyrangers.ie",
-              logo: "https://rivervalleyrangers.ie/river-valley-rangers-logo-pack-v2/rvr-crest-1024.png",
-              image: "https://rivervalleyrangers.ie/river-valley-rangers-logo-pack-v2/rvr-crest-1024.png",
+              url: "https://www.rivervalleyrangers.ie",
+              logo: "https://www.rivervalleyrangers.ie/river-valley-rangers-logo-pack-v2/rvr-crest-1024.png",
+              image: "https://www.rivervalleyrangers.ie/river-valley-rangers-logo-pack-v2/rvr-crest-1024.png",
               description:
                 "Community football club in Swords, North Dublin. Youth academy, DDSL boys and girls teams U7–U17, senior, Over 35s, walking football, and inclusive programmes since 1981.",
               foundingDate: "1981",
