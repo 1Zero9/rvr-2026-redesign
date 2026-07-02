@@ -89,10 +89,6 @@ body {
 .site-canvas {
   min-height: 100vh;
   background-color: #FAF8F5;
-  background-image:
-    linear-gradient(rgba(11, 31, 59, 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(11, 31, 59, 0.04) 1px, transparent 1px);
-  background-size: 40px 40px;
   color: #121212;
 }
 

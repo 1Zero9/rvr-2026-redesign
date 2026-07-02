@@ -52,21 +52,11 @@ export default function Hero() {
           loop
           muted
           playsInline
-          className="w-full h-full object-cover opacity-45 scale-105"
+          className="w-full h-full object-cover opacity-60 scale-105"
         >
           <source src="/videos/hero.mp4" type="video/mp4" />
         </video>
-        {/* Strengthened gradient overlay for text legibility */}
-        <div className="absolute inset-0 z-10 bg-gradient-to-b from-brand-navy/70 via-brand-navy/50 to-brand-navy/80" />
-        {/* Neon hairline grid — visible on dark video */}
-        <div
-          className="absolute inset-0 pointer-events-none z-10"
-          style={{
-            backgroundImage: `linear-gradient(rgba(133,227,32,0.12) 1px, transparent 1px),
-                              linear-gradient(90deg, rgba(133,227,32,0.12) 1px, transparent 1px)`,
-            backgroundSize: '40px 40px',
-          }}
-        />
+        <div className="absolute inset-0 z-10 bg-gradient-to-b from-brand-navy/55 via-brand-navy/30 to-brand-navy/65" />
       </div>
 
 
