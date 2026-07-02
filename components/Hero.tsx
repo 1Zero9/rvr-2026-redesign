@@ -108,8 +108,9 @@ export default function Hero() {
       </button>
 
       <div className="relative z-20 max-w-5xl mx-auto px-6 text-center py-10 md:py-20 flex flex-col items-center">
-        <span className="inline-block bg-brand-neon text-brand-charcoal font-display font-black text-xs md:text-sm px-5 py-2 rounded-full uppercase tracking-wider mb-5 md:mb-8 border-3 border-brand-charcoal shadow-brutalist rotate-[-2deg] hover:rotate-0 transition-transform cursor-default">
-          Swords, Dublin &bull; Rivervalley Rangers AFC
+        <span className="inline-block bg-brand-neon text-brand-charcoal font-display font-black text-xs md:text-sm px-5 py-2 rounded-full uppercase tracking-wider mb-5 md:mb-8 border-3 border-brand-charcoal shadow-brutalist rotate-[-2deg] hover:rotate-0 transition-transform cursor-default whitespace-nowrap">
+          <span className="sm:hidden">Swords, Dublin &bull; Est. 1981</span>
+          <span className="hidden sm:inline">Swords, Dublin &bull; Rivervalley Rangers AFC</span>
         </span>
 
         <div className="flex flex-col md:flex-row items-center gap-6 md:gap-10 mb-8 w-full justify-center">
@@ -133,7 +134,7 @@ export default function Hero() {
 
         {/* Age-group quick-find */}
         <div className="flex flex-wrap items-center justify-center gap-1.5 mb-6 md:mb-8">
-          <span className="text-zinc-500 text-[10px] font-bold uppercase tracking-widest shrink-0 mr-1">Find your team:</span>
+          <span className="w-full text-center md:w-auto text-zinc-500 text-[10px] font-bold uppercase tracking-widest md:mr-1 mb-1 md:mb-0">Find your team:</span>
           {[
             { label: 'Ages 4–6',  href: '/academy'            },
             { label: 'U7–U17',    href: '/teams'              },
@@ -151,7 +152,7 @@ export default function Hero() {
           ))}
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 w-full max-w-xl mb-16">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 w-full max-w-xl mb-10 md:mb-16">
           {HERO_CTAS.map(({ label, sub, href, icon: Icon }) => (
             <Link
               key={href}
