@@ -35,6 +35,7 @@ const explodeProps = [
 export default function Hero() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [videoPaused, setVideoPaused] = useState(false);
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     const v = videoRef.current;
@@ -45,6 +46,8 @@ export default function Hero() {
       setVideoPaused(true);
     }
   }, []);
+
+  useEffect(() => { setReady(true); }, []);
 
   const toggleVideo = () => {
     const v = videoRef.current;
@@ -148,13 +151,12 @@ export default function Hero() {
             return (
               <div
                 key={i}
-                className={`animate-explode-in bg-white text-brand-charcoal border-3 border-brand-charcoal rounded-2xl shadow-brutalist p-4 flex flex-col gap-1 text-left${i === 4 ? ' hidden md:flex' : ''}`}
+                className={`${ready ? 'animate-explode-in' : ''} bg-white text-brand-charcoal border-3 border-brand-charcoal rounded-2xl shadow-brutalist p-4 flex flex-col gap-1 text-left${i === 4 ? ' hidden md:flex' : ''}`}
                 style={{
                   '--explode-x': ep.x,
                   '--explode-y': ep.y,
                   '--explode-r': ep.r,
-                  animationDelay: ep.delay,
-                  animationFillMode: 'both',
+                  '--explode-delay': ep.delay,
                 } as React.CSSProperties}
               >
                 <span className="font-display font-black text-2xl md:text-3xl uppercase tracking-tighter italic leading-none">
