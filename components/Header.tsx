@@ -57,6 +57,7 @@ const NAV_SECTIONS: NavSection[] = [
         heading: 'Membership',
         links: [
           { href: '/register',              label: 'Register a Player' },
+          { href: '/pathway',               label: 'Player Pathway'    },
           { href: '/membership-calculator', label: 'Calculate Fees'    },
           { href: '/astro-booking',         label: 'Book Astro Pitch'  },
         ],
@@ -166,8 +167,9 @@ const MOBILE_NAV_SECTIONS: MobileNavSection[] = [
     href: '/register',
     topLinkLabel: 'Register a player',
     links: [
-      { href: '/membership-calculator', label: 'Calculate Fees'   },
-      { href: '/astro-booking',         label: 'Book Astro Pitch' },
+      { href: '/pathway',               label: 'Player Pathway'    },
+      { href: '/membership-calculator', label: 'Calculate Fees'    },
+      { href: '/astro-booking',         label: 'Book Astro Pitch'  },
       { href: '/football-for-all',      label: 'Football For All'  },
       { href: '/walking-football',      label: 'Walking Football'  },
       { href: '/ladies-football',       label: 'Ladies Football'   },

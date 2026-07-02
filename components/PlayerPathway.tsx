@@ -1,56 +1,96 @@
 import Link from 'next/link';
+import { ArrowRight } from 'lucide-react';
 
-const STEPS = [
-  { label: 'Academy', sub: 'Ages 4–6',  href: '/academy', active: false },
-  { label: 'Youth',   sub: 'U7 – U11',  href: '/teams',   active: false },
-  { label: 'Teen',    sub: 'U12 – U17', href: '/teams',   active: false },
-  { label: 'Senior',  sub: '17+',       href: '/seniors', active: false },
+const TRACKS = [
+  {
+    label: 'Boys',
+    colour: 'bg-brand-navy',
+    accent: 'bg-brand-neon',
+    textAccent: 'text-brand-neon',
+    steps: ['Academy', 'U7–U11', 'U12–U17', 'Seniors', 'Over 35s'],
+    href: '/teams?filter=boys',
+  },
+  {
+    label: 'Girls',
+    colour: 'bg-[#5a1235]',
+    accent: 'bg-pink-300',
+    textAccent: 'text-pink-300',
+    steps: ['Academy', 'U7–U18', 'Ladies Football'],
+    href: '/teams?filter=girls',
+  },
+  {
+    label: 'Community',
+    colour: 'bg-brand-green',
+    accent: 'bg-brand-neon',
+    textAccent: 'text-brand-neon',
+    steps: ['Walking Football', 'Ladies Football Fit', 'Football For All'],
+    href: '/football-for-all',
+  },
 ];
 
 interface PlayerPathwayProps {
-  activeStep?: number;
   className?: string;
 }
 
-export default function PlayerPathway({ activeStep, className = '' }: PlayerPathwayProps) {
+export default function PlayerPathway({ className = '' }: PlayerPathwayProps) {
   return (
     <div className={`w-full ${className}`}>
-      <p className="text-[10px] font-display font-black uppercase tracking-widest text-brand-charcoal/40 mb-3">
-        The RVR Player Pathway
-      </p>
-      <div className="flex items-stretch">
-        {STEPS.map((step, i) => {
-          const isActive = activeStep === i;
-          return (
-            <Link
-              key={step.label}
-              href={step.href}
-              className={`group flex-1 flex flex-col items-center justify-center py-3 px-2 text-center border-2 transition-all ${
-                i > 0 ? '-ml-0.5' : ''
-              } ${
-                isActive
-                  ? 'bg-brand-navy border-brand-neon z-10'
-                  : 'bg-white border-brand-navy/20 hover:border-brand-navy/50 hover:bg-brand-neon/5 z-0'
-              }`}
-            >
-              <span className={`font-display font-black text-xs uppercase leading-tight ${
-                isActive ? 'text-brand-neon' : 'text-brand-charcoal group-hover:text-brand-navy'
-              }`}>
-                {step.label}
+      <div className="flex items-center justify-between mb-4">
+        <p className="text-[10px] font-display font-black uppercase tracking-widest text-brand-charcoal/40">
+          The RVR Player Pathway
+        </p>
+        <Link
+          href="/pathway"
+          className="inline-flex items-center gap-1 text-[10px] font-display font-black uppercase tracking-widest text-brand-navy/50 hover:text-brand-navy transition-colors"
+        >
+          View full pathway
+          <ArrowRight className="h-3 w-3" aria-hidden="true" />
+        </Link>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        {TRACKS.map((track) => (
+          <Link
+            key={track.label}
+            href={track.href}
+            className={`group flex items-center gap-0 overflow-hidden border-2 border-brand-navy/15 hover:border-brand-navy/40 transition-all`}
+          >
+            {/* Label pill */}
+            <div className={`${track.colour} shrink-0 flex items-center justify-center px-3 py-3 self-stretch`}>
+              <span className={`font-display font-black text-[10px] uppercase tracking-widest ${track.textAccent} whitespace-nowrap`} style={{ writingMode: 'horizontal-tb' }}>
+                {track.label}
               </span>
-              <span className={`text-[10px] mt-0.5 ${
-                isActive ? 'text-brand-sky' : 'text-brand-charcoal/45'
-              }`}>
-                {step.sub}
-              </span>
-              {isActive && (
-                <span className="text-[11px] font-bold text-brand-neon/70 uppercase tracking-wide mt-1">
-                  You are here
-                </span>
-              )}
-            </Link>
-          );
-        })}
+            </div>
+
+            {/* Steps */}
+            <div className="flex items-center gap-0 flex-1 bg-white px-3 py-2.5 overflow-x-auto">
+              {track.steps.map((step, i) => (
+                <div key={step} className="flex items-center gap-0 shrink-0">
+                  <span className="font-display font-black text-[10px] uppercase tracking-wide text-brand-charcoal/70 whitespace-nowrap group-hover:text-brand-navy transition-colors">
+                    {step}
+                  </span>
+                  {i < track.steps.length - 1 && (
+                    <span className="mx-2 text-brand-charcoal/20 text-[10px]">›</span>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            {/* Arrow */}
+            <div className="shrink-0 bg-white pr-3 py-2.5 self-stretch flex items-center">
+              <ArrowRight className="h-3.5 w-3.5 text-brand-navy/25 group-hover:text-brand-navy transition-colors" aria-hidden="true" />
+            </div>
+          </Link>
+        ))}
+      </div>
+
+      <div className="mt-3 text-center">
+        <Link
+          href="/pathway"
+          className="inline-flex items-center gap-1.5 text-xs font-display font-black uppercase tracking-widest text-brand-navy border-b-2 border-brand-neon pb-0.5 hover:text-brand-green transition-colors"
+        >
+          See the full pathway →
+        </Link>
       </div>
     </div>
   );
