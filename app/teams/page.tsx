@@ -55,6 +55,41 @@ export default async function TeamsPage({
         }
       />
 
+      {/* Age group quick-reference — birth year for the current DDSL season */}
+      <div className="bg-brand-cream border-b border-brand-navy/10">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-5">
+          <p className="font-display font-black text-[10px] uppercase tracking-widest text-brand-green mb-3">
+            Which age group is my child?
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {[
+              { group: 'Academy', born: '2020–2022' },
+              { group: 'U7',  born: '2019' },
+              { group: 'U8',  born: '2018' },
+              { group: 'U9',  born: '2017' },
+              { group: 'U10', born: '2016' },
+              { group: 'U11', born: '2015' },
+              { group: 'U12', born: '2014' },
+              { group: 'U13', born: '2013' },
+              { group: 'U14', born: '2012' },
+              { group: 'U15', born: '2011' },
+              { group: 'U16', born: '2010' },
+              { group: 'U17', born: '2009' },
+            ].map(({ group, born }) => (
+              <div key={group} className="flex items-center gap-1.5 rounded-full border border-brand-navy/15 bg-white px-3 py-1.5 text-xs font-bold text-brand-charcoal">
+                <span className="font-display font-black uppercase text-brand-navy">{group}</span>
+                <span className="text-brand-muted">·</span>
+                <span className="text-brand-muted">b. {born}</span>
+              </div>
+            ))}
+          </div>
+          <p className="mt-2.5 text-xs text-brand-muted">
+            Based on {CLUB_SEASON.currentSeason} DDSL season. Not sure?{' '}
+            <a href="/contact" className="font-bold text-brand-navy underline underline-offset-2 hover:text-brand-green">Contact us</a> and we&apos;ll find the right team for your child.
+          </p>
+        </div>
+      </div>
+
         <TeamsClient
           youthDivisions={KNOWN_DIVISIONS}
           aflDivisions={AFL_DIVISIONS}

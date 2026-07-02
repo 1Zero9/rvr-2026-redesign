@@ -3,7 +3,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { UserPlus, CalendarDays, Trophy, Newspaper, Pause, Play } from 'lucide-react';
+import { UserPlus, Route, Trophy, Newspaper, Pause, Play } from 'lucide-react';
 import { computeClubStats } from '@/lib/club-stats';
 import { CLUB_SEASON } from '@/config/club-season';
 
@@ -11,7 +11,7 @@ const HERO_CTAS = [
   { label: 'Join the Club',   sub: `Register for ${CLUB_SEASON.registrationSeason}`, href: '/register', icon: UserPlus },
   { label: 'Match Day',       sub: 'Fixtures & results',       href: '/fixtures',      icon: Trophy       },
   { label: 'Club News',       sub: 'Latest updates',           href: '/news',          icon: Newspaper    },
-  { label: 'Book Astro Pitch', sub: 'Reserve your slot online', href: '/astro-booking', icon: CalendarDays },
+  { label: 'Player Pathway',  sub: 'Academy to seniors',       href: '/pathway',       icon: Route        },
 ] as const;
 
 const { yearsActive, totalTeams, estimatedPlayers } = computeClubStats();
@@ -34,6 +34,7 @@ const explodeProps = [
 
 export default function Hero() {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const statsRef = useRef<HTMLDivElement>(null);
   const [videoPaused, setVideoPaused] = useState(false);
   const [ready, setReady] = useState(false);
 
@@ -47,7 +48,17 @@ export default function Hero() {
     }
   }, []);
 
-  useEffect(() => { setReady(true); }, []);
+  // Trigger explode-in animation when stat cards enter the viewport
+  useEffect(() => {
+    const el = statsRef.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setReady(true); obs.disconnect(); } },
+      { threshold: 0.1 },
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
 
   const toggleVideo = () => {
     const v = videoRef.current;
@@ -154,8 +165,8 @@ export default function Hero() {
           ))}
         </div>
 
-        {/* Stat cards — scatter-then-snap entrance */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 w-full">
+        {/* Stat cards — scatter-then-snap entrance, fires when scrolled into view */}
+        <div ref={statsRef} className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 w-full">
           {heroStats.map((stat, i) => {
             const ep = explodeProps[i];
             return (

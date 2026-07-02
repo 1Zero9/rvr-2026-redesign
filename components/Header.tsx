@@ -4,9 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { ArrowRight, ChevronDown, ChevronRight, Info, Megaphone, Menu, X } from 'lucide-react';
-import type { PublicAnnouncement } from '@/lib/announcements/types';
-import { CATEGORY_CONFIG } from '@/lib/announcements/types';
+import { ArrowRight, ChevronDown, ChevronRight, Menu, X } from 'lucide-react';
 import SearchOverlay from './SearchOverlay';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -58,6 +56,7 @@ const NAV_SECTIONS: NavSection[] = [
         heading: 'Register',
         links: [
           { href: '/register',              label: 'Register a Player' },
+          { href: '/trials',                label: 'Trials'            },
           { href: '/pathway',               label: 'Player Pathway'    },
           { href: '/membership-calculator', label: 'Calculate Fees'    },
         ],
@@ -94,7 +93,7 @@ const NAV_SECTIONS: NavSection[] = [
           { href: '/news',          label: 'Club News'         },
           { href: '/get-involved',  label: 'Volunteer & Coach' },
           { href: '/sponsorship',   label: 'Sponsorship'       },
-          { href: '/boot-room',     label: 'Boot Room'         },
+          { href: '/boot-room',     label: 'Boot Room (kit swap)' },
           { href: '/contact',       label: 'Contact Us'        },
           { href: '/shop',          label: 'Club Shop'         },
         ],
@@ -133,6 +132,7 @@ const MOBILE_NAV_SECTIONS: MobileNavSection[] = [
     href: '/register',
     topLinkLabel: 'Register a player',
     links: [
+      { href: '/trials',                label: 'Trials'            },
       { href: '/pathway',               label: 'Player Pathway'    },
       { href: '/membership-calculator', label: 'Calculate Fees'    },
       { href: '/community',             label: 'Community Football'},
@@ -146,15 +146,15 @@ const MOBILE_NAV_SECTIONS: MobileNavSection[] = [
     href: '/club',
     topLinkLabel: 'Club overview',
     links: [
-      { href: '/club/history',      label: 'Our History'       },
-      { href: '/club/anniversary',  label: '45th Anniversary'  },
-      { href: '/club/safeguarding', label: 'Safeguarding'      },
-      { href: '/news',              label: 'Club News'         },
-      { href: '/get-involved',      label: 'Volunteer & Coach' },
-      { href: '/sponsorship',       label: 'Sponsorship'       },
-      { href: '/boot-room',         label: 'Boot Room'         },
-      { href: '/contact',           label: 'Contact Us'        },
-      { href: '/campaigns',         label: 'Campaigns'         },
+      { href: '/club/history',      label: 'Our History'          },
+      { href: '/club/anniversary',  label: '45th Anniversary'     },
+      { href: '/club/safeguarding', label: 'Safeguarding'         },
+      { href: '/news',              label: 'Club News'            },
+      { href: '/get-involved',      label: 'Volunteer & Coach'    },
+      { href: '/sponsorship',       label: 'Sponsorship'          },
+      { href: '/boot-room',         label: 'Boot Room (kit swap)' },
+      { href: '/contact',           label: 'Contact Us'           },
+      { href: '/campaigns',         label: 'Campaigns'            },
     ],
   },
 ];
@@ -171,6 +171,7 @@ function isNavActive(label: string, pathname: string): boolean {
                                pathname === '/pitch-locations' ||
                                pathname === '/astro-booking';
   if (label === 'Join') return pathname === '/register' ||
+                               pathname === '/trials' ||
                                pathname === '/pathway' ||
                                pathname === '/membership-calculator' ||
                                pathname === '/community' ||
@@ -200,10 +201,10 @@ function isMobileSectionActive(section: MobileNavSection, pathname: string): boo
            pathname === '/pitch-locations';
   }
   if (section.label === 'Join') {
-    return pathname === '/register' || pathname === '/pathway' ||
-           pathname === '/membership-calculator' || pathname === '/community' ||
-           pathname === '/football-for-all' || pathname === '/walking-football' ||
-           pathname === '/ladies-football';
+    return pathname === '/register' || pathname === '/trials' ||
+           pathname === '/pathway' || pathname === '/membership-calculator' ||
+           pathname === '/community' || pathname === '/football-for-all' ||
+           pathname === '/walking-football' || pathname === '/ladies-football';
   }
   if (section.label === 'Club') {
     return pathname.startsWith('/club') || pathname === '/news' ||
@@ -218,23 +219,12 @@ function isMobileSectionActive(section: MobileNavSection, pathname: string): boo
 // ─── Component ───────────────────────────────────────────────────────────────
 
 export default function Header() {
-  const [open,        setOpen]        = useState(false);
-  const [openSection, setOpenSection] = useState<string | null>(null);
+  const [open,          setOpen]          = useState(false);
+  const [openSection,   setOpenSection]   = useState<string | null>(null);
   const [mobileSection, setMobileSection] = useState<string | null>(null);
-  const [searchOpen,  setSearchOpen]  = useState(false);
-  const [infoOpen,    setInfoOpen]    = useState(false);
-  const [newsOpen,    setNewsOpen]    = useState(false);
-  const [announcements, setAnnouncements] = useState<PublicAnnouncement[]>([]);
-  const [newsLoaded,  setNewsLoaded]  = useState(false);
-  const [tabsVisible, setTabsVisible] = useState(true);
-  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [searchOpen,    setSearchOpen]    = useState(false);
+  const closeTimer      = useRef<ReturnType<typeof setTimeout> | null>(null);
   const searchButtonRef = useRef<HTMLButtonElement>(null);
-  const infoCloseRef    = useRef<HTMLButtonElement>(null);
-  const newsCloseRef    = useRef<HTMLButtonElement>(null);
-  const infoTabRef      = useRef<HTMLButtonElement>(null);
-  const newsTabRef      = useRef<HTMLButtonElement>(null);
-  const infoHasOpened   = useRef(false);
-  const newsHasOpened   = useRef(false);
   const pathname = usePathname();
   const activeMobileSection = MOBILE_NAV_SECTIONS.find((section) => isMobileSectionActive(section, pathname));
 
@@ -242,55 +232,20 @@ export default function Header() {
   const toggleMobileNav = () => {
     if (!open) {
       setMobileSection(activeMobileSection?.links?.length ? activeMobileSection.label : null);
-      setNewsOpen(false);
     }
     setOpen((current) => !current);
   };
-  const openNews = () => { setNewsOpen(true); setOpen(false); };
 
-  // Focus management: move focus into panels on open, return to trigger on close.
-  // infoHasOpened / newsHasOpened guards prevent focus from firing on initial mount.
-  useEffect(() => {
-    if (infoOpen) {
-      infoHasOpened.current = true;
-      requestAnimationFrame(() => infoCloseRef.current?.focus());
-    } else if (infoHasOpened.current) {
-      requestAnimationFrame(() => infoTabRef.current?.focus());
-    }
-  }, [infoOpen]);
-
-  useEffect(() => {
-    if (newsOpen) {
-      newsHasOpened.current = true;
-      requestAnimationFrame(() => newsCloseRef.current?.focus());
-    } else if (newsHasOpened.current) {
-      requestAnimationFrame(() => newsTabRef.current?.focus());
-    }
-  }, [newsOpen]);
-
-  // Auto-hide side tabs after 10 seconds
-  useEffect(() => {
-    const timer = setTimeout(() => setTabsVisible(false), 10000);
-    return () => clearTimeout(timer);
-  }, []);
-
-  // Fetch announcements for header news panel
-  useEffect(() => {
-    fetch('/api/announcements')
-      .then((r) => r.json())
-      .then((data: PublicAnnouncement[]) => { setAnnouncements(data); setNewsLoaded(true); })
-      .catch(() => setNewsLoaded(true));
-  }, []);
   const closeSearch = useCallback(() => {
     setSearchOpen(false);
     requestAnimationFrame(() => searchButtonRef.current?.focus());
   }, []);
 
-  // Body scroll lock for mobile overlay and panels
+  // Body scroll lock for mobile overlay
   useEffect(() => {
-    document.body.style.overflow = (open || infoOpen || newsOpen) ? 'hidden' : '';
+    document.body.style.overflow = open ? 'hidden' : '';
     return () => { document.body.style.overflow = ''; };
-  }, [open, infoOpen, newsOpen]);
+  }, [open]);
 
   // Close mega menu and search on Escape
   useEffect(() => {
@@ -298,14 +253,12 @@ export default function Header() {
       if (e.key === 'Escape') {
         setOpenSection(null);
         if (open) setOpen(false);
-        if (infoOpen) setInfoOpen(false);
-        if (newsOpen) setNewsOpen(false);
         if (searchOpen) closeSearch();
       }
     };
     document.addEventListener('keydown', handler);
     return () => document.removeEventListener('keydown', handler);
-  }, [closeSearch, infoOpen, newsOpen, open, searchOpen]);
+  }, [closeSearch, open, searchOpen]);
 
   useEffect(() => {
     return () => {
@@ -523,209 +476,6 @@ export default function Header() {
       {/* Search overlay */}
       <SearchOverlay isOpen={searchOpen} onClose={closeSearch} />
 
-      {/* Left bookmark tabs — mobile */}
-      <div className={`lg:hidden fixed left-0 z-[55] flex flex-col gap-1.5 transition-opacity duration-700 ${tabsVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'}`} style={{ top: '50%', transform: 'translateY(-50%)' }}>
-        <button ref={infoTabRef} type="button" aria-label="Open club info" onClick={() => setInfoOpen(true)}
-          aria-hidden={infoOpen}
-          className={`flex flex-col items-center gap-0.5 bg-blue-600/35 text-blue-200/80 hover:bg-blue-600 hover:text-white rounded-r-lg px-2 py-2.5 transition-all ${infoOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
-          style={{ boxShadow: '3px 2px 8px rgba(0,0,0,0.18)' }}>
-          <Info className="h-5 w-5" strokeWidth={2.5} />
-          <span className="font-display font-black text-[10px] uppercase tracking-wide">info</span>
-        </button>
-        {!newsOpen && newsLoaded && announcements.length > 0 && (
-          <button ref={newsTabRef} type="button" aria-label="Open club news" onClick={openNews}
-            className="flex flex-col items-center gap-0.5 bg-emerald-600/35 text-emerald-200/80 hover:bg-emerald-600 hover:text-white rounded-r-lg px-2 py-2.5 transition-all"
-            style={{ boxShadow: '3px 2px 8px rgba(0,0,0,0.18)' }}>
-            <Megaphone className="h-5 w-5" strokeWidth={2.5} />
-            <span className="font-display font-black text-[10px] uppercase tracking-wide">news</span>
-          </button>
-        )}
-      </div>
-
-      {/* Left bookmark tabs — desktop (always visible, solid) */}
-      <div className="hidden lg:flex fixed left-0 z-[55] flex-col gap-2" style={{ top: '50%', transform: 'translateY(-50%)' }}>
-        <button ref={infoTabRef} type="button" aria-label="Open club info" onClick={() => setInfoOpen(true)}
-          aria-hidden={infoOpen}
-          className={`flex flex-col items-center justify-center gap-2 bg-blue-700 text-white hover:bg-blue-500 rounded-r-lg px-2.5 transition-all h-52 ${infoOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
-          style={{ writingMode: 'vertical-lr', boxShadow: '4px 0 12px rgba(0,0,0,0.35)' }}>
-          <Info className="h-4 w-4 shrink-0" />
-          <span className="font-display font-black text-[10px] uppercase tracking-widest">info</span>
-        </button>
-        {!newsOpen && newsLoaded && announcements.length > 0 && (
-          <button ref={newsTabRef} type="button" aria-label="Open club news" onClick={openNews}
-            className="flex flex-col items-center justify-center gap-2 bg-emerald-700 text-white hover:bg-emerald-500 rounded-r-lg px-2.5 transition-all h-52"
-            style={{ writingMode: 'vertical-lr', boxShadow: '4px 0 12px rgba(0,0,0,0.35)' }}>
-            <Megaphone className="h-4 w-4 shrink-0" />
-            <span className="font-display font-black text-[10px] uppercase tracking-widest">news</span>
-          </button>
-        )}
-      </div>
-
-      {/* Info panel — slides in from the left */}
-      <div
-        className={`fixed inset-0 z-[60] transition ${
-          infoOpen ? 'pointer-events-auto' : 'pointer-events-none'
-        }`}
-        aria-hidden={!infoOpen}
-      >
-        <button
-          type="button"
-          aria-label="Close info panel"
-          onClick={() => setInfoOpen(false)}
-          className={`absolute inset-0 bg-brand-charcoal/40 transition-opacity duration-300 ease-out ${
-            infoOpen ? 'opacity-100' : 'opacity-0'
-          }`}
-        />
-        <aside
-          role="dialog"
-          aria-modal="true"
-          aria-label="Site information"
-          className={`absolute inset-y-0 left-0 flex w-3/4 max-w-sm flex-col border-r-4 border-blue-400 bg-blue-700 transition-transform duration-300 ease-out ${
-            infoOpen ? 'translate-x-0 shadow-[18px_0_40px_rgba(0,0,0,0.35)]' : '-translate-x-full shadow-none'
-          }`}
-        >
-          <div className="flex h-16 shrink-0 items-center justify-between px-5 border-b border-blue-600">
-            <div className="flex items-center gap-2">
-              <Info className="h-4 w-4 text-blue-200" />
-              <span className="font-display font-black italic uppercase text-white tracking-wide">
-                Club Update
-              </span>
-            </div>
-            <button
-              ref={infoCloseRef}
-              type="button"
-              aria-label="Close info panel"
-              onClick={() => setInfoOpen(false)}
-              className="flex h-9 w-9 items-center justify-center rounded-xl border-2 border-blue-500 text-blue-200 hover:border-white hover:text-white transition-colors"
-            >
-              <X className="h-5 w-5" />
-            </button>
-          </div>
-
-          <div className="flex flex-col gap-5 px-5 py-6">
-            <div>
-              <p className="font-display font-black italic text-2xl uppercase text-white leading-tight">
-                Welcome to RVR
-              </p>
-              <div className="mt-1 h-1 w-10 bg-blue-300" />
-            </div>
-            <p className="text-sm text-blue-100/80 leading-relaxed">
-              Rivervalley Rangers AFC — Swords&apos; community football club since 1981. Academy, youth, senior, walking football, and Football For All programmes available.
-            </p>
-            <div className="space-y-2">
-              <div className="flex items-center gap-2 text-sm text-blue-100/90">
-                <span className="text-blue-300 font-black">✓</span>
-                <span>100% Garda Vetted Coaches</span>
-              </div>
-              <div className="flex items-center gap-2 text-sm text-blue-100/90">
-                <span className="text-blue-300 font-black">✓</span>
-                <span>FAI Club Mark Accredited</span>
-              </div>
-              <div className="flex items-center gap-2 text-sm text-blue-100/90">
-                <span className="text-blue-300 font-black">✓</span>
-                <span>Teams for ages 4 through adult</span>
-              </div>
-            </div>
-            <Link
-              href="/register"
-              onClick={() => setInfoOpen(false)}
-              className="inline-flex items-center justify-center gap-2 min-h-[44px] px-5 bg-white text-blue-700 font-display font-black uppercase text-sm border-3 border-blue-900 shadow-brutalist hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all"
-            >
-              Join the Club →
-            </Link>
-            <Link
-              href="/contact"
-              onClick={() => setInfoOpen(false)}
-              className="inline-flex items-center justify-center gap-2 min-h-[44px] px-5 bg-transparent text-blue-200 font-display font-black uppercase text-sm border-2 border-blue-400/50 hover:border-white hover:text-white transition-colors"
-            >
-              Get in Touch
-            </Link>
-          </div>
-        </aside>
-      </div>
-
-      {/* News panel — slides in from the right */}
-      <div
-        className={`fixed inset-0 z-[65] transition ${
-          newsOpen ? 'pointer-events-auto' : 'pointer-events-none'
-        }`}
-        aria-hidden={!newsOpen}
-      >
-        <button
-          type="button"
-          aria-label="Close news panel"
-          onClick={() => setNewsOpen(false)}
-          className={`absolute inset-0 bg-brand-charcoal/40 transition-opacity duration-300 ease-out ${
-            newsOpen ? 'opacity-100' : 'opacity-0'
-          }`}
-        />
-        <aside
-          role="dialog"
-          aria-modal="true"
-          aria-label="Club news"
-          className={`absolute inset-y-0 left-0 flex w-3/4 max-w-sm flex-col border-r-4 border-emerald-800 bg-emerald-600 transition-transform duration-300 ease-out ${
-            newsOpen ? 'translate-x-0 shadow-[18px_0_40px_rgba(0,0,0,0.4)]' : '-translate-x-full shadow-none'
-          }`}
-        >
-          <div className="flex h-16 shrink-0 items-center justify-between px-5 border-b border-white/20">
-            <div className="flex items-center gap-2">
-              <Megaphone className="h-4 w-4 text-white" />
-              <span className="font-display font-black italic uppercase text-white tracking-wide">
-                Club News
-              </span>
-            </div>
-            <button
-              ref={newsCloseRef}
-              type="button"
-              aria-label="Close news panel"
-              onClick={() => setNewsOpen(false)}
-              className="flex h-9 w-9 items-center justify-center rounded-xl border-2 border-white/30 text-white hover:border-white hover:bg-white/10 transition-colors"
-            >
-              <X className="h-5 w-5" />
-            </button>
-          </div>
-
-          <div className="flex-1 overflow-y-auto px-5 py-6 space-y-6">
-            {announcements.map((a) => {
-              const cat = CATEGORY_CONFIG[a.category];
-              return (
-                <div key={a.id}>
-                  <span className={`inline-block font-display font-black uppercase text-[10px] tracking-widest px-2 py-0.5 mb-3 ${cat.colour} ${cat.textColour}`}>
-                    {cat.label}
-                  </span>
-                  <p className="font-display font-black italic uppercase text-white text-xl leading-tight">
-                    {a.title}
-                  </p>
-                  <div className="mt-1.5 h-0.5 w-8 bg-white/60" />
-                  <p className="mt-3 text-sm text-white/80 leading-relaxed">
-                    {a.body}
-                  </p>
-                  {a.ctaUrl && a.ctaLabel && (
-                    <Link
-                      href={a.ctaUrl}
-                      onClick={() => setNewsOpen(false)}
-                      className="inline-block mt-3 font-display font-black italic uppercase text-sm text-white/90 hover:text-white underline transition-colors"
-                    >
-                      {a.ctaLabel} →
-                    </Link>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-
-          <div className="shrink-0 border-t border-white/20 p-5">
-            <Link
-              href="/news"
-              onClick={() => setNewsOpen(false)}
-              className="flex items-center justify-center min-h-[52px] w-full bg-white text-emerald-700 font-display font-black uppercase text-sm border-3 border-emerald-900 shadow-brutalist hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all"
-            >
-              All News & Updates →
-            </Link>
-          </div>
-        </aside>
-      </div>
-
       {/* Mobile slide-out drawer */}
       <div
         className={`fixed inset-0 z-[60] lg:hidden transition ${
@@ -757,7 +507,7 @@ export default function Header() {
               onClick={close}
               className="flex h-11 w-11 items-center justify-center rounded-xl border-2 border-brand-sky/30 bg-brand-neon text-brand-charcoal shadow-[3px_3px_0_rgba(18,18,18,0.35)] transition active:translate-y-0.5 active:shadow-none"
             >
-              <ArrowRight className="h-6 w-6" />
+              <X className="h-6 w-6" />
             </button>
           </div>
 

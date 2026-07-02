@@ -179,7 +179,7 @@ export default function CommunityPage() {
               { icon: '🤝', text: 'Open to all — no trials, no pressure' },
             ].map((item) => (
               <div key={item.text} className="flex items-center gap-3 text-sm font-semibold text-brand-sky">
-                <span className="text-xl select-none shrink-0" aria-hidden="true">{item.icon}</span>
+                <span className="text-xl select-none shrink-0" role="img" aria-hidden="true">{item.icon}</span>
                 {item.text}
               </div>
             ))}
