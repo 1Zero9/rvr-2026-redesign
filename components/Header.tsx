@@ -541,19 +541,19 @@ export default function Header() {
         )}
       </div>
 
-      {/* Left bookmark tabs — desktop */}
-      <div className={`hidden lg:flex fixed left-0 z-[55] flex-col gap-2 transition-opacity duration-700 ${tabsVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'}`} style={{ top: '50%', transform: 'translateY(-50%)' }}>
+      {/* Left bookmark tabs — desktop (always visible, solid) */}
+      <div className="hidden lg:flex fixed left-0 z-[55] flex-col gap-2" style={{ top: '50%', transform: 'translateY(-50%)' }}>
         <button ref={infoTabRef} type="button" aria-label="Open club info" onClick={() => setInfoOpen(true)}
           aria-hidden={infoOpen}
-          className={`flex flex-col items-center justify-center gap-2 bg-blue-600/35 text-blue-200/80 hover:bg-blue-600 hover:text-white rounded-r-lg px-2 shadow-md transition-all h-52 ${infoOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
-          style={{ writingMode: 'vertical-lr' }}>
+          className={`flex flex-col items-center justify-center gap-2 bg-blue-700 text-white hover:bg-blue-500 rounded-r-lg px-2.5 transition-all h-52 ${infoOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+          style={{ writingMode: 'vertical-lr', boxShadow: '4px 0 12px rgba(0,0,0,0.35)' }}>
           <Info className="h-4 w-4 shrink-0" />
           <span className="font-display font-black text-[10px] uppercase tracking-widest">info</span>
         </button>
         {!newsOpen && newsLoaded && announcements.length > 0 && (
           <button ref={newsTabRef} type="button" aria-label="Open club news" onClick={openNews}
-            className="flex flex-col items-center justify-center gap-2 bg-emerald-600/35 text-emerald-200/80 hover:bg-emerald-600 hover:text-white rounded-r-lg px-2 shadow-md transition-all h-52"
-            style={{ writingMode: 'vertical-lr' }}>
+            className="flex flex-col items-center justify-center gap-2 bg-emerald-700 text-white hover:bg-emerald-500 rounded-r-lg px-2.5 transition-all h-52"
+            style={{ writingMode: 'vertical-lr', boxShadow: '4px 0 12px rgba(0,0,0,0.35)' }}>
             <Megaphone className="h-4 w-4 shrink-0" />
             <span className="font-display font-black text-[10px] uppercase tracking-widest">news</span>
           </button>

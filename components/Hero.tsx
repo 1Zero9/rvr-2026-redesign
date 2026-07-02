@@ -54,8 +54,8 @@ export default function Hero() {
   };
 
   return (
-    <section className="relative min-h-[80vh] w-full overflow-hidden flex items-center justify-center bg-brand-navy text-white border-b border-brand-sky/20">
-      <div className="absolute inset-0 z-0 select-none pointer-events-none">
+    <section className="relative min-h-[80vh] w-full flex items-start justify-center bg-brand-navy text-white border-b border-brand-sky/20">
+      <div className="absolute inset-0 z-0 select-none pointer-events-none overflow-hidden">
         <video
           ref={videoRef}
           autoPlay
