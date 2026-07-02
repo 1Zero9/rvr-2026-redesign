@@ -59,7 +59,7 @@ export default function LottoWidget({
 
   return (
     <section className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-      <article className="overflow-hidden rounded-[2rem] border-4 border-brand-navy bg-brand-navy text-white shadow-[6px_6px_0_#85E320]">
+      <article className="overflow-hidden rounded-[2rem] border-4 border-brand-navy bg-brand-navy text-white shadow-brutalist-neon-lg">
         <div className="grid gap-0 lg:grid-cols-[1.05fr_0.95fr]">
           <div className="p-5 sm:p-7 lg:p-8">
             <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl border-3 border-white bg-brand-neon shadow-[3px_3px_0_#FFFFFF]">
@@ -89,7 +89,7 @@ export default function LottoWidget({
 
           <div className="border-t-4 border-white bg-white p-5 text-brand-charcoal sm:p-7 lg:border-l-4 lg:border-t-0 lg:p-8">
             <div className="grid gap-4">
-              <div className="rounded-2xl border-4 border-brand-navy bg-brand-cream p-5 shadow-[5px_5px_0_#0B1F3B]">
+              <div className="rounded-2xl border-4 border-brand-navy bg-brand-cream p-5 shadow-brutalist">
                 <div className="flex items-center gap-2">
                   <ShieldCheck className="h-5 w-5 text-brand-green" aria-hidden="true" />
                   <p className="font-display text-xs font-black uppercase text-brand-green">
@@ -101,7 +101,7 @@ export default function LottoWidget({
                 </p>
               </div>
 
-              <div className="rounded-2xl border-4 border-brand-navy bg-[#f1ffe1] p-5 shadow-[5px_5px_0_#0B1F3B]">
+              <div className="rounded-2xl border-4 border-brand-navy bg-[#f1ffe1] p-5 shadow-brutalist">
                 <div className="flex items-center gap-2">
                   <CalendarDays
                     className="h-5 w-5 text-brand-green"
@@ -133,7 +133,7 @@ export default function LottoWidget({
             role="dialog"
             aria-modal="true"
             aria-labelledby="lotto-checkout-title"
-            className="flex h-[calc(100dvh-1.5rem)] w-full max-w-5xl flex-col overflow-hidden rounded-2xl border-4 border-brand-navy bg-white shadow-[6px_6px_0_#85E320] sm:h-[min(88dvh,820px)]"
+            className="flex h-[calc(100dvh-1.5rem)] w-full max-w-5xl flex-col overflow-hidden rounded-2xl border-4 border-brand-navy bg-white shadow-brutalist-neon-lg sm:h-[min(88dvh,820px)]"
           >
             <header className="flex shrink-0 items-center justify-between gap-4 border-b-4 border-brand-navy bg-brand-navy px-4 py-3 text-white sm:px-5">
               <div className="min-w-0">

@@ -381,7 +381,7 @@ export default function KitDesignCompetition({
                     type="button"
                     onClick={() => handleVote(submission.id)}
                     disabled={hasVoted || isLoading}
-                    className={`mt-5 w-full rounded-full border-3 border-brand-charcoal px-5 py-3 font-display text-sm font-black uppercase shadow-[4px_4px_0_#121212] transition ${
+                    className={`mt-5 w-full rounded-full border-3 border-brand-charcoal px-5 py-3 font-display text-sm font-black uppercase shadow-brutalist-charcoal transition ${
                       hasVoted
                         ? "bg-zinc-200 text-zinc-500"
                         : "bg-brand-neon text-brand-charcoal hover:-translate-y-0.5"

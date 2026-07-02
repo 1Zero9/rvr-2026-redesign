@@ -388,7 +388,7 @@ export default function SiblingRosterPricingSelector() {
                   return (
                     <article
                       key={field.id}
-                      className="rounded-2xl border-3 border-brand-charcoal bg-white p-5 shadow-[4px_4px_0_#121212]"
+                      className="rounded-2xl border-3 border-brand-charcoal bg-white p-5 shadow-brutalist-charcoal"
                     >
                       <div className="mb-4 flex items-start justify-between gap-4">
                         <div>

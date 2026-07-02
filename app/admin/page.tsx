@@ -43,7 +43,7 @@ function SectionCard({ card }: { card: NavCard }) {
   return (
     <Link
       href={card.href}
-      className="group flex flex-col gap-3 rounded-xl border-2 border-brand-navy/15 bg-white p-5 transition hover:border-brand-navy hover:shadow-[3px_3px_0_#0B1F3B]"
+      className="group flex flex-col gap-3 rounded-xl border-2 border-brand-navy/15 bg-white p-5 transition hover:border-brand-navy hover:shadow-mid-brutalist"
     >
       <div className="flex items-start justify-between gap-2">
         <span className="flex h-9 w-9 items-center justify-center rounded-lg border-2 border-brand-navy/20 bg-brand-cream group-hover:bg-brand-neon group-hover:border-brand-charcoal transition">

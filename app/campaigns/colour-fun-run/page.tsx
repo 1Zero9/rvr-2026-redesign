@@ -80,7 +80,7 @@ export default function ColourFunRunPage() {
       <main>
         <section className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:py-16">
           <div className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr] lg:items-stretch">
-            <div className="relative overflow-hidden rounded-[2rem] border-4 border-brand-charcoal bg-white p-6 shadow-[6px_6px_0_#121212] sm:p-8 lg:p-10">
+            <div className="relative overflow-hidden rounded-[2rem] border-4 border-brand-charcoal bg-white p-6 shadow-brutalist-charcoal-lg sm:p-8 lg:p-10">
               <div className="mb-6 inline-flex items-center gap-2 rounded-full border-3 border-brand-charcoal bg-brand-neon px-4 py-2 font-display text-xs font-black uppercase shadow-[3px_3px_0_#121212]">
                 <Sparkles className="h-4 w-4" aria-hidden="true" />
                 Annual family event
@@ -116,7 +116,7 @@ export default function ColourFunRunPage() {
               </div>
             </div>
 
-            <aside className="rounded-[2rem] border-4 border-brand-charcoal bg-brand-charcoal p-6 text-white shadow-[6px_6px_0_#121212] sm:p-8">
+            <aside className="rounded-[2rem] border-4 border-brand-charcoal bg-brand-charcoal p-6 text-white shadow-brutalist-charcoal-lg sm:p-8">
               <div className="flex h-14 w-14 items-center justify-center rounded-2xl border-3 border-white/20 bg-brand-neon shadow-[3px_3px_0_#FAF8F5]">
                 <PartyPopper className="h-7 w-7 text-brand-charcoal" aria-hidden="true" />
               </div>
@@ -141,7 +141,7 @@ export default function ColourFunRunPage() {
         </section>
 
         <section className="mx-auto max-w-6xl px-4 pb-12 sm:px-6 lg:pb-16">
-          <div className="rounded-[2rem] border-4 border-brand-charcoal bg-white p-5 shadow-[6px_6px_0_#121212] sm:p-8">
+          <div className="rounded-[2rem] border-4 border-brand-charcoal bg-white p-5 shadow-brutalist-charcoal-lg sm:p-8">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
               <div>
                 <p className="font-display text-xs font-black uppercase text-brand-green">
@@ -164,7 +164,7 @@ export default function ColourFunRunPage() {
                 return (
                   <article
                     key={item.step}
-                    className="rounded-2xl border-3 border-brand-charcoal bg-brand-cream p-5 shadow-[4px_4px_0_#121212]"
+                    className="rounded-2xl border-3 border-brand-charcoal bg-brand-cream p-5 shadow-brutalist-charcoal"
                   >
                     <div className="flex items-start justify-between gap-4">
                       <span className="font-display text-4xl font-black text-brand-green">

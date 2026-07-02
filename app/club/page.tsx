@@ -147,7 +147,7 @@ export default function ClubPage() {
           {clubValues.map((value) => (
             <article
               key={value.title}
-              className="rounded-2xl border-3 border-brand-navy bg-white p-5 shadow-[4px_4px_0_#0B1F3B]"
+              className="rounded-2xl border-3 border-brand-navy bg-white p-5 shadow-sm-brutalist"
             >
               <h3 className="font-display text-xl font-black uppercase text-brand-navy">
                 {value.title}

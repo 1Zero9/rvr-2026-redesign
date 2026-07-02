@@ -150,10 +150,10 @@ export default function SafeguardingPage() {
               {complianceDocuments.map((document) => (
                 <article
                   key={document.title}
-                  className="flex min-h-72 flex-col justify-between rounded-2xl border-4 border-brand-navy bg-brand-cream p-6 shadow-[6px_6px_0_#0B1F3B]"
+                  className="flex min-h-72 flex-col justify-between rounded-2xl border-4 border-brand-navy bg-brand-cream p-6 shadow-brutalist"
                 >
                   <div>
-                    <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl border-3 border-brand-navy bg-brand-neon shadow-[3px_3px_0_#0B1F3B]">
+                    <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl border-3 border-brand-navy bg-brand-neon shadow-mid-brutalist">
                       <FileText
                         className="h-6 w-6 text-brand-charcoal"
                         aria-hidden="true"

@@ -59,7 +59,7 @@ export default async function FeatureAvailabilityPage() {
           {Object.entries(FEATURE_DEFINITIONS).map(([key, definition]) => (
             <label
               key={key}
-              className="flex cursor-pointer items-start gap-4 border-3 border-brand-charcoal bg-white p-5 shadow-[4px_4px_0_#121212]"
+              className="flex cursor-pointer items-start gap-4 border-3 border-brand-charcoal bg-white p-5 shadow-brutalist-charcoal"
             >
               <input
                 type="checkbox"

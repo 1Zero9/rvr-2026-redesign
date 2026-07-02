@@ -207,7 +207,7 @@ export default function KitCompetition() {
     <section className="bg-brand-navy text-white">
       <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:py-16">
         <div className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
-          <div className="rounded-[2rem] border-4 border-white bg-brand-navy p-6 shadow-[6px_6px_0_#85E320] sm:p-8">
+          <div className="rounded-[2rem] border-4 border-white bg-brand-navy p-6 shadow-brutalist-neon-lg sm:p-8">
             <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl border-3 border-white bg-brand-neon shadow-[3px_3px_0_#FFFFFF]">
               <Shirt className="h-7 w-7 text-brand-charcoal" aria-hidden="true" />
             </div>
@@ -232,7 +232,7 @@ export default function KitCompetition() {
 
           <form
             onSubmit={submitDesign}
-            className="rounded-[2rem] border-4 border-white bg-white p-6 text-brand-charcoal shadow-[6px_6px_0_#85E320] sm:p-8"
+            className="rounded-[2rem] border-4 border-white bg-white p-6 text-brand-charcoal shadow-brutalist-neon-lg sm:p-8"
           >
             <p className="font-display text-xs font-black uppercase text-brand-green">
               Submit an entry
@@ -318,7 +318,7 @@ export default function KitCompetition() {
           </form>
         </div>
 
-        <div className="mt-10 rounded-[2rem] border-4 border-white bg-white p-5 text-brand-charcoal shadow-[6px_6px_0_#85E320] sm:p-8">
+        <div className="mt-10 rounded-[2rem] border-4 border-white bg-white p-5 text-brand-charcoal shadow-brutalist-neon-lg sm:p-8">
           <div className="mb-7 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <p className="font-display text-xs font-black uppercase text-brand-green">
@@ -340,7 +340,7 @@ export default function KitCompetition() {
               return (
                 <article
                   key={submission.id}
-                  className="overflow-hidden rounded-2xl border-4 border-brand-navy bg-brand-cream shadow-[6px_6px_0_#0B1F3B]"
+                  className="overflow-hidden rounded-2xl border-4 border-brand-navy bg-brand-cream shadow-brutalist"
                 >
                   <div className="flex aspect-[4/3] items-center justify-center border-b-4 border-brand-navy bg-white">
                     {submission.thumbnailUrl ? (
@@ -377,7 +377,7 @@ export default function KitCompetition() {
                       type="button"
                       onClick={() => voteForSubmission(submission.id)}
                       disabled={hasVoted}
-                      className={`mt-5 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full border-3 border-brand-charcoal px-5 py-3 font-display text-sm font-black uppercase shadow-[4px_4px_0_#121212] transition ${
+                      className={`mt-5 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full border-3 border-brand-charcoal px-5 py-3 font-display text-sm font-black uppercase shadow-brutalist-charcoal transition ${
                         hasVoted
                           ? "cursor-not-allowed bg-zinc-200 text-zinc-500"
                           : "bg-brand-neon text-brand-charcoal hover:-translate-y-0.5"

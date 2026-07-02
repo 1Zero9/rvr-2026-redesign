@@ -435,7 +435,7 @@ export default function FamilyRegistrationWizard({
                 {fields.map((field, index) => (
                   <div
                     key={field.id}
-                    className="rounded-2xl border-3 border-brand-charcoal bg-white p-5 shadow-[4px_4px_0_#121212]"
+                    className="rounded-2xl border-3 border-brand-charcoal bg-white p-5 shadow-brutalist-charcoal"
                   >
                     <div className="mb-4 flex items-center justify-between">
                       <h3 className="font-display text-lg font-black uppercase">
@@ -514,7 +514,7 @@ export default function FamilyRegistrationWizard({
                 {fields.map((field, index) => (
                   <div
                     key={field.id}
-                    className="rounded-2xl border-3 border-brand-charcoal bg-white p-5 shadow-[4px_4px_0_#121212]"
+                    className="rounded-2xl border-3 border-brand-charcoal bg-white p-5 shadow-brutalist-charcoal"
                   >
                     <h3 className="font-display text-lg font-black uppercase">
                       {watchedChildren[index]?.fullName || `Child ${index + 1}`}
@@ -599,7 +599,7 @@ export default function FamilyRegistrationWizard({
                 <button
                   type="button"
                   onClick={goBack}
-                  className="rounded-full border-3 border-brand-charcoal bg-white px-7 py-3 font-display font-black uppercase shadow-[4px_4px_0_#121212]"
+                  className="rounded-full border-3 border-brand-charcoal bg-white px-7 py-3 font-display font-black uppercase shadow-brutalist-charcoal"
                 >
                   Back
                 </button>
@@ -682,7 +682,7 @@ function StepHeader({ currentStep }: { currentStep: number }) {
             key={label}
             className={`rounded-2xl border-3 border-brand-charcoal px-4 py-3 font-display text-sm font-black uppercase ${
               active || complete
-                ? "bg-brand-neon text-brand-charcoal shadow-[4px_4px_0_#121212]"
+                ? "bg-brand-neon text-brand-charcoal shadow-brutalist-charcoal"
                 : "bg-white text-zinc-500"
             }`}
           >

@@ -84,7 +84,7 @@ export default function AcademyPage() {
             {sessions.map((s) => (
               <div
                 key={s.born}
-                className={`flex flex-col border-2 border-brand-navy bg-brand-navy shadow-[4px_4px_0_#0B1F3B]`}
+                className={`flex flex-col border-2 border-brand-navy bg-brand-navy shadow-sm-brutalist`}
               >
                 <div className={`h-1.5 w-full shrink-0 ${s.accentClass}`} />
                 <div className="flex flex-1 flex-col gap-3 p-6">

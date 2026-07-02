@@ -165,7 +165,7 @@ export default function FixturesPageClient({ fixtures, results }: Props) {
     <>
       {/* Favourites banner */}
       {isFavFiltered && (
-        <div className="mx-auto mt-6 flex max-w-4xl items-center justify-between border-2 border-brand-navy bg-white px-4 py-2 shadow-[3px_3px_0_#0B1F3B]">
+        <div className="mx-auto mt-6 flex max-w-4xl items-center justify-between border-2 border-brand-navy bg-white px-4 py-2 shadow-mid-brutalist">
           <span className="text-xs font-bold uppercase tracking-wide text-brand-green">
             ★ Showing your teams
           </span>

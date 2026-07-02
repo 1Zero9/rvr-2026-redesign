@@ -232,7 +232,7 @@ export default function UnifiedRegistrationForm() {
 
   return (
     <section className="mx-auto max-w-6xl px-4 py-10 text-brand-charcoal sm:px-6 lg:py-16">
-      <div className="mb-6 rounded-[2rem] border-4 border-brand-charcoal bg-white p-6 shadow-[6px_6px_0_#121212] sm:p-8">
+      <div className="mb-6 rounded-[2rem] border-4 border-brand-charcoal bg-white p-6 shadow-brutalist-charcoal-lg sm:p-8">
         <span className="mb-4 inline-flex items-center gap-2 rounded-full border-3 border-brand-charcoal bg-brand-neon px-4 py-2 font-display text-xs font-black uppercase">
           <Users className="h-4 w-4" aria-hidden="true" />
           Unified registration
@@ -250,7 +250,7 @@ export default function UnifiedRegistrationForm() {
           </div>
 
           {familyTierActive && (
-            <div className="rounded-2xl border-3 border-brand-charcoal bg-brand-neon px-5 py-4 font-display text-sm font-black uppercase shadow-[4px_4px_0_#121212]">
+            <div className="rounded-2xl border-3 border-brand-charcoal bg-brand-neon px-5 py-4 font-display text-sm font-black uppercase shadow-brutalist-charcoal">
               Family/Sibling Multi-Child Tier Active
             </div>
           )}
@@ -259,7 +259,7 @@ export default function UnifiedRegistrationForm() {
 
       <form onSubmit={handleSubmit} className="grid gap-6 lg:grid-cols-[1fr_340px]">
         <div className="space-y-6">
-          <section className="rounded-2xl border-4 border-brand-charcoal bg-white p-5 shadow-[6px_6px_0_#121212] sm:p-6">
+          <section className="rounded-2xl border-4 border-brand-charcoal bg-white p-5 shadow-brutalist-charcoal-lg sm:p-6">
             <div className="mb-5 flex items-center gap-3">
               <span className="flex h-11 w-11 items-center justify-center rounded-xl border-3 border-brand-charcoal bg-brand-neon">
                 <ShieldCheck className="h-5 w-5" aria-hidden="true" />
@@ -298,7 +298,7 @@ export default function UnifiedRegistrationForm() {
             </div>
           </section>
 
-          <section className="rounded-2xl border-4 border-brand-charcoal bg-white p-5 shadow-[6px_6px_0_#121212] sm:p-6">
+          <section className="rounded-2xl border-4 border-brand-charcoal bg-white p-5 shadow-brutalist-charcoal-lg sm:p-6">
             <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <p className="font-display text-xs font-black uppercase text-brand-green">
@@ -322,7 +322,7 @@ export default function UnifiedRegistrationForm() {
               {enrichedPlayers.map((player, index) => (
                 <article
                   key={player.id}
-                  className="rounded-2xl border-3 border-brand-charcoal bg-brand-cream p-4 shadow-[4px_4px_0_#121212] sm:p-5"
+                  className="rounded-2xl border-3 border-brand-charcoal bg-brand-cream p-4 shadow-brutalist-charcoal sm:p-5"
                 >
                   <div className="mb-5 flex items-start justify-between gap-3">
                     <div className="flex items-center gap-3">

@@ -51,7 +51,7 @@ export default async function EnquiriesPage() {
               return (
                 <article
                   key={enquiry.id}
-                  className="border-3 border-brand-charcoal bg-white p-5 shadow-[4px_4px_0_#121212]"
+                  className="border-3 border-brand-charcoal bg-white p-5 shadow-brutalist-charcoal"
                 >
                   <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                     <div>

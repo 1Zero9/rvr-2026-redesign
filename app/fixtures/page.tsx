@@ -72,7 +72,7 @@ export default async function FixturesPage() {
 
       {fixtures.length === 0 && results.length === 0 && (
         <div className="mx-auto max-w-4xl px-4 pt-6 sm:px-6">
-          <div className="flex items-start gap-4 border-2 border-brand-navy/20 bg-white px-5 py-5 shadow-[3px_3px_0_#0B1F3B]">
+          <div className="flex items-start gap-4 border-2 border-brand-navy/20 bg-white px-5 py-5 shadow-mid-brutalist">
             <RefreshCw className="h-5 w-5 shrink-0 text-brand-navy mt-0.5" aria-hidden="true" />
             <div>
               <p className="text-sm font-black uppercase tracking-wide text-brand-navy mb-1">Season fixtures coming soon</p>

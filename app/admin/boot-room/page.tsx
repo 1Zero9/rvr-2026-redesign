@@ -48,7 +48,7 @@ export default async function BootRoomAdminPage() {
             listings.map((listing) => (
               <article
                 key={listing.id}
-                className="border-3 border-brand-charcoal bg-white p-5 shadow-[4px_4px_0_#121212]"
+                className="border-3 border-brand-charcoal bg-white p-5 shadow-brutalist-charcoal"
               >
                 <div className="grid gap-5 lg:grid-cols-[1fr_auto]">
                   <div>

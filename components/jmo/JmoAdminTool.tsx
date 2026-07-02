@@ -311,8 +311,8 @@ export default function JmoAdminTool() {
                     onClick={() => selectFixture(fixture)}
                     className={`w-full rounded-2xl border-3 border-brand-charcoal p-4 text-left transition ${
                       active
-                        ? "bg-brand-neon shadow-[4px_4px_0_#121212]"
-                        : "bg-white hover:-translate-y-0.5 hover:shadow-[4px_4px_0_#121212]"
+                        ? "bg-brand-neon shadow-brutalist-charcoal"
+                        : "bg-white hover:-translate-y-0.5 hover:shadow-brutalist-charcoal"
                     }`}
                   >
                     <div className="flex items-start justify-between gap-3">
@@ -524,7 +524,7 @@ export default function JmoAdminTool() {
                 {claims.map((claim) => (
                   <article
                     key={claim.id}
-                    className="rounded-2xl border-3 border-brand-charcoal bg-white p-4 shadow-[4px_4px_0_#121212]"
+                    className="rounded-2xl border-3 border-brand-charcoal bg-white p-4 shadow-brutalist-charcoal"
                   >
                     <div className="flex items-start justify-between gap-3">
                       <div>

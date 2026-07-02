@@ -220,7 +220,7 @@ export default function FunRunRegistrationWizard({
                   {campaign.merchItems.map((item) => (
                     <div
                       key={item.id}
-                      className="rounded-2xl border-3 border-brand-charcoal bg-white p-5 shadow-[4px_4px_0_#121212]"
+                      className="rounded-2xl border-3 border-brand-charcoal bg-white p-5 shadow-brutalist-charcoal"
                     >
                       <h3 className="font-display text-xl font-black uppercase">
                         {item.name}
@@ -254,7 +254,7 @@ export default function FunRunRegistrationWizard({
                   <button
                     type="button"
                     onClick={() => setStep(1)}
-                    className="rounded-full border-3 border-brand-charcoal bg-white px-7 py-3 font-display font-black uppercase shadow-[4px_4px_0_#121212]"
+                    className="rounded-full border-3 border-brand-charcoal bg-white px-7 py-3 font-display font-black uppercase shadow-brutalist-charcoal"
                   >
                     Back
                   </button>
@@ -355,7 +355,7 @@ function StepTabs({ currentStep }: { currentStep: number }) {
             key={label}
             className={`rounded-2xl border-3 border-brand-charcoal px-4 py-3 font-display text-sm font-black uppercase ${
               currentStep === step
-                ? "bg-brand-neon text-brand-charcoal shadow-[4px_4px_0_#121212]"
+                ? "bg-brand-neon text-brand-charcoal shadow-brutalist-charcoal"
                 : "bg-white text-zinc-500"
             }`}
           >

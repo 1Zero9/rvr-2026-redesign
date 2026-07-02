@@ -111,7 +111,7 @@ export default function ClubZapCheckoutModal({
         {products.map((product) => (
           <article
             key={product.id}
-            className="flex min-h-64 flex-col justify-between rounded-2xl border-4 border-brand-charcoal bg-white p-6 shadow-[6px_6px_0_#121212] transition hover:-translate-y-0.5 hover:shadow-[8px_8px_0_#121212]"
+            className="flex min-h-64 flex-col justify-between rounded-2xl border-4 border-brand-charcoal bg-white p-6 shadow-brutalist-charcoal-lg transition hover:-translate-y-0.5 hover:shadow-[8px_8px_0_#121212]"
           >
             <div>
               <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl border-3 border-brand-charcoal bg-brand-neon shadow-[3px_3px_0_#121212]">
@@ -150,7 +150,7 @@ export default function ClubZapCheckoutModal({
             role="dialog"
             aria-modal="true"
             aria-labelledby="clubzap-checkout-title"
-            className="flex h-[calc(100dvh-1.5rem)] w-full max-w-5xl flex-col overflow-hidden rounded-2xl border-4 border-brand-charcoal bg-white shadow-[6px_6px_0_#121212] sm:h-[min(88dvh,820px)]"
+            className="flex h-[calc(100dvh-1.5rem)] w-full max-w-5xl flex-col overflow-hidden rounded-2xl border-4 border-brand-charcoal bg-white shadow-brutalist-charcoal-lg sm:h-[min(88dvh,820px)]"
           >
             <header className="flex shrink-0 items-center justify-between gap-4 border-b-4 border-brand-charcoal bg-brand-charcoal px-4 py-3 text-white sm:px-5">
               <div className="min-w-0">

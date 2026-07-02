@@ -28,7 +28,12 @@
   --shadow-brutalist: 6px 6px 0px 0px #0B1F3B;
   --shadow-brutalist-green: 6px 6px 0px 0px #005C39;
   --shadow-brutalist-neon: 4px 4px 0px 0px #85E320;
+  --shadow-brutalist-neon-lg: 6px 6px 0px 0px #85E320;
   --shadow-hover-brutalist: 2px 2px 0px 0px #0B1F3B;
+  --shadow-mid-brutalist: 3px 3px 0px 0px #0B1F3B;
+  --shadow-sm-brutalist: 4px 4px 0px 0px #0B1F3B;
+  --shadow-brutalist-charcoal: 4px 4px 0px 0px #121212;
+  --shadow-brutalist-charcoal-lg: 6px 6px 0px 0px #121212;
   
   --animate-bounce-spring: bounceSpring 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
   --animate-explode-in: explode-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;

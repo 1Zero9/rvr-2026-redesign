@@ -124,7 +124,7 @@ export default function TeamsClient({ youthDivisions, aflDivisions, initialFilte
                       <div key={div.slug} className="relative">
                         <Link
                           href={`/teams/${div.slug}`}
-                          className="group flex min-h-[100px] flex-col border-2 border-brand-sky bg-brand-navy shadow-[4px_4px_0_#0B1F3B] transition-colors hover:border-brand-neon sm:min-h-[88px] sm:shadow-brutalist"
+                          className="group flex min-h-[100px] flex-col border-2 border-brand-sky bg-brand-navy shadow-sm-brutalist transition-colors hover:border-brand-neon sm:min-h-[88px] sm:shadow-brutalist"
                         >
                           <div className={`h-1 w-full shrink-0 ${isDev ? 'bg-brand-sky/50' : 'bg-brand-neon'}`} />
                           <div className="flex flex-1 flex-col justify-between p-4 pr-14">
@@ -174,7 +174,7 @@ export default function TeamsClient({ youthDivisions, aflDivisions, initialFilte
                       <div key={div.slug} className="relative">
                         <Link
                           href={`/teams/${div.slug}`}
-                          className="group flex min-h-[100px] flex-col border-2 border-brand-maroon bg-brand-navy shadow-[4px_4px_0_#0B1F3B] transition-colors hover:border-brand-neon sm:min-h-[88px] sm:shadow-brutalist"
+                          className="group flex min-h-[100px] flex-col border-2 border-brand-maroon bg-brand-navy shadow-sm-brutalist transition-colors hover:border-brand-neon sm:min-h-[88px] sm:shadow-brutalist"
                         >
                           <div className={`h-1 w-full shrink-0 ${isDev ? 'bg-brand-maroon/40' : 'bg-brand-maroon'}`} />
                           <div className="flex flex-1 flex-col justify-between p-4 pr-14">
@@ -213,7 +213,7 @@ export default function TeamsClient({ youthDivisions, aflDivisions, initialFilte
               <div className="relative">
                 <Link
                   href="/seniors/first-team"
-                  className="group flex min-h-[112px] flex-col border-2 border-brand-green bg-brand-navy shadow-[4px_4px_0_#0B1F3B] transition-colors hover:border-brand-neon sm:min-h-[88px] sm:shadow-brutalist"
+                  className="group flex min-h-[112px] flex-col border-2 border-brand-green bg-brand-navy shadow-sm-brutalist transition-colors hover:border-brand-neon sm:min-h-[88px] sm:shadow-brutalist"
                 >
                   <div className="h-1 w-full shrink-0 bg-brand-green" />
                   <div className="flex flex-1 flex-col justify-between p-4 pr-14">
@@ -234,7 +234,7 @@ export default function TeamsClient({ youthDivisions, aflDivisions, initialFilte
               <div className="relative">
                 <Link
                   href="/seniors/lsl-div3b"
-                  className="group flex min-h-[112px] flex-col border-2 border-brand-green bg-brand-navy shadow-[4px_4px_0_#0B1F3B] transition-colors hover:border-brand-neon sm:min-h-[88px] sm:shadow-brutalist"
+                  className="group flex min-h-[112px] flex-col border-2 border-brand-green bg-brand-navy shadow-sm-brutalist transition-colors hover:border-brand-neon sm:min-h-[88px] sm:shadow-brutalist"
                 >
                   <div className="h-1 w-full shrink-0 bg-brand-green" />
                   <div className="flex flex-1 flex-col justify-between p-4 pr-14">
@@ -255,7 +255,7 @@ export default function TeamsClient({ youthDivisions, aflDivisions, initialFilte
               <div className="relative">
                 <Link
                   href="/seniors/lsl-div3c"
-                  className="group flex min-h-[112px] flex-col border-2 border-brand-green bg-brand-navy shadow-[4px_4px_0_#0B1F3B] transition-colors hover:border-brand-neon sm:min-h-[88px] sm:shadow-brutalist"
+                  className="group flex min-h-[112px] flex-col border-2 border-brand-green bg-brand-navy shadow-sm-brutalist transition-colors hover:border-brand-neon sm:min-h-[88px] sm:shadow-brutalist"
                 >
                   <div className="h-1 w-full shrink-0 bg-brand-green" />
                   <div className="flex flex-1 flex-col justify-between p-4 pr-14">
@@ -294,7 +294,7 @@ export default function TeamsClient({ youthDivisions, aflDivisions, initialFilte
                 <div key={division.id} className="relative">
                   <Link
                     href={`/seniors/over-35s/${division.id}`}
-                    className="group flex min-h-[112px] flex-col border-2 border-brand-neon bg-brand-navy shadow-[4px_4px_0_#0B1F3B] transition-colors hover:border-brand-sky sm:min-h-[88px] sm:shadow-brutalist"
+                    className="group flex min-h-[112px] flex-col border-2 border-brand-neon bg-brand-navy shadow-sm-brutalist transition-colors hover:border-brand-sky sm:min-h-[88px] sm:shadow-brutalist"
                   >
                     <div className="h-1 w-full shrink-0 bg-brand-neon" />
                     <div className="flex flex-1 flex-col justify-between p-4 pr-14">

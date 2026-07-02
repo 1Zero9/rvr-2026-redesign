@@ -44,7 +44,7 @@ function StepCard({
     <div className="flex items-stretch flex-1 min-w-0 min-w-[140px]">
       <Link
         href={href}
-        className="group flex flex-col flex-1 border-2 border-brand-navy bg-white shadow-[3px_3px_0_#0B1F3B] hover:shadow-[1px_1px_0_#0B1F3B] hover:translate-x-0.5 hover:translate-y-0.5 transition-all"
+        className="group flex flex-col flex-1 border-2 border-brand-navy bg-white shadow-mid-brutalist hover:shadow-[1px_1px_0_#0B1F3B] hover:translate-x-0.5 hover:translate-y-0.5 transition-all"
       >
         <div className={`h-1 w-full shrink-0 ${topBar}`} />
         <div className="flex flex-col gap-1 p-4 flex-1">
@@ -191,7 +191,7 @@ export default function PathwayPage() {
               <Link
                 key={p.label}
                 href={p.href}
-                className="group flex flex-col border-2 border-brand-navy bg-white shadow-[3px_3px_0_#0B1F3B] hover:shadow-[1px_1px_0_#0B1F3B] hover:translate-x-0.5 hover:translate-y-0.5 transition-all"
+                className="group flex flex-col border-2 border-brand-navy bg-white shadow-mid-brutalist hover:shadow-[1px_1px_0_#0B1F3B] hover:translate-x-0.5 hover:translate-y-0.5 transition-all"
               >
                 <div className="h-1 w-full bg-brand-green shrink-0" />
                 <div className="flex flex-col gap-2 p-5 flex-1">
