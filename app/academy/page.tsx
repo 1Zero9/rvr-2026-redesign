@@ -71,21 +71,6 @@ export default function AcademyPage() {
         }
       />
 
-      {/* ── Season return banner ─────────────────────────────────────────── */}
-      <div className="bg-brand-neon border-b-4 border-brand-charcoal">
-        <div className="mx-auto max-w-4xl px-4 py-5 sm:px-6 flex flex-col sm:flex-row items-center gap-3 justify-between">
-          <p className="font-display font-black italic uppercase text-brand-charcoal text-xl md:text-2xl tracking-tight">
-            Academy returns Saturday 6th September
-          </p>
-          <Link
-            href="/register"
-            className="shrink-0 inline-flex min-h-[44px] items-center justify-center gap-2 border-3 border-brand-charcoal bg-brand-charcoal px-6 py-2.5 text-sm font-display font-black uppercase text-brand-neon shadow-[4px_4px_0_rgba(11,31,59,0.3)] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all"
-          >
-            Sign Up Now
-          </Link>
-        </div>
-      </div>
-
       {/* ── Session times ────────────────────────────────────────────────── */}
       <section className="bg-brand-cream border-b border-brand-navy/10">
         <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6">
@@ -165,9 +150,6 @@ export default function AcademyPage() {
               <CalendarDays className="h-6 w-6 text-brand-navy" aria-hidden="true" />
               <p className="font-display font-black text-sm uppercase tracking-wide text-brand-charcoal">Day</p>
               <p className="text-brand-charcoal/70 text-sm">Saturday mornings</p>
-              <p className="text-xs text-brand-charcoal/50 mt-1">
-                From Saturday 6th September
-              </p>
             </div>
             <div className="brutalist-card bg-white p-5 flex flex-col gap-2">
               <Users className="h-6 w-6 text-brand-navy" aria-hidden="true" />
