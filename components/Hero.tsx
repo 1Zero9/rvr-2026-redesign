@@ -70,6 +70,16 @@ export default function Hero() {
           <source src="/videos/hero.mp4" type="video/mp4" />
         </video>
         <div className="absolute inset-0 z-10 bg-gradient-to-b from-brand-navy/55 via-brand-navy/30 to-brand-navy/65" />
+        {/* Neon hairline grid — centred to avoid edge-alignment artefacts on mobile */}
+        <div
+          className="absolute inset-0 pointer-events-none z-10"
+          style={{
+            backgroundImage: `linear-gradient(rgba(133,227,32,0.10) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(133,227,32,0.10) 1px, transparent 1px)`,
+            backgroundSize: '40px 40px',
+            backgroundPosition: 'center center',
+          }}
+        />
       </div>
 
 
