@@ -19,7 +19,7 @@ export const FEATURE_DEFINITIONS = {
   anniversaryKit: {
     label: 'Anniversary kit competition',
     description: 'Expose the anniversary kit campaign and public submission workflow.',
-    defaultEnabled: false,
+    defaultEnabled: true,
   },
 } as const;
 
