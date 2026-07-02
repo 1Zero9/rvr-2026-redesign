@@ -1,5 +1,4 @@
 import type { ReactNode } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
 import Header from '@/components/Header';
 
@@ -26,12 +25,40 @@ export default function PublicPageShell({
 }: PublicPageShellProps) {
   return (
     <div className={`site-canvas flex min-h-screen flex-col ${className}`}>
+      {/* Skip-to-content — visible on keyboard focus only */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[999] focus:inline-flex focus:min-h-[44px] focus:items-center focus:px-4 focus:bg-brand-neon focus:text-brand-charcoal focus:font-display focus:font-black focus:uppercase focus:text-sm focus:border-3 focus:border-brand-charcoal focus:shadow-brutalist"
+      >
+        Skip to main content
+      </a>
+
       <Header />
-      <main className="flex-1">{children}</main>
+      <main id="main-content" className="flex-1">{children}</main>
 
       <footer className="bg-brand-navy border-t border-brand-sky/15">
+        {/* Join CTA strip */}
+        <div className="bg-brand-navy border-b border-brand-sky/10">
+          <div className="max-w-6xl mx-auto px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div>
+              <p className="font-display font-black italic text-xl uppercase text-brand-cream leading-tight">
+                Ready to join Rivervalley Rangers?
+              </p>
+              <p className="text-brand-sky/70 text-sm mt-1">
+                Teams for every age, every level — from Academy to Seniors.
+              </p>
+            </div>
+            <Link
+              href="/register"
+              className="shrink-0 inline-flex items-center gap-2 min-h-[48px] px-7 bg-brand-neon text-brand-charcoal font-display font-black italic uppercase text-sm border-3 border-brand-charcoal shadow-brutalist hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all whitespace-nowrap"
+            >
+              Register Now →
+            </Link>
+          </div>
+        </div>
+
         {/* Nav row */}
-        <div className="max-w-6xl mx-auto px-6 py-8 border-b border-brand-sky/10">
+        <div className="max-w-6xl mx-auto px-6 py-6 border-b border-brand-sky/10">
           <div className="flex flex-wrap gap-x-6 gap-y-2">
             {FOOTER_LINKS.map((l) => (
               <Link
@@ -46,26 +73,10 @@ export default function PublicPageShell({
         </div>
 
         {/* Bottom row */}
-        <div className="max-w-6xl mx-auto px-6 py-5 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p className="text-xs text-zinc-500">
+        <div className="max-w-6xl mx-auto px-6 py-5">
+          <p className="text-xs text-zinc-500 text-center sm:text-left">
             &copy; {new Date().getFullYear()} Rivervalley Rangers AFC · Swords, Co. Dublin
           </p>
-          <a
-            href="https://www.1zero9.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 text-brand-neon hover:text-white transition-colors"
-            aria-label="Built by 1Zero9Studio"
-          >
-            <Image
-              src="/marketing/109-logo-circle-white2.png"
-              alt="1Zero9Studio"
-              width={28}
-              height={28}
-              className="h-7 w-7 opacity-90"
-            />
-            <span className="font-bold text-xs animate-pulse">Built by 1Zero9Studio</span>
-          </a>
         </div>
       </footer>
     </div>

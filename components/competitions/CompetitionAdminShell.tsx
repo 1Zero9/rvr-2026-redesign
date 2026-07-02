@@ -1,5 +1,5 @@
-import Link from "next/link";
-import type { ReactNode } from "react";
+import Link from 'next/link';
+import type { ReactNode } from 'react';
 
 interface NavItem {
   href: string;
@@ -15,51 +15,39 @@ export function CompetitionAdminShell({
   nav?: NavItem[];
   title?: string;
 }) {
-  const defaultNav: NavItem[] = [
-    { href: "/competitions/admin", label: "Dashboard" },
-    { href: "/competitions/admin/new", label: "New Competition" },
-  ];
-  const items = nav ?? defaultNav;
-
   return (
-    <div className="min-h-screen bg-brand-cream flex flex-col">
-      <div className="flex flex-1 max-w-7xl mx-auto w-full">
-        {/* Sidebar — desktop */}
-        <aside className="hidden md:flex flex-col w-52 shrink-0 border-r-3 border-brand-navy/20 pt-6 px-4 gap-1">
-          {items.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="min-h-[44px] px-3 flex items-center font-bold text-sm text-brand-charcoal hover:text-brand-navy hover:bg-brand-navy/5 rounded transition-colors"
+    <div className="flex flex-col min-h-full">
+      {/* Horizontal sub-nav — shown only when nav items are provided */}
+      {nav && nav.length > 0 && (
+        <div className="bg-white border-b border-brand-navy/10 sticky top-0 z-30">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6">
+            <nav
+              className="flex overflow-x-auto gap-0"
+              aria-label="Section navigation"
             >
-              {item.label}
-            </Link>
-          ))}
-        </aside>
+              {nav.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="shrink-0 flex items-center px-4 min-h-[44px] font-display font-black text-xs uppercase tracking-wide whitespace-nowrap text-brand-navy/50 hover:text-brand-navy border-b-2 border-transparent hover:border-brand-navy transition-colors"
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </nav>
+          </div>
+        </div>
+      )}
 
-        {/* Main */}
-        <main className="flex-1 py-6 px-4 md:px-8">
-          {title && (
-            <h1 className="font-display font-black italic text-3xl uppercase text-brand-navy mb-6">
-              {title}
-            </h1>
-          )}
-          {children}
-        </main>
-      </div>
-
-      {/* Bottom nav — mobile */}
-      <nav className="md:hidden sticky bottom-0 bg-brand-navy border-t-3 border-brand-charcoal flex">
-        {items.slice(0, 4).map((item) => (
-          <Link
-            key={item.href}
-            href={item.href}
-            className="flex-1 min-h-[52px] flex items-center justify-center text-brand-sky text-xs font-bold uppercase hover:text-brand-neon transition-colors"
-          >
-            {item.label}
-          </Link>
-        ))}
-      </nav>
+      {/* Content */}
+      <main className="flex-1 max-w-6xl mx-auto w-full px-4 sm:px-6 py-8">
+        {title && (
+          <h1 className="font-display font-black italic text-3xl uppercase text-brand-navy mb-6">
+            {title}
+          </h1>
+        )}
+        {children}
+      </main>
     </div>
   );
 }

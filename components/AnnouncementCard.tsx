@@ -42,7 +42,7 @@ export default function AnnouncementCard({
           {a.pinned && (
             <span className="text-[10px] font-bold text-brand-neon/70 uppercase tracking-wide">Pinned</span>
           )}
-          <span className="text-[10px] text-brand-charcoal/35 font-semibold ml-auto">
+          <span className="text-[10px] text-brand-charcoal/55 font-semibold ml-auto">
             {formatDate(a.publishedAt)}
           </span>
         </div>

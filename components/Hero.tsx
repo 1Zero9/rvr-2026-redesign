@@ -1,9 +1,9 @@
 'use client';
 
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { UserPlus, CalendarDays, Trophy, Newspaper } from 'lucide-react';
+import { UserPlus, CalendarDays, Trophy, Newspaper, Pause, Play } from 'lucide-react';
 import { computeClubStats } from '@/lib/club-stats';
 import { CLUB_SEASON } from '@/config/club-season';
 
@@ -33,10 +33,21 @@ const explodeProps = [
 ];
 
 export default function Hero() {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [videoPaused, setVideoPaused] = useState(false);
+
+  const toggleVideo = () => {
+    const v = videoRef.current;
+    if (!v) return;
+    if (v.paused) { v.play(); setVideoPaused(false); }
+    else          { v.pause(); setVideoPaused(true); }
+  };
+
   return (
     <section className="relative min-h-[80vh] w-full overflow-hidden flex items-center justify-center bg-brand-navy text-white border-b border-brand-sky/20">
       <div className="absolute inset-0 z-0 select-none pointer-events-none">
         <video
+          ref={videoRef}
           autoPlay
           loop
           muted
@@ -59,6 +70,19 @@ export default function Hero() {
       </div>
 
 
+      {/* Video pause control — WCAG 2.2.2 */}
+      <button
+        type="button"
+        onClick={toggleVideo}
+        aria-label={videoPaused ? 'Play background video' : 'Pause background video'}
+        className="absolute bottom-4 left-4 z-30 flex items-center justify-center w-9 h-9 rounded-full border border-white/25 bg-brand-navy/60 text-white/60 hover:text-white hover:bg-brand-navy/80 transition-colors backdrop-blur-sm"
+      >
+        {videoPaused
+          ? <Play  className="h-3.5 w-3.5 fill-current" aria-hidden="true" />
+          : <Pause className="h-3.5 w-3.5 fill-current" aria-hidden="true" />
+        }
+      </button>
+
       <div className="relative z-20 max-w-5xl mx-auto px-6 text-center py-10 md:py-20 flex flex-col items-center">
         <span className="inline-block bg-brand-neon text-brand-charcoal font-display font-black text-xs md:text-sm px-5 py-2 rounded-full uppercase tracking-wider mb-5 md:mb-8 border-3 border-brand-charcoal shadow-brutalist rotate-[-2deg] hover:rotate-0 transition-transform cursor-default">
           Swords, Dublin &bull; Rivervalley Rangers AFC
@@ -75,12 +99,12 @@ export default function Hero() {
           />
 
           <h1 className="font-display font-black text-5xl md:text-7xl lg:text-8xl tracking-tighter uppercase leading-none italic select-none skew-x-[-4deg] text-center md:text-left flex-1">
-            FEEL THE <span className="text-brand-neon">RVR</span> ENERGY
+            EVERY PLAYER<br className="hidden md:block" /> <span className="text-brand-neon">STARTS</span> HERE
           </h1>
         </div>
 
         <p className="font-sans text-lg md:text-2xl text-zinc-200 max-w-2xl mx-auto mb-6 md:mb-12 leading-relaxed font-medium">
-          Rivervalley Rangers AFC is Swords&apos; premier soccer club. Empowering local athletes across all ages, formats, and levels.
+          Swords&apos; community football club since 1981. From a child&apos;s first kick on the Academy pitch to senior league football — your family is welcome here.
         </p>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 w-full max-w-xl mb-16">
@@ -92,7 +116,7 @@ export default function Hero() {
             >
               <Icon className="w-6 h-6 shrink-0" aria-hidden="true" />
               <span className="font-display font-black text-[11px] uppercase tracking-wide leading-tight">{label}</span>
-              <span className="text-[9px] font-bold leading-tight text-white/50">{sub}</span>
+              <span className="text-[10px] font-bold leading-tight text-white/75">{sub}</span>
             </Link>
           ))}
         </div>

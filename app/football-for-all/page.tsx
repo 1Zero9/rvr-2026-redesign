@@ -1,9 +1,10 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PublicPageShell from '@/components/layout/PublicPageShell';
 import PageHeroNavy from '@/components/layout/PageHeroNavy';
 import ContactForm from '@/components/ContactForm';
+import { Activity, CalendarDays, Eye, VolumeX } from 'lucide-react';
 
 interface Testimonial {
   quote: string;
@@ -35,6 +36,16 @@ const TESTIMONIALS: Testimonial[] = [
 
 export default function FootballForAllPage() {
   const [textSize, setTextSize] = useState<'normal' | 'large' | 'xlarge'>('normal');
+
+  useEffect(() => {
+    const saved = localStorage.getItem('ffa-text-size');
+    if (saved === 'large' || saved === 'xlarge') setTextSize(saved);
+  }, []);
+
+  const setTextSizeAndSave = (size: 'normal' | 'large' | 'xlarge') => {
+    setTextSize(size);
+    localStorage.setItem('ffa-text-size', size);
+  };
   const [activeTestimonial, setActiveTestimonial] = useState(0);
   const [callbackRequested, setCallbackRequested] = useState(false);
   const [callbackName, setCallbackName] = useState('');
@@ -100,14 +111,14 @@ export default function FootballForAllPage() {
         {/* TOP WIDGET: Accessibility Text Customizer */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 bg-brand-cream-dark border-3 border-zinc-300 rounded-2xl shadow-sm">
           <div className="flex items-center gap-2">
-            <span className="text-2xl" aria-hidden="true">👁️</span>
+            <Eye className="h-5 w-5 text-zinc-500 shrink-0" aria-hidden="true" />
             <span className="font-display font-bold text-sm uppercase tracking-wide text-zinc-700">
               Accessibility Settings: Adjust Text Size
             </span>
           </div>
           <div className="flex gap-2">
             <button
-              onClick={() => setTextSize('normal')}
+              onClick={() => setTextSizeAndSave('normal')}
               className={`px-4 py-2 text-xs font-display font-black uppercase rounded-lg border-2 transition-all focus:ring-4 focus:ring-brand-green focus:outline-none ${
                 textSize === 'normal'
                   ? 'bg-brand-green text-white border-brand-charcoal'
@@ -118,7 +129,7 @@ export default function FootballForAllPage() {
               A (Normal)
             </button>
             <button
-              onClick={() => setTextSize('large')}
+              onClick={() => setTextSizeAndSave('large')}
               className={`px-4 py-2 text-sm font-display font-black uppercase rounded-lg border-2 transition-all focus:ring-4 focus:ring-brand-green focus:outline-none ${
                 textSize === 'large'
                   ? 'bg-brand-green text-white border-brand-charcoal'
@@ -129,7 +140,7 @@ export default function FootballForAllPage() {
               A+ (Large)
             </button>
             <button
-              onClick={() => setTextSize('xlarge')}
+              onClick={() => setTextSizeAndSave('xlarge')}
               className={`px-4 py-2 text-base font-display font-black uppercase rounded-lg border-2 transition-all focus:ring-4 focus:ring-brand-green focus:outline-none ${
                 textSize === 'xlarge'
                   ? 'bg-brand-green text-white border-brand-charcoal'
@@ -152,20 +163,20 @@ export default function FootballForAllPage() {
             {/* Grid 1: Saturdays on Ward Astro */}
             <div className="p-6 bg-brand-cream-dark border-3 border-zinc-300 rounded-2xl space-y-4 hover:border-zinc-400 transition-colors focus-within:ring-4 focus-within:ring-brand-green">
               <div className="w-12 h-12 rounded-xl bg-brand-sage flex items-center justify-center border-2 border-zinc-400" aria-hidden="true">
-                <span className="text-2xl">📅</span>
+                <CalendarDays className="h-6 w-6 text-brand-green" />
               </div>
               <h3 className="font-display font-black text-xl uppercase italic text-brand-charcoal">
                 Weekly Session Details
               </h3>
               <p className="font-sans text-sm font-semibold text-zinc-700 leading-relaxed">
-                Sessions run every Saturday at **2:30pm** at the **Rivervalley Community Centre**. Fun and friendly sessions for girls and boys — all welcome.
+                Sessions run every Saturday at <strong>2:30pm</strong> at the <strong>Rivervalley Community Centre</strong>. Fun and friendly sessions for girls and boys — all welcome.
               </p>
             </div>
 
             {/* Grid 2: Sensory-Friendly Play */}
             <div className="p-6 bg-brand-cream-dark border-3 border-zinc-300 rounded-2xl space-y-4 hover:border-zinc-400 transition-colors focus-within:ring-4 focus-within:ring-brand-green">
               <div className="w-12 h-12 rounded-xl bg-brand-sage flex items-center justify-center border-2 border-zinc-400" aria-hidden="true">
-                <span className="text-2xl">🤫</span>
+                <VolumeX className="h-6 w-6 text-brand-green" />
               </div>
               <h3 className="font-display font-black text-xl uppercase italic text-brand-charcoal">
                 Sensory-Friendly Space
@@ -178,7 +189,7 @@ export default function FootballForAllPage() {
             {/* Grid 3: Adaptive Training */}
             <div className="p-6 bg-brand-cream-dark border-3 border-zinc-300 rounded-2xl space-y-4 hover:border-zinc-400 transition-colors focus-within:ring-4 focus-within:ring-brand-green">
               <div className="w-12 h-12 rounded-xl bg-brand-sage flex items-center justify-center border-2 border-zinc-400" aria-hidden="true">
-                <span className="text-2xl">🏃</span>
+                <Activity className="h-6 w-6 text-brand-green" />
               </div>
               <h3 className="font-display font-black text-xl uppercase italic text-brand-charcoal">
                 Gentle Pacing & Coaching
@@ -243,7 +254,7 @@ export default function FootballForAllPage() {
                         value={callbackName}
                         onChange={(e) => setCallbackName(e.target.value)}
                         autoComplete="name"
-                        className="min-h-11 w-full rounded-lg border-2 border-zinc-300 p-2 text-sm focus:border-brand-green focus:outline-none"
+                        className="min-h-11 w-full rounded-lg border-2 border-zinc-300 p-2 text-sm focus:border-brand-green focus:outline-none focus:ring-2 focus:ring-brand-green/30"
                         placeholder="Enter name"
                       />
                     </div>
@@ -256,7 +267,7 @@ export default function FootballForAllPage() {
                         value={callbackPhone}
                         onChange={(e) => setCallbackPhone(e.target.value)}
                         autoComplete="tel"
-                        className="min-h-11 w-full rounded-lg border-2 border-zinc-300 p-2 text-sm focus:border-brand-green focus:outline-none"
+                        className="min-h-11 w-full rounded-lg border-2 border-zinc-300 p-2 text-sm focus:border-brand-green focus:outline-none focus:ring-2 focus:ring-brand-green/30"
                         placeholder="Your phone number"
                       />
                     </div>
@@ -329,28 +340,17 @@ export default function FootballForAllPage() {
 
         </div>
 
-        {/* ACCESSIBILITY MANUAL (Collapsible / Documentation card) */}
-        <section className="border-3 border-dashed border-zinc-400 rounded-2xl p-6 bg-brand-cream-dark space-y-4">
-          <h2 className="font-display font-bold text-lg uppercase tracking-tight text-brand-charcoal flex items-center gap-2">
-            <span>🛡️</span> Accessibility Manual (WCAG AAA Compliance Guidelines)
+        {/* Commitment note */}
+        <section className="border-2 border-brand-navy/15 rounded-2xl p-6 bg-white space-y-3">
+          <h2 className="font-display font-black text-lg uppercase tracking-tight text-brand-charcoal">
+            Our Commitment to Inclusion
           </h2>
           <p className="font-sans text-sm font-semibold text-zinc-600 leading-relaxed">
-            This portal has been built adhering to standard accessibility requirements:
+            Football For All sessions are designed to be accessible to everyone. If you or your child has specific needs we haven&apos;t addressed here, please get in touch — we will do everything we can to accommodate you.
           </p>
-          <ul className="list-disc pl-5 font-sans text-xs md:text-sm text-zinc-600 space-y-2.5 font-semibold">
-            <li>
-              <strong>Proportional Scaling:</strong> Font adjustments resize elements using relative scaling, avoiding layout breaking or text clipping.
-            </li>
-            <li>
-              <strong>AAA Color Contrast Ratio:</strong> Colors are soft and muted, yet verify a contrast ratio of &gt; 7:1 for body copy against light backgrounds (Charcoal text on Cream and Sage).
-            </li>
-            <li>
-              <strong>Keyboard Navigation:</strong> High-contrast focus borders are implemented using Tailwind&apos;s <code>focus:ring-4 focus:ring-brand-green</code> to help keyboard-only navigators.
-            </li>
-            <li>
-              <strong>ARIA tags &amp; Accessibility Labels:</strong> Non-text items like arrow buttons and custom settings buttons include descriptive <code>aria-label</code> tags. Emojis are hidden from screen readers using <code>aria-hidden=&quot;true&quot;</code>.
-            </li>
-          </ul>
+          <p className="font-sans text-sm font-semibold text-zinc-600 leading-relaxed">
+            This page supports adjustable text size. Your preference will remain active while you browse — use the controls at the top of the page.
+          </p>
         </section>
 
       </div>

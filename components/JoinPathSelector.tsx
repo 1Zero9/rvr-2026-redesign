@@ -17,63 +17,71 @@ export default function JoinPathSelector() {
   return (
     <div className="bg-brand-cream">
 
-      {/* Choice cards */}
-      <section className="max-w-3xl mx-auto px-4 py-10">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      {/* Emotional intro */}
+      <section className="max-w-3xl mx-auto px-4 pt-10 pb-2 text-center">
+        <p className="font-display font-black italic text-2xl md:text-3xl uppercase text-brand-charcoal leading-tight mb-3">
+          The friendships start here.
+        </p>
+        <p className="text-brand-charcoal/55 text-sm md:text-base leading-relaxed max-w-xl mx-auto">
+          Never kicked a ball before? Coming back after a break? Ready to transfer from another club?
+          Whatever your story — we&apos;ll find the right team for you.
+        </p>
+      </section>
 
-          {/* Trial */}
+      {/* Choice cards */}
+      <section className="max-w-3xl mx-auto px-4 py-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-start">
+
+          {/* Join — primary action */}
+          <button
+            type="button"
+            onClick={() => setPath('join')}
+            className={`group flex flex-col items-center text-center p-6 border-3 transition-all shadow-brutalist hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none order-first ${
+              path === 'join'
+                ? 'bg-brand-navy border-brand-charcoal'
+                : 'bg-brand-navy border-brand-charcoal hover:bg-brand-charcoal'
+            }`}
+          >
+            <span className="mb-2 inline-flex items-center px-2 py-0.5 rounded-full bg-brand-neon/20 border border-brand-neon/40 font-display font-black text-[9px] uppercase tracking-widest text-brand-neon">
+              Most popular
+            </span>
+            <ClipboardList
+              className="w-8 h-8 mb-3 text-brand-neon"
+              aria-hidden="true"
+            />
+            <h2 className="font-display font-black italic text-xl uppercase leading-tight mb-2 text-white">
+              Join the Club
+            </h2>
+            <p className="text-sm leading-relaxed text-brand-sky/80">
+              Already trialled or ready to register? Complete the membership form to join Rivervalley Rangers.
+            </p>
+          </button>
+
+          {/* Trial — secondary action */}
           <button
             type="button"
             onClick={() => setPath('trial')}
-            className={`group flex flex-col items-center text-center p-6 border-3 transition-all shadow-brutalist hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none ${
+            className={`group flex flex-col items-center text-center p-6 border-2 transition-all ${
               path === 'trial'
-                ? 'bg-brand-navy border-brand-charcoal'
-                : 'bg-white border-brand-charcoal hover:bg-brand-navy'
+                ? 'bg-brand-navy border-brand-navy'
+                : 'bg-white border-brand-navy/25 hover:border-brand-navy/60 hover:bg-brand-navy/3'
             }`}
           >
             <UserPlus
               className={`w-8 h-8 mb-3 transition-colors ${
-                path === 'trial' ? 'text-brand-neon' : 'text-brand-navy group-hover:text-brand-neon'
+                path === 'trial' ? 'text-brand-neon' : 'text-brand-navy/60 group-hover:text-brand-navy'
               }`}
               aria-hidden="true"
             />
             <h2 className={`font-display font-black italic text-xl uppercase leading-tight mb-2 transition-colors ${
-              path === 'trial' ? 'text-brand-neon' : 'text-brand-navy group-hover:text-brand-neon'
+              path === 'trial' ? 'text-brand-neon' : 'text-brand-navy/70 group-hover:text-brand-navy'
             }`}>
               Interested in a Trial
             </h2>
             <p className={`text-sm leading-relaxed transition-colors ${
-              path === 'trial' ? 'text-brand-sky' : 'text-zinc-500 group-hover:text-brand-sky'
+              path === 'trial' ? 'text-brand-sky' : 'text-zinc-400 group-hover:text-zinc-600'
             }`}>
               New to RVR? Register for an open training session and we&apos;ll find the right team for you.
-            </p>
-          </button>
-
-          {/* Join */}
-          <button
-            type="button"
-            onClick={() => setPath('join')}
-            className={`group flex flex-col items-center text-center p-6 border-3 transition-all shadow-brutalist hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none ${
-              path === 'join'
-                ? 'bg-brand-navy border-brand-charcoal'
-                : 'bg-white border-brand-charcoal hover:bg-brand-navy'
-            }`}
-          >
-            <ClipboardList
-              className={`w-8 h-8 mb-3 transition-colors ${
-                path === 'join' ? 'text-brand-neon' : 'text-brand-navy group-hover:text-brand-neon'
-              }`}
-              aria-hidden="true"
-            />
-            <h2 className={`font-display font-black italic text-xl uppercase leading-tight mb-2 transition-colors ${
-              path === 'join' ? 'text-brand-neon' : 'text-brand-navy group-hover:text-brand-neon'
-            }`}>
-              Join the Club
-            </h2>
-            <p className={`text-sm leading-relaxed transition-colors ${
-              path === 'join' ? 'text-brand-sky' : 'text-zinc-500 group-hover:text-brand-sky'
-            }`}>
-              Already trialled or ready to register? Complete the membership form to join Rivervalley Rangers.
             </p>
           </button>
 

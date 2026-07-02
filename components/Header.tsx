@@ -98,9 +98,8 @@ const NAV_SECTIONS: NavSection[] = [
       {
         heading: 'Safeguarding',
         links: [
-          { href: '/club/safeguarding', label: 'Safeguarding Statement' },
-          { href: '/club/safeguarding', label: 'Garda Vetting'          },
-          { href: '/club/safeguarding', label: 'Child Welfare'          },
+          { href: '/club/safeguarding', label: 'Safeguarding Hub'  },
+          { href: '/contact',           label: 'Welfare Contact'   },
         ],
       },
     ],
@@ -241,6 +240,12 @@ export default function Header() {
   const [tabsVisible, setTabsVisible] = useState(true);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const searchButtonRef = useRef<HTMLButtonElement>(null);
+  const infoCloseRef    = useRef<HTMLButtonElement>(null);
+  const newsCloseRef    = useRef<HTMLButtonElement>(null);
+  const infoTabRef      = useRef<HTMLButtonElement>(null);
+  const newsTabRef      = useRef<HTMLButtonElement>(null);
+  const infoHasOpened   = useRef(false);
+  const newsHasOpened   = useRef(false);
   const pathname = usePathname();
   const activeMobileSection = MOBILE_NAV_SECTIONS.find((section) => isMobileSectionActive(section, pathname));
 
@@ -253,6 +258,26 @@ export default function Header() {
     setOpen((current) => !current);
   };
   const openNews = () => { setNewsOpen(true); setOpen(false); };
+
+  // Focus management: move focus into panels on open, return to trigger on close.
+  // infoHasOpened / newsHasOpened guards prevent focus from firing on initial mount.
+  useEffect(() => {
+    if (infoOpen) {
+      infoHasOpened.current = true;
+      requestAnimationFrame(() => infoCloseRef.current?.focus());
+    } else if (infoHasOpened.current) {
+      requestAnimationFrame(() => infoTabRef.current?.focus());
+    }
+  }, [infoOpen]);
+
+  useEffect(() => {
+    if (newsOpen) {
+      newsHasOpened.current = true;
+      requestAnimationFrame(() => newsCloseRef.current?.focus());
+    } else if (newsHasOpened.current) {
+      requestAnimationFrame(() => newsTabRef.current?.focus());
+    }
+  }, [newsOpen]);
 
   // Auto-hide side tabs after 10 seconds
   useEffect(() => {
@@ -530,40 +555,38 @@ export default function Header() {
 
       {/* Left bookmark tabs — mobile */}
       <div className={`lg:hidden fixed left-0 z-[55] flex flex-col gap-1.5 transition-opacity duration-700 ${tabsVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'}`} style={{ top: '50%', transform: 'translateY(-50%)' }}>
-        {!infoOpen && (
-          <button type="button" aria-label="Open club update" onClick={() => setInfoOpen(true)}
-            className="flex flex-col items-center gap-0.5 bg-blue-600 hover:bg-blue-500 rounded-r-lg px-2 py-2.5 transition-colors"
-            style={{ boxShadow: '3px 2px 8px rgba(0,0,0,0.18)' }}>
-            <Info className="h-5 w-5 text-white" strokeWidth={2.5} />
-            <span className="font-display font-black text-[8px] uppercase tracking-wide text-white">info</span>
-          </button>
-        )}
+        <button ref={infoTabRef} type="button" aria-label="Open club info" onClick={() => setInfoOpen(true)}
+          aria-hidden={infoOpen}
+          className={`flex flex-col items-center gap-0.5 bg-blue-600 hover:bg-blue-500 rounded-r-lg px-2 py-2.5 transition-all ${infoOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+          style={{ boxShadow: '3px 2px 8px rgba(0,0,0,0.18)' }}>
+          <Info className="h-5 w-5 text-white" strokeWidth={2.5} />
+          <span className="font-display font-black text-[10px] uppercase tracking-wide text-white">info</span>
+        </button>
         {!newsOpen && newsLoaded && announcements.length > 0 && (
-          <button type="button" aria-label="Open club news" onClick={openNews}
+          <button ref={newsTabRef} type="button" aria-label="Open club news" onClick={openNews}
             className="flex flex-col items-center gap-0.5 bg-emerald-600 hover:bg-emerald-500 rounded-r-lg px-2 py-2.5 transition-colors"
             style={{ boxShadow: '3px 2px 8px rgba(0,0,0,0.18)' }}>
             <Megaphone className="h-5 w-5 text-white" strokeWidth={2.5} />
-            <span className="font-display font-black text-[8px] uppercase tracking-wide text-white">news</span>
+            <span className="font-display font-black text-[10px] uppercase tracking-wide text-white">news</span>
           </button>
         )}
       </div>
 
       {/* Left bookmark tabs — desktop */}
       <div className={`hidden lg:flex fixed left-0 z-[55] flex-col gap-2 transition-opacity duration-700 ${tabsVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'}`} style={{ top: '50%', transform: 'translateY(-50%)' }}>
-        {!infoOpen && (
-          <button type="button" aria-label="Open club update" onClick={() => setInfoOpen(true)}
-            className="flex flex-col items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 rounded-r-lg px-2 shadow-md transition-colors h-44"
-            style={{ writingMode: 'vertical-lr' }}>
-            <Info className="h-3.5 w-3.5 shrink-0 text-white" />
-            <span className="font-display font-black text-[8px] uppercase tracking-widest text-white">info</span>
-          </button>
-        )}
+        <button ref={infoTabRef} type="button" aria-label="Open club info" onClick={() => setInfoOpen(true)}
+          aria-hidden={infoOpen}
+          className={`flex flex-col items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 rounded-r-lg px-2 shadow-md transition-all h-52 ${infoOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+          style={{ writingMode: 'vertical-lr' }}>
+          <Info className="h-4 w-4 shrink-0 text-white" />
+          <span className="font-display font-black text-[10px] uppercase tracking-widest text-white">info</span>
+        </button>
         {!newsOpen && newsLoaded && announcements.length > 0 && (
-          <button type="button" aria-label="Open club news" onClick={openNews}
-            className="flex flex-col items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 rounded-r-lg px-2 shadow-md transition-colors h-44"
+          <button ref={newsTabRef} type="button" aria-label="Open club news" onClick={openNews}
+            className="flex flex-col items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 rounded-r-lg px-2 shadow-md transition-colors h-52"
             style={{ writingMode: 'vertical-lr' }}>
-            <Megaphone className="h-3.5 w-3.5 shrink-0 text-white" />
-            <span className="font-display font-black text-[8px] uppercase tracking-widest text-white">news</span>
+            <Megaphone className="h-4 w-4 shrink-0 text-white" />
+            <span className="font-display font-black text-[10px] uppercase tracking-widest text-white">news</span>
           </button>
         )}
       </div>
@@ -599,6 +622,7 @@ export default function Header() {
               </span>
             </div>
             <button
+              ref={infoCloseRef}
               type="button"
               aria-label="Close info panel"
               onClick={() => setInfoOpen(false)}
@@ -608,25 +632,43 @@ export default function Header() {
             </button>
           </div>
 
-          <div className="flex flex-col gap-6 px-5 py-6">
+          <div className="flex flex-col gap-5 px-5 py-6">
             <div>
               <p className="font-display font-black italic text-2xl uppercase text-white leading-tight">
-                We&apos;re upgrading
+                Welcome to RVR
               </p>
               <div className="mt-1 h-1 w-10 bg-blue-300" />
             </div>
             <p className="text-sm text-blue-100/80 leading-relaxed">
-              This site is currently undergoing an upgrade — please be patient as we get everything ready for the season ahead.
+              Rivervalley Rangers AFC — Swords&apos; community football club since 1981. Academy, youth, senior, walking football, and Football For All programmes available.
             </p>
-            <p className="font-display font-black italic text-lg uppercase text-blue-200">
-              Up the Valley! 🏆
-            </p>
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 text-sm text-blue-100/90">
+                <span className="text-blue-300 font-black">✓</span>
+                <span>100% Garda Vetted Coaches</span>
+              </div>
+              <div className="flex items-center gap-2 text-sm text-blue-100/90">
+                <span className="text-blue-300 font-black">✓</span>
+                <span>FAI Club Mark Accredited</span>
+              </div>
+              <div className="flex items-center gap-2 text-sm text-blue-100/90">
+                <span className="text-blue-300 font-black">✓</span>
+                <span>Teams for ages 4 through adult</span>
+              </div>
+            </div>
             <Link
               href="/register"
               onClick={() => setInfoOpen(false)}
               className="inline-flex items-center justify-center gap-2 min-h-[44px] px-5 bg-white text-blue-700 font-display font-black uppercase text-sm border-3 border-blue-900 shadow-brutalist hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all"
             >
-              Join the Club
+              Join the Club →
+            </Link>
+            <Link
+              href="/contact"
+              onClick={() => setInfoOpen(false)}
+              className="inline-flex items-center justify-center gap-2 min-h-[44px] px-5 bg-transparent text-blue-200 font-display font-black uppercase text-sm border-2 border-blue-400/50 hover:border-white hover:text-white transition-colors"
+            >
+              Get in Touch
             </Link>
           </div>
         </aside>
@@ -663,6 +705,7 @@ export default function Header() {
               </span>
             </div>
             <button
+              ref={newsCloseRef}
               type="button"
               aria-label="Close news panel"
               onClick={() => setNewsOpen(false)}

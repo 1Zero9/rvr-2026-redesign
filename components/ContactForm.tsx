@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { CheckCircle, Send } from 'lucide-react';
+import TurnstileWidget from '@/components/TurnstileWidget';
 
 type Mailbox = 'info' | 'secretary' | 'welfare' | 'safeguarding' | 'footballforall';
 
@@ -14,11 +15,12 @@ export default function ContactForm({
   mailbox,
   messagePlaceholder = 'How can we help?',
 }: ContactFormProps) {
-  const [name,    setName]    = useState('');
-  const [email,   setEmail]   = useState('');
-  const [message, setMessage] = useState('');
-  const [status,  setStatus]  = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
-  const [errMsg,  setErrMsg]  = useState('');
+  const [name,           setName]           = useState('');
+  const [email,          setEmail]          = useState('');
+  const [message,        setMessage]        = useState('');
+  const [status,         setStatus]         = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
+  const [errMsg,         setErrMsg]         = useState('');
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -29,7 +31,7 @@ export default function ContactForm({
       const res  = await fetch('/api/contact', {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ mailbox, name, email, message }),
+        body:    JSON.stringify({ mailbox, name, email, message, website: '', turnstileToken }),
       });
       const data = await res.json();
       if (res.ok) {
@@ -83,6 +85,11 @@ export default function ContactForm({
         rows={3}
         className="w-full border border-zinc-200 px-3 py-2.5 text-sm text-brand-charcoal placeholder:text-zinc-400 focus:border-brand-navy focus:outline-none resize-none"
       />
+      <label className="hidden" aria-hidden="true">
+        Website
+        <input type="text" name="website" tabIndex={-1} autoComplete="off" />
+      </label>
+      <TurnstileWidget onToken={setTurnstileToken} action="contact" />
       {errMsg && (
         <p className="text-xs font-semibold text-red-600">{errMsg}</p>
       )}

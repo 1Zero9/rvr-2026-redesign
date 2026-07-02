@@ -133,7 +133,7 @@ export default function WalkingFootballPage() {
               Get in Touch
             </h2>
             <PublicEnquiryForm
-              type="VOLUNTEER_INTEREST"
+              type="WALKING_FOOTBALL_INTEREST"
               title="Express Interest"
               description="Interested in joining our Walking Football sessions? Drop us a note and we'll be in touch with session times and next steps."
               detailsLabel="Tell us a little about yourself (optional)"

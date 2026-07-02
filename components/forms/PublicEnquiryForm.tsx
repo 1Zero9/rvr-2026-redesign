@@ -7,7 +7,8 @@ import TurnstileWidget from '@/components/TurnstileWidget';
 type EnquiryType =
   | 'VOLUNTEER_INTEREST'
   | 'COACHING_INTEREST'
-  | 'SPONSORSHIP_INTEREST';
+  | 'SPONSORSHIP_INTEREST'
+  | 'WALKING_FOOTBALL_INTEREST';
 
 interface PublicEnquiryFormProps {
   type: EnquiryType;

@@ -14,27 +14,31 @@ export const metadata: Metadata = {
 const contacts: Array<{
   role: string;
   note: string;
+  hint: string;
   mailbox: 'info' | 'secretary' | 'welfare';
   placeholder: string;
   icon: ComponentType<{ className?: string }>;
 }> = [
   {
     role: "General Enquiries",
-    note: "Membership, registration, and general questions.",
+    note: "Not sure where to start? Use this form.",
+    hint: "Best for: joining the club, team queries, training times, pitch bookings.",
     mailbox: "info",
-    placeholder: "How can we help?",
+    placeholder: "How can we help you?",
     icon: Mail,
   },
   {
     role: "Club Secretary",
-    note: "Committee matters, documentation, and official correspondence.",
+    note: "Official club business and documentation.",
+    hint: "Best for: governance, formal correspondence, and committee matters.",
     mailbox: "secretary",
     placeholder: "Your message to the secretary…",
     icon: Mail,
   },
   {
     role: "Children's Welfare Officer",
-    note: "Safeguarding concerns and child welfare queries.",
+    note: "Child safeguarding and welfare concerns.",
+    hint: "All enquiries are treated with full confidentiality.",
     mailbox: "welfare",
     placeholder: "Please describe your concern…",
     icon: ShieldCheck,
@@ -63,8 +67,11 @@ export default function ContactPage() {
                   <p className="font-display text-xs font-black uppercase tracking-wide text-brand-charcoal">
                     {c.role}
                   </p>
-                  <p className="mt-1 text-sm leading-relaxed text-zinc-500">
+                  <p className="mt-1 text-sm leading-relaxed text-zinc-500 font-semibold">
                     {c.note}
+                  </p>
+                  <p className="mt-1 text-xs leading-relaxed text-zinc-400">
+                    {c.hint}
                   </p>
                 </div>
               </div>

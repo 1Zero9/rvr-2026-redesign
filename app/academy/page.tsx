@@ -139,6 +139,8 @@ export default function AcademyPage() {
               <CalendarDays className="h-6 w-6 text-brand-navy" aria-hidden="true" />
               <p className="font-display font-black text-sm uppercase tracking-wide text-brand-charcoal">Day</p>
               <p className="text-brand-charcoal/70 text-sm">Saturday mornings</p>
+              {/* TODO: Add confirmed time when available from club e.g. "10:00am – 11:00am" */}
+              <p className="text-xs text-brand-charcoal/45 mt-1">Contact us to confirm current session time</p>
             </div>
             <div className="brutalist-card bg-white p-5 flex flex-col gap-2">
               <Users className="h-6 w-6 text-brand-navy" aria-hidden="true" />

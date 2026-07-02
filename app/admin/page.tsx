@@ -20,8 +20,6 @@ export const metadata: Metadata = {
   title: 'Admin Dashboard | RVR',
 };
 
-// ── Data ──────────────────────────────────────────────────────────────────────
-
 async function getDashboardStats() {
   const [newRegs, newEnquiries, publishedAnnouncements] = await Promise.all([
     prisma.playerProfile.count({ where: { registrationStatus: 'NEW' } }),
@@ -31,17 +29,14 @@ async function getDashboardStats() {
   return { newRegs, newEnquiries, publishedAnnouncements };
 }
 
-// ── Types ─────────────────────────────────────────────────────────────────────
-
 interface NavCard {
   href: string;
   label: string;
   description: string;
   icon: React.ElementType;
   badge?: number;
+  superOnly?: boolean;
 }
-
-// ── Sub-components ────────────────────────────────────────────────────────────
 
 function SectionCard({ card }: { card: NavCard }) {
   const Icon = card.icon;
@@ -72,8 +67,6 @@ function SectionCard({ card }: { card: NavCard }) {
   );
 }
 
-// ── Page ──────────────────────────────────────────────────────────────────────
-
 export default async function AdminDashboardPage() {
   const [{ newRegs, newEnquiries, publishedAnnouncements }, session] = await Promise.all([
     getDashboardStats(),
@@ -83,7 +76,7 @@ export default async function AdminDashboardPage() {
   const role = (session?.user as { globalRole?: string | null } | undefined)?.globalRole;
   const isSuperAdmin = role === GlobalRole.SUPER_ADMIN;
 
-  const SITE_CARDS: NavCard[] = [
+  const ALL_CARDS: NavCard[] = [
     {
       href: '/admin/announcements',
       label: 'Announcements',
@@ -116,9 +109,6 @@ export default async function AdminDashboardPage() {
       description: 'Kit and equipment management.',
       icon: Shirt,
     },
-  ];
-
-  const SUPER_CARDS: NavCard[] = [
     {
       href: '/competitions/admin',
       label: 'Competitions',
@@ -130,30 +120,36 @@ export default async function AdminDashboardPage() {
       label: 'Users',
       description: 'Manage admin accounts and role assignments.',
       icon: Users,
+      superOnly: true,
     },
     {
       href: '/admin/features',
       label: 'Features & Setup',
       description: 'Toggle site features and manage platform configuration.',
       icon: Cog,
+      superOnly: true,
     },
     {
       href: '/admin/docs',
       label: 'Docs',
       description: 'Internal documentation, guides, and reference materials.',
       icon: BookOpen,
+      superOnly: true,
     },
     {
       href: '#',
       label: 'Logs',
       description: 'Activity logs and audit trail — coming soon.',
       icon: FileText,
+      superOnly: true,
     },
   ];
 
+  const visibleCards = ALL_CARDS.filter((c) => !c.superOnly || isSuperAdmin);
+
   return (
     <main className="min-h-screen bg-brand-cream px-4 py-10 text-brand-charcoal">
-      <div className="mx-auto max-w-4xl space-y-12">
+      <div className="mx-auto max-w-4xl space-y-8">
 
         {/* Header */}
         <div className="border-b-2 border-brand-navy/10 pb-6">
@@ -165,41 +161,12 @@ export default async function AdminDashboardPage() {
           </h1>
         </div>
 
-        {/* ── Site Admin ─────────────────────────────────────────────────── */}
-        <section>
-          <div className="flex items-baseline gap-3 mb-5">
-            <h2 className="font-display font-black italic text-xl uppercase text-brand-navy">
-              Site Admin
-            </h2>
-            <span className="text-xs font-bold text-zinc-400 uppercase tracking-wider">
-              Content &amp; members
-            </span>
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-            {SITE_CARDS.map((card) => (
-              <SectionCard key={card.href} card={card} />
-            ))}
-          </div>
-        </section>
-
-        {/* ── Super Admin — only visible to SUPER_ADMIN ──────────────────── */}
-        {isSuperAdmin && (
-          <section>
-            <div className="flex items-baseline gap-3 mb-5">
-              <h2 className="font-display font-black italic text-xl uppercase text-brand-navy">
-                Super Admin
-              </h2>
-              <span className="text-xs font-bold text-zinc-400 uppercase tracking-wider">
-                Platform, competitions &amp; users
-              </span>
-            </div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-              {SUPER_CARDS.map((card) => (
-                <SectionCard key={card.label} card={card} />
-              ))}
-            </div>
-          </section>
-        )}
+        {/* Unified card grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+          {visibleCards.map((card) => (
+            <SectionCard key={card.href + card.label} card={card} />
+          ))}
+        </div>
 
       </div>
     </main>

@@ -363,8 +363,11 @@ export default function TeletextFixtures() {
 
       {/* Scrolling ticker — all upcoming, unfiltered */}
       {!loading && allMatches.length > 0 && (
-        <div className="bg-brand-neon text-brand-charcoal text-[10px] font-mono font-bold uppercase overflow-hidden whitespace-nowrap">
-          <span className="inline-block animate-ticker hover:[animation-play-state:paused] px-4 py-1">
+        <div
+          className="bg-brand-neon text-brand-charcoal text-[10px] font-mono font-bold uppercase overflow-hidden whitespace-nowrap"
+          aria-label="Upcoming fixtures ticker"
+        >
+          <span className="inline-block animate-ticker hover:[animation-play-state:paused] focus-within:[animation-play-state:paused] px-4 py-1">
             {tickerItems}
           </span>
         </div>

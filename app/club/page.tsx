@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import {
-  AlertTriangle,
   ArrowRight,
   Building2,
   CheckCircle2,
@@ -60,7 +59,7 @@ function StatusLabel({
       ) : (
         <CheckCircle2 className="h-3.5 w-3.5" aria-hidden="true" />
       )}
-      {isPending ? 'Confirmation needed' : 'Available'}
+      {isPending ? 'Coming soon' : 'Available'}
     </span>
   );
 }
@@ -68,16 +67,6 @@ function StatusLabel({
 export default function ClubPage() {
   return (
     <PublicPageShell>
-      <div className="sticky top-16 z-40 bg-brand-neon border-b-3 border-brand-charcoal">
-        <div className="max-w-6xl mx-auto px-6 py-3 flex items-start gap-3">
-          <AlertTriangle className="w-4 h-4 text-brand-charcoal shrink-0 mt-0.5" aria-hidden="true" />
-          <p className="text-sm font-bold text-brand-charcoal">
-            <span className="font-black uppercase">Sample data only.</span>{' '}
-            Committee contacts, timeline, facilities, and policies on this page are placeholder content pending confirmation from the club.
-          </p>
-        </div>
-      </div>
-
       <PageHeroNavy
         eyebrow={`Est. ${clubOverview.foundingYear}`}
         title="Club Information"
@@ -400,20 +389,17 @@ export default function ClubPage() {
             </span>
             <div>
               <h2 className="site-section-heading text-2xl sm:text-3xl">
-                Help complete the club archive
+                Get in touch
               </h2>
               <p className="mt-3 text-sm font-semibold leading-6 text-zinc-600">
-                Committee-approved history dates, facility details, office
-                holders, and governance documents can be added without changing
-                this page layout. The source information is maintained in one
-                structured configuration file.
+                Questions about the club, membership, or our programmes? Our committee responds within two working days.
               </p>
               <div className="mt-5 flex flex-wrap gap-3">
                 <Link
                   href="/contact"
                   className="inline-flex min-h-11 items-center gap-2 rounded-xl border-2 border-brand-navy bg-brand-neon px-4 font-display text-xs font-black uppercase text-brand-navy"
                 >
-                  Submit confirmed information
+                  Contact Us
                   <ArrowRight className="h-4 w-4" aria-hidden="true" />
                 </Link>
                 <Link
@@ -421,7 +407,13 @@ export default function ClubPage() {
                   className="inline-flex min-h-11 items-center gap-2 rounded-xl border-2 border-brand-navy bg-white px-4 font-display text-xs font-black uppercase text-brand-navy"
                 >
                   <Building2 className="h-4 w-4" aria-hidden="true" />
-                  Safeguarding hub
+                  Safeguarding Hub
+                </Link>
+                <Link
+                  href="/register"
+                  className="inline-flex min-h-11 items-center gap-2 rounded-xl border-2 border-brand-navy bg-white px-4 font-display text-xs font-black uppercase text-brand-navy"
+                >
+                  Join RVR →
                 </Link>
               </div>
             </div>
