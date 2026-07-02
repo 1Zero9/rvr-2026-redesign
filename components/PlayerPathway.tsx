@@ -4,25 +4,22 @@ import { ArrowRight } from 'lucide-react';
 const TRACKS = [
   {
     label: 'Boys',
-    colour: 'bg-brand-navy',
-    accent: 'bg-brand-neon',
-    textAccent: 'text-brand-neon',
+    borderColor: 'border-l-brand-neon',
+    labelColor: 'text-brand-green',
     steps: ['Academy', 'U7–U11', 'U12–U17', 'Seniors', 'Over 35s'],
     href: '/teams?filter=boys',
   },
   {
     label: 'Girls',
-    colour: 'bg-[#5a1235]',
-    accent: 'bg-pink-300',
-    textAccent: 'text-pink-300',
+    borderColor: 'border-l-brand-maroon',
+    labelColor: 'text-brand-maroon',
     steps: ['Academy', 'U7–U18', 'Ladies Football'],
     href: '/teams?filter=girls',
   },
   {
     label: 'Community',
-    colour: 'bg-brand-green',
-    accent: 'bg-brand-neon',
-    textAccent: 'text-brand-neon',
+    borderColor: 'border-l-brand-green',
+    labelColor: 'text-brand-green',
     steps: ['Walking Football', 'Ladies Football Fit', 'Football For All'],
     href: '/football-for-all',
   },
@@ -53,17 +50,20 @@ export default function PlayerPathway({ className = '' }: PlayerPathwayProps) {
           <Link
             key={track.label}
             href={track.href}
-            className={`group flex items-center gap-0 overflow-hidden border-2 border-brand-navy/15 hover:border-brand-navy/40 transition-all`}
+            className={`group flex items-center gap-0 overflow-hidden border-2 border-l-4 border-brand-navy/15 ${track.borderColor} hover:border-brand-navy/40 bg-white transition-all`}
           >
-            {/* Label pill */}
-            <div className={`${track.colour} shrink-0 flex items-center justify-center px-3 py-3 self-stretch`}>
-              <span className={`font-display font-black text-[10px] uppercase tracking-widest ${track.textAccent} whitespace-nowrap`} style={{ writingMode: 'horizontal-tb' }}>
+            {/* Label */}
+            <div className="shrink-0 flex items-center justify-center px-3 py-2.5 self-stretch">
+              <span className={`font-display font-black text-[10px] uppercase tracking-widest ${track.labelColor} whitespace-nowrap`}>
                 {track.label}
               </span>
             </div>
 
+            {/* Divider */}
+            <div className="w-px self-stretch bg-brand-navy/10 shrink-0" />
+
             {/* Steps */}
-            <div className="flex items-center gap-0 flex-1 bg-white px-3 py-2.5 overflow-x-auto">
+            <div className="flex items-center gap-0 flex-1 px-3 py-2.5 overflow-x-auto">
               {track.steps.map((step, i) => (
                 <div key={step} className="flex items-center gap-0 shrink-0">
                   <span className="font-display font-black text-[10px] uppercase tracking-wide text-brand-charcoal/70 whitespace-nowrap group-hover:text-brand-navy transition-colors">
@@ -77,7 +77,7 @@ export default function PlayerPathway({ className = '' }: PlayerPathwayProps) {
             </div>
 
             {/* Arrow */}
-            <div className="shrink-0 bg-white pr-3 py-2.5 self-stretch flex items-center">
+            <div className="shrink-0 pr-3 py-2.5 self-stretch flex items-center">
               <ArrowRight className="h-3.5 w-3.5 text-brand-navy/25 group-hover:text-brand-navy transition-colors" aria-hidden="true" />
             </div>
           </Link>
