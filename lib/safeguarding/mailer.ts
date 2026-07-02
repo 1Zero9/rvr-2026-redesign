@@ -21,6 +21,7 @@ interface MailPayload {
   subject: string;
   html: string;
   text: string;
+  replyTo?: string;
   /** Additional recipients — not exposed in To/CC headers */
   bcc?: string | string[];
 }
@@ -55,6 +56,7 @@ export async function sendMail(payload: MailPayload): Promise<{ messageId: strin
     subject: payload.subject,
     html:    payload.html,
     text:    payload.text,
+    replyTo: payload.replyTo,
     bcc:     bccList.length ? bccList.join(', ') : undefined,
   });
 

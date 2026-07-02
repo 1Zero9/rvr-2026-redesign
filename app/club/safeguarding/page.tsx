@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import PublicPageShell from "@/components/layout/PublicPageShell";
 import PageHeroNavy from "@/components/layout/PageHeroNavy";
+import ContactForm from "@/components/ContactForm";
 
 export const metadata: Metadata = {
   title: "Safeguarding and Child Welfare",
@@ -23,14 +24,14 @@ const welfareOfficers = [
   {
     role: "Club Children's Officer",
     name: "Sarah Kelly",
-    email: "rivervalleyrangers+welfare@outlook.com",
+    mailbox: "welfare" as const,
     summary:
       "First contact for child welfare questions, parent concerns, and support for young players.",
   },
   {
     role: "Designated Liaison Person",
     name: "Michael Byrne",
-    email: "rivervalleyrangers+safeguarding@outlook.com",
+    mailbox: "safeguarding" as const,
     summary:
       "Lead contact for formal reporting pathways, safeguarding concerns, and statutory liaison.",
   },
@@ -122,13 +123,7 @@ export default function SafeguardingPage() {
                 <p className="mt-4 text-sm font-semibold leading-6 text-zinc-600">
                   {officer.summary}
                 </p>
-                <a
-                  href={`mailto:${officer.email}`}
-                  className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-xl border-3 border-brand-navy bg-brand-cream px-4 py-3 text-sm font-black text-brand-navy transition hover:bg-brand-neon"
-                >
-                  <Mail className="h-4 w-4 text-brand-green" aria-hidden="true" />
-                  {officer.email}
-                </a>
+                <ContactForm mailbox={officer.mailbox} messagePlaceholder="Describe your concern or question…" />
               </article>
             ))}
           </div>

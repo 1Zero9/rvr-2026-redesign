@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import PublicPageShell from "@/components/layout/PublicPageShell";
 import PageHeroNavy from "@/components/layout/PageHeroNavy";
-import { AlertTriangle, Mail, MapPin, ShieldCheck } from "lucide-react";
+import ContactForm from "@/components/ContactForm";
+import { Mail, MapPin, ShieldCheck } from "lucide-react";
+import type { ComponentType } from "react";
 
 export const metadata: Metadata = {
   title: "Contact",
@@ -9,101 +11,100 @@ export const metadata: Metadata = {
     "Contact Rivervalley Rangers AFC — committee, coaching staff, welfare officers, and general enquiries.",
 };
 
-const contacts = [
+const contacts: Array<{
+  role: string;
+  note: string;
+  mailbox: 'info' | 'secretary' | 'welfare';
+  placeholder: string;
+  icon: ComponentType<{ className?: string }>;
+}> = [
   {
     role: "General Enquiries",
-    email: "rivervalleyrangers+info@outlook.com",
     note: "Membership, registration, and general questions.",
+    mailbox: "info",
+    placeholder: "How can we help?",
+    icon: Mail,
   },
   {
     role: "Club Secretary",
-    email: "rivervalleyrangers+secretary@outlook.com",
     note: "Committee matters, documentation, and official correspondence.",
+    mailbox: "secretary",
+    placeholder: "Your message to the secretary…",
+    icon: Mail,
   },
   {
     role: "Children's Welfare Officer",
-    email: "rivervalleyrangers+welfare@outlook.com",
     note: "Safeguarding concerns and child welfare queries.",
+    mailbox: "welfare",
+    placeholder: "Please describe your concern…",
+    icon: ShieldCheck,
   },
 ];
 
 export default function ContactPage() {
   return (
     <PublicPageShell>
-      <div className="sticky top-16 z-40 bg-brand-neon border-b-3 border-brand-charcoal">
-        <div className="max-w-6xl mx-auto px-6 py-3 flex items-start gap-3">
-          <AlertTriangle className="w-4 h-4 text-brand-charcoal shrink-0 mt-0.5" aria-hidden="true" />
-          <p className="text-sm font-bold text-brand-charcoal">
-            <span className="font-black uppercase">Sample data only.</span>{' '}
-            Contact details shown are placeholder content pending confirmation from the club committee.
-          </p>
-        </div>
-      </div>
-
       <PageHeroNavy
         eyebrow={<><Mail className="h-4 w-4" aria-hidden="true" /> Get in Touch</>}
         title="Contact Us"
         description="Reach the RVR committee, coaching staff, or welfare team. We aim to respond within two working days."
       />
 
-        <section className="mx-auto max-w-6xl px-6 py-12 lg:py-16">
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {contacts.map((c) => (
-              <article
-                key={c.email}
-                className="brutalist-card flex flex-col gap-4 bg-white p-6"
-              >
+      <section className="mx-auto max-w-6xl px-6 py-12 lg:py-16">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {contacts.map((c) => (
+            <article
+              key={c.mailbox}
+              className="brutalist-card flex flex-col bg-white p-6"
+            >
+              <div className="flex items-start gap-3 mb-1">
+                <c.icon className="h-4 w-4 text-brand-neon shrink-0 mt-0.5" aria-hidden="true" />
                 <div>
-                  <p className="font-display text-xs font-black uppercase tracking-wide text-brand-green">
+                  <p className="font-display text-xs font-black uppercase tracking-wide text-brand-charcoal">
                     {c.role}
                   </p>
-                  <p className="mt-2 text-sm font-semibold leading-relaxed text-zinc-600">
+                  <p className="mt-1 text-sm leading-relaxed text-zinc-500">
                     {c.note}
                   </p>
                 </div>
-                <a
-                  href={`mailto:${c.email}`}
-                  className="mt-auto inline-flex items-center gap-2 font-display text-sm font-black uppercase text-brand-charcoal underline-offset-4 hover:text-brand-green hover:underline"
-                >
-                  <Mail className="h-4 w-4 shrink-0" aria-hidden="true" />
-                  {c.email}
-                </a>
-              </article>
-            ))}
+              </div>
+              <ContactForm mailbox={c.mailbox} messagePlaceholder={c.placeholder} />
+            </article>
+          ))}
+        </div>
+
+        <div className="mt-10 grid gap-6 sm:grid-cols-2">
+          <div className="rounded-2xl border-4 border-brand-charcoal bg-brand-charcoal p-6 text-white shadow-brutalist">
+            <MapPin className="mb-4 h-6 w-6 text-brand-neon" aria-hidden="true" />
+            <p className="font-display text-sm font-black uppercase tracking-wide text-brand-neon">
+              Our Ground
+            </p>
+            <p className="mt-2 text-sm font-semibold leading-relaxed text-zinc-300">
+              Ward Rivervalley Park<br />
+              Swords, Co. Dublin<br />
+              D17 W2X3
+            </p>
           </div>
 
-          <div className="mt-10 grid gap-6 sm:grid-cols-2">
-            <div className="rounded-2xl border-4 border-brand-charcoal bg-brand-charcoal p-6 text-white shadow-brutalist">
-              <MapPin className="mb-4 h-6 w-6 text-brand-neon" aria-hidden="true" />
-              <p className="font-display text-sm font-black uppercase tracking-wide text-brand-neon">
-                Our Ground
-              </p>
-              <p className="mt-2 text-sm font-semibold leading-relaxed text-zinc-300">
-                Ward Rivervalley Park<br />
-                Swords, Co. Dublin<br />
-                D17 W2X3
-              </p>
-            </div>
-
-            <div className="rounded-2xl border-4 border-brand-charcoal bg-white p-6 shadow-brutalist">
-              <ShieldCheck className="mb-4 h-6 w-6 text-brand-green" aria-hidden="true" />
-              <p className="font-display text-sm font-black uppercase tracking-wide text-brand-green">
-                Safeguarding Concerns
-              </p>
-              <p className="mt-2 text-sm font-semibold leading-relaxed text-zinc-600">
-                For child welfare concerns, contact our Children&apos;s Officer
-                directly or visit the{" "}
-                <a
-                  href="/club/safeguarding"
-                  className="font-black text-brand-green underline underline-offset-4"
-                >
-                  Safeguarding page
-                </a>
-                .
-              </p>
-            </div>
+          <div className="rounded-2xl border-4 border-brand-charcoal bg-white p-6 shadow-brutalist">
+            <ShieldCheck className="mb-4 h-6 w-6 text-brand-green" aria-hidden="true" />
+            <p className="font-display text-sm font-black uppercase tracking-wide text-brand-green">
+              Safeguarding Concerns
+            </p>
+            <p className="mt-2 text-sm font-semibold leading-relaxed text-zinc-600">
+              For child welfare concerns, use the Children&apos;s Welfare Officer
+              form above or visit the{" "}
+              <a
+                href="/club/safeguarding"
+                className="font-black text-brand-green underline underline-offset-4"
+              >
+                Safeguarding page
+              </a>
+              .
+            </p>
           </div>
-        </section>
+        </div>
+      </section>
     </PublicPageShell>
   );
 }

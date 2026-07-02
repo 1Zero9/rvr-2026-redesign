@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import PublicPageShell from '@/components/layout/PublicPageShell';
 import PageHeroNavy from '@/components/layout/PageHeroNavy';
+import ContactForm from '@/components/ContactForm';
 
 interface Testimonial {
   quote: string;
@@ -213,14 +214,12 @@ export default function FootballForAllPage() {
                   <span className="font-sans text-xs font-bold text-zinc-500 uppercase tracking-wide block mt-1">
                     Inclusive programme enquiries
                   </span>
-                  <a
-                    href="mailto:rivervalleyrangers+footballforall@outlook.com?subject=Football%20For%20All"
-                    className="inline-flex min-h-11 items-center gap-1.5 rounded text-sm font-bold text-brand-green hover:underline focus:outline-none focus:ring-2 focus:ring-brand-green"
-                  >
-                    Email rivervalleyrangers+footballforall@outlook.com
-                  </a>
+                  <span className="font-sans text-xs text-zinc-400 block mt-1">
+                    Send us a message below
+                  </span>
                 </div>
               </div>
+              <ContactForm mailbox="footballforall" messagePlaceholder="Tell us a little about yourself or your child…" />
 
               {/* Call Back Form */}
               <div className="border-t border-zinc-200 pt-6 space-y-4">
