@@ -109,10 +109,11 @@ const STATIC_PILLS: Array<{ key: FilterKey; label: string }> = [
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
-export default function TeletextFixtures() {
+export default function TeletextFixtures({ limit }: { limit?: number }) {
   const [allMatches,  setAllMatches]  = useState<UnifiedMatch[]>([]);
   const [loading,     setLoading]     = useState(true);
   const [activeFilter, setActiveFilter] = useState<FilterKey>('All');
+  const [teamFilter,  setTeamFilter]  = useState('');
   const { favourites, clear } = useFavourites();
 
   useEffect(() => {
@@ -178,7 +179,15 @@ export default function TeletextFixtures() {
     return na - nb;
   });
 
-  const displayMatches = applyFilter(favMatches, activeFilter).slice(0, 6);
+  const seniorCompetitions = [
+    ...new Set(allMatches.filter((m) => m.source === 'senior').map((m) => m.competition)),
+  ].sort();
+
+  const filtered = teamFilter
+    ? favMatches.filter((m) => m.competition === teamFilter)
+    : applyFilter(favMatches, activeFilter);
+  const displayMatches = limit ? filtered.slice(0, limit) : filtered;
+  const hiddenCount = filtered.length - displayMatches.length;
 
   const tickerItems = allMatches.map((m, i) => (
     <span key={m.id}>
@@ -239,27 +248,51 @@ export default function TeletextFixtures() {
           ))}
         </div>
       ) : (
-        <div className="flex gap-2 px-3 py-2 overflow-x-auto">
-          {STATIC_PILLS.map(({ key, label }) => (
-            <button
-              key={key}
-              type="button"
-              onClick={() => setActiveFilter(key)}
-              className={`${BASE_PILL} ${activeFilter === key ? pillActiveClass(key) : INACTIVE_PILL}`}
-            >
-              {label}
-            </button>
-          ))}
-          {availableAgeGroups.map((ag) => (
-            <button
-              key={ag}
-              type="button"
-              onClick={() => setActiveFilter(ag)}
-              className={`${BASE_PILL} ${activeFilter === ag ? pillActiveClass(ag) : INACTIVE_PILL}`}
-            >
-              {ag}
-            </button>
-          ))}
+        <div className="px-3 py-2 space-y-2">
+          <div className="flex gap-2 overflow-x-auto">
+            {STATIC_PILLS.map(({ key, label }) => (
+              <button
+                key={key}
+                type="button"
+                onClick={() => { setActiveFilter(key); setTeamFilter(''); }}
+                className={`${BASE_PILL} ${!teamFilter && activeFilter === key ? pillActiveClass(key) : INACTIVE_PILL}`}
+              >
+                {label}
+              </button>
+            ))}
+            {availableAgeGroups.map((ag) => (
+              <button
+                key={ag}
+                type="button"
+                onClick={() => { setActiveFilter(ag); setTeamFilter(''); }}
+                className={`${BASE_PILL} ${!teamFilter && activeFilter === ag ? pillActiveClass(ag) : INACTIVE_PILL}`}
+              >
+                {ag}
+              </button>
+            ))}
+          </div>
+          <select
+            value={teamFilter}
+            onChange={(e) => { setTeamFilter(e.target.value); setActiveFilter('All'); }}
+            aria-label="Select your team"
+            className="w-full min-h-[44px] bg-brand-navy border border-brand-sky/30 px-2 font-mono text-[11px] font-bold uppercase text-brand-sky focus:outline-none focus:border-brand-neon"
+          >
+            <option value="">★ Select your team — show only its fixtures</option>
+            <optgroup label="Youth (DDSL)">
+              {KNOWN_DIVISIONS.map((d) => (
+                <option key={d.slug} value={d.competitionName}>
+                  {d.ageGroup} — {d.officialName}
+                </option>
+              ))}
+            </optgroup>
+            {seniorCompetitions.length > 0 && (
+              <optgroup label="Senior">
+                {seniorCompetitions.map((c) => (
+                  <option key={c} value={c}>{c}</option>
+                ))}
+              </optgroup>
+            )}
+          </select>
         </div>
       )}
 
@@ -291,6 +324,14 @@ export default function TeletextFixtures() {
         </div>
       ) : (
         <div>
+          {/* Column titles */}
+          <div className="px-3 py-1.5 flex items-center gap-2 border-b border-brand-sky/30 bg-brand-navy/70 text-[9px] font-mono font-bold uppercase tracking-widest text-brand-sky/60">
+            <span className="w-12 shrink-0">Team</span>
+            <span className="w-5 shrink-0">H/A</span>
+            <span className="flex-1 min-w-0">Opponent</span>
+            <span className="w-16 shrink-0 text-right">Date</span>
+            <span className="w-10 shrink-0 text-right">KO</span>
+          </div>
           {displayMatches.map((m, i) => (
             <div
               key={m.id}
@@ -354,10 +395,10 @@ export default function TeletextFixtures() {
           </a>
         </span>
         <Link
-          href="/fixtures"
+          href="/matchday"
           className="text-brand-neon hover:underline inline-flex items-center min-h-11"
         >
-          ALL FIXTURES »
+          {hiddenCount > 0 ? `+${hiddenCount} MORE » MATCHDAY CENTRE` : 'MATCHDAY CENTRE »'}
         </Link>
       </div>
 

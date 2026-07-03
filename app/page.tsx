@@ -164,7 +164,7 @@ export default async function Home() {
                 <Trophy className="w-8 h-8 text-brand-neon shrink-0" aria-hidden="true" />
               </h2>
             </div>
-            <TeletextFixtures />
+            <TeletextFixtures limit={6} />
           </div>
         </section>
 

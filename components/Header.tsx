@@ -4,7 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { ArrowRight, ChevronDown, ChevronRight, Menu, X } from 'lucide-react';
+import { ChevronDown, ChevronRight, Menu, X } from 'lucide-react';
 import SearchOverlay from './SearchOverlay';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -39,6 +39,7 @@ const NAV_SECTIONS: NavSection[] = [
       {
         heading: 'Matchday',
         links: [
+          { href: '/matchday',               label: 'Matchday Centre'    },
           { href: '/fixtures',               label: 'Fixtures & Results' },
           { href: '/fixtures?filter=youth',  label: 'Youth Fixtures'     },
           { href: '/fixtures?filter=senior', label: 'Senior Fixtures'    },
@@ -123,6 +124,7 @@ const MOBILE_NAV_SECTIONS: MobileNavSection[] = [
       { href: '/teams?filter=girls',         label: 'DDSL Girls'          },
       { href: '/seniors',                    label: 'Seniors'             },
       { href: '/seniors/over-35s',           label: 'Over 35s'            },
+      { href: '/matchday',                   label: 'Matchday Centre'     },
       { href: '/fixtures',                   label: 'Fixtures & Results'  },
       { href: '/astro-booking',              label: 'Book Astro Pitch'    },
       { href: '/pitch-locations',            label: 'Pitch Locations'     },

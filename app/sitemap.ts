@@ -14,6 +14,7 @@ const routes: RouteConfig[] = [
   { path: '',                          changeFrequency: 'weekly',  priority: 1.0 },
   { path: '/teams',                    changeFrequency: 'weekly',  priority: 0.9 },
   { path: '/fixtures',                 changeFrequency: 'daily',   priority: 0.9 },
+  { path: '/matchday',                 changeFrequency: 'daily',   priority: 0.8 },
   { path: '/register',                 changeFrequency: 'monthly', priority: 0.9 },
   { path: '/news',                     changeFrequency: 'weekly',  priority: 0.8 },
   { path: '/academy',                  changeFrequency: 'monthly', priority: 0.8 },
