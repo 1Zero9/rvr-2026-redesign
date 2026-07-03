@@ -479,12 +479,13 @@ export default function Header() {
       {/* Search overlay */}
       <SearchOverlay isOpen={searchOpen} onClose={closeSearch} />
 
-      {/* Mobile slide-out drawer */}
+      {/* Mobile slide-out drawer — inert (not aria-hidden) when closed so
+          descendants can never retain focus while hidden */}
       <div
         className={`fixed inset-0 z-[60] lg:hidden transition ${
           open ? 'pointer-events-auto' : 'pointer-events-none'
         }`}
-        aria-hidden={!open}
+        inert={!open}
       >
         <button
           type="button"
