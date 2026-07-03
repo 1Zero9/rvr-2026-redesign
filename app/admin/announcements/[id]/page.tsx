@@ -31,6 +31,8 @@ export default async function EditAnnouncementPage({
         category:    formData.get('category') as 'BREAKING' | 'CONGRATULATIONS' | 'COMMUNITY_NEWS' | 'IN_SYMPATHY',
         body:        formData.get('body') as string,
         imageUrl:    (formData.get('imageUrl') as string)  || null,
+        focalX:      Number(formData.get('focalX') ?? 50),
+        focalY:      Number(formData.get('focalY') ?? 50),
         ctaLabel:    (formData.get('ctaLabel') as string)  || null,
         ctaUrl:      (formData.get('ctaUrl') as string)    || null,
         expiresAt:   formData.get('expiresAt')
@@ -61,6 +63,8 @@ export default async function EditAnnouncementPage({
     category:    announcement.category,
     body:        announcement.body,
     imageUrl:    announcement.imageUrl,
+    focalX:      announcement.focalX,
+    focalY:      announcement.focalY,
     ctaLabel:    announcement.ctaLabel,
     ctaUrl:      announcement.ctaUrl,
     expiresAt:   announcement.expiresAt?.toISOString() ?? null,

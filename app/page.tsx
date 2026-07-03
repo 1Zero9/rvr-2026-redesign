@@ -121,7 +121,7 @@ export default async function Home() {
       subtitle:       a.body.split('\n')[0] || null,
       imageUrl:       a.imageUrl,
       mobileImageUrl: null,
-      objectPosition: '50% 50%',
+      objectPosition: `${a.focalX}% ${a.focalY}%`,
       href:           a.ctaUrl ?? `/news/${a.id}`,
       ctaLabel:       a.ctaLabel ?? 'Read More',
     })),

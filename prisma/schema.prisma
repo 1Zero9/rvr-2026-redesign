@@ -669,6 +669,9 @@ model Announcement {
   category    AnnouncementCategory
   body        String // markdown, 2-3 paragraphs max
   imageUrl    String? // optional — paste any image URL
+  /// Focal point as percentages (0–100) — drives CSS object-position
+  focalX      Float                @default(50)
+  focalY      Float                @default(50)
   ctaLabel    String? // e.g. "Register Now", "Sign Up"
   ctaUrl      String? // destination for the CTA button
   publishedAt DateTime             @default(now())

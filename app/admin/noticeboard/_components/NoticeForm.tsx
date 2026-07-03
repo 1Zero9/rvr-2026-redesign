@@ -12,6 +12,8 @@ export interface NewsFormData {
   category:    string;
   body:        string;
   imageUrl:    string | null;
+  focalX:      number;
+  focalY:      number;
   ctaLabel:    string | null;
   ctaUrl:      string | null;
   expiresAt:   string | null;
@@ -212,8 +214,8 @@ export default function NoticeForm({
   const [newsImage, setNewsImage]   = useState(n?.imageUrl ?? '');
   const [heroUrl, setHeroUrl]       = useState(c?.heroImageUrl ?? '');
   const [mobileUrl, setMobileUrl]   = useState(c?.mobileImageUrl ?? '');
-  const [focalX, setFocalX]         = useState(c?.focalX ?? 50);
-  const [focalY, setFocalY]         = useState(c?.focalY ?? 50);
+  const [focalX, setFocalX]         = useState(c?.focalX ?? n?.focalX ?? 50);
+  const [focalY, setFocalY]         = useState(c?.focalY ?? n?.focalY ?? 50);
 
   const action = type === 'news' ? newsAction : campaignAction;
   const isNews = type === 'news';
@@ -303,8 +305,19 @@ export default function NoticeForm({
               url={newsImage}
               onUrlChange={setNewsImage}
               pathPrefix="news"
-              showPreview
             />
+
+            {newsImage && (
+              <FocalPointEditor
+                heroUrl={newsImage}
+                mobileUrl=""
+                focalX={focalX}
+                focalY={focalY}
+                onChange={(x, y) => { setFocalX(x); setFocalY(y); }}
+              />
+            )}
+            <input type="hidden" name="focalX" value={focalX} />
+            <input type="hidden" name="focalY" value={focalY} />
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>

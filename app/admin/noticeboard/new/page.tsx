@@ -28,6 +28,8 @@ export default async function NewNoticePage({
         category:    formData.get('category') as 'BREAKING' | 'CONGRATULATIONS' | 'COMMUNITY_NEWS' | 'IN_SYMPATHY',
         body:        formData.get('body') as string,
         imageUrl:    (formData.get('imageUrl') as string)  || null,
+        focalX:      Number(formData.get('focalX') ?? 50),
+        focalY:      Number(formData.get('focalY') ?? 50),
         ctaLabel:    (formData.get('ctaLabel') as string)  || null,
         ctaUrl:      (formData.get('ctaUrl') as string)    || null,
         expiresAt:   formData.get('expiresAt')
