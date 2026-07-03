@@ -3,6 +3,7 @@ import { Inter, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
 import MobileNavBar from "@/components/MobileNavBar";
+import ImageProtection from "@/components/ImageProtection";
 import { FavouritesProvider } from "@/lib/favourites/context";
 
 const inter = Inter({
@@ -22,6 +23,14 @@ const jakarta = Plus_Jakarta_Sans({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.rivervalleyrangers.ie"),
+  // Pages are indexable, but photos (mostly of children) must never appear
+  // in Google Images or other image search results
+  robots: {
+    index: true,
+    follow: true,
+    noimageindex: true,
+    googleBot: { index: true, follow: true, noimageindex: true },
+  },
   title: {
     default: "Rivervalley Rangers AFC | Swords Football Club",
     template: "%s | Rivervalley Rangers AFC",
@@ -135,6 +144,7 @@ export default function RootLayout({
           </div>
           <MobileNavBar />
         </FavouritesProvider>
+        <ImageProtection />
         <Analytics />
       </body>
     </html>

@@ -50,6 +50,11 @@ const nextConfig: NextConfig = {
         headers: securityHeaders,
       },
       {
+        // Photos (mostly of children) must never appear in image search
+        source: "/images/:path*",
+        headers: [{ key: "X-Robots-Tag", value: "noimageindex, noindex" }],
+      },
+      {
         // Stripe webhooks must not be redirected or modified by headers
         // that could alter the raw body — keep them clean
         source: "/api/webhooks/:path*",

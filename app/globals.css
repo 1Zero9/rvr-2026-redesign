@@ -79,6 +79,14 @@
   top: 1rem;
 }
 
+/* Photo protection — blocks iOS long-press save and drag ghosts on
+   photos of club members. Deterrent only; see ImageProtection.tsx */
+img {
+  -webkit-touch-callout: none;
+  -webkit-user-drag: none;
+  user-select: none;
+}
+
 /* Global visible focus indicator (WCAG 2.4.7) — two-layer ring stays
    visible on both cream and navy backgrounds */
 :focus-visible {
