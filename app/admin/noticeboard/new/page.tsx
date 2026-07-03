@@ -2,15 +2,46 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
-import CampaignForm from '../_components/CampaignForm';
+import NoticeForm from '../_components/NoticeForm';
 import { requireAdmin } from '@/lib/admin/require-admin';
 import type { CampaignAudience } from '@prisma/client';
 
 export const metadata: Metadata = {
-  title: 'New Campaign | RVR Admin',
+  title: 'New Notice | RVR Admin',
 };
 
-export default function NewCampaignPage() {
+export default async function NewNoticePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ type?: string }>;
+}) {
+  const { type } = await searchParams;
+  const initialType = type === 'campaign' ? 'campaign' : 'news';
+
+  async function createNews(formData: FormData) {
+    'use server';
+    await requireAdmin();
+    const { prisma } = await import('@/lib/prisma');
+    await prisma.announcement.create({
+      data: {
+        title:       formData.get('title') as string,
+        category:    formData.get('category') as 'BREAKING' | 'CONGRATULATIONS' | 'COMMUNITY_NEWS' | 'IN_SYMPATHY',
+        body:        formData.get('body') as string,
+        imageUrl:    (formData.get('imageUrl') as string)  || null,
+        ctaLabel:    (formData.get('ctaLabel') as string)  || null,
+        ctaUrl:      (formData.get('ctaUrl') as string)    || null,
+        expiresAt:   formData.get('expiresAt')
+                       ? new Date(formData.get('expiresAt') as string)
+                       : null,
+        isPublished: formData.get('isPublished') === 'on',
+        pinned:      formData.get('pinned') === 'on',
+      },
+    });
+    revalidatePath('/');
+    revalidatePath('/news');
+    redirect('/admin/noticeboard');
+  }
+
   async function createCampaign(formData: FormData) {
     'use server';
     await requireAdmin();
@@ -37,6 +68,7 @@ export default function NewCampaignPage() {
     });
     revalidatePath('/');
     revalidatePath('/campaigns');
+    revalidatePath('/news');
     redirect('/admin/noticeboard');
   }
 
@@ -52,11 +84,15 @@ export default function NewCampaignPage() {
             ← Back to Noticeboard
           </Link>
           <h1 className="font-display font-black italic text-4xl uppercase text-brand-navy mt-3">
-            New Campaign
+            New Notice
           </h1>
         </div>
 
-        <CampaignForm action={createCampaign} />
+        <NoticeForm
+          initialType={initialType}
+          newsAction={createNews}
+          campaignAction={createCampaign}
+        />
 
       </div>
     </main>

@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/prisma';
-import CampaignForm from '../_components/CampaignForm';
+import NoticeForm from '@/app/admin/noticeboard/_components/NoticeForm';
 import { requireAdmin } from '@/lib/admin/require-admin';
 import type { CampaignAudience } from '@prisma/client';
 
@@ -48,6 +48,7 @@ export default async function EditCampaignPage({
     });
     revalidatePath('/');
     revalidatePath('/campaigns');
+    revalidatePath('/news');
     redirect('/admin/noticeboard');
   }
 
@@ -58,10 +59,11 @@ export default async function EditCampaignPage({
     await db.campaign.delete({ where: { id } });
     revalidatePath('/');
     revalidatePath('/campaigns');
+    revalidatePath('/news');
     redirect('/admin/noticeboard');
   }
 
-  const initialData = {
+  const campaignData = {
     id:             campaign.id,
     title:          campaign.title,
     subtitle:       campaign.subtitle,
@@ -96,10 +98,12 @@ export default async function EditCampaignPage({
           <p className="text-brand-charcoal/40 text-xs font-mono mt-1">{id}</p>
         </div>
 
-        <CampaignForm
-          action={updateCampaign}
+        <NoticeForm
+          initialType="campaign"
+          lockType
+          campaignAction={updateCampaign}
           deleteAction={deleteCampaign}
-          initialData={initialData}
+          campaignData={campaignData}
         />
 
       </div>

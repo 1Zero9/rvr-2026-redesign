@@ -128,20 +128,12 @@ export default async function NoticeboardAdminPage() {
               exactly as they compete for the homepage spotlight.
             </p>
           </div>
-          <div className="flex gap-2 shrink-0">
-            <Link
-              href="/admin/announcements/new"
-              className="bg-white text-brand-charcoal font-bold px-4 py-3 min-h-[44px] flex items-center text-sm border-2 border-brand-charcoal hover:bg-brand-sky/30 transition-colors"
-            >
-              + News
-            </Link>
-            <Link
-              href="/admin/campaigns/new"
-              className="bg-brand-neon text-brand-charcoal font-bold px-4 py-3 min-h-[44px] flex items-center text-sm border-3 border-brand-charcoal shadow-brutalist hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all"
-            >
-              + Campaign
-            </Link>
-          </div>
+          <Link
+            href="/admin/noticeboard/new"
+            className="shrink-0 bg-brand-neon text-brand-charcoal font-bold px-5 py-3 min-h-[44px] flex items-center border-3 border-brand-charcoal shadow-brutalist hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all"
+          >
+            + New Notice
+          </Link>
         </div>
 
         {/* Spotlight settings */}

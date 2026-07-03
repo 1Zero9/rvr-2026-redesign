@@ -1,12 +1,13 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
+import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/prisma';
-import AnnouncementForm from '../_components/AnnouncementForm';
+import NoticeForm from '@/app/admin/noticeboard/_components/NoticeForm';
 import { requireAdmin } from '@/lib/admin/require-admin';
 
 export const metadata: Metadata = {
-  title: 'Edit Announcement | RVR Admin',
+  title: 'Edit News Item | RVR Admin',
 };
 
 export default async function EditAnnouncementPage({
@@ -39,6 +40,8 @@ export default async function EditAnnouncementPage({
         pinned:      formData.get('pinned') === 'on',
       },
     });
+    revalidatePath('/');
+    revalidatePath('/news');
     redirect('/admin/noticeboard');
   }
 
@@ -47,10 +50,12 @@ export default async function EditAnnouncementPage({
     await requireAdmin();
     const { prisma: db } = await import('@/lib/prisma');
     await db.announcement.delete({ where: { id } });
+    revalidatePath('/');
+    revalidatePath('/news');
     redirect('/admin/noticeboard');
   }
 
-  const initialData = {
+  const newsData = {
     id:          announcement.id,
     title:       announcement.title,
     category:    announcement.category,
@@ -75,15 +80,17 @@ export default async function EditAnnouncementPage({
             ← Back to Noticeboard
           </Link>
           <h1 className="font-display font-black italic text-4xl uppercase text-brand-navy mt-3">
-            Edit Announcement
+            Edit News Item
           </h1>
           <p className="text-brand-charcoal/40 text-xs font-mono mt-1">{id}</p>
         </div>
 
-        <AnnouncementForm
-          action={updateAnnouncement}
+        <NoticeForm
+          initialType="news"
+          lockType
+          newsAction={updateAnnouncement}
           deleteAction={deleteAnnouncement}
-          initialData={initialData}
+          newsData={newsData}
         />
 
       </div>
