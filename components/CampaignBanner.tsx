@@ -61,17 +61,17 @@ export default function CampaignBanner() {
 
   return (
     <div
-      className={`grid ${animate ? 'transition-[grid-template-rows] duration-500 ease-out' : ''}`}
+      className={animate ? 'grid transition-[grid-template-rows] duration-700 [transition-timing-function:cubic-bezier(0.22,1,0.36,1)]' : 'grid'}
       style={{ gridTemplateRows: open ? '1fr' : '0fr' }}
       aria-hidden={!open}
     >
       <div className="overflow-hidden">
-        <div
-          className={`bg-brand-neon border-b-3 border-brand-charcoal ${
-            animate ? 'transition-transform duration-500 ease-out' : ''
-          } ${open ? 'translate-y-0' : '-translate-y-full'}`}
-        >
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-2.5 flex items-center gap-3">
+        <div className="bg-brand-neon border-b-3 border-brand-charcoal">
+      <div
+        className={`max-w-6xl mx-auto px-4 sm:px-6 py-2.5 flex items-center gap-3 ${
+          animate ? 'transition-opacity duration-500 delay-200' : ''
+        } ${open ? 'opacity-100' : 'opacity-0'}`}
+      >
         <p className="flex-1 min-w-0 text-sm font-bold text-brand-charcoal truncate">
           <span className="font-display font-black uppercase">{campaign.title}</span>
           {campaign.subtitle && (
