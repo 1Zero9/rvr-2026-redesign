@@ -57,6 +57,17 @@ const LABEL = 'block text-sm font-bold text-brand-charcoal mb-1';
 const INPUT = 'w-full border-2 border-brand-charcoal px-3 py-2 min-h-[44px] bg-white focus:outline-none focus:border-brand-neon text-brand-charcoal';
 const TEXTAREA = 'w-full border-2 border-brand-charcoal px-3 py-2 bg-white focus:outline-none focus:border-brand-neon text-brand-charcoal resize-y';
 
+// Known public routes — suggested in the CTA URL field to prevent typos
+// like /regsiter. Free entry still allowed for external URLs.
+const SITE_PATHS = [
+  '/register', '/contact', '/membership-calculator', '/teams', '/fixtures',
+  '/academy', '/campaigns', '/news', '/community', '/walking-football',
+  '/ladies-football', '/football-for-all', '/seniors', '/astro-booking',
+  '/boot-room', '/shop', '/sponsorship', '/get-involved', '/club',
+  '/club/history', '/club/safeguarding', '/club/anniversary', '/pathway',
+  '/pitch-locations',
+];
+
 // ─── Copy prompt helper ───────────────────────────────────────────────────────
 
 const COPY_PROMPT = `You are writing website copy for Rivervalley Rangers AFC, a community football club in Swords, Dublin, founded in 1981.
@@ -267,6 +278,10 @@ export default function NoticeForm({
 
   return (
     <div className="space-y-6">
+      <datalist id="site-paths">
+        {SITE_PATHS.map((p) => <option key={p} value={p} />)}
+      </datalist>
+
       {/* Type selector */}
       {!lockType && (
         <div>
@@ -374,7 +389,7 @@ export default function NoticeForm({
               </div>
               <div>
                 <label htmlFor="ctaUrl" className={LABEL}>CTA URL <span className="font-normal text-brand-charcoal/50">(optional — /register, /contact…)</span></label>
-                <input id="ctaUrl" name="ctaUrl" type="text" defaultValue={n?.ctaUrl ?? ''} placeholder="/register" className={INPUT} />
+                <input id="ctaUrl" name="ctaUrl" type="text" list="site-paths" defaultValue={n?.ctaUrl ?? ''} placeholder="/register" className={INPUT} />
               </div>
             </div>
 
@@ -445,7 +460,7 @@ export default function NoticeForm({
               </div>
               <div>
                 <label htmlFor="ctaUrl" className={LABEL}>CTA URL * <span className="font-normal text-brand-charcoal/50">(where the button goes — /register, /contact, /astro-booking…)</span></label>
-                <input id="ctaUrl" name="ctaUrl" type="text" required defaultValue={c?.ctaUrl ?? ''} placeholder="/register" className={INPUT} />
+                <input id="ctaUrl" name="ctaUrl" type="text" list="site-paths" required defaultValue={c?.ctaUrl ?? ''} placeholder="/register" className={INPUT} />
               </div>
             </div>
 
