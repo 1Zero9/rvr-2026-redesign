@@ -23,20 +23,36 @@ function getDismissed(): string[] {
   }
 }
 
+const DROP_DELAY_MS = 1500;
+
 export default function CampaignBanner() {
   const [queue, setQueue] = useState<BannerCampaign[]>([]);
+  const [open, setOpen] = useState(false);
+  const [animate, setAnimate] = useState(true);
 
   useEffect(() => {
     let cancelled = false;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
     fetch('/api/campaigns')
       .then((res) => (res.ok ? res.json() : []))
       .then((campaigns: BannerCampaign[]) => {
         if (cancelled) return;
         const dismissed = getDismissed();
-        setQueue(campaigns.filter((c) => c.showBanner && !dismissed.includes(c.id)));
+        const banners = campaigns.filter((c) => c.showBanner && !dismissed.includes(c.id));
+        setQueue(banners);
+        if (banners.length === 0) return;
+        if (reducedMotion) {
+          // No delay, no motion — just appear
+          setAnimate(false);
+          setOpen(true);
+        } else {
+          timer = setTimeout(() => setOpen(true), DROP_DELAY_MS);
+        }
       })
       .catch(() => {});
-    return () => { cancelled = true; };
+    return () => { cancelled = true; clearTimeout(timer); };
   }, []);
 
   // Newest live banner first; dismissing reveals the next one
@@ -44,7 +60,17 @@ export default function CampaignBanner() {
   if (!campaign) return null;
 
   return (
-    <div className="bg-brand-neon border-b-3 border-brand-charcoal">
+    <div
+      className={`grid ${animate ? 'transition-[grid-template-rows] duration-500 ease-out' : ''}`}
+      style={{ gridTemplateRows: open ? '1fr' : '0fr' }}
+      aria-hidden={!open}
+    >
+      <div className="overflow-hidden">
+        <div
+          className={`bg-brand-neon border-b-3 border-brand-charcoal ${
+            animate ? 'transition-transform duration-500 ease-out' : ''
+          } ${open ? 'translate-y-0' : '-translate-y-full'}`}
+        >
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-2.5 flex items-center gap-3">
         <p className="flex-1 min-w-0 text-sm font-bold text-brand-charcoal truncate">
           <span className="font-display font-black uppercase">{campaign.title}</span>
@@ -77,6 +103,8 @@ export default function CampaignBanner() {
         >
           <X className="h-4 w-4" aria-hidden="true" />
         </button>
+        </div>
+        </div>
       </div>
     </div>
   );
