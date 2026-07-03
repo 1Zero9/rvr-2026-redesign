@@ -57,16 +57,103 @@ const LABEL = 'block text-sm font-bold text-brand-charcoal mb-1';
 const INPUT = 'w-full border-2 border-brand-charcoal px-3 py-2 min-h-[44px] bg-white focus:outline-none focus:border-brand-neon text-brand-charcoal';
 const TEXTAREA = 'w-full border-2 border-brand-charcoal px-3 py-2 bg-white focus:outline-none focus:border-brand-neon text-brand-charcoal resize-y';
 
-// Known public routes — suggested in the CTA URL field to prevent typos
-// like /regsiter. Free entry still allowed for external URLs.
-const SITE_PATHS = [
-  '/register', '/contact', '/membership-calculator', '/teams', '/fixtures',
-  '/academy', '/campaigns', '/news', '/community', '/walking-football',
-  '/ladies-football', '/football-for-all', '/seniors', '/astro-booking',
-  '/boot-room', '/shop', '/sponsorship', '/get-involved', '/club',
-  '/club/history', '/club/safeguarding', '/club/anniversary', '/pathway',
-  '/pitch-locations',
+// Known public destinations — the CTA target is a dropdown (with an
+// "Other…" escape hatch) so typos like /regsiter can't happen.
+const SITE_TARGETS: Array<{ path: string; label: string }> = [
+  { path: '/register',             label: 'Join — Register a Player' },
+  { path: '/membership-calculator', label: 'Fee Calculator' },
+  { path: '/contact',              label: 'Contact the Club' },
+  { path: '/teams',                label: 'All Teams' },
+  { path: '/fixtures',             label: 'Fixtures & Results' },
+  { path: '/academy',              label: 'Development Academy' },
+  { path: '/campaigns',            label: 'Campaigns' },
+  { path: '/news',                 label: 'News & Noticeboard' },
+  { path: '/community',            label: 'Community Football' },
+  { path: '/walking-football',     label: 'Walking Football' },
+  { path: '/ladies-football',      label: 'Ladies Football' },
+  { path: '/football-for-all',     label: 'Football For All' },
+  { path: '/seniors',              label: 'Seniors' },
+  { path: '/astro-booking',        label: 'Book the Astro Pitch' },
+  { path: '/boot-room',            label: 'Boot Room Exchange' },
+  { path: '/shop',                 label: 'Club Shop' },
+  { path: '/sponsorship',          label: 'Sponsorship' },
+  { path: '/get-involved',         label: 'Volunteer & Coach' },
+  { path: '/club',                 label: 'Club Overview' },
+  { path: '/club/history',         label: 'Club History' },
+  { path: '/club/anniversary',     label: '45th Anniversary' },
+  { path: '/club/safeguarding',    label: 'Safeguarding' },
+  { path: '/pathway',              label: 'Player Pathway' },
+  { path: '/pitch-locations',      label: 'Pitch Locations' },
 ];
+
+const CTA_LABELS = [
+  'Register Now', 'Join Us', 'Book a Trial', 'Find Out More', 'Read More',
+  'Get Involved', 'Contact Us', 'Book Now', 'Learn More', 'Donate',
+];
+
+const CUSTOM = '__custom';
+
+function SelectWithCustom({
+  name,
+  required,
+  initial,
+  options,
+  chooseText,
+  customText,
+  customPlaceholder,
+}: {
+  name: string;
+  required?: boolean;
+  initial: string;
+  options: Array<{ value: string; label: string }>;
+  chooseText: string;
+  customText: string;
+  customPlaceholder: string;
+}) {
+  const isKnown = initial === '' || options.some((o) => o.value === initial);
+  const [custom, setCustom] = useState(!isKnown);
+
+  if (custom) {
+    return (
+      <div className="flex gap-2">
+        <input
+          name={name}
+          type="text"
+          required={required}
+          defaultValue={initial}
+          placeholder={customPlaceholder}
+          className={INPUT}
+          autoFocus={initial === ''}
+        />
+        <button
+          type="button"
+          onClick={() => setCustom(false)}
+          className="shrink-0 min-h-[44px] px-3 border-2 border-brand-charcoal/30 text-xs font-bold text-brand-charcoal/60 hover:border-brand-charcoal hover:text-brand-charcoal transition-colors"
+        >
+          List
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <select
+      name={name}
+      required={required}
+      defaultValue={initial}
+      className={INPUT}
+      onChange={(e) => {
+        if (e.target.value === CUSTOM) setCustom(true);
+      }}
+    >
+      <option value="" disabled={required}>{required ? chooseText : '— None —'}</option>
+      {options.map((o) => (
+        <option key={o.value} value={o.value}>{o.label}</option>
+      ))}
+      <option value={CUSTOM}>{customText}</option>
+    </select>
+  );
+}
 
 // ─── Copy prompt helper ───────────────────────────────────────────────────────
 
@@ -278,10 +365,6 @@ export default function NoticeForm({
 
   return (
     <div className="space-y-6">
-      <datalist id="site-paths">
-        {SITE_PATHS.map((p) => <option key={p} value={p} />)}
-      </datalist>
-
       {/* Type selector */}
       {!lockType && (
         <div>
@@ -384,12 +467,26 @@ export default function NoticeForm({
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label htmlFor="ctaLabel" className={LABEL}>CTA Label <span className="font-normal text-brand-charcoal/50">(optional — 2–3 words, start with a verb)</span></label>
-                <input id="ctaLabel" name="ctaLabel" type="text" defaultValue={n?.ctaLabel ?? ''} placeholder="Read More" className={INPUT} />
+                <span className={LABEL}>Button Text <span className="font-normal text-brand-charcoal/50">(optional)</span></span>
+                <SelectWithCustom
+                  name="ctaLabel"
+                  initial={n?.ctaLabel ?? ''}
+                  options={CTA_LABELS.map((l) => ({ value: l, label: l }))}
+                  chooseText="Choose button text…"
+                  customText="Other — write my own…"
+                  customPlaceholder="e.g. See the Photos"
+                />
               </div>
               <div>
-                <label htmlFor="ctaUrl" className={LABEL}>CTA URL <span className="font-normal text-brand-charcoal/50">(optional — /register, /contact…)</span></label>
-                <input id="ctaUrl" name="ctaUrl" type="text" list="site-paths" defaultValue={n?.ctaUrl ?? ''} placeholder="/register" className={INPUT} />
+                <span className={LABEL}>Button Goes To <span className="font-normal text-brand-charcoal/50">(optional)</span></span>
+                <SelectWithCustom
+                  name="ctaUrl"
+                  initial={n?.ctaUrl ?? ''}
+                  options={SITE_TARGETS.map((t) => ({ value: t.path, label: t.label }))}
+                  chooseText="Choose a page…"
+                  customText="Other — external link…"
+                  customPlaceholder="https://…"
+                />
               </div>
             </div>
 
@@ -455,12 +552,28 @@ export default function NoticeForm({
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label htmlFor="ctaLabel" className={LABEL}>CTA Label * <span className="font-normal text-brand-charcoal/50">(2–3 words, start with a verb)</span></label>
-                <input id="ctaLabel" name="ctaLabel" type="text" required defaultValue={c?.ctaLabel ?? ''} placeholder="Book a Trial" className={INPUT} />
+                <span className={LABEL}>Button Text *</span>
+                <SelectWithCustom
+                  name="ctaLabel"
+                  required
+                  initial={c?.ctaLabel ?? ''}
+                  options={CTA_LABELS.map((l) => ({ value: l, label: l }))}
+                  chooseText="Choose button text…"
+                  customText="Other — write my own…"
+                  customPlaceholder="e.g. Enter the Draw"
+                />
               </div>
               <div>
-                <label htmlFor="ctaUrl" className={LABEL}>CTA URL * <span className="font-normal text-brand-charcoal/50">(where the button goes — /register, /contact, /astro-booking…)</span></label>
-                <input id="ctaUrl" name="ctaUrl" type="text" list="site-paths" required defaultValue={c?.ctaUrl ?? ''} placeholder="/register" className={INPUT} />
+                <span className={LABEL}>Button Goes To *</span>
+                <SelectWithCustom
+                  name="ctaUrl"
+                  required
+                  initial={c?.ctaUrl ?? ''}
+                  options={SITE_TARGETS.map((t) => ({ value: t.path, label: t.label }))}
+                  chooseText="Choose a page…"
+                  customText="Other — external link…"
+                  customPlaceholder="https://…"
+                />
               </div>
             </div>
 
