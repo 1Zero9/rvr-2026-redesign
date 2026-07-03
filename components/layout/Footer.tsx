@@ -118,6 +118,7 @@ export default function Footer() {
       <div className="max-w-6xl mx-auto px-6 pb-6 border-t border-zinc-800 pt-5">
         <div className="flex flex-wrap gap-x-5 gap-y-2">
           <Link href="/privacy"          className="text-xs text-zinc-500 hover:text-brand-neon transition-colors">Privacy Policy</Link>
+          <Link href="/accessibility"    className="text-xs text-zinc-500 hover:text-brand-neon transition-colors">Accessibility</Link>
           <Link href="/club/safeguarding" className="text-xs text-zinc-500 hover:text-brand-neon transition-colors">Child Safeguarding</Link>
           <Link href="/boot-room"         className="text-xs text-zinc-500 hover:text-brand-neon transition-colors">Boot Room</Link>
           <Link href="/shop"              className="text-xs text-zinc-500 hover:text-brand-neon transition-colors">Club Shop</Link>

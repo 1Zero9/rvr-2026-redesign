@@ -150,6 +150,15 @@ export default async function BootRoomPage() {
           </p>
         </div>
       </ContentSection>
+
+      <div className="mx-auto max-w-4xl px-4 pb-10 sm:px-6">
+        <p className="text-xs text-zinc-500 leading-relaxed">
+          The Boot Room is a free community exchange between club members. Items are
+          donated as-is and exchanges are arranged directly between members — Rivervalley
+          Rangers AFC facilitates listings but is not a party to any exchange and accepts
+          no responsibility for the condition or suitability of donated items.
+        </p>
+      </div>
     </PublicPageShell>
   );
 }

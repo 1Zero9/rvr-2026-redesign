@@ -159,8 +159,34 @@ export default function PrivacyPolicyPage() {
 
         <h2>8. Cookies</h2>
         <p>
-          This site uses a single session cookie for authenticated admin users. No tracking or
-          advertising cookies are set for public visitors.
+          We deliberately run this site without tracking or advertising cookies, which is
+          why you don&rsquo;t see a cookie consent banner. The cookies we do use are all
+          strictly necessary:
+        </p>
+        <ul>
+          <li>
+            <strong>Admin session</strong> (<code>authjs.session-token</code>) — set only
+            when a club administrator signs in. Public visitors never receive it.
+            Expires after 8 hours of inactivity.
+          </li>
+          <li>
+            <strong>Security token</strong> (<code>authjs.csrf-token</code>) — protects
+            the admin sign-in form against forgery. Session-only.
+          </li>
+          <li>
+            <strong>Payment cookies (Stripe)</strong> — if you use a payment feature,
+            Stripe sets cookies strictly necessary for processing the payment and
+            preventing fraud, per the{' '}
+            <a href="https://stripe.com/cookie-settings" target="_blank" rel="noopener noreferrer">
+              Stripe Cookie Policy
+            </a>.
+          </li>
+        </ul>
+        <p>
+          Our visitor analytics (Vercel Web Analytics) are cookieless and anonymous — no
+          personal identifiers are stored on your device. If we ever introduce
+          non-essential cookies, we will add a consent mechanism first and update this
+          policy.
         </p>
 
         <h2>9. Changes to This Policy</h2>
