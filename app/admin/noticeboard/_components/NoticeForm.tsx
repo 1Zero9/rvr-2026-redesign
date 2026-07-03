@@ -106,6 +106,51 @@ function CopyPromptHelper() {
   );
 }
 
+// ─── Image guidelines ─────────────────────────────────────────────────────────
+
+const IMAGE_SPECS: Array<{ use: string; size: string; note: string }> = [
+  { use: 'Campaign hero',  size: '1920 × 1080px (16:9)', note: 'Landscape. Minimum 1600px wide — used full-width on desktop.' },
+  { use: 'Campaign mobile', size: '1080 × 1350px (4:5)', note: 'Portrait crop shown on phones instead of the hero.' },
+  { use: 'News image',      size: '1600 × 900px (16:9)', note: 'One landscape image covers the card, article, and spotlight.' },
+];
+
+function ImageGuidelines() {
+  return (
+    <details className="border-2 border-brand-navy/15 bg-white">
+      <summary className="cursor-pointer px-4 py-2.5 text-xs font-bold text-brand-navy hover:bg-brand-navy/5 transition-colors inline-flex w-full items-center gap-2">
+        <span aria-hidden="true" className="inline-flex h-4 w-4 items-center justify-center rounded-full border border-brand-navy text-[10px] font-black">i</span>
+        Image guidelines — sizes, formats, resolution
+      </summary>
+      <div className="border-t border-brand-navy/10 p-4 space-y-3 text-xs text-brand-charcoal/80">
+        <table className="w-full text-left">
+          <thead>
+            <tr className="text-[10px] font-black uppercase tracking-wider text-brand-green">
+              <th className="pb-1 pr-3">Use</th>
+              <th className="pb-1 pr-3">Optimal size</th>
+              <th className="pb-1">Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            {IMAGE_SPECS.map((spec) => (
+              <tr key={spec.use} className="border-t border-brand-navy/10 align-top">
+                <td className="py-1.5 pr-3 font-bold whitespace-nowrap">{spec.use}</td>
+                <td className="py-1.5 pr-3 whitespace-nowrap">{spec.size}</td>
+                <td className="py-1.5">{spec.note}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <ul className="list-disc pl-4 space-y-1">
+          <li><strong>Formats:</strong> JPG, PNG, or WebP. Maximum 15MB per file.</li>
+          <li><strong>Resolution:</strong> 72dpi is fine for the web — pixel dimensions are what matter, not print DPI.</li>
+          <li><strong>Bigger is fine:</strong> larger photos are accepted and scaled down; avoid images narrower than 1200px, which look soft on desktop.</li>
+          <li><strong>Cropping:</strong> images are never distorted — each slot crops to fit. Use the focal-point tool below the upload to control what stays in frame.</li>
+        </ul>
+      </div>
+    </details>
+  );
+}
+
 // ─── Focal point editor (campaigns) ───────────────────────────────────────────
 
 function FocalPointEditor({
@@ -297,15 +342,18 @@ export default function NoticeForm({
               <textarea id="body" name="body" rows={6} required defaultValue={n?.body ?? ''} className={TEXTAREA} />
             </div>
 
-            <ImageUploadField
-              id="imageUrl"
-              name="imageUrl"
-              label="Image"
-              hint="optional — shown on the news card, article page, and homepage spotlight"
-              url={newsImage}
-              onUrlChange={setNewsImage}
-              pathPrefix="news"
-            />
+            <div className="space-y-2">
+              <ImageUploadField
+                id="imageUrl"
+                name="imageUrl"
+                label="Image"
+                hint="optional — shown on the news card, article page, and homepage spotlight"
+                url={newsImage}
+                onUrlChange={setNewsImage}
+                pathPrefix="news"
+              />
+              <ImageGuidelines />
+            </div>
 
             {newsImage && (
               <FocalPointEditor
@@ -375,12 +423,7 @@ export default function NoticeForm({
                   pathPrefix="campaigns"
                 />
               </div>
-              <p className="text-xs text-brand-charcoal/60">
-                JPG, PNG or WebP, up to 15MB. Hero: landscape, at least 1600px wide.
-                Mobile: portrait, around 1080×1350 — used on phones instead of the hero.
-                Images are automatically cropped to fit each screen; use the preview below
-                to control what stays in frame.
-              </p>
+              <ImageGuidelines />
             </div>
 
             {heroUrl && (
