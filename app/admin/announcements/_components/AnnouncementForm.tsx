@@ -1,5 +1,8 @@
 'use client';
 
+import { useState } from 'react';
+import ImageUploadField from '@/components/admin/ImageUploadField';
+
 export interface AnnouncementFormData {
   id:          string;
   title:       string;
@@ -25,6 +28,7 @@ const TEXTAREA = 'w-full border-2 border-brand-charcoal px-3 py-2 bg-white focus
 
 export default function AnnouncementForm({ action, deleteAction, initialData }: Props) {
   const d = initialData;
+  const [imageUrl, setImageUrl] = useState(d?.imageUrl ?? '');
 
   return (
     <div className="space-y-8">
@@ -51,14 +55,18 @@ export default function AnnouncementForm({ action, deleteAction, initialData }: 
             id="category"
             name="category"
             required
-            defaultValue={d?.category ?? 'NEWS'}
+            defaultValue={d?.category ?? 'COMMUNITY_NEWS'}
             className={INPUT}
           >
-            <option value="RECRUITMENT">Recruitment</option>
-            <option value="EVENT">Event</option>
-            <option value="NEWS">News</option>
-            <option value="VOLUNTEER">Volunteer</option>
+            <option value="BREAKING">Breaking News — urgent, time-sensitive</option>
+            <option value="CONGRATULATIONS">Congratulations — wins, awards, milestones</option>
+            <option value="COMMUNITY_NEWS">Community News — general club updates</option>
+            <option value="IN_SYMPATHY">In Sympathy — condolence notices</option>
           </select>
+          <p className="mt-1 text-xs text-brand-charcoal/60">
+            In Sympathy notices: keep wording gentle and factual — &ldquo;The club extends
+            its deepest sympathies to…&rdquo;. Always confirm with the family before publishing.
+          </p>
         </div>
 
         {/* Body */}
@@ -74,18 +82,17 @@ export default function AnnouncementForm({ action, deleteAction, initialData }: 
           />
         </div>
 
-        {/* Image URL */}
-        <div>
-          <label htmlFor="imageUrl" className={LABEL}>Image URL <span className="font-normal text-brand-charcoal/50">(optional)</span></label>
-          <input
-            id="imageUrl"
-            name="imageUrl"
-            type="url"
-            defaultValue={d?.imageUrl ?? ''}
-            placeholder="https://..."
-            className={INPUT}
-          />
-        </div>
+        {/* Image */}
+        <ImageUploadField
+          id="imageUrl"
+          name="imageUrl"
+          label="Image"
+          hint="optional — shown on the news card, article page, and homepage spotlight"
+          url={imageUrl}
+          onUrlChange={setImageUrl}
+          pathPrefix="news"
+          showPreview
+        />
 
         {/* CTA */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

@@ -16,7 +16,7 @@ export default function NewAnnouncementPage() {
     await prisma.announcement.create({
       data: {
         title:       formData.get('title') as string,
-        category:    formData.get('category') as 'RECRUITMENT' | 'EVENT' | 'NEWS' | 'VOLUNTEER',
+        category:    formData.get('category') as 'BREAKING' | 'CONGRATULATIONS' | 'COMMUNITY_NEWS' | 'IN_SYMPATHY',
         body:        formData.get('body') as string,
         imageUrl:    (formData.get('imageUrl') as string)  || null,
         ctaLabel:    (formData.get('ctaLabel') as string)  || null,
@@ -28,7 +28,7 @@ export default function NewAnnouncementPage() {
         pinned:      formData.get('pinned') === 'on',
       },
     });
-    redirect('/admin/announcements');
+    redirect('/admin/noticeboard');
   }
 
   return (
@@ -37,10 +37,10 @@ export default function NewAnnouncementPage() {
 
         <div className="mb-8">
           <Link
-            href="/admin/announcements"
+            href="/admin/noticeboard"
             className="text-sm text-brand-charcoal/50 hover:text-brand-navy transition-colors"
           >
-            ← Back to Announcements
+            ← Back to Noticeboard
           </Link>
           <h1 className="font-display font-black italic text-4xl uppercase text-brand-navy mt-3">
             New Announcement

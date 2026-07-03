@@ -14,10 +14,10 @@ interface Props {
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 const CATEGORY_STYLE: Record<string, { strip: string; badge: string; label: string }> = {
-  RECRUITMENT: { strip: 'bg-brand-neon',   badge: 'bg-brand-neon/20 text-brand-charcoal', label: 'Recruitment' },
-  EVENT:       { strip: 'bg-brand-sky',    badge: 'bg-brand-sky/20 text-brand-navy',      label: 'Event'       },
-  NEWS:        { strip: 'bg-brand-green',  badge: 'bg-brand-green/10 text-brand-green',   label: 'News'        },
-  VOLUNTEER:   { strip: 'bg-brand-maroon', badge: 'bg-brand-maroon/10 text-brand-maroon', label: 'Volunteer'   },
+  BREAKING:        { strip: 'bg-brand-maroon', badge: 'bg-brand-maroon/10 text-brand-maroon', label: 'Breaking News'   },
+  CONGRATULATIONS: { strip: 'bg-brand-neon',   badge: 'bg-brand-neon/20 text-brand-charcoal', label: 'Congratulations' },
+  COMMUNITY_NEWS:  { strip: 'bg-brand-sky',    badge: 'bg-brand-sky/20 text-brand-navy',      label: 'Community News'  },
+  IN_SYMPATHY:     { strip: 'bg-brand-navy',   badge: 'bg-brand-navy/10 text-brand-navy',     label: 'In Sympathy'     },
 };
 
 function renderBody(body: string) {

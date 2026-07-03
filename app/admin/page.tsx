@@ -1,11 +1,11 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import {
-  Bell,
   BookOpen,
   ClipboardList,
   Cog,
   FileText,
+  Megaphone,
   MessageSquare,
   Shield,
   Trophy,
@@ -78,10 +78,10 @@ export default async function AdminDashboardPage() {
 
   const ALL_CARDS: NavCard[] = [
     {
-      href: '/admin/announcements',
-      label: 'Announcements',
-      description: `${publishedAnnouncements} published — create, edit, and pin club news.`,
-      icon: Bell,
+      href: '/admin/noticeboard',
+      label: 'Noticeboard',
+      description: `${publishedAnnouncements} news items published — manage news and campaigns together, plus the homepage spotlight timer.`,
+      icon: Megaphone,
     },
     {
       href: '/admin/registrations',

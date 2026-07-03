@@ -68,12 +68,50 @@ enum PlayerGender {
   FEMALE
 }
 
-/// Category for public-facing club announcements.
+/// Editorial label for public-facing club announcements — sets tone and
+/// urgency on the noticeboard and homepage spotlight.
 enum AnnouncementCategory {
-  RECRUITMENT
-  EVENT
-  NEWS
-  VOLUNTEER
+  BREAKING
+  CONGRATULATIONS
+  COMMUNITY_NEWS
+  IN_SYMPATHY
+}
+
+enum CampaignAudience {
+  EVERYONE
+  PARENTS
+  PLAYERS
+  COACHES
+  VOLUNTEERS
+  SPONSORS
+}
+
+/// First-class campaign content (strategy §12). Visibility is computed from
+/// the date window at query time — no cron needed to publish or expire.
+/// Active campaigns always appear on /campaigns; homepage card and sitewide
+/// banner are independent additional placements.
+model Campaign {
+  id             String           @id @default(cuid())
+  title          String
+  subtitle       String?
+  heroImageUrl   String?
+  mobileImageUrl String?
+  ctaLabel       String
+  ctaUrl         String
+  audience       CampaignAudience @default(EVERYONE)
+  showOnHomepage Boolean          @default(false)
+  showBanner     Boolean          @default(false)
+  /// Focal point as percentages (0–100) — drives CSS object-position so the
+  /// subject stays visible whatever shape each placement crops to
+  focalX         Float            @default(50)
+  focalY         Float            @default(50)
+  startsAt       DateTime         @default(now())
+  endsAt         DateTime?
+  isPublished    Boolean          @default(false)
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+
+  @@index([isPublished, startsAt])
 }
 
 /// Privacy-guarded player profile for mobile player cards.
@@ -643,6 +681,13 @@ model Announcement {
   @@index([isPublished, publishedAt])
   @@index([category, isPublished])
   @@index([pinned, publishedAt])
+}
+
+/// Free-form admin-controlled site settings (e.g. spotlight rotation speed).
+model SiteSetting {
+  key       String   @id
+  value     String
+  updatedAt DateTime @updatedAt
 }
 
 /// Admin-controlled availability for optional public site capabilities.

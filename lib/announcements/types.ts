@@ -1,7 +1,7 @@
 export interface PublicAnnouncement {
   id:          string;
   title:       string;
-  category:    'RECRUITMENT' | 'EVENT' | 'NEWS' | 'VOLUNTEER';
+  category:    'BREAKING' | 'CONGRATULATIONS' | 'COMMUNITY_NEWS' | 'IN_SYMPATHY';
   body:        string;
   imageUrl:    string | null;
   ctaLabel:    string | null;
@@ -15,28 +15,28 @@ export const CATEGORY_CONFIG: Record<
   PublicAnnouncement['category'],
   { label: string; colour: string; textColour: string; border: string }
 > = {
-  RECRUITMENT: {
-    label:      'Recruitment',
+  BREAKING: {
+    label:      'Breaking News',
+    colour:     'bg-brand-maroon',
+    textColour: 'text-white',
+    border:     'border-brand-maroon',
+  },
+  CONGRATULATIONS: {
+    label:      'Congratulations',
     colour:     'bg-brand-neon',
     textColour: 'text-brand-charcoal',
     border:     'border-brand-neon',
   },
-  EVENT: {
-    label:      'Event',
+  COMMUNITY_NEWS: {
+    label:      'Community News',
     colour:     'bg-brand-sky',
     textColour: 'text-brand-charcoal',
     border:     'border-brand-sky',
   },
-  NEWS: {
-    label:      'News',
-    colour:     'bg-brand-green',
-    textColour: 'text-white',
-    border:     'border-brand-green',
-  },
-  VOLUNTEER: {
-    label:      'Volunteer',
-    colour:     'bg-brand-maroon',
-    textColour: 'text-white',
-    border:     'border-brand-maroon',
+  IN_SYMPATHY: {
+    label:      'In Sympathy',
+    colour:     'bg-brand-navy',
+    textColour: 'text-brand-cream',
+    border:     'border-brand-navy',
   },
 };

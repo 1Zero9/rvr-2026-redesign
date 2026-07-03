@@ -3,10 +3,10 @@
 import { useEffect, useState } from 'react';
 
 const CATEGORY_LABELS: Record<string, string> = {
-  RECRUITMENT: '🔵 Recruitment',
-  EVENT:       '🟡 Event',
-  NEWS:        '⚽ News',
-  VOLUNTEER:   '🟢 Volunteer',
+  BREAKING:        'Breaking News',
+  CONGRATULATIONS: 'Congratulations',
+  COMMUNITY_NEWS:  'Community News',
+  IN_SYMPATHY:     'In Sympathy',
 };
 
 const STORAGE_KEY = 'rvr_pinned_widget_dismissed';

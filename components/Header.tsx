@@ -91,6 +91,7 @@ const NAV_SECTIONS: NavSection[] = [
         heading: 'Get Involved',
         links: [
           { href: '/news',          label: 'Club News'         },
+          { href: '/campaigns',     label: 'Campaigns'         },
           { href: '/get-involved',  label: 'Volunteer & Coach' },
           { href: '/sponsorship',   label: 'Sponsorship'       },
           { href: '/boot-room',     label: 'Boot Room (kit swap)' },

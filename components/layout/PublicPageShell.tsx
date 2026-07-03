@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/layout/Footer';
+import CampaignBanner from '@/components/CampaignBanner';
 
 interface PublicPageShellProps {
   children: ReactNode;
@@ -22,6 +23,7 @@ export default function PublicPageShell({
       </a>
 
       <Header />
+      <CampaignBanner />
       <main id="main-content" className="flex-1">{children}</main>
       <Footer />
     </div>

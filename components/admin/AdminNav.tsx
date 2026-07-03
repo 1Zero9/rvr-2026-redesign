@@ -5,7 +5,7 @@ import { GlobalRole } from '@prisma/client';
 import { signOutAction } from '@/lib/actions/sign-out';
 
 const SITE_LINKS = [
-  { href: '/admin/announcements', label: 'Announcements', badge: 'ann' as const },
+  { href: '/admin/noticeboard',   label: 'Noticeboard',   badge: 'ann' as const },
   { href: '/admin/registrations', label: 'Registrations',  badge: 'reg' as const },
   { href: '/admin/enquiries',     label: 'Enquiries',       badge: 'enq' as const },
   { href: '/admin/moderation',    label: 'Moderation'       },
@@ -101,9 +101,9 @@ export default async function AdminNav() {
         <div className="ml-auto flex items-center gap-3 shrink-0">
           <Link
             href="/"
-            className="text-xs font-bold text-white/30 hover:text-white/60 transition-colors whitespace-nowrap hidden sm:block"
+            className="hidden sm:flex items-center gap-1.5 h-8 px-3 text-xs font-black uppercase tracking-wide border border-brand-neon/60 text-brand-neon hover:bg-brand-neon hover:text-brand-charcoal rounded transition-colors whitespace-nowrap"
           >
-            ← Site
+            View Site
           </Link>
 
           {user && (

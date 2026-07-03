@@ -4,11 +4,11 @@ import { auth } from '@/auth';
 import { GlobalRole } from '@prisma/client';
 import { signOutAction } from '@/lib/actions/sign-out';
 import {
-  ArrowLeft,
-  Bell,
   BookOpen,
   ClipboardList,
   Cog,
+  ExternalLink,
+  Megaphone,
   MessageSquare,
   Shield,
   Shirt,
@@ -17,7 +17,7 @@ import {
 } from 'lucide-react';
 
 const SITE_NAV = [
-  { href: '/admin/announcements', label: 'Announcements', icon: Bell,           badge: 'ann' as const },
+  { href: '/admin/noticeboard',   label: 'Noticeboard',   icon: Megaphone,      badge: 'ann' as const },
   { href: '/admin/registrations', label: 'Registrations', icon: ClipboardList,  badge: 'reg' as const },
   { href: '/admin/enquiries',     label: 'Enquiries',     icon: MessageSquare,  badge: 'enq' as const },
   { href: '/admin/moderation',    label: 'Moderation',    icon: Shield                                },
@@ -126,10 +126,10 @@ export default async function AdminSidebar() {
       <div className="shrink-0 border-t border-brand-sky/10 px-3 py-4 space-y-3">
         <Link
           href="/"
-          className="flex items-center gap-2 text-xs text-brand-sky/40 hover:text-brand-sky/70 transition-colors"
+          className="flex items-center justify-center gap-2 min-h-[40px] w-full border-2 border-brand-neon bg-brand-neon/10 px-3 text-xs font-display font-black uppercase tracking-wide text-brand-neon hover:bg-brand-neon hover:text-brand-charcoal transition-colors"
         >
-          <ArrowLeft className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-          Back to site
+          <ExternalLink className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+          View Live Site
         </Link>
 
         {user && (

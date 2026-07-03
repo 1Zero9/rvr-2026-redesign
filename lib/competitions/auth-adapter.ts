@@ -125,8 +125,10 @@ export function AdminPrismaAdapter(): Adapter {
     },
 
     async deleteSession(sessionToken) {
-      const s = await prisma.authSession.delete({ where: { sessionToken } });
-      return s as AdapterSession;
+      // deleteMany tolerates an already-gone session (e.g. stale cookie after
+      // a DB cleanup) — a strict delete() throws P2025 and breaks the
+      // magic-link callback with a Configuration error
+      await prisma.authSession.deleteMany({ where: { sessionToken } });
     },
 
     async createVerificationToken(token) {

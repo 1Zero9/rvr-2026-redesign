@@ -2,17 +2,17 @@ import Link from 'next/link';
 import type { Announcement } from '@prisma/client';
 
 const CATEGORY_STYLE: Record<string, { border: string; badge: string }> = {
-  RECRUITMENT: { border: 'border-l-brand-neon',   badge: 'bg-brand-neon/15 text-brand-charcoal'  },
-  EVENT:       { border: 'border-l-brand-sky',    badge: 'bg-brand-sky/15 text-brand-navy'       },
-  NEWS:        { border: 'border-l-brand-green',  badge: 'bg-brand-green/10 text-brand-green'    },
-  VOLUNTEER:   { border: 'border-l-brand-maroon', badge: 'bg-brand-maroon/10 text-brand-maroon'  },
+  BREAKING:        { border: 'border-l-brand-maroon', badge: 'bg-brand-maroon/10 text-brand-maroon'  },
+  CONGRATULATIONS: { border: 'border-l-brand-neon',   badge: 'bg-brand-neon/15 text-brand-charcoal'  },
+  COMMUNITY_NEWS:  { border: 'border-l-brand-sky',    badge: 'bg-brand-sky/15 text-brand-navy'       },
+  IN_SYMPATHY:     { border: 'border-l-brand-navy',   badge: 'bg-brand-navy/10 text-brand-navy'      },
 };
 
 const CATEGORY_LABEL: Record<string, string> = {
-  RECRUITMENT: 'Recruitment',
-  EVENT:       'Event',
-  NEWS:        'News',
-  VOLUNTEER:   'Volunteer',
+  BREAKING:        'Breaking News',
+  CONGRATULATIONS: 'Congratulations',
+  COMMUNITY_NEWS:  'Community News',
+  IN_SYMPATHY:     'In Sympathy',
 };
 
 function formatDate(date: Date | string): string {
@@ -26,7 +26,7 @@ export default function AnnouncementCard({
   announcement: Announcement;
   href?: string;
 }) {
-  const style = CATEGORY_STYLE[a.category] ?? CATEGORY_STYLE.NEWS;
+  const style = CATEGORY_STYLE[a.category] ?? CATEGORY_STYLE.COMMUNITY_NEWS;
   const dest  = href ?? `/news/${a.id}`;
 
   return (
@@ -34,6 +34,17 @@ export default function AnnouncementCard({
       href={dest}
       className={`group bg-white border-l-4 border border-brand-charcoal/10 hover:border-brand-navy/30 flex flex-col overflow-hidden h-full transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg ${style.border}`}
     >
+      {a.imageUrl && (
+        <div className="h-36 overflow-hidden border-b border-brand-charcoal/10">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={a.imageUrl}
+            alt=""
+            loading="lazy"
+            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+          />
+        </div>
+      )}
       <div className="p-5 flex-1 flex flex-col gap-3">
         <div className="flex items-center gap-2 flex-wrap">
           <span className={`text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full ${style.badge}`}>

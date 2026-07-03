@@ -3,11 +3,14 @@ import Header from '@/components/Header';
 import Hero from '@/components/Hero';
 import Link from 'next/link';
 import TeletextFixtures from '@/components/TeletextFixtures';
-import NewsCarousel from '@/components/NewsCarousel';
+import ClubSpotlight, { type SpotlightItem } from '@/components/ClubSpotlight';
 import InstagramFeed from '@/components/InstagramFeed';
 import PlayerPathway from '@/components/PlayerPathway';
 import Footer from '@/components/layout/Footer';
+import CampaignBanner from '@/components/CampaignBanner';
 import { prisma } from '@/lib/prisma';
+import { getActiveCampaigns } from '@/lib/campaigns';
+import { getSpotlightIntervalSeconds } from '@/lib/site-settings';
 import { getFeatureAvailability } from '@/lib/features';
 import { GraduationCap, Trophy, Users, Heart, User, Calculator, type LucideIcon } from 'lucide-react';
 import type { Metadata } from 'next';
@@ -15,6 +18,10 @@ import type { Metadata } from 'next';
 export const metadata: Metadata = {
   alternates: { canonical: '/' },
 };
+
+// Announcements and campaigns publish/expire on date windows — re-render
+// periodically, not only at deploy time
+export const revalidate = 300;
 
 const COMMUNITY_CATEGORIES: Array<{
   Icon: LucideIcon;
@@ -62,6 +69,13 @@ const COMMUNITY_CATEGORIES: Array<{
   },
 ];
 
+const SPOTLIGHT_LABELS: Record<string, { label: string; chip: string }> = {
+  BREAKING:        { label: 'Breaking News',   chip: 'bg-brand-maroon text-white' },
+  CONGRATULATIONS: { label: 'Congratulations', chip: 'bg-brand-neon text-brand-charcoal' },
+  COMMUNITY_NEWS:  { label: 'Community News',  chip: 'bg-brand-sky text-brand-charcoal' },
+  IN_SYMPATHY:     { label: 'In Sympathy',     chip: 'bg-white text-brand-navy' },
+};
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Page
 // ─────────────────────────────────────────────────────────────────────────────
@@ -71,45 +85,71 @@ export default async function Home() {
 
   const now = new Date();
 
-  const announcements = await prisma.announcement.findMany({
-    where: {
-      isPublished: true,
-      OR: [{ expiresAt: null }, { expiresAt: { gt: now } }],
-    },
-    orderBy: [{ pinned: 'desc' }, { publishedAt: 'desc' }],
-    take: 6,
-  });
+  const [announcements, homepageCampaigns] = await Promise.all([
+    prisma.announcement.findMany({
+      where: {
+        isPublished: true,
+        OR: [{ expiresAt: null }, { expiresAt: { gt: now } }],
+      },
+      orderBy: [{ pinned: 'desc' }, { publishedAt: 'desc' }],
+      take: 5,
+    }),
+    getActiveCampaigns('homepage'),
+  ]);
+  const spotlightIntervalSeconds = await getSpotlightIntervalSeconds();
+
+  const spotlightItems: SpotlightItem[] = [
+    ...homepageCampaigns.map((c) => ({
+      id:             c.id,
+      kind:           'campaign' as const,
+      label:          'Campaign',
+      labelClass:     'bg-brand-neon text-brand-charcoal',
+      title:          c.title,
+      subtitle:       c.subtitle,
+      imageUrl:       c.heroImageUrl,
+      mobileImageUrl: c.mobileImageUrl,
+      objectPosition: `${c.focalX}% ${c.focalY}%`,
+      href:           c.ctaUrl,
+      ctaLabel:       c.ctaLabel,
+    })),
+    ...announcements.map((a) => ({
+      id:             a.id,
+      kind:           'news' as const,
+      label:          SPOTLIGHT_LABELS[a.category]?.label ?? 'Community News',
+      labelClass:     SPOTLIGHT_LABELS[a.category]?.chip ?? 'bg-brand-sky text-brand-charcoal',
+      title:          a.title,
+      subtitle:       a.body.split('\n')[0] || null,
+      imageUrl:       a.imageUrl,
+      mobileImageUrl: null,
+      objectPosition: '50% 50%',
+      href:           a.ctaUrl ?? `/news/${a.id}`,
+      ctaLabel:       a.ctaLabel ?? 'Read More',
+    })),
+  ];
 
   return (
     <div className="flex flex-col min-h-screen bg-brand-cream text-brand-charcoal">
       <Header />
+      <CampaignBanner />
 
       <main id="main-content" className="flex-grow">
 
         {/* ── 1. Hero ──────────────────────────────────────────────────────── */}
         <Hero />
 
-        {/* ── 2. Announcements strip ───────────────────────────────────────── */}
-        {announcements.length > 0 && (
+        {/* ── 2. Club Spotlight — campaigns + news in one rotating slot ────── */}
+        {spotlightItems.length > 0 && (
           <section className="py-14 bg-brand-cream border-b border-brand-navy/10">
             <div className="max-w-6xl mx-auto px-6">
-              <div className="flex items-end justify-between mb-8 gap-4">
-                <div>
-                  <p className="font-display font-black text-[10px] uppercase tracking-widest text-brand-green mb-1">
-                    Club Updates
-                  </p>
-                  <h2 className="font-display font-black italic text-3xl md:text-4xl uppercase tracking-tight text-brand-charcoal leading-none">
-                    Latest News
-                  </h2>
-                </div>
-                <Link
-                  href="/news"
-                  className="min-h-[44px] inline-flex items-center px-2 -mr-2 text-xs font-display font-black uppercase tracking-wide text-brand-charcoal/40 hover:text-brand-navy transition-colors shrink-0"
-                >
-                  See all →
-                </Link>
+              <div className="mb-6">
+                <p className="font-display font-black text-[10px] uppercase tracking-widest text-brand-green mb-1">
+                  Happening now
+                </p>
+                <h2 className="font-display font-black italic text-3xl md:text-4xl uppercase tracking-tight text-brand-charcoal leading-none">
+                  Club Spotlight
+                </h2>
               </div>
-              <NewsCarousel announcements={announcements} />
+              <ClubSpotlight items={spotlightItems} intervalMs={spotlightIntervalSeconds * 1000} />
             </div>
           </section>
         )}
