@@ -56,7 +56,7 @@ export default function ClubSpotlight({
       onFocus={() => setPaused(true)}
       onBlur={() => setPaused(false)}
     >
-      <div className="relative overflow-hidden border-3 border-brand-charcoal bg-brand-navy min-h-[340px] md:min-h-[420px] flex flex-col justify-end shadow-brutalist-charcoal">
+      <div className="relative overflow-hidden border-y-3 border-brand-charcoal bg-brand-navy min-h-[380px] md:min-h-[540px] flex flex-col justify-end">
         {item.imageUrl && (
           <>
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -79,30 +79,32 @@ export default function ClubSpotlight({
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-brand-navy/95 via-brand-navy/40 to-brand-navy/10" />
 
-        <div className="relative p-6 md:p-10" aria-live="polite">
-          <span className={`inline-block px-2.5 py-1 text-[10px] md:text-xs font-display font-black uppercase tracking-widest ${item.labelClass}`}>
-            {item.label}
-          </span>
-          <h3 className="mt-3 font-display font-black italic text-3xl md:text-5xl uppercase tracking-tight text-brand-cream leading-none max-w-3xl">
-            {item.title}
-          </h3>
-          {item.subtitle && (
-            <p className="mt-3 text-sm md:text-base font-semibold text-brand-sky/90 max-w-xl line-clamp-2">
-              {item.subtitle}
-            </p>
-          )}
-          <Link
-            href={item.href}
-            className="mt-5 inline-flex min-h-[48px] items-center gap-2 border-3 border-brand-charcoal bg-brand-neon px-6 text-sm font-display font-black italic uppercase text-brand-charcoal hover:translate-x-[2px] hover:translate-y-[2px] transition-transform"
-          >
-            {item.ctaLabel} →
-          </Link>
+        <div className="relative w-full" aria-live="polite">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 md:py-12">
+            <span className={`inline-block px-2.5 py-1 text-[10px] md:text-xs font-display font-black uppercase tracking-widest ${item.labelClass}`}>
+              {item.label}
+            </span>
+            <h3 className="mt-3 font-display font-black italic text-3xl md:text-5xl uppercase tracking-tight text-brand-cream leading-none max-w-3xl">
+              {item.title}
+            </h3>
+            {item.subtitle && (
+              <p className="mt-3 text-sm md:text-base font-semibold text-brand-sky/90 max-w-xl line-clamp-2">
+                {item.subtitle}
+              </p>
+            )}
+            <Link
+              href={item.href}
+              className="mt-5 inline-flex min-h-[48px] items-center gap-2 border-3 border-brand-charcoal bg-brand-neon px-6 text-sm font-display font-black italic uppercase text-brand-charcoal hover:translate-x-[2px] hover:translate-y-[2px] transition-transform"
+            >
+              {item.ctaLabel} →
+            </Link>
+          </div>
         </div>
       </div>
 
       {/* Controls */}
       {items.length > 1 && (
-        <div className="mt-3 flex items-center justify-between">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 mt-3 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <button
               type="button"

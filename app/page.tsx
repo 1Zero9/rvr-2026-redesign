@@ -140,17 +140,15 @@ export default async function Home() {
         {/* ── 2. Club Spotlight — campaigns + news in one rotating slot ────── */}
         {spotlightItems.length > 0 && (
           <section className="py-14 bg-brand-cream border-b border-brand-navy/10">
-            <div className="max-w-6xl mx-auto px-6">
-              <div className="mb-6">
-                <p className="font-display font-black text-[10px] uppercase tracking-widest text-brand-green mb-1">
-                  Happening now
-                </p>
-                <h2 className="font-display font-black italic text-3xl md:text-4xl uppercase tracking-tight text-brand-charcoal leading-none">
-                  Club Spotlight
-                </h2>
-              </div>
-              <ClubSpotlight items={spotlightItems} intervalMs={spotlightIntervalSeconds * 1000} />
+            <div className="max-w-6xl mx-auto px-6 mb-6">
+              <p className="font-display font-black text-[10px] uppercase tracking-widest text-brand-green mb-1">
+                Happening now
+              </p>
+              <h2 className="font-display font-black italic text-3xl md:text-4xl uppercase tracking-tight text-brand-charcoal leading-none">
+                Club Spotlight
+              </h2>
             </div>
+            <ClubSpotlight items={spotlightItems} intervalMs={spotlightIntervalSeconds * 1000} />
           </section>
         )}
 
