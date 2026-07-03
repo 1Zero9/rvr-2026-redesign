@@ -6,6 +6,49 @@ import { upload } from '@vercel/blob/client';
 const LABEL = 'block text-sm font-bold text-brand-charcoal mb-1';
 const INPUT = 'w-full border-2 border-brand-charcoal px-3 py-2 min-h-[44px] bg-white focus:outline-none focus:border-brand-neon text-brand-charcoal';
 
+const WATERMARK_SRC = '/river-valley-rangers-logo-pack-v2/RVR-New-White2.png';
+const MAX_WIDTH = 1920;
+
+/**
+ * Re-encode the photo through a canvas: caps width at 1920px, strips ALL
+ * metadata (EXIF/GPS — important for photos of children), and optionally
+ * stamps the club watermark bottom-right.
+ */
+async function processImage(file: File, watermark: boolean): Promise<Blob> {
+  const bitmap = await createImageBitmap(file);
+  const scale = Math.min(1, MAX_WIDTH / bitmap.width);
+  const width = Math.round(bitmap.width * scale);
+  const height = Math.round(bitmap.height * scale);
+
+  const canvas = document.createElement('canvas');
+  canvas.width = width;
+  canvas.height = height;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) throw new Error('Canvas unavailable');
+  ctx.drawImage(bitmap, 0, 0, width, height);
+  bitmap.close();
+
+  if (watermark) {
+    const logo = new Image();
+    logo.src = WATERMARK_SRC;
+    await logo.decode();
+    const logoWidth = Math.round(width * 0.12);
+    const logoHeight = Math.round(logoWidth * (logo.naturalHeight / logo.naturalWidth));
+    const margin = Math.round(width * 0.02);
+    ctx.globalAlpha = 0.45;
+    ctx.drawImage(logo, width - logoWidth - margin, height - logoHeight - margin, logoWidth, logoHeight);
+    ctx.globalAlpha = 1;
+  }
+
+  return new Promise((resolve, reject) => {
+    canvas.toBlob(
+      (blob) => (blob ? resolve(blob) : reject(new Error('Image processing failed'))),
+      'image/jpeg',
+      0.85,
+    );
+  });
+}
+
 export default function ImageUploadField({
   id,
   name,
@@ -28,6 +71,7 @@ export default function ImageUploadField({
   const [status, setStatus] = useState<'idle' | 'uploading' | 'error'>('idle');
   const [progress, setProgress] = useState(0);
   const [errorMsg, setErrorMsg] = useState('');
+  const [watermark, setWatermark] = useState(true);
   const fileRef = useRef<HTMLInputElement>(null);
 
   async function handleFile(file: File | undefined) {
@@ -36,9 +80,12 @@ export default function ImageUploadField({
     setProgress(0);
     setErrorMsg('');
     try {
-      const blob = await upload(`${pathPrefix}/${file.name}`, file, {
+      const processed = await processImage(file, watermark);
+      const jpgName = file.name.replace(/\.[^.]+$/, '') + '.jpg';
+      const blob = await upload(`${pathPrefix}/${jpgName}`, processed, {
         access: 'public',
         handleUploadUrl: '/api/admin/blob-upload',
+        contentType: 'image/jpeg',
         onUploadProgress: ({ percentage }) => setProgress(Math.round(percentage)),
       });
       onUrlChange(blob.url);
@@ -76,6 +123,15 @@ export default function ImageUploadField({
           />
         </label>
       </div>
+      <label className="mt-1.5 flex items-center gap-2 cursor-pointer text-xs text-brand-charcoal/70">
+        <input
+          type="checkbox"
+          checked={watermark}
+          onChange={(e) => setWatermark(e.target.checked)}
+          className="w-4 h-4 accent-brand-neon"
+        />
+        Add club watermark <span className="text-brand-charcoal/45">(untick for posters/graphics — photos of players should keep it)</span>
+      </label>
       {status === 'uploading' && (
         <div
           className="mt-2 h-2 w-full border border-brand-charcoal/20 bg-brand-charcoal/5"

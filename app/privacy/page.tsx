@@ -108,6 +108,19 @@ export default function PrivacyPolicyPage() {
         </p>
         <ul>
           <li>We do not publish a child&rsquo;s full name alongside their photograph.</li>
+          <li>
+            Hidden photo metadata — including any GPS location data recorded by the
+            camera or phone — is stripped from every image before publication.
+          </li>
+          <li>
+            Photographs of players are published with a club watermark, and we instruct
+            search engines not to include our images in image-search results.
+          </li>
+          <li>
+            The website also blocks casual saving of images (right-click, drag, and
+            long-press). No technical measure can prevent screenshots entirely, which is
+            why the protections above and our takedown commitment matter most.
+          </li>
           <li>Parents and guardians may withdraw photography consent at any time.</li>
           <li>
             To request the removal of any image, contact our Children&rsquo;s Welfare Officer via
