@@ -36,7 +36,7 @@ export default function MobileNavBar() {
 
   return (
     <nav
-      className="md:hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-50 w-[360px] max-w-[calc(100%-2rem)] bg-brand-navy text-white border border-brand-sky/20 rounded-2xl shadow-brutalist flex items-center justify-around py-2 px-3 animate-bounce-spring"
+      className="md:hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-50 w-[360px] max-w-[calc(100%-2rem)] bg-brand-navy text-white border border-brand-sky/20 rounded-2xl shadow-brutalist flex items-center justify-around py-2 px-3 animate-bounce-spring transition-all duration-300 [body[data-drawer-open]_&]:translate-y-28 [body[data-drawer-open]_&]:opacity-0 [body[data-drawer-open]_&]:pointer-events-none"
       aria-label="Mobile navigation"
     >
       {navItems.map(({ label, path, ariaLabel, icon: Icon }) => {

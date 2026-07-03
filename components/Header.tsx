@@ -247,7 +247,13 @@ export default function Header() {
   // Body scroll lock for mobile overlay
   useEffect(() => {
     document.body.style.overflow = open ? 'hidden' : '';
-    return () => { document.body.style.overflow = ''; };
+    // Signals the floating bottom tab bar to slide away — its buttons sit
+    // under the drawer backdrop and would otherwise need two taps
+    document.body.toggleAttribute('data-drawer-open', open);
+    return () => {
+      document.body.style.overflow = '';
+      document.body.removeAttribute('data-drawer-open');
+    };
   }, [open]);
 
   // Close mega menu and search on Escape
