@@ -3,6 +3,9 @@ import type { NextConfig } from "next";
 const isDevelopment = process.env.NODE_ENV === "development";
 
 const securityHeaders = [
+  // Override Vercel's platform default of Access-Control-Allow-Origin: *
+  // on static content — nothing on this site needs cross-origin reads
+  { key: "Access-Control-Allow-Origin", value: "https://www.rivervalleyrangers.ie" },
   // Prevent framing (clickjacking)
   { key: "X-Frame-Options", value: "DENY" },
   // Block MIME-type sniffing
