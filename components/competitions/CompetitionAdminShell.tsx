@@ -19,7 +19,8 @@ export function CompetitionAdminShell({
     <div className="flex flex-col min-h-full">
       {/* Horizontal sub-nav — shown only when nav items are provided */}
       {nav && nav.length > 0 && (
-        <div className="bg-white border-b border-brand-navy/10 sticky top-0 z-30">
+        // top-14 on mobile clears the fixed admin top bar; lg has the sidebar instead
+        <div className="bg-white border-b border-brand-navy/10 sticky top-14 lg:top-0 z-30">
           <div className="max-w-6xl mx-auto px-4 sm:px-6">
             <nav
               className="flex overflow-x-auto gap-0"

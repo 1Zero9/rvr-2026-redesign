@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import { revalidatePath } from 'next/cache';
 import { requireAdmin } from '@/lib/admin/require-admin';
 import { prisma } from '@/lib/prisma';
@@ -18,11 +19,28 @@ async function markEnquiry(id: string, status: 'NEW' | 'RESOLVED') {
   revalidatePath('/admin/enquiries');
 }
 
-export default async function EnquiriesPage() {
-  const enquiries = await prisma.publicEnquiry.findMany({
-    orderBy: { createdAt: 'desc' },
-    take: 200,
-  });
+export default async function EnquiriesPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ status?: string }>;
+}) {
+  const { status } = await searchParams;
+  const statusFilter = status === 'NEW' || status === 'RESOLVED' ? status : null;
+
+  const [enquiries, newCount] = await Promise.all([
+    prisma.publicEnquiry.findMany({
+      where: statusFilter ? { status: statusFilter } : undefined,
+      orderBy: { createdAt: 'desc' },
+      take: 200,
+    }),
+    prisma.publicEnquiry.count({ where: { status: 'NEW' } }),
+  ]);
+
+  const FILTERS: Array<{ label: string; value: string | null }> = [
+    { label: 'All', value: null },
+    { label: 'New', value: 'NEW' },
+    { label: 'Resolved', value: 'RESOLVED' },
+  ];
 
   return (
     <main className="min-h-screen bg-brand-cream px-4 py-8 text-brand-charcoal">
@@ -35,10 +53,31 @@ export default async function EnquiriesPage() {
           submissions from the public site.
         </p>
 
-        <div className="mt-8 grid gap-4">
+        <div className="mt-6 flex gap-1.5">
+          {FILTERS.map((f) => (
+            <Link
+              key={f.label}
+              href={f.value ? `/admin/enquiries?status=${f.value}` : '/admin/enquiries'}
+              className={`px-3 min-h-[40px] flex items-center gap-1.5 text-xs font-bold border-2 transition-colors ${
+                statusFilter === f.value
+                  ? 'border-brand-charcoal bg-brand-navy text-brand-cream'
+                  : 'border-brand-charcoal/20 bg-white text-brand-charcoal/60 hover:border-brand-charcoal/50'
+              }`}
+            >
+              {f.label}
+              {f.value === 'NEW' && newCount > 0 && (
+                <span className="bg-brand-neon text-brand-charcoal px-1 min-w-[18px] text-center leading-[18px] text-[10px] font-black">
+                  {newCount}
+                </span>
+              )}
+            </Link>
+          ))}
+        </div>
+
+        <div className="mt-6 grid gap-4">
           {enquiries.length === 0 ? (
             <p className="border-3 border-brand-navy bg-white p-8 text-center font-bold">
-              No enquiries received.
+              {statusFilter ? 'Nothing with this status.' : 'No enquiries received.'}
             </p>
           ) : (
             enquiries.map((enquiry) => {

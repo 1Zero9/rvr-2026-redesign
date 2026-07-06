@@ -124,6 +124,21 @@ const nextConfig: NextConfig = {
         destination: '/teams',
         permanent: true,
       },
+      {
+        source: '/ddsl-jmo',
+        destination: '/club/refereeing',
+        permanent: true,
+      },
+      {
+        source: '/admin/moderation',
+        destination: '/admin/approvals?tab=shirts',
+        permanent: false,
+      },
+      {
+        source: '/admin/boot-room',
+        destination: '/admin/approvals?tab=boot-room',
+        permanent: false,
+      },
     ];
   },
 };

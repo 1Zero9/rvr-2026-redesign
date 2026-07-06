@@ -9,13 +9,13 @@ export default function robots(): MetadataRoute.Robots {
         // Standard crawlers and search engines
         userAgent: '*',
         allow: '/',
-        disallow: ['/admin/', '/jmo-admin/', '/api/'],
+        disallow: ['/admin/', '/api/'],
       },
       {
         // AI assistants — allow indexing for visibility in AI search
         userAgent: ['GPTBot', 'ChatGPT-User', 'Google-Extended', 'PerplexityBot', 'ClaudeBot', 'anthropic-ai', 'Applebot-Extended'],
         allow: '/',
-        disallow: ['/admin/', '/jmo-admin/', '/api/'],
+        disallow: ['/admin/', '/api/'],
       },
     ],
     sitemap: `${SITE_URL}/sitemap.xml`,

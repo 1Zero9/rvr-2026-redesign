@@ -38,7 +38,7 @@ export default function AdminMobileNav({
     };
   }, [open]);
 
-  const totalBadges = badges.ann + badges.reg + badges.enq;
+  const totalBadges = badges.ann + badges.reg + badges.enq + badges.appr;
   const navSections = [
     { heading: 'Content', items: SITE_NAV },
     ...(isSuperAdmin ? [{ heading: 'Platform', items: SUPER_NAV }] : []),

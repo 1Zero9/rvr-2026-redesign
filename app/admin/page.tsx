@@ -1,45 +1,22 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import {
-  BookOpen,
-  ClipboardList,
-  Cog,
-  FileText,
-  Megaphone,
-  MessageSquare,
-  Shield,
-  Trophy,
-  Users,
-  Shirt,
-} from 'lucide-react';
 import { prisma } from '@/lib/prisma';
 import { auth } from '@/auth';
 import { GlobalRole } from '@prisma/client';
+import {
+  SITE_NAV,
+  SUPER_NAV,
+  type AdminBadges,
+  type AdminNavItem,
+} from '@/components/admin/nav-config';
 
 export const metadata: Metadata = {
   title: 'Admin Dashboard | RVR',
 };
 
-async function getDashboardStats() {
-  const [newRegs, newEnquiries, publishedAnnouncements] = await Promise.all([
-    prisma.playerProfile.count({ where: { registrationStatus: 'NEW' } }),
-    prisma.publicEnquiry.count({ where: { status: 'NEW' } }),
-    prisma.announcement.count({ where: { isPublished: true } }),
-  ]);
-  return { newRegs, newEnquiries, publishedAnnouncements };
-}
-
-interface NavCard {
-  href: string;
-  label: string;
-  description: string;
-  icon: React.ElementType;
-  badge?: number;
-  superOnly?: boolean;
-}
-
-function SectionCard({ card }: { card: NavCard }) {
+function SectionCard({ card, badges }: { card: AdminNavItem; badges: AdminBadges }) {
   const Icon = card.icon;
+  const count = card.badge ? badges[card.badge] : 0;
   return (
     <Link
       href={card.href}
@@ -49,9 +26,9 @@ function SectionCard({ card }: { card: NavCard }) {
         <span className="flex h-9 w-9 items-center justify-center rounded-lg border-2 border-brand-navy/20 bg-brand-cream group-hover:bg-brand-neon group-hover:border-brand-charcoal transition">
           <Icon className="h-4 w-4 text-brand-navy" aria-hidden="true" />
         </span>
-        {card.badge !== undefined && card.badge > 0 && (
+        {count > 0 && (
           <span className="bg-brand-neon text-brand-charcoal font-black text-[10px] px-1.5 py-0.5 min-w-[20px] text-center border border-brand-charcoal">
-            {card.badge}
+            {count}
           </span>
         )}
       </div>
@@ -68,84 +45,20 @@ function SectionCard({ card }: { card: NavCard }) {
 }
 
 export default async function AdminDashboardPage() {
-  const [{ newRegs, newEnquiries, publishedAnnouncements }, session] = await Promise.all([
-    getDashboardStats(),
+  const [annCount, regCount, enqCount, shirtCount, listingCount, session] = await Promise.all([
+    prisma.announcement.count({ where: { isPublished: false } }),
+    prisma.playerProfile.count({ where: { registrationStatus: 'NEW' } }),
+    prisma.publicEnquiry.count({ where: { status: 'NEW' } }),
+    prisma.shirtSubmission.count({ where: { moderationStatus: 'PENDING' } }),
+    prisma.bootRoomListing.count({ where: { moderationStatus: 'PENDING' } }),
     auth(),
   ]);
 
+  const badges: AdminBadges = { ann: annCount, reg: regCount, enq: enqCount, appr: shirtCount + listingCount };
   const role = (session?.user as { globalRole?: string | null } | undefined)?.globalRole;
   const isSuperAdmin = role === GlobalRole.SUPER_ADMIN;
 
-  const ALL_CARDS: NavCard[] = [
-    {
-      href: '/admin/noticeboard',
-      label: 'Noticeboard',
-      description: `${publishedAnnouncements} news items published — manage news and campaigns together, plus the homepage spotlight timer.`,
-      icon: Megaphone,
-    },
-    {
-      href: '/admin/registrations',
-      label: 'Registrations',
-      description: 'Review and process player registration submissions.',
-      icon: ClipboardList,
-      badge: newRegs,
-    },
-    {
-      href: '/admin/enquiries',
-      label: 'Enquiries',
-      description: 'Public contact and callback requests from the website.',
-      icon: MessageSquare,
-      badge: newEnquiries,
-    },
-    {
-      href: '/admin/moderation',
-      label: 'Moderation',
-      description: 'Review and approve player-submitted content.',
-      icon: Shield,
-    },
-    {
-      href: '/admin/boot-room',
-      label: 'Boot Room',
-      description: 'Kit and equipment management.',
-      icon: Shirt,
-    },
-    {
-      href: '/competitions/admin',
-      label: 'Competitions',
-      description: 'Manage fixtures, results, pitches, and competition settings.',
-      icon: Trophy,
-    },
-    {
-      href: '/competitions/admin/users',
-      label: 'Users',
-      description: 'Manage admin accounts and role assignments.',
-      icon: Users,
-      superOnly: true,
-    },
-    {
-      href: '/admin/features',
-      label: 'Features & Setup',
-      description: 'Toggle site features and manage platform configuration.',
-      icon: Cog,
-      superOnly: true,
-    },
-    {
-      href: '/admin/docs',
-      label: 'Docs',
-      description: 'Internal documentation, guides, and reference materials.',
-      icon: BookOpen,
-      superOnly: true,
-    },
-    {
-      href: '#',
-      label: 'Logs',
-      description: 'Activity logs and audit trail — coming soon.',
-      icon: FileText,
-      superOnly: true,
-    },
-  ];
-
-  const visibleCards = ALL_CARDS.filter((c) => !c.superOnly || isSuperAdmin);
+  const cards = isSuperAdmin ? [...SITE_NAV, ...SUPER_NAV] : SITE_NAV;
 
   return (
     <main className="min-h-screen bg-brand-cream px-4 py-10 text-brand-charcoal">
@@ -163,8 +76,8 @@ export default async function AdminDashboardPage() {
 
         {/* Unified card grid */}
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-          {visibleCards.map((card) => (
-            <SectionCard key={card.href + card.label} card={card} />
+          {cards.map((card) => (
+            <SectionCard key={card.href} card={card} badges={badges} />
           ))}
         </div>
 

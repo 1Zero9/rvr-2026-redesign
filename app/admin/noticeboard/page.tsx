@@ -136,38 +136,6 @@ export default async function NoticeboardAdminPage() {
           </Link>
         </div>
 
-        {/* Spotlight settings */}
-        <form
-          action={saveSpotlightInterval}
-          className="mb-8 flex flex-col sm:flex-row sm:items-center gap-3 border-2 border-brand-navy/15 bg-white p-4"
-        >
-          <div className="flex-1">
-            <p className="text-sm font-bold text-brand-charcoal">Homepage spotlight rotation</p>
-            <p className="text-xs text-brand-charcoal/60 mt-0.5">
-              Seconds each item stays on screen before swapping (3–30). Visitors with
-              reduced-motion enabled never auto-rotate.
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
-            <input
-              name="seconds"
-              type="number"
-              min={3}
-              max={30}
-              defaultValue={intervalSeconds}
-              aria-label="Rotation interval in seconds"
-              className="w-20 border-2 border-brand-charcoal px-3 py-2 min-h-[44px] bg-white text-brand-charcoal focus:outline-none focus:border-brand-neon"
-            />
-            <span className="text-sm font-bold text-brand-charcoal/60">sec</span>
-            <button
-              type="submit"
-              className="bg-brand-navy text-brand-cream font-bold px-4 py-2 min-h-[44px] border-2 border-brand-navy hover:bg-brand-navy/85 transition-colors"
-            >
-              Save
-            </button>
-          </div>
-        </form>
-
         {rows.length === 0 ? (
           <div className="bg-brand-navy border border-brand-sky/20 p-8 text-center">
             <p className="text-brand-sky">Nothing on the noticeboard yet.</p>
@@ -225,6 +193,40 @@ export default async function NoticeboardAdminPage() {
             ))}
           </div>
         )}
+
+        {/* Spotlight settings — rarely touched, so tucked below the list */}
+        <details className="mt-8 border-2 border-brand-navy/15 bg-white">
+          <summary className="cursor-pointer px-4 py-3 text-sm font-bold text-brand-navy hover:bg-brand-navy/5 transition-colors">
+            ⚙ Homepage spotlight rotation — currently {intervalSeconds}s per item
+          </summary>
+          <form
+            action={saveSpotlightInterval}
+            className="flex flex-col sm:flex-row sm:items-center gap-3 border-t border-brand-navy/10 p-4"
+          >
+            <p className="flex-1 text-xs text-brand-charcoal/60">
+              Seconds each item stays on screen before swapping (3–30). Visitors with
+              reduced-motion enabled never auto-rotate.
+            </p>
+            <div className="flex items-center gap-2">
+              <input
+                name="seconds"
+                type="number"
+                min={3}
+                max={30}
+                defaultValue={intervalSeconds}
+                aria-label="Rotation interval in seconds"
+                className="w-20 border-2 border-brand-charcoal px-3 py-2 min-h-[44px] bg-white text-brand-charcoal focus:outline-none focus:border-brand-neon"
+              />
+              <span className="text-sm font-bold text-brand-charcoal/60">sec</span>
+              <button
+                type="submit"
+                className="bg-brand-navy text-brand-cream font-bold px-4 py-2 min-h-[44px] border-2 border-brand-navy hover:bg-brand-navy/85 transition-colors"
+              >
+                Save
+              </button>
+            </div>
+          </form>
+        </details>
 
       </div>
     </main>

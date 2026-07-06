@@ -28,13 +28,15 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     redirect('/admin/login');
   }
 
-  const [annCount, regCount, enqCount] = await Promise.all([
+  const [annCount, regCount, enqCount, shirtCount, listingCount] = await Promise.all([
     prisma.announcement.count({ where: { isPublished: false } }),
     prisma.playerProfile.count({ where: { registrationStatus: 'NEW' } }),
     prisma.publicEnquiry.count({ where: { status: 'NEW' } }),
+    prisma.shirtSubmission.count({ where: { moderationStatus: 'PENDING' } }),
+    prisma.bootRoomListing.count({ where: { moderationStatus: 'PENDING' } }),
   ]);
 
-  const badges = { ann: annCount, reg: regCount, enq: enqCount };
+  const badges = { ann: annCount, reg: regCount, enq: enqCount, appr: shirtCount + listingCount };
   const displayName = user?.name ?? user?.email ?? '';
 
   return (

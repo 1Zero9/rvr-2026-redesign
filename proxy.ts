@@ -11,7 +11,7 @@ export function proxy(req: NextRequest): NextResponse {
   const { pathname } = req.nextUrl;
 
   // NextAuth session gate for /admin/* (role check happens in layout + server actions)
-  if (pathname.startsWith('/admin') || pathname.startsWith('/jmo-admin')) {
+  if (pathname.startsWith('/admin')) {
     if (pathname !== '/admin/login' && !getSessionToken(req)) {
       return NextResponse.redirect(new URL('/admin/login', req.url));
     }
@@ -29,5 +29,5 @@ export function proxy(req: NextRequest): NextResponse {
 }
 
 export const config = {
-  matcher: ['/admin', '/admin/:path*', '/jmo-admin', '/jmo-admin/:path*', '/competitions/admin/:path*'],
+  matcher: ['/admin', '/admin/:path*', '/competitions/admin/:path*'],
 };

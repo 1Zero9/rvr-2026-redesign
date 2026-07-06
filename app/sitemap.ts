@@ -51,8 +51,8 @@ const routes: RouteConfig[] = [
   { path: '/shop',                     changeFrequency: 'monthly', priority: 0.5 },
   { path: '/campaigns',                changeFrequency: 'monthly', priority: 0.5 },
 
-  // ── DDSL-JMO ────────────────────────────────────────────────────────────────
-  { path: '/ddsl-jmo',                 changeFrequency: 'monthly', priority: 0.5 },
+  // ── Refereeing ──────────────────────────────────────────────────────────────
+  { path: '/club/refereeing',          changeFrequency: 'monthly', priority: 0.6 },
 
   // ── Local & programme pages ─────────────────────────────────────────────────
   { path: '/swords',                   changeFrequency: 'monthly', priority: 0.7 },
