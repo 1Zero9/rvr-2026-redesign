@@ -17,7 +17,16 @@ const CLUB_COLOURS: Array<{ label: string; value: string }> = [
 const NEON = '#85E320';
 const CREAM = '#FAF8F5';
 
+const ACCENT_COLOURS: Array<{ label: string; value: string }> = [
+  { label: 'Neon',   value: NEON },
+  { label: 'Cream',  value: CREAM },
+  { label: 'White',  value: '#FFFFFF' },
+  { label: 'Sky',    value: '#B8CDEE' },
+  { label: 'Maroon', value: '#8B1E4D' },
+];
+
 type Layout = 'band' | 'center' | 'corner';
+type BgStyle = 'solid' | 'gradient' | 'dots' | 'stripes';
 
 const LAYOUTS: Array<{ id: Layout; label: string; blurb: string }> = [
   { id: 'band',   label: 'Bottom Band', blurb: 'Solid title band along the bottom' },
@@ -25,12 +34,23 @@ const LAYOUTS: Array<{ id: Layout; label: string; blurb: string }> = [
   { id: 'corner', label: 'Top Corner',  blurb: 'Title top-left with accent bar' },
 ];
 
+const BG_STYLES: Array<{ id: BgStyle; label: string }> = [
+  { id: 'solid',    label: 'Solid' },
+  { id: 'gradient', label: 'Gradient' },
+  { id: 'dots',     label: 'Dot Grid' },
+  { id: 'stripes',  label: 'Stripes' },
+];
+
 interface PosterSpec {
   title: string;
   subtitle: string;
   layout: Layout;
   bgColour: string;
+  bgStyle: BgStyle;
+  accentColour: string;
+  showCrest: boolean;
   photo: HTMLImageElement | null;
+  photoOffset: { x: number; y: number };
   displayFont: string;
   sansFont: string;
   logo: HTMLImageElement | null;
@@ -38,11 +58,80 @@ interface PosterSpec {
 
 // ─── Canvas drawing ───────────────────────────────────────────────────────────
 
-function coverDraw(ctx: CanvasRenderingContext2D, img: HTMLImageElement, w: number, h: number) {
+function computeCover(img: HTMLImageElement, w: number, h: number) {
   const scale = Math.max(w / img.naturalWidth, h / img.naturalHeight);
-  const dw = img.naturalWidth * scale;
-  const dh = img.naturalHeight * scale;
-  ctx.drawImage(img, (w - dw) / 2, (h - dh) / 2, dw, dh);
+  return { dw: img.naturalWidth * scale, dh: img.naturalHeight * scale };
+}
+
+function coverDraw(
+  ctx: CanvasRenderingContext2D,
+  img: HTMLImageElement,
+  w: number,
+  h: number,
+  offset: { x: number; y: number } = { x: 0, y: 0 },
+) {
+  const { dw, dh } = computeCover(img, w, h);
+  const slackX = dw - w;
+  const slackY = dh - h;
+  const x = (w - dw) / 2 + (slackX / 2) * offset.x;
+  const y = (h - dh) / 2 + (slackY / 2) * offset.y;
+  ctx.drawImage(img, x, y, dw, dh);
+}
+
+/** Lighten (positive) or darken (negative) a #rrggbb colour by `amt` (0-255). */
+function shade(hex: string, amt: number): string {
+  const n = parseInt(hex.replace('#', ''), 16);
+  const clamp = (v: number) => Math.max(0, Math.min(255, Math.round(v)));
+  const r = clamp(((n >> 16) & 255) + amt);
+  const g = clamp(((n >> 8) & 255) + amt);
+  const b = clamp((n & 255) + amt);
+  return `rgb(${r}, ${g}, ${b})`;
+}
+
+function paintBackground(ctx: CanvasRenderingContext2D, w: number, h: number, spec: PosterSpec) {
+  ctx.fillStyle = spec.bgColour;
+  ctx.fillRect(0, 0, w, h);
+
+  if (spec.bgStyle === 'gradient') {
+    const grad = ctx.createLinearGradient(0, 0, w, h);
+    grad.addColorStop(0, shade(spec.bgColour, 34));
+    grad.addColorStop(1, shade(spec.bgColour, -42));
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, w, h);
+  } else if (spec.bgStyle === 'dots') {
+    const gap = Math.round(Math.min(w, h) * 0.045);
+    const r = Math.max(2, gap * 0.09);
+    ctx.fillStyle = shade(spec.bgColour, 26);
+    for (let y = gap / 2; y < h; y += gap) {
+      for (let x = gap / 2; x < w; x += gap) {
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+  } else if (spec.bgStyle === 'stripes') {
+    ctx.save();
+    ctx.globalAlpha = 0.35;
+    ctx.strokeStyle = shade(spec.bgColour, 34);
+    const gap = Math.round(Math.min(w, h) * 0.05);
+    ctx.lineWidth = gap * 0.4;
+    for (let x = -h; x < w + h; x += gap) {
+      ctx.beginPath();
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x + h, h);
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+}
+
+function drawCrest(ctx: CanvasRenderingContext2D, spec: PosterSpec, w: number, h: number) {
+  if (!spec.logo) return;
+  const logoW = Math.min(w, h) * 0.85;
+  const logoH = logoW * (spec.logo.naturalHeight / spec.logo.naturalWidth);
+  ctx.globalAlpha = 0.12;
+  ctx.drawImage(spec.logo, (w - logoW) / 2, (h - logoH) / 2, logoW, logoH);
+  ctx.globalAlpha = 1;
 }
 
 function wrapLines(ctx: CanvasRenderingContext2D, text: string, maxWidth: number): string[] {
@@ -80,9 +169,9 @@ export function drawPoster(canvas: HTMLCanvasElement, w: number, h: number, spec
   if (!ctx) return;
 
   // Background
-  ctx.fillStyle = spec.bgColour;
-  ctx.fillRect(0, 0, w, h);
-  if (spec.photo) coverDraw(ctx, spec.photo, w, h);
+  paintBackground(ctx, w, h, spec);
+  if (!spec.photo && spec.showCrest) drawCrest(ctx, spec, w, h);
+  if (spec.photo) coverDraw(ctx, spec.photo, w, h, spec.photoOffset);
 
   const unit = Math.min(w, h);
   const title = spec.title.trim().toUpperCase() || 'YOUR TITLE HERE';
@@ -109,7 +198,7 @@ export function drawPoster(canvas: HTMLCanvasElement, w: number, h: number, spec
 
     ctx.fillStyle = spec.photo ? 'rgba(11,31,59,0.92)' : 'rgba(0,0,0,0.35)';
     ctx.fillRect(0, bandY, w, bandH);
-    ctx.fillStyle = NEON;
+    ctx.fillStyle = spec.accentColour;
     ctx.fillRect(0, bandY, w, Math.max(6, Math.round(unit * 0.008)));
 
     let y = bandY + pad + titleSize * 0.9;
@@ -147,7 +236,7 @@ export function drawPoster(canvas: HTMLCanvasElement, w: number, h: number, spec
     const total = titleLines.length * titleSize * 1.1 + (subLines.length ? unit * 0.03 + subLines.length * subSize * 1.45 : 0);
     let y = (h - total) / 2 + titleSize * 0.9;
 
-    ctx.fillStyle = NEON;
+    ctx.fillStyle = spec.accentColour;
     ctx.font = `italic 900 ${titleSize}px ${spec.displayFont}`;
     for (const line of titleLines) {
       ctx.fillText(line, w / 2, y);
@@ -197,7 +286,7 @@ export function drawPoster(canvas: HTMLCanvasElement, w: number, h: number, spec
         y += subSize * 1.45;
       }
     }
-    ctx.fillStyle = NEON;
+    ctx.fillStyle = spec.accentColour;
     ctx.fillRect(margin, blockTop, barW, y - blockTop - titleSize * 0.35);
     drawLogo(ctx, spec, w, h, 'bottom-right');
   }
@@ -237,7 +326,11 @@ export default function PosterMaker({
   const [subtitle, setSubtitle] = useState('');
   const [layout, setLayout] = useState<Layout>('band');
   const [bgColour, setBgColour] = useState(CLUB_COLOURS[0].value);
+  const [bgStyle, setBgStyle] = useState<BgStyle>('solid');
+  const [accentColour, setAccentColour] = useState(NEON);
+  const [showCrest, setShowCrest] = useState(false);
   const [photo, setPhoto] = useState<HTMLImageElement | null>(null);
+  const [photoOffset, setPhotoOffset] = useState({ x: 0, y: 0 });
   const [preview, setPreview] = useState<'hero' | 'mobile'>('hero');
   const [libraryOpen, setLibraryOpen] = useState(false);
   const [status, setStatus] = useState<'idle' | 'saving' | 'error'>('idle');
@@ -252,6 +345,15 @@ export default function PosterMaker({
   const displayProbe = useRef<HTMLSpanElement>(null);
   const sansProbe = useRef<HTMLSpanElement>(null);
   const photoUrlRef = useRef<string | null>(null);
+  const photoDrag = useRef<{
+    startX: number;
+    startY: number;
+    startOffset: { x: number; y: number };
+    canvasW: number;
+    canvasH: number;
+    rectW: number;
+    rectH: number;
+  } | null>(null);
 
   useEffect(() => {
     document.body.style.overflow = 'hidden';
@@ -284,7 +386,11 @@ export default function PosterMaker({
     subtitle,
     layout,
     bgColour,
+    bgStyle,
+    accentColour,
+    showCrest,
     photo,
+    photoOffset,
     displayFont: fonts.display,
     sansFont: fonts.sans,
     logo,
@@ -295,7 +401,7 @@ export default function PosterMaker({
     if (heroCanvas.current) drawPoster(heroCanvas.current, 1920, 1080, spec);
     if (mobileCanvas.current) drawPoster(mobileCanvas.current, 1080, 1350, spec);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [title, subtitle, layout, bgColour, photo, fonts, logo, preview]);
+  }, [title, subtitle, layout, bgColour, bgStyle, accentColour, showCrest, photo, photoOffset, fonts, logo, preview]);
 
   async function handlePhotoFile(file: File | undefined) {
     if (!file) return;
@@ -304,6 +410,7 @@ export default function PosterMaker({
       if (photoUrlRef.current) URL.revokeObjectURL(photoUrlRef.current);
       const url = URL.createObjectURL(file);
       photoUrlRef.current = url;
+      setPhotoOffset({ x: 0, y: 0 });
       setPhoto(await loadImage(url));
     } catch {
       setErrorMsg('Could not load that photo');
@@ -314,11 +421,49 @@ export default function PosterMaker({
     setLibraryOpen(false);
     setErrorMsg('');
     try {
+      setPhotoOffset({ x: 0, y: 0 });
       setPhoto(await loadImage(url, true));
     } catch {
       setErrorMsg('Could not load that image from the library');
     }
   }, []);
+
+  function beginPhotoDrag(e: React.PointerEvent<HTMLCanvasElement>) {
+    if (!photo) return;
+    const canvas = e.currentTarget;
+    const rect = canvas.getBoundingClientRect();
+    canvas.setPointerCapture(e.pointerId);
+    photoDrag.current = {
+      startX: e.clientX,
+      startY: e.clientY,
+      startOffset: photoOffset,
+      canvasW: canvas.width,
+      canvasH: canvas.height,
+      rectW: rect.width,
+      rectH: rect.height,
+    };
+  }
+
+  function movePhotoDrag(e: React.PointerEvent<HTMLCanvasElement>) {
+    const drag = photoDrag.current;
+    if (!drag || !photo || !drag.rectW || !drag.rectH) return;
+    const scaleX = drag.canvasW / drag.rectW;
+    const scaleY = drag.canvasH / drag.rectH;
+    const dxCanvas = (e.clientX - drag.startX) * scaleX;
+    const dyCanvas = (e.clientY - drag.startY) * scaleY;
+    const { dw, dh } = computeCover(photo, drag.canvasW, drag.canvasH);
+    const slackX = Math.max(0, dw - drag.canvasW);
+    const slackY = Math.max(0, dh - drag.canvasH);
+    const clamp = (v: number) => Math.min(1, Math.max(-1, v));
+    setPhotoOffset({
+      x: slackX > 0 ? clamp(drag.startOffset.x + dxCanvas / (slackX / 2)) : 0,
+      y: slackY > 0 ? clamp(drag.startOffset.y + dyCanvas / (slackY / 2)) : 0,
+    });
+  }
+
+  function endPhotoDrag() {
+    photoDrag.current = null;
+  }
 
   async function handleSave() {
     if (!title.trim()) {
@@ -407,16 +552,26 @@ export default function PosterMaker({
             </div>
             <canvas
               ref={heroCanvas}
-              className={`w-full border-2 border-brand-charcoal/20 ${preview === 'hero' ? '' : 'hidden'}`}
+              onPointerDown={beginPhotoDrag}
+              onPointerMove={movePhotoDrag}
+              onPointerUp={endPhotoDrag}
+              onPointerCancel={endPhotoDrag}
+              className={`w-full touch-none border-2 border-brand-charcoal/20 ${photo ? 'cursor-move' : ''} ${preview === 'hero' ? '' : 'hidden'}`}
               aria-label="Poster preview, desktop crop"
             />
             <canvas
               ref={mobileCanvas}
-              className={`mx-auto max-h-[45dvh] w-auto border-2 border-brand-charcoal/20 ${preview === 'mobile' ? '' : 'hidden'}`}
+              onPointerDown={beginPhotoDrag}
+              onPointerMove={movePhotoDrag}
+              onPointerUp={endPhotoDrag}
+              onPointerCancel={endPhotoDrag}
+              className={`mx-auto max-h-[45dvh] w-auto touch-none border-2 border-brand-charcoal/20 ${photo ? 'cursor-move' : ''} ${preview === 'mobile' ? '' : 'hidden'}`}
               aria-label="Poster preview, phone crop"
             />
             <p className="mt-1 text-[11px] text-brand-charcoal/50">
-              Both sizes are generated together — desktop hero and phone portrait.
+              {photo
+                ? 'Drag the preview to reposition the photo.'
+                : 'Both sizes are generated together — desktop hero and phone portrait.'}
             </p>
           </div>
 
@@ -510,33 +665,85 @@ export default function PosterMaker({
                 Library
               </button>
             </div>
-            <div className="mt-2 flex items-center gap-2 flex-wrap">
-              <span className="text-xs text-brand-charcoal/60">Or a club colour:</span>
-              {CLUB_COLOURS.map((c) => (
-                <button
-                  key={c.value}
-                  type="button"
-                  onClick={() => {
-                    setPhoto(null);
-                    setBgColour(c.value);
-                  }}
-                  className={`h-9 w-9 rounded-full border-2 ${
-                    !photo && bgColour === c.value ? 'border-brand-neon ring-2 ring-brand-neon/40' : 'border-brand-charcoal/20'
-                  }`}
-                  style={{ backgroundColor: c.value }}
-                  aria-label={`${c.label} background`}
-                  title={c.label}
-                />
-              ))}
-              {photo && (
+            {photo ? (
+              <div className="mt-2 flex items-center justify-between gap-2">
+                <p className="text-xs text-brand-charcoal/60">Drag the preview above to reframe the photo.</p>
                 <button
                   type="button"
                   onClick={() => setPhoto(null)}
-                  className="text-xs font-bold text-brand-maroon underline min-h-[36px]"
+                  className="shrink-0 text-xs font-bold text-brand-maroon underline min-h-[36px]"
                 >
                   Remove photo
                 </button>
-              )}
+              </div>
+            ) : (
+              <div className="mt-3 space-y-3">
+                <div>
+                  <p className="text-xs font-bold text-brand-charcoal/70 mb-1">Colour</p>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    {CLUB_COLOURS.map((c) => (
+                      <button
+                        key={c.value}
+                        type="button"
+                        onClick={() => setBgColour(c.value)}
+                        className={`h-9 w-9 rounded-full border-2 ${
+                          bgColour === c.value ? 'border-brand-neon ring-2 ring-brand-neon/40' : 'border-brand-charcoal/20'
+                        }`}
+                        style={{ backgroundColor: c.value }}
+                        aria-label={`${c.label} background`}
+                        title={c.label}
+                      />
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <p className="text-xs font-bold text-brand-charcoal/70 mb-1">Style</p>
+                  <div className="flex gap-1.5 flex-wrap">
+                    {BG_STYLES.map((s) => (
+                      <button
+                        key={s.id}
+                        type="button"
+                        onClick={() => setBgStyle(s.id)}
+                        className={`px-3 min-h-[36px] text-xs font-bold border-2 transition-colors ${
+                          bgStyle === s.id
+                            ? 'border-brand-charcoal bg-brand-navy text-brand-cream'
+                            : 'border-brand-charcoal/20 bg-white text-brand-charcoal/70 hover:border-brand-charcoal/50'
+                        }`}
+                      >
+                        {s.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <label className="flex items-center gap-2 text-xs font-bold text-brand-charcoal/70 min-h-[36px]">
+                  <input
+                    type="checkbox"
+                    checked={showCrest}
+                    onChange={(e) => setShowCrest(e.target.checked)}
+                    className="h-4 w-4 accent-brand-navy"
+                  />
+                  Add a large faded crest
+                </label>
+              </div>
+            )}
+
+            <div className="mt-3">
+              <p className="text-xs font-bold text-brand-charcoal/70 mb-1">Accent colour</p>
+              <div className="flex items-center gap-2 flex-wrap">
+                {ACCENT_COLOURS.map((c) => (
+                  <button
+                    key={c.value}
+                    type="button"
+                    onClick={() => setAccentColour(c.value)}
+                    className={`h-9 w-9 rounded-full border-2 ${
+                      accentColour === c.value ? 'border-brand-navy ring-2 ring-brand-navy/30' : 'border-brand-charcoal/20'
+                    }`}
+                    style={{ backgroundColor: c.value }}
+                    aria-label={`${c.label} accent`}
+                    title={c.label}
+                  />
+                ))}
+              </div>
             </div>
           </div>
 

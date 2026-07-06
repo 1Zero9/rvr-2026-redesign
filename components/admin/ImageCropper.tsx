@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { RotateCw, X, ZoomIn, ZoomOut } from 'lucide-react';
+import { RotateCw, X } from 'lucide-react';
 
 export interface AspectOption {
   label: string;
@@ -16,8 +16,68 @@ export const DEFAULT_ASPECTS: AspectOption[] = [
   { label: 'Original',     value: null },
 ];
 
-const MAX_ZOOM = 4;
 const MAX_OUTPUT = 2400;
+/** Minimum crop-box width, in on-screen pixels. */
+const MIN_BOX_SCREEN = 60;
+
+type Corner = 'tl' | 'tr' | 'bl' | 'br';
+type Box = { x: number; y: number; w: number; h: number };
+type Drag =
+  | { mode: 'move'; startX: number; startY: number; startBox: Box }
+  | { mode: 'resize'; corner: Corner; startX: number; startY: number; startBox: Box };
+
+const CORNERS: Corner[] = ['tl', 'tr', 'bl', 'br'];
+const CORNER_SIGN: Record<Corner, { x: 1 | -1; y: 1 | -1 }> = {
+  tl: { x: -1, y: -1 },
+  tr: { x: 1, y: -1 },
+  bl: { x: -1, y: 1 },
+  br: { x: 1, y: 1 },
+};
+
+/** Largest centred box matching `aspect` (or the full image) within `bounds`. */
+function defaultBox(bounds: { w: number; h: number }, aspect: number | null): Box {
+  if (aspect === null) return { x: 0, y: 0, w: bounds.w, h: bounds.h };
+  const boundsAspect = bounds.w / bounds.h;
+  const w = boundsAspect > aspect ? bounds.h * aspect : bounds.w;
+  const h = boundsAspect > aspect ? bounds.h : bounds.w / aspect;
+  return { x: (bounds.w - w) / 2, y: (bounds.h - h) / 2, w, h };
+}
+
+/** Resize `start` by dragging `corner`, keeping the opposite edges anchored. */
+function resizeCorner(
+  start: Box,
+  corner: Corner,
+  dx: number,
+  dy: number,
+  bounds: { w: number; h: number },
+  aspect: number | null,
+  minSize: number,
+): Box {
+  const sign = CORNER_SIGN[corner];
+  const anchorX = sign.x === 1 ? start.x : start.x + start.w;
+  const anchorY = sign.y === 1 ? start.y : start.y + start.h;
+  const maxW = sign.x === 1 ? bounds.w - anchorX : anchorX;
+  const maxH = sign.y === 1 ? bounds.h - anchorY : anchorY;
+
+  let newW: number;
+  let newH: number;
+  if (aspect) {
+    const grow = (dx * sign.x + dy * sign.y * aspect) / 2;
+    const widthLimit = Math.min(maxW, maxH * aspect);
+    newW = Math.min(widthLimit, Math.max(minSize, start.w + grow));
+    newH = newW / aspect;
+  } else {
+    newW = Math.min(maxW, Math.max(minSize, start.w + dx * sign.x));
+    newH = Math.min(maxH, Math.max(minSize, start.h + dy * sign.y));
+  }
+
+  return {
+    x: sign.x === 1 ? anchorX : anchorX - newW,
+    y: sign.y === 1 ? anchorY : anchorY - newH,
+    w: newW,
+    h: newH,
+  };
+}
 
 export default function ImageCropper({
   file,
@@ -37,15 +97,13 @@ export default function ImageCropper({
   const [imgSize, setImgSize] = useState<{ w: number; h: number } | null>(null);
   const [aspect, setAspect] = useState<number | null>(initialAspect);
   const [rotation, setRotation] = useState(0);
-  const [zoom, setZoom] = useState(1);
-  const [offset, setOffset] = useState({ x: 0, y: 0 });
   const [frame, setFrame] = useState({ w: 0, h: 0 });
+  const [box, setBox] = useState<Box>({ x: 0, y: 0, w: 0, h: 0 });
   const [exporting, setExporting] = useState(false);
 
-  const frameRef = useRef<HTMLDivElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
   const imgRef = useRef<HTMLImageElement>(null);
-  const pointers = useRef(new Map<number, { x: number; y: number }>());
-  const pinchStart = useRef<{ dist: number; zoom: number } | null>(null);
+  const dragRef = useRef<Drag | null>(null);
 
   const src = useMemo(() => URL.createObjectURL(file), [file]);
   useEffect(() => () => URL.revokeObjectURL(src), [src]);
@@ -58,99 +116,91 @@ export default function ImageCropper({
   }, []);
 
   useEffect(() => {
-    const el = frameRef.current;
+    const el = stageRef.current;
     if (!el) return;
     const observer = new ResizeObserver(([entry]) => {
       setFrame({ w: entry.contentRect.width, h: entry.contentRect.height });
     });
     observer.observe(el);
     return () => observer.disconnect();
-  }, [imgSize, aspect]);
+  }, []);
 
-  // Rotated image dimensions
+  // Rotated (on-screen) image dimensions
   const rotated = useMemo(() => {
     if (!imgSize) return null;
     const swap = rotation % 180 !== 0;
     return { w: swap ? imgSize.h : imgSize.w, h: swap ? imgSize.w : imgSize.h };
   }, [imgSize, rotation]);
 
-  const frameAspect = aspect ?? (rotated ? rotated.w / rotated.h : 16 / 9);
+  // Reset the crop box whenever the aspect or the (rotated) image changes.
+  // Done during render (not an effect) since `rotated` is a derived value
+  // whose reference is only stable across genuinely unrelated re-renders.
+  const [boxFor, setBoxFor] = useState<{ rotated: { w: number; h: number } | null; aspect: number | null }>({
+    rotated: null,
+    aspect: null,
+  });
+  if (rotated && (rotated !== boxFor.rotated || aspect !== boxFor.aspect)) {
+    setBoxFor({ rotated, aspect });
+    setBox(defaultBox(rotated, aspect));
+  }
 
-  const coverScale = useMemo(() => {
-    if (!rotated || !frame.w || !frame.h) return 1;
-    return Math.max(frame.w / rotated.w, frame.h / rotated.h);
+  const fit = useMemo(() => {
+    if (!rotated || !frame.w || !frame.h) return null;
+    const scale = Math.min(frame.w / rotated.w, frame.h / rotated.h);
+    const dispW = rotated.w * scale;
+    const dispH = rotated.h * scale;
+    return { scale, dispW, dispH, left: (frame.w - dispW) / 2, top: (frame.h - dispH) / 2 };
   }, [rotated, frame]);
 
-  const displayScale = coverScale * zoom;
+  const displayScale = fit?.scale ?? 1;
+  const minBoxSize = MIN_BOX_SCREEN / displayScale;
 
-  const clampOffset = useCallback(
-    (x: number, y: number, scale: number) => {
-      if (!rotated || !frame.w) return { x: 0, y: 0 };
-      const maxX = Math.max(0, (rotated.w * scale - frame.w) / 2);
-      const maxY = Math.max(0, (rotated.h * scale - frame.h) / 2);
-      return {
-        x: Math.min(maxX, Math.max(-maxX, x)),
-        y: Math.min(maxY, Math.max(-maxY, y)),
-      };
-    },
-    [rotated, frame],
-  );
+  const handleDragMove = useCallback(
+    (e: React.PointerEvent) => {
+      const drag = dragRef.current;
+      if (!drag || !rotated) return;
+      const dx = (e.clientX - drag.startX) / displayScale;
+      const dy = (e.clientY - drag.startY) / displayScale;
 
-  const setZoomClamped = useCallback(
-    (next: number) => {
-      const z = Math.min(MAX_ZOOM, Math.max(1, next));
-      setZoom(z);
-      setOffset((o) => clampOffset(o.x, o.y, coverScale * z));
-    },
-    [clampOffset, coverScale],
-  );
-
-  function handlePointerDown(e: React.PointerEvent<HTMLDivElement>) {
-    e.currentTarget.setPointerCapture(e.pointerId);
-    pointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
-    if (pointers.current.size === 2) {
-      const [a, b] = [...pointers.current.values()];
-      pinchStart.current = { dist: Math.hypot(a.x - b.x, a.y - b.y), zoom };
-    }
-  }
-
-  function handlePointerMove(e: React.PointerEvent<HTMLDivElement>) {
-    const prev = pointers.current.get(e.pointerId);
-    if (!prev) return;
-    const current = { x: e.clientX, y: e.clientY };
-    pointers.current.set(e.pointerId, current);
-
-    if (pointers.current.size === 2 && pinchStart.current) {
-      const [a, b] = [...pointers.current.values()];
-      const dist = Math.hypot(a.x - b.x, a.y - b.y);
-      if (pinchStart.current.dist > 0) {
-        setZoomClamped(pinchStart.current.zoom * (dist / pinchStart.current.dist));
+      if (drag.mode === 'move') {
+        const maxX = rotated.w - drag.startBox.w;
+        const maxY = rotated.h - drag.startBox.h;
+        setBox({
+          ...drag.startBox,
+          x: Math.min(maxX, Math.max(0, drag.startBox.x + dx)),
+          y: Math.min(maxY, Math.max(0, drag.startBox.y + dy)),
+        });
+      } else {
+        setBox(resizeCorner(drag.startBox, drag.corner, dx, dy, rotated, aspect, minBoxSize));
       }
-    } else if (pointers.current.size === 1) {
-      const dx = current.x - prev.x;
-      const dy = current.y - prev.y;
-      setOffset((o) => clampOffset(o.x + dx, o.y + dy, displayScale));
-    }
+    },
+    [rotated, aspect, displayScale, minBoxSize],
+  );
+
+  function beginMove(e: React.PointerEvent<HTMLDivElement>) {
+    e.currentTarget.setPointerCapture(e.pointerId);
+    dragRef.current = { mode: 'move', startX: e.clientX, startY: e.clientY, startBox: box };
   }
 
-  function handlePointerUp(e: React.PointerEvent<HTMLDivElement>) {
-    pointers.current.delete(e.pointerId);
-    if (pointers.current.size < 2) pinchStart.current = null;
+  function beginResize(corner: Corner) {
+    return (e: React.PointerEvent<HTMLDivElement>) => {
+      e.stopPropagation();
+      e.currentTarget.setPointerCapture(e.pointerId);
+      dragRef.current = { mode: 'resize', corner, startX: e.clientX, startY: e.clientY, startBox: box };
+    };
+  }
+
+  function endDrag() {
+    dragRef.current = null;
   }
 
   function rotate() {
     setRotation((r) => (r + 90) % 360);
-    setOffset({ x: 0, y: 0 });
-  }
-
-  function changeAspect(value: number | null) {
-    setAspect(value);
-    setOffset({ x: 0, y: 0 });
   }
 
   async function handleConfirm() {
     const img = imgRef.current;
-    if (!img || !imgSize || !rotated || !frame.w || !frame.h) return;
+    if (!img || !imgSize || !rotated) return;
     setExporting(true);
     try {
       // Draw the full rotated image once
@@ -163,19 +213,14 @@ export default function ImageCropper({
       baseCtx.rotate((rotation * Math.PI) / 180);
       baseCtx.drawImage(img, -imgSize.w / 2, -imgSize.h / 2);
 
-      // Crop rect in rotated-image coordinates
-      const cropW = frame.w / displayScale;
-      const cropH = frame.h / displayScale;
-      const cropX = rotated.w / 2 - offset.x / displayScale - cropW / 2;
-      const cropY = rotated.h / 2 - offset.y / displayScale - cropH / 2;
-
-      const outScale = Math.min(1, MAX_OUTPUT / Math.max(cropW, cropH));
+      // Crop straight from the box — it's already in rotated-image coordinates
+      const outScale = Math.min(1, MAX_OUTPUT / Math.max(box.w, box.h));
       const out = document.createElement('canvas');
-      out.width = Math.round(cropW * outScale);
-      out.height = Math.round(cropH * outScale);
+      out.width = Math.round(box.w * outScale);
+      out.height = Math.round(box.h * outScale);
       const outCtx = out.getContext('2d');
       if (!outCtx) throw new Error('Canvas unavailable');
-      outCtx.drawImage(base, cropX, cropY, cropW, cropH, 0, 0, out.width, out.height);
+      outCtx.drawImage(base, box.x, box.y, box.w, box.h, 0, 0, out.width, out.height);
 
       const blob = await new Promise<Blob>((resolve, reject) => {
         out.toBlob(
@@ -205,48 +250,76 @@ export default function ImageCropper({
         </button>
       </div>
 
-      {/* Crop stage */}
-      <div className="flex-1 min-h-0 flex items-center justify-center px-4">
-        <div
-          ref={frameRef}
-          className="relative overflow-hidden border-2 border-white/60 touch-none select-none cursor-move bg-black"
-          style={{
-            aspectRatio: String(frameAspect),
-            width: `min(100%, calc((100dvh - 240px) * ${frameAspect}))`,
-          }}
-          onPointerDown={handlePointerDown}
-          onPointerMove={handlePointerMove}
-          onPointerUp={handlePointerUp}
-          onPointerCancel={handlePointerUp}
-          role="application"
-          aria-label="Drag to position the photo, pinch or use the slider to zoom"
-        >
-          {src && (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              ref={imgRef}
-              src={src}
-              alt=""
-              draggable={false}
-              onLoad={(e) => {
-                const el = e.currentTarget;
-                setImgSize({ w: el.naturalWidth, h: el.naturalHeight });
-              }}
-              className="absolute left-1/2 top-1/2 max-w-none"
-              style={{
-                width: imgSize ? `${imgSize.w * displayScale}px` : undefined,
-                transform: `translate(calc(-50% + ${offset.x}px), calc(-50% + ${offset.y}px)) rotate(${rotation}deg)`,
-              }}
-            />
-          )}
-          {/* Rule-of-thirds grid */}
-          <div aria-hidden="true" className="pointer-events-none absolute inset-0">
-            <div className="absolute left-1/3 top-0 bottom-0 w-px bg-white/25" />
-            <div className="absolute left-2/3 top-0 bottom-0 w-px bg-white/25" />
-            <div className="absolute top-1/3 left-0 right-0 h-px bg-white/25" />
-            <div className="absolute top-2/3 left-0 right-0 h-px bg-white/25" />
+      {/* Crop stage — shows the whole photo; the box below marks what's kept */}
+      <div ref={stageRef} className="relative flex-1 min-h-0 mx-4 my-2">
+        {src && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            ref={imgRef}
+            src={src}
+            alt=""
+            draggable={false}
+            onLoad={(e) => {
+              const el = e.currentTarget;
+              setImgSize({ w: el.naturalWidth, h: el.naturalHeight });
+            }}
+            className="absolute max-w-none"
+            style={
+              fit && imgSize
+                ? {
+                    left: fit.left + fit.dispW / 2,
+                    top: fit.top + fit.dispH / 2,
+                    width: imgSize.w * displayScale,
+                    transform: `translate(-50%, -50%) rotate(${rotation}deg)`,
+                  }
+                : { left: 0, top: 0, opacity: 0, pointerEvents: 'none' }
+            }
+          />
+        )}
+
+        {fit && rotated && (
+          <div
+            className="absolute border-2 border-white touch-none cursor-move"
+            style={{
+              left: fit.left + box.x * displayScale,
+              top: fit.top + box.y * displayScale,
+              width: box.w * displayScale,
+              height: box.h * displayScale,
+              boxShadow: '0 0 0 9999px rgba(18,18,18,0.7)',
+            }}
+            onPointerDown={beginMove}
+            onPointerMove={handleDragMove}
+            onPointerUp={endDrag}
+            onPointerCancel={endDrag}
+            role="application"
+            aria-label="Crop area — drag to move, drag a corner to resize"
+          >
+            {/* Rule-of-thirds grid */}
+            <div aria-hidden="true" className="pointer-events-none absolute inset-0">
+              <div className="absolute left-1/3 top-0 bottom-0 w-px bg-white/25" />
+              <div className="absolute left-2/3 top-0 bottom-0 w-px bg-white/25" />
+              <div className="absolute top-1/3 left-0 right-0 h-px bg-white/25" />
+              <div className="absolute top-2/3 left-0 right-0 h-px bg-white/25" />
+            </div>
+
+            {/* Corner resize handles */}
+            {CORNERS.map((corner) => (
+              <div
+                key={corner}
+                onPointerDown={beginResize(corner)}
+                className="absolute flex h-9 w-9 items-center justify-center touch-none"
+                style={{
+                  left: corner === 'tl' || corner === 'bl' ? 0 : '100%',
+                  top: corner === 'tl' || corner === 'tr' ? 0 : '100%',
+                  transform: 'translate(-50%, -50%)',
+                  cursor: corner === 'tl' || corner === 'br' ? 'nwse-resize' : 'nesw-resize',
+                }}
+              >
+                <div className="h-3 w-3 rounded-sm border-2 border-brand-charcoal bg-white shadow" />
+              </div>
+            ))}
           </div>
-        </div>
+        )}
       </div>
 
       {/* Controls */}
@@ -257,7 +330,7 @@ export default function ImageCropper({
             <button
               key={a.label}
               type="button"
-              onClick={() => changeAspect(a.value)}
+              onClick={() => setAspect(a.value)}
               className={`shrink-0 px-3 min-h-[36px] text-xs font-bold border-2 transition-colors ${
                 aspect === a.value
                   ? 'border-brand-neon bg-brand-neon text-brand-charcoal'
@@ -275,22 +348,6 @@ export default function ImageCropper({
           >
             <RotateCw className="h-4 w-4" aria-hidden="true" />
           </button>
-        </div>
-
-        {/* Zoom */}
-        <div className="flex items-center gap-3">
-          <ZoomOut className="h-4 w-4 text-white/50 shrink-0" aria-hidden="true" />
-          <input
-            type="range"
-            min={1}
-            max={MAX_ZOOM}
-            step={0.01}
-            value={zoom}
-            onChange={(e) => setZoomClamped(Number(e.target.value))}
-            className="flex-1 accent-brand-neon min-h-[32px]"
-            aria-label="Zoom"
-          />
-          <ZoomIn className="h-4 w-4 text-white/50 shrink-0" aria-hidden="true" />
         </div>
 
         {/* Actions */}
