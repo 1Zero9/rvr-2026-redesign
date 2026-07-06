@@ -1,61 +1,27 @@
 import Link from 'next/link';
-import { prisma } from '@/lib/prisma';
-import { auth } from '@/auth';
 import { GlobalRole } from '@prisma/client';
 import { signOutAction } from '@/lib/actions/sign-out';
+import { ExternalLink } from 'lucide-react';
 import {
-  BookOpen,
-  ClipboardList,
-  Cog,
-  ExternalLink,
-  Megaphone,
-  MessageSquare,
-  Shield,
-  Shirt,
-  Trophy,
-  Users,
-} from 'lucide-react';
+  SITE_NAV,
+  SUPER_NAV,
+  ROLE_LABELS,
+  ROLE_STYLES,
+  type AdminBadges,
+} from '@/components/admin/nav-config';
 
-const SITE_NAV = [
-  { href: '/admin/noticeboard',   label: 'Noticeboard',   icon: Megaphone,      badge: 'ann' as const },
-  { href: '/admin/registrations', label: 'Registrations', icon: ClipboardList,  badge: 'reg' as const },
-  { href: '/admin/enquiries',     label: 'Enquiries',     icon: MessageSquare,  badge: 'enq' as const },
-  { href: '/admin/moderation',    label: 'Moderation',    icon: Shield                                },
-  { href: '/admin/boot-room',     label: 'Boot Room',     icon: Shirt                                 },
-  { href: '/competitions/admin',  label: 'Competitions',  icon: Trophy                                },
-];
-
-const SUPER_NAV = [
-  { href: '/competitions/admin/users', label: 'Users',    icon: Users    },
-  { href: '/admin/features',           label: 'Features', icon: Cog      },
-  { href: '/admin/docs',               label: 'Docs',     icon: BookOpen },
-];
-
-const ROLE_LABELS: Record<string, string> = {
-  SUPER_ADMIN: 'Super Admin',
-  SITE_ADMIN:  'Site Admin',
-};
-
-const ROLE_STYLES: Record<string, string> = {
-  SUPER_ADMIN: 'bg-brand-neon text-brand-charcoal',
-  SITE_ADMIN:  'bg-brand-sky/20 text-brand-sky',
-};
-
-export default async function AdminSidebar() {
-  const [session, annCount, regCount, enqCount] = await Promise.all([
-    auth(),
-    prisma.announcement.count({ where: { isPublished: false } }),
-    prisma.playerProfile.count({ where: { registrationStatus: 'NEW' } }),
-    prisma.publicEnquiry.count({ where: { status: 'NEW' } }),
-  ]);
-
-  const badges = { ann: annCount, reg: regCount, enq: enqCount };
-  const user = session?.user as
-    | { name?: string | null; email?: string | null; globalRole?: string | null }
-    | undefined;
-  const role = user?.globalRole ?? null;
+export default function AdminSidebar({
+  badges,
+  role,
+  displayName,
+  email,
+}: {
+  badges: AdminBadges;
+  role: string | null;
+  displayName: string;
+  email: string;
+}) {
   const isSuperAdmin = role === GlobalRole.SUPER_ADMIN;
-  const displayName = user?.name ?? user?.email ?? '';
 
   return (
     <aside className="hidden lg:flex flex-col w-56 shrink-0 h-screen sticky top-0 bg-brand-navy border-r border-brand-sky/10 overflow-hidden">
@@ -132,7 +98,7 @@ export default async function AdminSidebar() {
           View Live Site
         </Link>
 
-        {user && (
+        {displayName && (
           <div className="space-y-1.5">
             {role && (
               <span
@@ -143,7 +109,7 @@ export default async function AdminSidebar() {
                 {ROLE_LABELS[role] ?? role}
               </span>
             )}
-            <p className="text-xs text-brand-sky/50 truncate" title={user.email ?? ''}>
+            <p className="text-xs text-brand-sky/50 truncate" title={email}>
               {displayName}
             </p>
             <form action={signOutAction}>

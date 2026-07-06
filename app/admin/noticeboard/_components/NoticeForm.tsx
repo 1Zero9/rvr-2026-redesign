@@ -1,8 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { Megaphone, Newspaper } from 'lucide-react';
+import { Megaphone, Newspaper, Wand2 } from 'lucide-react';
 import ImageUploadField from '@/components/admin/ImageUploadField';
+import PosterMaker from '@/components/admin/PosterMaker';
 
 // ─── Data shapes ──────────────────────────────────────────────────────────────
 
@@ -86,31 +87,46 @@ const SITE_TARGETS: Array<{ path: string; label: string }> = [
   { path: '/pitch-locations',      label: 'Pitch Locations' },
 ];
 
+// Off-site destinations the club actually uses — shown in their own group so
+// social CTAs don't require pasting a URL by hand.
+const EXTERNAL_TARGETS: Array<{ path: string; label: string }> = [
+  { path: 'https://www.instagram.com/rvrfc1981/', label: 'Instagram — @rvrfc1981' },
+];
+
 const CTA_LABELS = [
   'Register Now', 'Join Us', 'Book a Trial', 'Find Out More', 'Read More',
-  'Get Involved', 'Contact Us', 'Book Now', 'Learn More', 'Donate',
+  'Get Involved', 'Contact Us', 'Book Now', 'Learn More', 'Donate', 'Follow Us',
 ];
 
 const CUSTOM = '__custom';
+
+type SelectOption = { value: string; label: string };
 
 function SelectWithCustom({
   name,
   required,
   initial,
-  options,
+  options = [],
+  groups,
   chooseText,
   customText,
   customPlaceholder,
+  customPattern,
+  customPatternHint,
 }: {
   name: string;
   required?: boolean;
   initial: string;
-  options: Array<{ value: string; label: string }>;
+  options?: SelectOption[];
+  groups?: Array<{ label: string; options: SelectOption[] }>;
   chooseText: string;
   customText: string;
   customPlaceholder: string;
+  customPattern?: string;
+  customPatternHint?: string;
 }) {
-  const isKnown = initial === '' || options.some((o) => o.value === initial);
+  const allOptions = groups ? groups.flatMap((g) => g.options) : options;
+  const isKnown = initial === '' || allOptions.some((o) => o.value === initial);
   const [custom, setCustom] = useState(!isKnown);
 
   if (custom) {
@@ -122,6 +138,8 @@ function SelectWithCustom({
           required={required}
           defaultValue={initial}
           placeholder={customPlaceholder}
+          pattern={customPattern}
+          title={customPatternHint}
           className={INPUT}
           autoFocus={initial === ''}
         />
@@ -147,9 +165,17 @@ function SelectWithCustom({
       }}
     >
       <option value="" disabled={required}>{required ? chooseText : '— None —'}</option>
-      {options.map((o) => (
-        <option key={o.value} value={o.value}>{o.label}</option>
-      ))}
+      {groups
+        ? groups.map((g) => (
+            <optgroup key={g.label} label={g.label}>
+              {g.options.map((o) => (
+                <option key={o.value} value={o.value}>{o.label}</option>
+              ))}
+            </optgroup>
+          ))
+        : options.map((o) => (
+            <option key={o.value} value={o.value}>{o.label}</option>
+          ))}
       <option value={CUSTOM}>{customText}</option>
     </select>
   );
@@ -220,7 +246,8 @@ function ImageGuidelines() {
         Image guidelines — sizes, formats, resolution
       </summary>
       <div className="border-t border-brand-navy/10 p-4 space-y-3 text-xs text-brand-charcoal/80">
-        <table className="w-full text-left">
+        <div className="overflow-x-auto">
+        <table className="w-full min-w-[420px] text-left">
           <thead>
             <tr className="text-[10px] font-black uppercase tracking-wider text-brand-green">
               <th className="pb-1 pr-3">Use</th>
@@ -238,6 +265,7 @@ function ImageGuidelines() {
             ))}
           </tbody>
         </table>
+        </div>
         <ul className="list-disc pl-4 space-y-1">
           <li><strong>Formats:</strong> JPG, PNG, or WebP. Maximum 15MB per file.</li>
           <li><strong>Resolution:</strong> 72dpi is fine for the web — pixel dimensions are what matter, not print DPI.</li>
@@ -265,12 +293,23 @@ function FocalPointEditor({
   onChange: (x: number, y: number) => void;
 }) {
   const objectPosition = `${focalX}% ${focalY}%`;
+  const [dragging, setDragging] = useState(false);
 
-  function handleClick(e: React.MouseEvent<HTMLDivElement>) {
+  function setFromPointer(e: React.PointerEvent<HTMLDivElement>) {
     const rect = e.currentTarget.getBoundingClientRect();
     const x = Math.round(((e.clientX - rect.left) / rect.width) * 100);
     const y = Math.round(((e.clientY - rect.top) / rect.height) * 100);
     onChange(Math.min(100, Math.max(0, x)), Math.min(100, Math.max(0, y)));
+  }
+
+  function handlePointerDown(e: React.PointerEvent<HTMLDivElement>) {
+    e.currentTarget.setPointerCapture(e.pointerId);
+    setDragging(true);
+    setFromPointer(e);
+  }
+
+  function handlePointerMove(e: React.PointerEvent<HTMLDivElement>) {
+    if (dragging) setFromPointer(e);
   }
 
   return (
@@ -278,27 +317,30 @@ function FocalPointEditor({
       <div>
         <p className="text-sm font-bold text-brand-charcoal">Crop preview &amp; focal point</p>
         <p className="text-xs text-brand-charcoal/60 mt-0.5">
-          Each placement crops the image to a different shape. Click the photo below to set
-          the focal point — the previews show exactly what visitors will see.
+          Each placement crops the image to a different shape. Tap or drag on the photo below
+          to set the focal point — the previews show exactly what visitors will see.
         </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <p className="text-[10px] font-black uppercase tracking-widest text-brand-green mb-1.5">
-            Full image — click to set focal point
+            Full image — tap to set focal point
           </p>
           <div
-            className="relative cursor-crosshair select-none border-2 border-brand-charcoal/20"
-            onClick={handleClick}
+            className="relative cursor-crosshair select-none border-2 border-brand-charcoal/20 touch-none"
+            onPointerDown={handlePointerDown}
+            onPointerMove={handlePointerMove}
+            onPointerUp={() => setDragging(false)}
+            onPointerCancel={() => setDragging(false)}
             role="application"
-            aria-label="Click to set the image focal point"
+            aria-label="Tap or drag to set the image focal point"
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={heroUrl} alt="" className="block w-full" draggable={false} />
             <span
               aria-hidden="true"
-              className="pointer-events-none absolute h-6 w-6 -translate-x-1/2 -translate-y-1/2 rounded-full border-[3px] border-brand-neon shadow-[0_0_0_2px_rgba(0,0,0,0.6)]"
+              className="pointer-events-none absolute h-9 w-9 -translate-x-1/2 -translate-y-1/2 rounded-full border-[3px] border-brand-neon shadow-[0_0_0_2px_rgba(0,0,0,0.6)] bg-brand-neon/15"
               style={{ left: `${focalX}%`, top: `${focalY}%` }}
             />
           </div>
@@ -359,6 +401,7 @@ export default function NoticeForm({
   const [mobileUrl, setMobileUrl]   = useState(c?.mobileImageUrl ?? '');
   const [focalX, setFocalX]         = useState(c?.focalX ?? n?.focalX ?? 50);
   const [focalY, setFocalY]         = useState(c?.focalY ?? n?.focalY ?? 50);
+  const [posterOpen, setPosterOpen] = useState(false);
 
   const action = type === 'news' ? newsAction : campaignAction;
   const isNews = type === 'news';
@@ -450,6 +493,14 @@ export default function NoticeForm({
                 onUrlChange={setNewsImage}
                 pathPrefix="news"
               />
+              <button
+                type="button"
+                onClick={() => setPosterOpen(true)}
+                className="inline-flex min-h-[44px] w-full items-center justify-center gap-2 border-2 border-dashed border-brand-navy/40 px-4 text-xs font-bold text-brand-navy hover:border-brand-navy hover:bg-brand-navy/5 transition-colors"
+              >
+                <Wand2 className="h-4 w-4 shrink-0" aria-hidden="true" />
+                No photo? Create a graphic — title on club colours or a photo
+              </button>
               <ImageGuidelines />
             </div>
 
@@ -482,10 +533,15 @@ export default function NoticeForm({
                 <SelectWithCustom
                   name="ctaUrl"
                   initial={n?.ctaUrl ?? ''}
-                  options={SITE_TARGETS.map((t) => ({ value: t.path, label: t.label }))}
-                  chooseText="Choose a page…"
-                  customText="Other — external link…"
+                  groups={[
+                    { label: 'Club pages', options: SITE_TARGETS.map((t) => ({ value: t.path, label: t.label })) },
+                    { label: 'Off-site',   options: EXTERNAL_TARGETS.map((t) => ({ value: t.path, label: t.label })) },
+                  ]}
+                  chooseText="Choose a destination…"
+                  customText="Other website — paste any link…"
                   customPlaceholder="https://…"
+                  customPattern="(https?://|/).*"
+                  customPatternHint="Must be a full https:// link or a site path starting with /"
                 />
               </div>
             </div>
@@ -515,6 +571,14 @@ export default function NoticeForm({
             </div>
 
             <div className="space-y-3">
+              <button
+                type="button"
+                onClick={() => setPosterOpen(true)}
+                className="inline-flex min-h-[44px] w-full items-center justify-center gap-2 border-2 border-dashed border-brand-navy/40 px-4 text-xs font-bold text-brand-navy hover:border-brand-navy hover:bg-brand-navy/5 transition-colors"
+              >
+                <Wand2 className="h-4 w-4 shrink-0" aria-hidden="true" />
+                Create a graphic — makes the hero and mobile images together
+              </button>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <ImageUploadField
                   id="heroImageUrl"
@@ -533,6 +597,7 @@ export default function NoticeForm({
                   url={mobileUrl}
                   onUrlChange={setMobileUrl}
                   pathPrefix="campaigns"
+                  initialAspect={4 / 5}
                 />
               </div>
               <ImageGuidelines />
@@ -569,10 +634,15 @@ export default function NoticeForm({
                   name="ctaUrl"
                   required
                   initial={c?.ctaUrl ?? ''}
-                  options={SITE_TARGETS.map((t) => ({ value: t.path, label: t.label }))}
-                  chooseText="Choose a page…"
-                  customText="Other — external link…"
+                  groups={[
+                    { label: 'Club pages', options: SITE_TARGETS.map((t) => ({ value: t.path, label: t.label })) },
+                    { label: 'Off-site',   options: EXTERNAL_TARGETS.map((t) => ({ value: t.path, label: t.label })) },
+                  ]}
+                  chooseText="Choose a destination…"
+                  customText="Other website — paste any link…"
                   customPlaceholder="https://…"
+                  customPattern="(https?://|/).*"
+                  customPatternHint="Must be a full https:// link or a site path starting with /"
                 />
               </div>
             </div>
@@ -622,13 +692,31 @@ export default function NoticeForm({
           </>
         )}
 
-        <button
-          type="submit"
-          className="bg-brand-neon text-brand-charcoal font-bold px-6 py-3 min-h-[44px] border-3 border-brand-charcoal shadow-brutalist hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all"
-        >
-          {isEdit ? 'Save Changes' : isNews ? 'Create News Item' : 'Create Campaign'}
-        </button>
+        {/* Sticky on mobile so saving never means scrolling back down */}
+        <div className="sticky bottom-0 z-10 -mx-4 px-4 py-3 bg-brand-cream/95 backdrop-blur-sm border-t-2 border-brand-charcoal/10 sm:static sm:mx-0 sm:p-0 sm:bg-transparent sm:border-0 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:pb-0">
+          <button
+            type="submit"
+            className="w-full sm:w-auto bg-brand-neon text-brand-charcoal font-bold px-6 py-3 min-h-[48px] border-3 border-brand-charcoal shadow-brutalist hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all"
+          >
+            {isEdit ? 'Save Changes' : isNews ? 'Create News Item' : 'Create Campaign'}
+          </button>
+        </div>
       </form>
+
+      {posterOpen && (
+        <PosterMaker
+          onClose={() => setPosterOpen(false)}
+          onCreated={({ heroUrl: posterHero, mobileUrl: posterMobile }) => {
+            if (isNews) {
+              setNewsImage(posterHero);
+            } else {
+              setHeroUrl(posterHero);
+              setMobileUrl(posterMobile);
+            }
+            setPosterOpen(false);
+          }}
+        />
+      )}
 
       {deleteAction && (
         <div className="border-t-2 border-brand-charcoal/10 pt-8">
