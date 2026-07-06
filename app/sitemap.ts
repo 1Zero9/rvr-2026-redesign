@@ -33,7 +33,6 @@ const routes: RouteConfig[] = [
   // ── Programmes ──────────────────────────────────────────────────────────────
   { path: '/football-for-all',         changeFrequency: 'monthly', priority: 0.7 },
   { path: '/walking-football',         changeFrequency: 'monthly', priority: 0.7 },
-  { path: '/trials',                   changeFrequency: 'monthly', priority: 0.6 },
 
   // ── Club information ────────────────────────────────────────────────────────
   { path: '/club',                     changeFrequency: 'monthly', priority: 0.7 },

@@ -5,7 +5,7 @@ import PageHeroNavy from '@/components/layout/PageHeroNavy';
 
 export const metadata: Metadata = {
   title: 'About Swords, Co. Dublin',
-  description: 'Discover Swords — the historic county town of Fingal, just 10 km north of Dublin. Founded c. 560 AD, home to 40,000+ people, Swords Castle, the Ward River Valley Park, and Rivervalley Rangers AFC.',
+  description: 'Discover Swords — the historic county town of Fingal, 10 km north of Dublin. Swords Castle, the Ward River Valley, and home of Rivervalley Rangers AFC.',
   alternates: { canonical: '/swords' },
 };
 

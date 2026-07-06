@@ -15,7 +15,7 @@ import PageHeroNavy from '@/components/layout/PageHeroNavy';
 export const metadata: Metadata = {
   title: 'Development Academy | Rivervalley Rangers AFC',
   description:
-    "The Rivervalley Rangers Development Academy — Swords' fun, welcoming Saturday football programme for children born 2020, 2021 & 2022 (ages 4–6). Over 20 years in the community.",
+    'The Rivervalley Rangers Development Academy — fun Saturday football in Swords for children born 2020–2022 (ages 4–6). Over 20 years in the community.',
 };
 
 const highlights = [

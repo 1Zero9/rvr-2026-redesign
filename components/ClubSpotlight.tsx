@@ -63,7 +63,7 @@ export default function ClubSpotlight({
             <img
               key={`m-${item.id}`}
               src={item.mobileImageUrl || item.imageUrl}
-              alt=""
+              alt={item.title}
               className="absolute inset-0 h-full w-full object-cover md:hidden"
               style={{ objectPosition: item.objectPosition }}
             />
@@ -71,7 +71,7 @@ export default function ClubSpotlight({
             <img
               key={`d-${item.id}`}
               src={item.imageUrl}
-              alt=""
+              alt={item.title}
               className="absolute inset-0 hidden h-full w-full object-cover md:block"
               style={{ objectPosition: item.objectPosition }}
             />

@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     template: "%s | Rivervalley Rangers AFC",
   },
   description:
-    "Rivervalley Rangers AFC — Swords' community football club since 1981. Youth academy, DDSL boys and girls teams U7–U17, senior, Over 35s, walking football, and inclusive programmes.",
+    "Rivervalley Rangers AFC — Swords' community football club since 1981. DDSL boys and girls teams, academy, senior, Over 35s and inclusive football.",
   keywords: [
     "Rivervalley Rangers AFC",
     "Swords football club",

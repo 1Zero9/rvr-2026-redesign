@@ -7,7 +7,7 @@ import PageHeroNavy from '@/components/layout/PageHeroNavy';
 export const metadata: Metadata = {
   title: 'Player Pathway | Rivervalley Rangers AFC',
   description:
-    'From first kick to senior football — the full player pathway at Rivervalley Rangers AFC. Boys, girls, community and inclusive routes for every age from 4 to 35+.',
+    'From first kick to senior football — the Rivervalley Rangers player pathway. Boys, girls, community and inclusive routes for ages 4 to 35+.',
 };
 
 // ─── Track data ───────────────────────────────────────────────────────────────
