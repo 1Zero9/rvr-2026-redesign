@@ -30,7 +30,9 @@ const securityHeaders = [
       "default-src 'self'",
       `script-src 'self' 'unsafe-inline'${isDevelopment ? " 'unsafe-eval' https://va.vercel-scripts.com" : ""} https://js.stripe.com https://challenges.cloudflare.com`,
       "style-src 'self' 'unsafe-inline'",
-      "img-src 'self' data: https://images.unsplash.com https://rivervalleyrangers.ie https://*.public.blob.vercel-storage.com",
+      // blob: is required by the admin image cropper and poster maker, which
+      // preview photos via same-origin object URLs before upload
+      "img-src 'self' data: blob: https://images.unsplash.com https://rivervalleyrangers.ie https://*.public.blob.vercel-storage.com",
       "font-src 'self' data:",
       "connect-src 'self' https://api.stripe.com https://hooks.stripe.com https://api.sportlomo.com https://widgets.sportlomo.com https://ddsl.ie https://blob.vercel-storage.com https://*.public.blob.vercel-storage.com https://vercel.com",
       "frame-src https://js.stripe.com https://hooks.stripe.com https://docs.google.com",

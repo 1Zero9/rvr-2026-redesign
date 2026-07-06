@@ -60,8 +60,6 @@ const routes: RouteConfig[] = [
   { path: '/ladies-football',          changeFrequency: 'monthly', priority: 0.7 },
   { path: '/pathway',                  changeFrequency: 'monthly', priority: 0.6 },
   { path: '/club/history',             changeFrequency: 'yearly',  priority: 0.5 },
-  { path: '/club/anniversary',         changeFrequency: 'monthly', priority: 0.5 },
-  { path: '/teams/matches',            changeFrequency: 'daily',   priority: 0.6 },
 ];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
