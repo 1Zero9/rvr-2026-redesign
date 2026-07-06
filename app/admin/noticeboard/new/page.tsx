@@ -22,7 +22,7 @@ export default async function NewNoticePage({
     'use server';
     await requireAdmin();
     const { prisma } = await import('@/lib/prisma');
-    await prisma.announcement.create({
+    const created = await prisma.announcement.create({
       data: {
         title:       formData.get('title') as string,
         category:    formData.get('category') as 'BREAKING' | 'CONGRATULATIONS' | 'COMMUNITY_NEWS' | 'IN_SYMPATHY',
@@ -41,6 +41,10 @@ export default async function NewNoticePage({
     });
     revalidatePath('/');
     revalidatePath('/news');
+    if (created.isPublished) {
+      const { pingIndexNow } = await import('@/lib/seo/indexnow');
+      await pingIndexNow(['/', '/news', `/news/${created.id}`, '/sitemap.xml']);
+    }
     redirect('/admin/noticeboard');
   }
 
@@ -48,7 +52,7 @@ export default async function NewNoticePage({
     'use server';
     await requireAdmin();
     const { prisma } = await import('@/lib/prisma');
-    await prisma.campaign.create({
+    const created = await prisma.campaign.create({
       data: {
         title:          formData.get('title') as string,
         subtitle:       (formData.get('subtitle') as string)       || null,
@@ -71,6 +75,10 @@ export default async function NewNoticePage({
     revalidatePath('/');
     revalidatePath('/campaigns');
     revalidatePath('/news');
+    if (created.isPublished) {
+      const { pingIndexNow } = await import('@/lib/seo/indexnow');
+      await pingIndexNow(['/', '/campaigns', '/sitemap.xml']);
+    }
     redirect('/admin/noticeboard');
   }
 

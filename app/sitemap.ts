@@ -1,5 +1,7 @@
 import type { MetadataRoute } from 'next';
 import { getFeatureAvailability } from '@/lib/features';
+import { KNOWN_DIVISIONS } from '@/config/ddsl-competitions';
+import { prisma } from '@/lib/prisma';
 
 const SITE_URL = 'https://www.rivervalleyrangers.ie';
 
@@ -52,20 +54,55 @@ const routes: RouteConfig[] = [
 
   // ── DDSL-JMO ────────────────────────────────────────────────────────────────
   { path: '/ddsl-jmo',                 changeFrequency: 'monthly', priority: 0.5 },
+
+  // ── Local & programme pages ─────────────────────────────────────────────────
+  { path: '/swords',                   changeFrequency: 'monthly', priority: 0.7 },
+  { path: '/community',                changeFrequency: 'monthly', priority: 0.6 },
+  { path: '/ladies-football',          changeFrequency: 'monthly', priority: 0.7 },
+  { path: '/pathway',                  changeFrequency: 'monthly', priority: 0.6 },
+  { path: '/club/history',             changeFrequency: 'yearly',  priority: 0.5 },
+  { path: '/club/anniversary',         changeFrequency: 'monthly', priority: 0.5 },
+  { path: '/teams/matches',            changeFrequency: 'daily',   priority: 0.6 },
 ];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const features = await getFeatureAvailability();
-  const enabledRoutes = [...routes];
+  const now = new Date();
+  const [features, articles] = await Promise.all([
+    getFeatureAvailability(),
+    prisma.announcement.findMany({
+      where: {
+        isPublished: true,
+        OR: [{ expiresAt: null }, { expiresAt: { gt: now } }],
+      },
+      select: { id: true, publishedAt: true },
+    }),
+  ]);
 
+  const enabledRoutes = [...routes];
   if (features.anniversaryKit) {
     enabledRoutes.push({ path: '/campaigns/45th-anniversary-kit', changeFrequency: 'monthly', priority: 0.5 });
   }
 
-  return enabledRoutes.map(({ path, changeFrequency, priority }) => ({
+  const staticEntries: MetadataRoute.Sitemap = enabledRoutes.map(({ path, changeFrequency, priority }) => ({
     url: `${SITE_URL}${path}`,
-    lastModified: new Date(),
+    lastModified: now,
     changeFrequency,
     priority,
   }));
+
+  const teamEntries: MetadataRoute.Sitemap = KNOWN_DIVISIONS.map((d) => ({
+    url: `${SITE_URL}/teams/${d.slug}`,
+    lastModified: now,
+    changeFrequency: 'weekly',
+    priority: 0.7,
+  }));
+
+  const newsEntries: MetadataRoute.Sitemap = articles.map((a) => ({
+    url: `${SITE_URL}/news/${a.id}`,
+    lastModified: a.publishedAt,
+    changeFrequency: 'monthly',
+    priority: 0.6,
+  }));
+
+  return [...staticEntries, ...teamEntries, ...newsEntries];
 }

@@ -49,6 +49,16 @@ export const metadata: Metadata = {
     "football for all Dublin",
     "community football Ireland",
   ],
+  // Set GOOGLE_SITE_VERIFICATION / BING_SITE_VERIFICATION in Vercel env
+  // (values from Search Console and Bing Webmaster Tools respectively)
+  verification: {
+    ...(process.env.GOOGLE_SITE_VERIFICATION
+      ? { google: process.env.GOOGLE_SITE_VERIFICATION }
+      : {}),
+    ...(process.env.BING_SITE_VERIFICATION
+      ? { other: { "msvalidate.01": process.env.BING_SITE_VERIFICATION } }
+      : {}),
+  },
   applicationName: "Rivervalley Rangers AFC",
   authors: [{ name: "1Zero9Studio", url: "https://www.1zero9.com" }],
   creator: "1Zero9Studio",
@@ -118,14 +128,34 @@ export default function RootLayout({
                 addressRegion: "County Dublin",
                 addressCountry: "IE",
               },
+              geo: {
+                "@type": "GeoCoordinates",
+                latitude: 53.455815,
+                longitude: -6.24444,
+              },
+              areaServed: [
+                { "@type": "City", name: "Swords" },
+                { "@type": "AdministrativeArea", name: "Fingal" },
+                { "@type": "AdministrativeArea", name: "North County Dublin" },
+              ],
+              award: "FAI Club Mark",
+              keywords:
+                "football club Swords, DDSL club, youth football North Dublin, kids soccer Swords, grassroots football Ireland",
               sameAs: [
                 "https://www.instagram.com/rvrfc1981",
               ],
-              memberOf: {
-                "@type": "SportsOrganization",
-                name: "Dublin & District Schoolboys/Girls League",
-                alternateName: "DDSL",
-              },
+              memberOf: [
+                {
+                  "@type": "SportsOrganization",
+                  name: "Dublin & District Schoolboys/Girls League",
+                  alternateName: "DDSL",
+                },
+                {
+                  "@type": "SportsOrganization",
+                  name: "Football Association of Ireland",
+                  alternateName: "FAI",
+                },
+              ],
               mainEntityOfPage: {
                 "@type": "WebSite",
                 url: "https://www.rivervalleyrangers.ie",

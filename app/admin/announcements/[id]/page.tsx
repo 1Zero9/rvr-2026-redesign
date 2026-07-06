@@ -44,6 +44,10 @@ export default async function EditAnnouncementPage({
     });
     revalidatePath('/');
     revalidatePath('/news');
+    if (formData.get('isPublished') === 'on') {
+      const { pingIndexNow } = await import('@/lib/seo/indexnow');
+      await pingIndexNow(['/', '/news', `/news/${id}`, '/sitemap.xml']);
+    }
     redirect('/admin/noticeboard');
   }
 
@@ -54,6 +58,9 @@ export default async function EditAnnouncementPage({
     await db.announcement.delete({ where: { id } });
     revalidatePath('/');
     revalidatePath('/news');
+    // Ping the removed URL too so engines re-crawl and drop it
+    const { pingIndexNow } = await import('@/lib/seo/indexnow');
+    await pingIndexNow(['/news', `/news/${id}`, '/sitemap.xml']);
     redirect('/admin/noticeboard');
   }
 

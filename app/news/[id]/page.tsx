@@ -3,7 +3,10 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ArrowLeft, ArrowRight, Calendar, Tag } from 'lucide-react';
 import PublicPageShell from '@/components/layout/PublicPageShell';
+import JsonLd from '@/components/seo/JsonLd';
 import { prisma } from '@/lib/prisma';
+
+const SITE_URL = 'https://www.rivervalleyrangers.ie';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -67,9 +70,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
   const a = await prisma.announcement.findUnique({ where: { id } });
   if (!a || !a.isPublished) return { title: 'News' };
+  const description = a.body.replace(/[#*`_>\[\]()]/g, '').slice(0, 160);
   return {
     title: a.title,
-    description: a.body.replace(/[#*`_>\[\]()]/g, '').slice(0, 160),
+    description,
+    alternates: { canonical: `/news/${id}` },
+    openGraph: {
+      type: 'article',
+      title: a.title,
+      description,
+      publishedTime: a.publishedAt.toISOString(),
+      ...(a.imageUrl ? { images: [{ url: a.imageUrl }] } : {}),
+    },
   };
 }
 
@@ -89,6 +101,36 @@ export default async function AnnouncementPage({ params }: Props) {
 
   return (
     <PublicPageShell>
+      <JsonLd
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'NewsArticle',
+          headline: a.title,
+          datePublished: a.publishedAt.toISOString(),
+          ...(a.imageUrl ? { image: [a.imageUrl] } : {}),
+          author: { '@type': 'Organization', name: 'Rivervalley Rangers AFC', url: SITE_URL },
+          publisher: {
+            '@type': 'Organization',
+            name: 'Rivervalley Rangers AFC',
+            logo: {
+              '@type': 'ImageObject',
+              url: `${SITE_URL}/river-valley-rangers-logo-pack-v2/rvr-crest-1024.png`,
+            },
+          },
+          mainEntityOfPage: `${SITE_URL}/news/${a.id}`,
+        }}
+      />
+      <JsonLd
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_URL },
+            { '@type': 'ListItem', position: 2, name: 'News', item: `${SITE_URL}/news` },
+            { '@type': 'ListItem', position: 3, name: a.title, item: `${SITE_URL}/news/${a.id}` },
+          ],
+        }}
+      />
       <div className="mx-auto max-w-2xl px-4 py-10 sm:px-6 sm:py-14 space-y-8">
 
         {/* Back link */}

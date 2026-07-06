@@ -49,6 +49,10 @@ export default async function EditCampaignPage({
     revalidatePath('/');
     revalidatePath('/campaigns');
     revalidatePath('/news');
+    if (formData.get('isPublished') === 'on') {
+      const { pingIndexNow } = await import('@/lib/seo/indexnow');
+      await pingIndexNow(['/', '/campaigns', '/sitemap.xml']);
+    }
     redirect('/admin/noticeboard');
   }
 
@@ -60,6 +64,8 @@ export default async function EditCampaignPage({
     revalidatePath('/');
     revalidatePath('/campaigns');
     revalidatePath('/news');
+    const { pingIndexNow } = await import('@/lib/seo/indexnow');
+    await pingIndexNow(['/', '/campaigns', '/sitemap.xml']);
     redirect('/admin/noticeboard');
   }
 

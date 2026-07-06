@@ -10,6 +10,9 @@ import { getClubMatchFeed } from '@/lib/ddsl/club-feed';
 import { transformAll } from '@/lib/ddsl/transform';
 import type { NormalisedMatch } from '@/lib/ddsl/types';
 import { CLUB_SEASON } from '@/config/club-season';
+import JsonLd from '@/components/seo/JsonLd';
+
+const SITE_URL = 'https://www.rivervalleyrangers.ie';
 
 // ─── Static params ────────────────────────────────────────────────────────────
 
@@ -26,10 +29,11 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const division = KNOWN_DIVISIONS.find((d) => d.slug === slug);
+  if (!division) return { title: 'Team | Rivervalley Rangers AFC' };
   return {
-    title: division
-      ? `${division.competitionName} | Rivervalley Rangers AFC`
-      : 'Team | Rivervalley Rangers AFC',
+    title: `${division.competitionName} | Rivervalley Rangers AFC`,
+    description: `Rivervalley Rangers ${division.competitionName} — fixtures, results, and league table. ${division.ageGroup} football in Swords, North Dublin, ${CLUB_SEASON.currentSeason} season.`,
+    alternates: { canonical: `/teams/${slug}` },
   };
 }
 
@@ -324,6 +328,41 @@ export default async function TeamPage({
 
   return (
     <PublicPageShell>
+      <JsonLd
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'SportsTeam',
+          name: `Rivervalley Rangers ${division.competitionName}`,
+          sport: 'Soccer',
+          url: `${SITE_URL}/teams/${division.slug}`,
+          memberOf: {
+            '@type': 'SportsClub',
+            name: 'Rivervalley Rangers AFC',
+            url: SITE_URL,
+          },
+          location: {
+            '@type': 'Place',
+            name: 'Rivervalley Park',
+            address: {
+              '@type': 'PostalAddress',
+              addressLocality: 'Swords',
+              addressRegion: 'County Dublin',
+              addressCountry: 'IE',
+            },
+          },
+        }}
+      />
+      <JsonLd
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_URL },
+            { '@type': 'ListItem', position: 2, name: 'Teams', item: `${SITE_URL}/teams` },
+            { '@type': 'ListItem', position: 3, name: division.competitionName, item: `${SITE_URL}/teams/${division.slug}` },
+          ],
+        }}
+      />
       <PageHeroNavy
         backHref="/teams"
         backLabel="All Teams"
