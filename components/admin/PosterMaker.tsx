@@ -51,6 +51,9 @@ interface PosterSpec {
   showCrest: boolean;
   photo: HTMLImageElement | null;
   photoOffset: { x: number; y: number };
+  /** Optional separate, already-formatted image to use for the phone crop instead of `photo`. */
+  mobilePhoto: HTMLImageElement | null;
+  mobilePhotoOffset: { x: number; y: number };
   displayFont: string;
   sansFont: string;
   logo: HTMLImageElement | null;
@@ -162,16 +165,27 @@ function drawLogo(ctx: CanvasRenderingContext2D, spec: PosterSpec, w: number, h:
   ctx.globalAlpha = 1;
 }
 
-export function drawPoster(canvas: HTMLCanvasElement, w: number, h: number, spec: PosterSpec) {
+export function drawPoster(
+  canvas: HTMLCanvasElement,
+  w: number,
+  h: number,
+  spec: PosterSpec,
+  target: 'hero' | 'mobile' = 'hero',
+) {
   canvas.width = w;
   canvas.height = h;
   const ctx = canvas.getContext('2d');
   if (!ctx) return;
 
+  // Use a dedicated mobile photo if one was supplied; otherwise fall back to
+  // auto-cropping the main photo for this canvas.
+  const activePhoto = target === 'mobile' && spec.mobilePhoto ? spec.mobilePhoto : spec.photo;
+  const activeOffset = target === 'mobile' && spec.mobilePhoto ? spec.mobilePhotoOffset : spec.photoOffset;
+
   // Background
   paintBackground(ctx, w, h, spec);
-  if (!spec.photo && spec.showCrest) drawCrest(ctx, spec, w, h);
-  if (spec.photo) coverDraw(ctx, spec.photo, w, h, spec.photoOffset);
+  if (!activePhoto && spec.showCrest) drawCrest(ctx, spec, w, h);
+  if (activePhoto) coverDraw(ctx, activePhoto, w, h, activeOffset);
 
   const unit = Math.min(w, h);
   const title = spec.title.trim().toUpperCase() || 'YOUR TITLE HERE';
@@ -196,7 +210,7 @@ export function drawPoster(canvas: HTMLCanvasElement, w: number, h: number, spec
     const bandH = titleBlock + subBlock + pad * 2 + (subLines.length ? unit * 0.02 : 0);
     const bandY = h - bandH;
 
-    ctx.fillStyle = spec.photo ? 'rgba(11,31,59,0.92)' : 'rgba(0,0,0,0.35)';
+    ctx.fillStyle = activePhoto ? 'rgba(11,31,59,0.92)' : 'rgba(0,0,0,0.35)';
     ctx.fillRect(0, bandY, w, bandH);
     ctx.fillStyle = spec.accentColour;
     ctx.fillRect(0, bandY, w, Math.max(6, Math.round(unit * 0.008)));
@@ -219,7 +233,7 @@ export function drawPoster(canvas: HTMLCanvasElement, w: number, h: number, spec
     }
     drawLogo(ctx, spec, w, h, 'top-right');
   } else if (spec.layout === 'center') {
-    if (spec.photo) {
+    if (activePhoto) {
       const grad = ctx.createLinearGradient(0, 0, 0, h);
       grad.addColorStop(0, 'rgba(18,18,18,0.25)');
       grad.addColorStop(0.5, 'rgba(18,18,18,0.55)');
@@ -255,7 +269,7 @@ export function drawPoster(canvas: HTMLCanvasElement, w: number, h: number, spec
     drawLogo(ctx, spec, w, h, 'bottom-right');
   } else {
     // corner
-    if (spec.photo) {
+    if (activePhoto) {
       const grad = ctx.createLinearGradient(0, 0, 0, h * 0.7);
       grad.addColorStop(0, 'rgba(18,18,18,0.7)');
       grad.addColorStop(1, 'rgba(18,18,18,0)');
@@ -331,8 +345,11 @@ export default function PosterMaker({
   const [showCrest, setShowCrest] = useState(false);
   const [photo, setPhoto] = useState<HTMLImageElement | null>(null);
   const [photoOffset, setPhotoOffset] = useState({ x: 0, y: 0 });
+  const [mobilePhoto, setMobilePhoto] = useState<HTMLImageElement | null>(null);
+  const [mobilePhotoOffset, setMobilePhotoOffset] = useState({ x: 0, y: 0 });
   const [preview, setPreview] = useState<'hero' | 'mobile'>('hero');
   const [libraryOpen, setLibraryOpen] = useState(false);
+  const [mobileLibraryOpen, setMobileLibraryOpen] = useState(false);
   const [status, setStatus] = useState<'idle' | 'saving' | 'error'>('idle');
   const [errorMsg, setErrorMsg] = useState('');
 
@@ -345,7 +362,9 @@ export default function PosterMaker({
   const displayProbe = useRef<HTMLSpanElement>(null);
   const sansProbe = useRef<HTMLSpanElement>(null);
   const photoUrlRef = useRef<string | null>(null);
+  const mobilePhotoUrlRef = useRef<string | null>(null);
   const photoDrag = useRef<{
+    target: 'hero' | 'mobile';
     startX: number;
     startY: number;
     startOffset: { x: number; y: number };
@@ -360,6 +379,7 @@ export default function PosterMaker({
     return () => {
       document.body.style.overflow = '';
       if (photoUrlRef.current) URL.revokeObjectURL(photoUrlRef.current);
+      if (mobilePhotoUrlRef.current) URL.revokeObjectURL(mobilePhotoUrlRef.current);
     };
   }, []);
 
@@ -391,6 +411,8 @@ export default function PosterMaker({
     showCrest,
     photo,
     photoOffset,
+    mobilePhoto,
+    mobilePhotoOffset,
     displayFont: fonts.display,
     sansFont: fonts.sans,
     logo,
@@ -398,10 +420,10 @@ export default function PosterMaker({
 
   // Redraw previews on any change
   useEffect(() => {
-    if (heroCanvas.current) drawPoster(heroCanvas.current, 1920, 1080, spec);
-    if (mobileCanvas.current) drawPoster(mobileCanvas.current, 1080, 1350, spec);
+    if (heroCanvas.current) drawPoster(heroCanvas.current, 1920, 1080, spec, 'hero');
+    if (mobileCanvas.current) drawPoster(mobileCanvas.current, 1080, 1350, spec, 'mobile');
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [title, subtitle, layout, bgColour, bgStyle, accentColour, showCrest, photo, photoOffset, fonts, logo, preview]);
+  }, [title, subtitle, layout, bgColour, bgStyle, accentColour, showCrest, photo, photoOffset, mobilePhoto, mobilePhotoOffset, fonts, logo, preview]);
 
   async function handlePhotoFile(file: File | undefined) {
     if (!file) return;
@@ -428,15 +450,50 @@ export default function PosterMaker({
     }
   }, []);
 
-  function beginPhotoDrag(e: React.PointerEvent<HTMLCanvasElement>) {
-    if (!photo) return;
+  async function handleMobilePhotoFile(file: File | undefined) {
+    if (!file) return;
+    setErrorMsg('');
+    try {
+      if (mobilePhotoUrlRef.current) URL.revokeObjectURL(mobilePhotoUrlRef.current);
+      const url = URL.createObjectURL(file);
+      mobilePhotoUrlRef.current = url;
+      setMobilePhotoOffset({ x: 0, y: 0 });
+      setMobilePhoto(await loadImage(url));
+    } catch {
+      setErrorMsg('Could not load that photo');
+    }
+  }
+
+  const handleMobileLibrarySelect = useCallback(async (url: string) => {
+    setMobileLibraryOpen(false);
+    setErrorMsg('');
+    try {
+      setMobilePhotoOffset({ x: 0, y: 0 });
+      setMobilePhoto(await loadImage(url, true));
+    } catch {
+      setErrorMsg('Could not load that image from the library');
+    }
+  }, []);
+
+  function removeMobilePhoto() {
+    if (mobilePhotoUrlRef.current) URL.revokeObjectURL(mobilePhotoUrlRef.current);
+    mobilePhotoUrlRef.current = null;
+    setMobilePhoto(null);
+    setMobilePhotoOffset({ x: 0, y: 0 });
+  }
+
+  function beginPhotoDrag(e: React.PointerEvent<HTMLCanvasElement>, target: 'hero' | 'mobile') {
+    const activePhoto = target === 'mobile' && mobilePhoto ? mobilePhoto : photo;
+    if (!activePhoto) return;
+    const activeOffset = target === 'mobile' && mobilePhoto ? mobilePhotoOffset : photoOffset;
     const canvas = e.currentTarget;
     const rect = canvas.getBoundingClientRect();
     canvas.setPointerCapture(e.pointerId);
     photoDrag.current = {
+      target: mobilePhoto && target === 'mobile' ? 'mobile' : 'hero',
       startX: e.clientX,
       startY: e.clientY,
-      startOffset: photoOffset,
+      startOffset: activeOffset,
       canvasW: canvas.width,
       canvasH: canvas.height,
       rectW: rect.width,
@@ -446,16 +503,19 @@ export default function PosterMaker({
 
   function movePhotoDrag(e: React.PointerEvent<HTMLCanvasElement>) {
     const drag = photoDrag.current;
-    if (!drag || !photo || !drag.rectW || !drag.rectH) return;
+    if (!drag || !drag.rectW || !drag.rectH) return;
+    const activePhoto = drag.target === 'mobile' ? mobilePhoto : photo;
+    if (!activePhoto) return;
+    const setOffset = drag.target === 'mobile' ? setMobilePhotoOffset : setPhotoOffset;
     const scaleX = drag.canvasW / drag.rectW;
     const scaleY = drag.canvasH / drag.rectH;
     const dxCanvas = (e.clientX - drag.startX) * scaleX;
     const dyCanvas = (e.clientY - drag.startY) * scaleY;
-    const { dw, dh } = computeCover(photo, drag.canvasW, drag.canvasH);
+    const { dw, dh } = computeCover(activePhoto, drag.canvasW, drag.canvasH);
     const slackX = Math.max(0, dw - drag.canvasW);
     const slackY = Math.max(0, dh - drag.canvasH);
     const clamp = (v: number) => Math.min(1, Math.max(-1, v));
-    setPhotoOffset({
+    setOffset({
       x: slackX > 0 ? clamp(drag.startOffset.x + dxCanvas / (slackX / 2)) : 0,
       y: slackY > 0 ? clamp(drag.startOffset.y + dyCanvas / (slackY / 2)) : 0,
     });
@@ -475,8 +535,8 @@ export default function PosterMaker({
     try {
       const hero = document.createElement('canvas');
       const mobile = document.createElement('canvas');
-      drawPoster(hero, 1920, 1080, spec);
-      drawPoster(mobile, 1080, 1350, spec);
+      drawPoster(hero, 1920, 1080, spec, 'hero');
+      drawPoster(mobile, 1080, 1350, spec, 'mobile');
       const [heroBlob, mobileBlob] = await Promise.all([canvasToBlob(hero), canvasToBlob(mobile)]);
 
       const slug = title.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 40) || 'poster';
@@ -552,7 +612,7 @@ export default function PosterMaker({
             </div>
             <canvas
               ref={heroCanvas}
-              onPointerDown={beginPhotoDrag}
+              onPointerDown={(e) => beginPhotoDrag(e, 'hero')}
               onPointerMove={movePhotoDrag}
               onPointerUp={endPhotoDrag}
               onPointerCancel={endPhotoDrag}
@@ -561,15 +621,17 @@ export default function PosterMaker({
             />
             <canvas
               ref={mobileCanvas}
-              onPointerDown={beginPhotoDrag}
+              onPointerDown={(e) => beginPhotoDrag(e, 'mobile')}
               onPointerMove={movePhotoDrag}
               onPointerUp={endPhotoDrag}
               onPointerCancel={endPhotoDrag}
-              className={`mx-auto max-h-[45dvh] w-auto touch-none border-2 border-brand-charcoal/20 ${photo ? 'cursor-move' : ''} ${preview === 'mobile' ? '' : 'hidden'}`}
+              className={`mx-auto max-h-[45dvh] w-auto touch-none border-2 border-brand-charcoal/20 ${(mobilePhoto ?? photo) ? 'cursor-move' : ''} ${preview === 'mobile' ? '' : 'hidden'}`}
               aria-label="Poster preview, phone crop"
             />
             <p className="mt-1 text-[11px] text-brand-charcoal/50">
-              {photo
+              {preview === 'mobile' && mobilePhoto
+                ? 'Using your separate phone photo. Drag to reposition.'
+                : photo
                 ? 'Drag the preview to reposition the photo.'
                 : 'Both sizes are generated together — desktop hero and phone portrait.'}
             </p>
@@ -666,16 +728,73 @@ export default function PosterMaker({
               </button>
             </div>
             {photo ? (
-              <div className="mt-2 flex items-center justify-between gap-2">
-                <p className="text-xs text-brand-charcoal/60">Drag the preview above to reframe the photo.</p>
-                <button
-                  type="button"
-                  onClick={() => setPhoto(null)}
-                  className="shrink-0 text-xs font-bold text-brand-maroon underline min-h-[36px]"
-                >
-                  Remove photo
-                </button>
-              </div>
+              <>
+                <div className="mt-2 flex items-center justify-between gap-2">
+                  <p className="text-xs text-brand-charcoal/60">Drag the preview above to reframe the photo.</p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setPhoto(null);
+                      removeMobilePhoto();
+                    }}
+                    className="shrink-0 text-xs font-bold text-brand-maroon underline min-h-[36px]"
+                  >
+                    Remove photo
+                  </button>
+                </div>
+
+                <div className="mt-4 border-t border-brand-charcoal/10 pt-3">
+                  <p className="text-xs font-bold text-brand-charcoal/70 mb-1">
+                    Phone crop <span className="font-normal text-brand-charcoal/50">(optional — use a separately formatted image for the phone version)</span>
+                  </p>
+                  {mobilePhoto ? (
+                    <div className="flex items-center justify-between gap-2">
+                      <p className="text-xs text-brand-charcoal/60">Using a separate photo for the phone crop.</p>
+                      <button
+                        type="button"
+                        onClick={removeMobilePhoto}
+                        className="shrink-0 text-xs font-bold text-brand-maroon underline min-h-[36px]"
+                      >
+                        Use main photo instead
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="flex gap-2">
+                      <label className={PICK_BTN}>
+                        <ImagePlus className="h-4 w-4 shrink-0" aria-hidden="true" />
+                        Photo
+                        <input
+                          type="file"
+                          accept="image/jpeg,image/png,image/webp,image/avif"
+                          className="sr-only"
+                          onChange={(e) => {
+                            handleMobilePhotoFile(e.target.files?.[0]);
+                            e.target.value = '';
+                          }}
+                        />
+                      </label>
+                      <label className={`${PICK_BTN} sm:hidden`}>
+                        <Camera className="h-4 w-4 shrink-0" aria-hidden="true" />
+                        Camera
+                        <input
+                          type="file"
+                          accept="image/*"
+                          capture="environment"
+                          className="sr-only"
+                          onChange={(e) => {
+                            handleMobilePhotoFile(e.target.files?.[0]);
+                            e.target.value = '';
+                          }}
+                        />
+                      </label>
+                      <button type="button" onClick={() => setMobileLibraryOpen(true)} className={PICK_BTN}>
+                        <FolderOpen className="h-4 w-4 shrink-0" aria-hidden="true" />
+                        Library
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </>
             ) : (
               <div className="mt-3 space-y-3">
                 <div>
@@ -774,6 +893,9 @@ export default function PosterMaker({
 
       {libraryOpen && (
         <ImageLibraryModal onClose={() => setLibraryOpen(false)} onSelect={handleLibrarySelect} />
+      )}
+      {mobileLibraryOpen && (
+        <ImageLibraryModal onClose={() => setMobileLibraryOpen(false)} onSelect={handleMobileLibrarySelect} />
       )}
     </div>
   );
