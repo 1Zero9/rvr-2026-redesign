@@ -1,8 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { Megaphone, Newspaper, Wand2 } from 'lucide-react';
-import ImageUploadField from '@/components/admin/ImageUploadField';
+import { Megaphone, Newspaper, Smartphone, Wand2 } from 'lucide-react';
+import { upload } from '@vercel/blob/client';
+import ImageUploadField, { processImage } from '@/components/admin/ImageUploadField';
+import ImageCropper from '@/components/admin/ImageCropper';
 import PosterMaker from '@/components/admin/PosterMaker';
 
 // ─── Data shapes ──────────────────────────────────────────────────────────────
@@ -83,6 +85,7 @@ const SITE_TARGETS: Array<{ path: string; label: string }> = [
   { path: '/club/history',         label: 'Club History' },
   { path: '/club/anniversary',     label: '45th Anniversary' },
   { path: '/club/safeguarding',    label: 'Safeguarding' },
+  { path: '/club/refereeing',      label: 'Become a Referee' },
   { path: '/pathway',              label: 'Player Pathway' },
   { path: '/pitch-locations',      label: 'Pitch Locations' },
 ];
@@ -285,15 +288,57 @@ function FocalPointEditor({
   focalX,
   focalY,
   onChange,
+  onMobileCreated,
 }: {
   heroUrl: string;
   mobileUrl: string;
   focalX: number;
   focalY: number;
   onChange: (x: number, y: number) => void;
+  /** When set (campaigns), enables "Create phone version" — crops the hero to 4:5 */
+  onMobileCreated?: (url: string) => void;
 }) {
   const objectPosition = `${focalX}% ${focalY}%`;
   const [dragging, setDragging] = useState(false);
+  const [mobileSource, setMobileSource] = useState<Blob | null>(null);
+  const [mobileBusy, setMobileBusy] = useState<'idle' | 'opening' | 'saving'>('idle');
+  const [mobileError, setMobileError] = useState('');
+
+  async function startMobileCrop() {
+    setMobileError('');
+    setMobileBusy('opening');
+    try {
+      const res = await fetch(heroUrl);
+      if (!res.ok) throw new Error();
+      const blob = await res.blob();
+      if (!blob.type.startsWith('image/')) throw new Error();
+      setMobileSource(blob);
+    } catch {
+      setMobileError("Couldn't open the hero image — if it's hosted off-site, upload a portrait version in the Mobile Image field instead.");
+    } finally {
+      setMobileBusy('idle');
+    }
+  }
+
+  async function saveMobileCrop(blob: Blob) {
+    setMobileSource(null);
+    setMobileBusy('saving');
+    setMobileError('');
+    try {
+      // No watermark — the hero was already stamped on its way in
+      const processed = await processImage(blob, false);
+      const result = await upload('campaigns/mobile-portrait.jpg', processed, {
+        access: 'public',
+        handleUploadUrl: '/api/admin/blob-upload',
+        contentType: 'image/jpeg',
+      });
+      onMobileCreated?.(result.url);
+    } catch (err) {
+      setMobileError(err instanceof Error ? err.message : 'Could not save the phone version');
+    } finally {
+      setMobileBusy('idle');
+    }
+  }
 
   function setFromPointer(e: React.PointerEvent<HTMLDivElement>) {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -357,23 +402,68 @@ function FocalPointEditor({
             </div>
           </div>
           <div className="flex gap-3">
-            <div className="w-28">
+            <div className="w-28 shrink-0">
               <p className="text-[10px] font-black uppercase tracking-widest text-brand-green mb-1.5">
-                Mobile crop
+                Phone crop
               </p>
               <div className="aspect-[4/5] overflow-hidden border-2 border-brand-charcoal/20">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={mobileUrl || heroUrl} alt="" className="h-full w-full object-cover" style={{ objectPosition }} />
+                <img
+                  src={mobileUrl || heroUrl}
+                  alt=""
+                  className="h-full w-full object-cover"
+                  style={mobileUrl ? undefined : { objectPosition }}
+                />
               </div>
             </div>
-            <p className="flex-1 self-end text-xs text-brand-charcoal/50 pb-1">
-              {mobileUrl
-                ? 'Mobile uses the separate portrait upload.'
-                : 'No mobile image uploaded — phones will crop the hero image as shown.'}
-            </p>
+            <div className="flex-1 self-end space-y-2 pb-1">
+              {onMobileCreated ? (
+                <>
+                  <p className="text-xs text-brand-charcoal/50">
+                    {mobileUrl
+                      ? 'Phones show your portrait version, framed exactly as you cropped it.'
+                      : 'Phones will crop the hero image as shown — or frame it yourself:'}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={startMobileCrop}
+                    disabled={mobileBusy !== 'idle'}
+                    className="inline-flex min-h-[44px] w-full items-center justify-center gap-1.5 border-2 border-brand-navy bg-white px-2 text-xs font-bold text-brand-navy hover:bg-brand-navy hover:text-brand-cream transition-colors disabled:opacity-50"
+                  >
+                    <Smartphone className="h-4 w-4 shrink-0" aria-hidden="true" />
+                    {mobileBusy === 'opening'
+                      ? 'Opening…'
+                      : mobileBusy === 'saving'
+                        ? 'Saving…'
+                        : mobileUrl
+                          ? 'Re-crop phone version'
+                          : 'Create phone version'}
+                  </button>
+                  {mobileError && (
+                    <p className="text-xs font-bold text-brand-maroon" role="alert">{mobileError}</p>
+                  )}
+                </>
+              ) : (
+                <p className="text-xs text-brand-charcoal/50">
+                  Phones show this crop of your image — drag the focal point to keep the
+                  important part in frame.
+                </p>
+              )}
+            </div>
           </div>
         </div>
       </div>
+
+      {mobileSource && (
+        <ImageCropper
+          file={mobileSource}
+          aspects={[{ label: 'Portrait 4:5', value: 4 / 5 }]}
+          initialAspect={4 / 5}
+          title="Frame the phone version"
+          onCancel={() => setMobileSource(null)}
+          onConfirm={saveMobileCrop}
+        />
+      )}
     </div>
   );
 }
@@ -610,6 +700,7 @@ export default function NoticeForm({
                 focalX={focalX}
                 focalY={focalY}
                 onChange={(x, y) => { setFocalX(x); setFocalY(y); }}
+                onMobileCreated={setMobileUrl}
               />
             )}
             <input type="hidden" name="focalX" value={focalX} />
