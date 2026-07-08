@@ -56,7 +56,7 @@ export default function ClubSpotlight({
       onFocus={() => setPaused(true)}
       onBlur={() => setPaused(false)}
     >
-      <div className="relative overflow-hidden border-y-3 border-brand-charcoal bg-brand-navy min-h-[380px] md:min-h-[540px] flex flex-col justify-end">
+      <div className="relative overflow-hidden border-y-3 border-brand-charcoal bg-brand-navy min-h-[clamp(380px,45vw,540px)] flex flex-col justify-end">
         {item.imageUrl && (
           <>
             {/* eslint-disable-next-line @next/next/no-img-element */}

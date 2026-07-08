@@ -35,7 +35,7 @@ export default function AnnouncementCard({
       className={`group bg-white border-l-4 border border-brand-charcoal/10 hover:border-brand-navy/30 flex flex-col overflow-hidden h-full transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg ${style.border}`}
     >
       {a.imageUrl && (
-        <div className="h-36 overflow-hidden border-b border-brand-charcoal/10">
+        <div className="aspect-video overflow-hidden border-b border-brand-charcoal/10">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={a.imageUrl}

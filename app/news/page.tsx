@@ -34,7 +34,7 @@ function CampaignNoticeCard({ campaign }: { campaign: Campaign }) {
       className="group flex flex-col overflow-hidden border-2 border-l-4 border-brand-navy/10 border-l-brand-neon bg-white transition-all hover:border-brand-navy/30 hover:shadow-mid-brutalist"
     >
       {campaign.heroImageUrl && (
-        <div className="h-36 overflow-hidden border-b border-brand-navy/10">
+        <div className="aspect-video overflow-hidden border-b border-brand-navy/10">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={campaign.heroImageUrl}

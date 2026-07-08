@@ -172,7 +172,7 @@ export default async function Home() {
         {features.instagramFeed && <InstagramFeed />}
 
         {/* ── 3.3. Club moment ─────────────────────────────────────────────── */}
-        <section className="relative h-80 md:h-[700px] overflow-hidden">
+        <section className="relative aspect-[6/5] md:aspect-[2/1] md:max-h-[700px] overflow-hidden">
           <Image
             src="/images/U11-win.jpg"
             alt="Rivervalley Rangers U11s celebrating a trophy win with coaches and the RVR banner"
