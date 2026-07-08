@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import Header from '@/components/Header';
 import Hero from '@/components/Hero';
 import Link from 'next/link';
@@ -85,7 +84,7 @@ export default async function Home() {
 
   const now = new Date();
 
-  const [announcements, homepageCampaigns] = await Promise.all([
+  const [announcements, homepageCampaigns, clubMoment] = await Promise.all([
     prisma.announcement.findMany({
       where: {
         isPublished: true,
@@ -95,6 +94,7 @@ export default async function Home() {
       take: 5,
     }),
     getActiveCampaigns('homepage'),
+    prisma.clubMoment.findUnique({ where: { id: 'current' } }),
   ]);
   const spotlightIntervalSeconds = await getSpotlightIntervalSeconds();
 
@@ -172,32 +172,41 @@ export default async function Home() {
         {features.instagramFeed && <InstagramFeed />}
 
         {/* ── 3.3. Club moment ─────────────────────────────────────────────── */}
-        <section className="relative aspect-[6/5] md:aspect-[2/1] md:max-h-[700px] overflow-hidden">
-          <Image
-            src="/images/U11-win.jpg"
-            alt="Rivervalley Rangers U11s celebrating a trophy win with coaches and the RVR banner"
-            fill
-            className="object-cover object-top"
-            sizes="100vw"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-brand-navy/85 via-brand-navy/20 to-transparent" />
-          <div className="absolute inset-x-0 bottom-0">
-            <div className="max-w-6xl mx-auto px-4 sm:px-6 pb-8 md:pb-12">
-              <p className="font-display font-black text-[10px] md:text-xs uppercase tracking-widest text-brand-neon mb-2">
-                U11s · Cup Winners
-              </p>
-              <h2 className="font-display font-black italic text-3xl md:text-5xl uppercase tracking-tight text-brand-cream leading-none max-w-2xl">
-                Your Saturday could look like this
-              </h2>
-              <Link
-                href="/register"
-                className="mt-5 inline-flex items-center gap-2 min-h-[48px] px-6 bg-brand-neon text-brand-charcoal font-display font-black italic uppercase text-sm border-3 border-brand-charcoal shadow-brutalist-charcoal hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all"
-              >
-                Join Us →
-              </Link>
+        {clubMoment?.imageUrl && (
+          <section className="relative aspect-[6/5] md:aspect-[2/1] md:max-h-[700px] overflow-hidden">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={clubMoment.mobileImageUrl || clubMoment.imageUrl}
+              alt=""
+              className="absolute inset-0 h-full w-full object-cover md:hidden"
+              style={{ objectPosition: `${clubMoment.focalX}% ${clubMoment.focalY}%` }}
+            />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={clubMoment.imageUrl}
+              alt=""
+              className="absolute inset-0 hidden h-full w-full object-cover md:block"
+              style={{ objectPosition: `${clubMoment.focalX}% ${clubMoment.focalY}%` }}
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-brand-navy/85 via-brand-navy/20 to-transparent" />
+            <div className="absolute inset-x-0 bottom-0">
+              <div className="max-w-6xl mx-auto px-4 sm:px-6 pb-8 md:pb-12">
+                <p className="font-display font-black text-[10px] md:text-xs uppercase tracking-widest text-brand-neon mb-2">
+                  {clubMoment.label}
+                </p>
+                <h2 className="font-display font-black italic text-3xl md:text-5xl uppercase tracking-tight text-brand-cream leading-none max-w-2xl">
+                  {clubMoment.title}
+                </h2>
+                <Link
+                  href={clubMoment.ctaUrl}
+                  className="mt-5 inline-flex items-center gap-2 min-h-[48px] px-6 bg-brand-neon text-brand-charcoal font-display font-black italic uppercase text-sm border-3 border-brand-charcoal shadow-brutalist-charcoal hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all"
+                >
+                  {clubMoment.ctaLabel} →
+                </Link>
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        )}
 
         {/* ── 3.5. 45th Anniversary strip ──────────────────────────────────── */}
         <section className="bg-brand-neon border-y border-brand-charcoal/10">

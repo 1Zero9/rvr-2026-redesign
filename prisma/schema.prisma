@@ -686,6 +686,24 @@ model Announcement {
   @@index([pinned, publishedAt])
 }
 
+/// Singleton — the "Your Saturday could look like this" homepage photo
+/// moment. Always one row, keyed by a fixed id so the homepage and admin
+/// form can both address it directly without a lookup.
+model ClubMoment {
+  id             String   @id @default("current")
+  label          String   @default("U11s · Cup Winners")
+  title          String   @default("Your Saturday could look like this")
+  imageUrl       String?
+  mobileImageUrl String?
+  /// Focal point as percentages (0–100) — drives CSS object-position so the
+  /// subject stays visible whatever shape this section crops to
+  focalX         Float    @default(50)
+  focalY         Float    @default(0)
+  ctaLabel       String   @default("Join Us")
+  ctaUrl         String   @default("/register")
+  updatedAt      DateTime @updatedAt
+}
+
 /// Free-form admin-controlled site settings (e.g. spotlight rotation speed).
 model SiteSetting {
   key       String   @id

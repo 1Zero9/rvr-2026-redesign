@@ -1,6 +1,7 @@
 import type { LucideIcon } from 'lucide-react';
 import {
   BookOpen,
+  Camera,
   ClipboardList,
   Cog,
   Megaphone,
@@ -30,6 +31,7 @@ export const SITE_NAV: AdminNavItem[] = [
   { href: '/admin/registrations', label: 'Registrations', icon: ClipboardList, badge: 'reg', description: 'Review and process player registration submissions.' },
   { href: '/admin/enquiries',     label: 'Enquiries',     icon: MessageSquare, badge: 'enq', description: 'Public contact and callback requests from the website.' },
   { href: '/admin/approvals',     label: 'Approvals',     icon: Shield,        badge: 'appr', description: 'Shirt designs and Boot Room listings awaiting a yes or no.' },
+  { href: '/admin/club-moment',   label: 'Club Moment',   icon: Camera,                      description: 'The homepage photo, headline, and button — "Your Saturday could look like this".' },
   { href: '/competitions/admin',  label: 'Competitions',  icon: Trophy,                      description: 'Fixtures, results, pitches, and competition settings.' },
 ];
 
