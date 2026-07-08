@@ -173,7 +173,7 @@ export default async function Home() {
 
         {/* ── 3.3. Club moment ─────────────────────────────────────────────── */}
         {clubMoment?.imageUrl && (
-          <section className="relative aspect-[6/5] md:aspect-[2/1] md:max-h-[700px] overflow-hidden">
+          <section className="relative aspect-[6/5] md:aspect-auto md:h-[clamp(340px,30vw,460px)] overflow-hidden">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={clubMoment.mobileImageUrl || clubMoment.imageUrl}
