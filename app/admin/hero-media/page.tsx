@@ -1,8 +1,14 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/prisma';
 import { requireAdmin } from '@/lib/admin/require-admin';
+import {
+  HERO_ROTATION_MODE_KEY,
+  HERO_ROTATION_INTERVAL_KEY,
+  getHeroRotationSettings,
+} from '@/lib/site-settings';
 
 export const metadata: Metadata = {
   title: 'Hero Rotation | RVR Admin',
@@ -18,7 +24,10 @@ const MOTION_LABELS: Record<string, string> = {
 export default async function HeroMediaAdminPage() {
   await requireAdmin();
 
-  const items = await prisma.heroMedia.findMany({ orderBy: { sortOrder: 'asc' } });
+  const [items, rotation] = await Promise.all([
+    prisma.heroMedia.findMany({ orderBy: { sortOrder: 'asc' } }),
+    getHeroRotationSettings(),
+  ]);
   const enabledCount = items.filter((i) => i.isEnabled).length;
 
   async function toggleEnabled(formData: FormData) {
@@ -32,6 +41,28 @@ export default async function HeroMediaAdminPage() {
     revalidatePath('/admin/hero-media');
   }
 
+  async function saveRotationSettings(formData: FormData) {
+    'use server';
+    await requireAdmin();
+    const { prisma: db } = await import('@/lib/prisma');
+    const mode = formData.get('mode') === 'CAROUSEL' ? 'CAROUSEL' : 'ONCE';
+    const intervalSeconds = Math.min(60, Math.max(5, Number(formData.get('intervalSeconds') ?? 8)));
+    await Promise.all([
+      db.siteSetting.upsert({
+        where:  { key: HERO_ROTATION_MODE_KEY },
+        create: { key: HERO_ROTATION_MODE_KEY, value: mode },
+        update: { value: mode },
+      }),
+      db.siteSetting.upsert({
+        where:  { key: HERO_ROTATION_INTERVAL_KEY },
+        create: { key: HERO_ROTATION_INTERVAL_KEY, value: String(intervalSeconds) },
+        update: { value: String(intervalSeconds) },
+      }),
+    ]);
+    revalidatePath('/');
+    redirect('/admin/hero-media');
+  }
+
   return (
     <main className="min-h-screen bg-brand-cream px-4 py-8 text-brand-charcoal">
       <div className="mx-auto max-w-4xl">
@@ -42,9 +73,11 @@ export default async function HeroMediaAdminPage() {
               Hero Rotation
             </h1>
             <p className="text-brand-charcoal/60 text-sm mt-1">
-              {items.length} item{items.length === 1 ? '' : 's'} · {enabledCount} in rotation —
-              one is picked at random each time someone loads the homepage, and stays put for
-              their visit. Leave this empty and the built-in hero video is used.
+              {items.length} item{items.length === 1 ? '' : 's'} · {enabledCount} in rotation —{' '}
+              {rotation.mode === 'CAROUSEL'
+                ? `cycles through every item automatically, ${rotation.intervalSeconds}s each.`
+                : 'one is picked at random each time someone loads the homepage, and stays put for their visit.'}
+              {' '}Leave this empty and the built-in hero video is used.
             </p>
           </div>
           <Link
@@ -134,6 +167,60 @@ export default async function HeroMediaAdminPage() {
             ))}
           </div>
         )}
+
+        {/* Rotation settings — rarely touched, so tucked below the list */}
+        <details className="mt-8 border-2 border-brand-navy/15 bg-white">
+          <summary className="cursor-pointer px-4 py-3 text-sm font-bold text-brand-navy hover:bg-brand-navy/5 transition-colors">
+            ⚙ Rotation behaviour — currently {rotation.mode === 'CAROUSEL' ? `auto-rotate, ${rotation.intervalSeconds}s each` : 'pick once per visit'}
+          </summary>
+          <form
+            action={saveRotationSettings}
+            className="space-y-4 border-t border-brand-navy/10 p-4"
+          >
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2" role="radiogroup" aria-label="Rotation mode">
+              <label className={`flex items-start gap-2 border-2 px-3 py-3 cursor-pointer transition-colors ${rotation.mode === 'ONCE' ? 'border-brand-neon bg-brand-neon/10' : 'border-brand-charcoal/15 hover:border-brand-charcoal/30'}`}>
+                <input type="radio" name="mode" value="ONCE" defaultChecked={rotation.mode === 'ONCE'} className="mt-1 w-4 h-4 accent-brand-neon" />
+                <span>
+                  <span className="block text-sm font-bold text-brand-charcoal">Pick once</span>
+                  <span className="block text-xs text-brand-charcoal/60">One random item per visit, stays fixed. Current behaviour.</span>
+                </span>
+              </label>
+              <label className={`flex items-start gap-2 border-2 px-3 py-3 cursor-pointer transition-colors ${rotation.mode === 'CAROUSEL' ? 'border-brand-neon bg-brand-neon/10' : 'border-brand-charcoal/15 hover:border-brand-charcoal/30'}`}>
+                <input type="radio" name="mode" value="CAROUSEL" defaultChecked={rotation.mode === 'CAROUSEL'} className="mt-1 w-4 h-4 accent-brand-neon" />
+                <span>
+                  <span className="block text-sm font-bold text-brand-charcoal">Auto-rotate carousel</span>
+                  <span className="block text-xs text-brand-charcoal/60">Cycles through every enabled item in Order, on a timer.</span>
+                </span>
+              </label>
+            </div>
+
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+              <p className="flex-1 text-xs text-brand-charcoal/60">
+                Seconds each item stays on screen in carousel mode (5–60). Visitors with
+                reduced-motion enabled never auto-rotate, and a pause button appears on the
+                homepage either way.
+              </p>
+              <div className="flex items-center gap-2">
+                <input
+                  name="intervalSeconds"
+                  type="number"
+                  min={5}
+                  max={60}
+                  defaultValue={rotation.intervalSeconds}
+                  aria-label="Carousel interval in seconds"
+                  className="w-20 border-2 border-brand-charcoal px-3 py-2 min-h-[44px] bg-white text-brand-charcoal focus:outline-none focus:border-brand-neon"
+                />
+                <span className="text-sm font-bold text-brand-charcoal/60">sec</span>
+                <button
+                  type="submit"
+                  className="bg-brand-navy text-brand-cream font-bold px-4 py-2 min-h-[44px] border-2 border-brand-navy hover:bg-brand-navy/85 transition-colors"
+                >
+                  Save
+                </button>
+              </div>
+            </div>
+          </form>
+        </details>
 
       </div>
     </main>

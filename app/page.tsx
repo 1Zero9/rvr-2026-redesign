@@ -9,7 +9,7 @@ import Footer from '@/components/layout/Footer';
 import CampaignBanner from '@/components/CampaignBanner';
 import { prisma } from '@/lib/prisma';
 import { getActiveCampaigns } from '@/lib/campaigns';
-import { getSpotlightIntervalSeconds } from '@/lib/site-settings';
+import { getSpotlightIntervalSeconds, getHeroRotationSettings } from '@/lib/site-settings';
 import { getFeatureAvailability } from '@/lib/features';
 import { GraduationCap, Trophy, Users, Heart, User, Calculator, type LucideIcon } from 'lucide-react';
 import type { Metadata } from 'next';
@@ -101,6 +101,7 @@ export default async function Home() {
     }),
   ]);
   const spotlightIntervalSeconds = await getSpotlightIntervalSeconds();
+  const heroRotation = await getHeroRotationSettings();
 
   const heroItems: HeroMediaItem[] = heroMedia.map((m) => ({
     id:             m.id,
@@ -150,7 +151,11 @@ export default async function Home() {
       <main id="main-content" className="flex-grow">
 
         {/* ── 1. Hero ──────────────────────────────────────────────────────── */}
-        <Hero items={heroItems} />
+        <Hero
+          items={heroItems}
+          rotationMode={heroRotation.mode}
+          rotationIntervalSeconds={heroRotation.intervalSeconds}
+        />
 
         {/* ── 2. Club Spotlight — campaigns + news in one rotating slot ────── */}
         {spotlightItems.length > 0 && (

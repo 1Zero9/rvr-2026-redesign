@@ -58,29 +58,49 @@ const explodeProps = [
   { x: '0px',   y: '-80px', r: '-12deg', delay: '1.1s' },
 ];
 
-export default function Hero({ items = [] }: { items?: HeroMediaItem[] }) {
+export default function Hero({
+  items = [],
+  rotationMode = 'ONCE',
+  rotationIntervalSeconds = 8,
+}: {
+  items?: HeroMediaItem[];
+  rotationMode?: 'ONCE' | 'CAROUSEL';
+  rotationIntervalSeconds?: number;
+}) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const statsRef = useRef<HTMLDivElement>(null);
   const [videoPaused, setVideoPaused] = useState(false);
+  const [rotationPaused, setRotationPaused] = useState(false);
   const [ready, setReady] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
 
   const pool = items.length > 0 ? items : [DEFAULT_ITEM];
-  // SSR and the first client render both use pool[0] — deterministic, so no
-  // hydration mismatch. The random pick below only runs after mount.
-  const [active, setActive] = useState(pool[0]);
+  // SSR and the first client render both use index 0 — deterministic, so no
+  // hydration mismatch. The random pick / auto-advance below only run after mount.
+  const [activeIndex, setActiveIndex] = useState(0);
+  const active = pool[activeIndex] ?? pool[0];
 
   useEffect(() => {
     setReducedMotion(window.matchMedia('(prefers-reduced-motion: reduce)').matches);
   }, []);
 
-  // Randomised on page load only — fires once after mount, then the choice
-  // stays fixed for the rest of the visit (no auto-advancing afterwards).
+  // "Pick once" mode: randomised on page load only — fires once after mount,
+  // then the choice stays fixed for the rest of the visit (no auto-advancing).
   useEffect(() => {
-    if (pool.length < 2) return;
-    setActive(pool[Math.floor(Math.random() * pool.length)]);
+    if (rotationMode !== 'ONCE' || pool.length < 2) return;
+    setActiveIndex(Math.floor(Math.random() * pool.length));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // "Carousel" mode: auto-advance through the pool in order, like the
+  // Noticeboard spotlight — pausable, and off entirely under reduced-motion.
+  useEffect(() => {
+    if (rotationMode !== 'CAROUSEL' || pool.length < 2 || reducedMotion || rotationPaused) return;
+    const id = setInterval(() => {
+      setActiveIndex((i) => (i + 1) % pool.length);
+    }, rotationIntervalSeconds * 1000);
+    return () => clearInterval(id);
+  }, [rotationMode, pool.length, reducedMotion, rotationPaused, rotationIntervalSeconds]);
 
   useEffect(() => {
     const v = videoRef.current;
@@ -145,11 +165,19 @@ export default function Hero({ items = [] }: { items?: HeroMediaItem[] }) {
     return () => { cancelled = true; };
   }, [active, reducedMotion]);
 
-  const toggleVideo = () => {
-    const v = videoRef.current;
-    if (!v) return;
-    if (v.paused) { v.play(); setVideoPaused(false); }
-    else          { v.pause(); setVideoPaused(true); }
+  const isCarousel = rotationMode === 'CAROUSEL' && pool.length > 1;
+  const motionPaused = active.type === 'VIDEO' ? videoPaused : rotationPaused;
+  const showPauseControl = active.type === 'VIDEO' || isCarousel;
+
+  const toggleMotion = () => {
+    if (active.type === 'VIDEO') {
+      const v = videoRef.current;
+      if (v) {
+        if (v.paused) { v.play(); setVideoPaused(false); }
+        else          { v.pause(); setVideoPaused(true); }
+      }
+    }
+    if (isCarousel) setRotationPaused((p) => !p);
   };
 
   const objectPosition = `${active.focalX}% ${active.focalY}%`;
@@ -170,7 +198,7 @@ export default function Hero({ items = [] }: { items?: HeroMediaItem[] }) {
             muted
             playsInline
             poster={active.posterUrl ?? undefined}
-            className={`w-full h-full object-cover opacity-35 ${zoomClass}`}
+            className={`w-full h-full object-cover opacity-50 ${zoomClass}`}
             style={{ objectPosition }}
           >
             <source src={active.url} type="video/mp4" />
@@ -182,7 +210,7 @@ export default function Hero({ items = [] }: { items?: HeroMediaItem[] }) {
               key={`m-${active.id}`}
               src={active.mobileImageUrl}
               alt=""
-              className={`w-full h-full object-cover opacity-35 md:hidden ${zoomClass}`}
+              className={`w-full h-full object-cover opacity-50 md:hidden ${zoomClass}`}
               style={{ objectPosition }}
             />
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -190,7 +218,7 @@ export default function Hero({ items = [] }: { items?: HeroMediaItem[] }) {
               key={`d-${active.id}`}
               src={active.url}
               alt=""
-              className={`w-full h-full object-cover opacity-35 hidden md:block ${zoomClass}`}
+              className={`w-full h-full object-cover opacity-50 hidden md:block ${zoomClass}`}
               style={{ objectPosition }}
             />
           </>
@@ -200,7 +228,7 @@ export default function Hero({ items = [] }: { items?: HeroMediaItem[] }) {
             key={active.id}
             src={active.url}
             alt=""
-            className={`w-full h-full object-cover opacity-35 ${zoomClass}`}
+            className={`w-full h-full object-cover opacity-50 ${zoomClass}`}
             style={{ objectPosition }}
           />
         )}
@@ -215,7 +243,7 @@ export default function Hero({ items = [] }: { items?: HeroMediaItem[] }) {
             style={{
               objectPosition,
               imageRendering: 'pixelated',
-              opacity: pixelRevealed ? 0 : 0.35,
+              opacity: pixelRevealed ? 0 : 0.5,
               transition: 'opacity 1200ms ease-out',
             }}
           />
@@ -235,15 +263,20 @@ export default function Hero({ items = [] }: { items?: HeroMediaItem[] }) {
       </div>
 
 
-      {/* Video pause control — WCAG 2.2.2 */}
-      {active.type === 'VIDEO' && (
+      {/* Motion pause control — WCAG 2.2.2. Pauses whatever's moving: the
+          video, and/or the carousel auto-advance. */}
+      {showPauseControl && (
         <button
           type="button"
-          onClick={toggleVideo}
-          aria-label={videoPaused ? 'Play background video' : 'Pause background video'}
+          onClick={toggleMotion}
+          aria-label={
+            active.type === 'VIDEO'
+              ? (motionPaused ? 'Play background video' : 'Pause background video')
+              : (motionPaused ? 'Resume rotation' : 'Pause rotation')
+          }
           className="absolute bottom-4 left-4 z-30 flex items-center justify-center w-9 h-9 rounded-full border border-white/25 bg-brand-navy/60 text-white/60 hover:text-white hover:bg-brand-navy/80 transition-colors backdrop-blur-sm"
         >
-          {videoPaused
+          {motionPaused
             ? <Play  className="h-3.5 w-3.5 fill-current" aria-hidden="true" />
             : <Pause className="h-3.5 w-3.5 fill-current" aria-hidden="true" />
           }
