@@ -58,12 +58,34 @@ const explodeProps = [
   { x: '0px',   y: '-80px', r: '-12deg', delay: '1.1s' },
 ];
 
+// Interleaves featured campaign slides into the carousel's sequential
+// advance: every `ratio`-th slot is a feature, the rest cycle through stock.
+// e.g. ratio 3 → stock, stock, feature, stock, stock, feature, ...
+function pickForSlot(
+  slot: number,
+  stockPool: HeroMediaItem[],
+  featurePool: HeroMediaItem[],
+  ratio: number,
+): HeroMediaItem {
+  if (featurePool.length === 0) return stockPool[slot % stockPool.length];
+  const pos = slot % ratio;
+  if (pos === ratio - 1) {
+    return featurePool[Math.floor(slot / ratio) % featurePool.length];
+  }
+  const stockIndex = slot - Math.floor(slot / ratio);
+  return stockPool[stockIndex % stockPool.length];
+}
+
 export default function Hero({
   items = [],
+  features = [],
+  featureRatio = 3,
   rotationMode = 'ONCE',
   rotationIntervalSeconds = 8,
 }: {
   items?: HeroMediaItem[];
+  features?: HeroMediaItem[];
+  featureRatio?: number;
   rotationMode?: 'ONCE' | 'CAROUSEL';
   rotationIntervalSeconds?: number;
 }) {
@@ -74,11 +96,22 @@ export default function Hero({
   const [ready, setReady] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
 
-  const pool = items.length > 0 ? items : [DEFAULT_ITEM];
-  // SSR and the first client render both use index 0 — deterministic, so no
-  // hydration mismatch. The random pick / auto-advance below only run after mount.
-  const [activeIndex, setActiveIndex] = useState(0);
-  const active = pool[activeIndex] ?? pool[0];
+  const ratio = featureRatio === 2 ? 2 : 3;
+  const stockPool = items.length > 0 ? items : [DEFAULT_ITEM];
+  const totalItems = stockPool.length + features.length;
+  // "Pick once" weighting: each feature appears `ratio` times so it's picked
+  // more often than a single stock item, without a strict positional pattern.
+  const weightedPool = features.length > 0
+    ? [...stockPool, ...features.flatMap((f) => Array(ratio).fill(f))]
+    : stockPool;
+
+  // SSR and the first client render both resolve to slot 0 — deterministic
+  // (always stockPool[0]), so no hydration mismatch. The random pick /
+  // auto-advance below only run after mount.
+  const [index, setIndex] = useState(0);
+  const active = rotationMode === 'CAROUSEL'
+    ? pickForSlot(index, stockPool, features, ratio)
+    : (weightedPool[index] ?? weightedPool[0]);
 
   useEffect(() => {
     setReducedMotion(window.matchMedia('(prefers-reduced-motion: reduce)').matches);
@@ -87,20 +120,20 @@ export default function Hero({
   // "Pick once" mode: randomised on page load only — fires once after mount,
   // then the choice stays fixed for the rest of the visit (no auto-advancing).
   useEffect(() => {
-    if (rotationMode !== 'ONCE' || pool.length < 2) return;
-    setActiveIndex(Math.floor(Math.random() * pool.length));
+    if (rotationMode !== 'ONCE' || weightedPool.length < 2) return;
+    setIndex(Math.floor(Math.random() * weightedPool.length));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // "Carousel" mode: auto-advance through the pool in order, like the
   // Noticeboard spotlight — pausable, and off entirely under reduced-motion.
   useEffect(() => {
-    if (rotationMode !== 'CAROUSEL' || pool.length < 2 || reducedMotion || rotationPaused) return;
+    if (rotationMode !== 'CAROUSEL' || totalItems < 2 || reducedMotion || rotationPaused) return;
     const id = setInterval(() => {
-      setActiveIndex((i) => (i + 1) % pool.length);
+      setIndex((i) => i + 1);
     }, rotationIntervalSeconds * 1000);
     return () => clearInterval(id);
-  }, [rotationMode, pool.length, reducedMotion, rotationPaused, rotationIntervalSeconds]);
+  }, [rotationMode, totalItems, reducedMotion, rotationPaused, rotationIntervalSeconds]);
 
   useEffect(() => {
     const v = videoRef.current;
@@ -165,7 +198,7 @@ export default function Hero({
     return () => { cancelled = true; };
   }, [active, reducedMotion]);
 
-  const isCarousel = rotationMode === 'CAROUSEL' && pool.length > 1;
+  const isCarousel = rotationMode === 'CAROUSEL' && totalItems > 1;
   const motionPaused = active.type === 'VIDEO' ? videoPaused : rotationPaused;
   const showPauseControl = active.type === 'VIDEO' || isCarousel;
 

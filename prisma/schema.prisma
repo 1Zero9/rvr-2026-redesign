@@ -101,6 +101,9 @@ model Campaign {
   audience       CampaignAudience @default(EVERYONE)
   showOnHomepage Boolean          @default(false)
   showBanner     Boolean          @default(false)
+  /// Featured slot in the homepage Hero background rotation, at a
+  /// configurable ratio against the stock hero photos/videos, until endsAt.
+  showInHero     Boolean          @default(false)
   /// Focal point as percentages (0–100) — drives CSS object-position so the
   /// subject stays visible whatever shape each placement crops to
   focalX         Float            @default(50)

@@ -7,6 +7,7 @@ import { requireAdmin } from '@/lib/admin/require-admin';
 import {
   HERO_ROTATION_MODE_KEY,
   HERO_ROTATION_INTERVAL_KEY,
+  HERO_FEATURE_RATIO_KEY,
   getHeroRotationSettings,
 } from '@/lib/site-settings';
 
@@ -47,6 +48,7 @@ export default async function HeroMediaAdminPage() {
     const { prisma: db } = await import('@/lib/prisma');
     const mode = formData.get('mode') === 'CAROUSEL' ? 'CAROUSEL' : 'ONCE';
     const intervalSeconds = Math.min(60, Math.max(5, Number(formData.get('intervalSeconds') ?? 8)));
+    const featureRatio = formData.get('featureRatio') === '2' ? '2' : '3';
     await Promise.all([
       db.siteSetting.upsert({
         where:  { key: HERO_ROTATION_MODE_KEY },
@@ -57,6 +59,11 @@ export default async function HeroMediaAdminPage() {
         where:  { key: HERO_ROTATION_INTERVAL_KEY },
         create: { key: HERO_ROTATION_INTERVAL_KEY, value: String(intervalSeconds) },
         update: { value: String(intervalSeconds) },
+      }),
+      db.siteSetting.upsert({
+        where:  { key: HERO_FEATURE_RATIO_KEY },
+        create: { key: HERO_FEATURE_RATIO_KEY, value: featureRatio },
+        update: { value: featureRatio },
       }),
     ]);
     revalidatePath('/');
@@ -211,13 +218,35 @@ export default async function HeroMediaAdminPage() {
                   className="w-20 border-2 border-brand-charcoal px-3 py-2 min-h-[44px] bg-white text-brand-charcoal focus:outline-none focus:border-brand-neon"
                 />
                 <span className="text-sm font-bold text-brand-charcoal/60">sec</span>
-                <button
-                  type="submit"
-                  className="bg-brand-navy text-brand-cream font-bold px-4 py-2 min-h-[44px] border-2 border-brand-navy hover:bg-brand-navy/85 transition-colors"
-                >
-                  Save
-                </button>
               </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3 border-t border-brand-navy/10 pt-4">
+              <p className="flex-1 text-xs text-brand-charcoal/60">
+                How often a campaign marked <span className="font-bold">&ldquo;Hero background&rdquo;</span> takes
+                a turn in the rotation, until it ends. In carousel mode this is a strict pattern;
+                in pick-once mode it&apos;s just weighted more likely.
+              </p>
+              <div className="flex items-center gap-2">
+                <select
+                  name="featureRatio"
+                  defaultValue={String(rotation.featureRatio)}
+                  aria-label="Featured campaign ratio"
+                  className="border-2 border-brand-charcoal px-3 py-2 min-h-[44px] bg-white text-brand-charcoal focus:outline-none focus:border-brand-neon"
+                >
+                  <option value="2">1 in 2</option>
+                  <option value="3">1 in 3</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="flex justify-end">
+              <button
+                type="submit"
+                className="bg-brand-navy text-brand-cream font-bold px-4 py-2 min-h-[44px] border-2 border-brand-navy hover:bg-brand-navy/85 transition-colors"
+              >
+                Save
+              </button>
             </div>
           </form>
         </details>

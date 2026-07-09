@@ -84,7 +84,7 @@ export default async function Home() {
 
   const now = new Date();
 
-  const [announcements, homepageCampaigns, clubMoment, heroMedia] = await Promise.all([
+  const [announcements, homepageCampaigns, heroCampaigns, clubMoment, heroMedia] = await Promise.all([
     prisma.announcement.findMany({
       where: {
         isPublished: true,
@@ -94,6 +94,7 @@ export default async function Home() {
       take: 5,
     }),
     getActiveCampaigns('homepage'),
+    getActiveCampaigns('hero'),
     prisma.clubMoment.findUnique({ where: { id: 'current' } }),
     prisma.heroMedia.findMany({
       where: { isEnabled: true },
@@ -113,6 +114,20 @@ export default async function Home() {
     focalY:         m.focalY,
     motionEffect:   m.motionEffect,
   }));
+
+  // Campaign-linked hero features — image only, no video support on campaigns.
+  const heroFeatures: HeroMediaItem[] = heroCampaigns
+    .filter((c) => c.heroImageUrl)
+    .map((c) => ({
+      id:             `campaign-${c.id}`,
+      type:           'IMAGE',
+      url:            c.heroImageUrl as string,
+      mobileImageUrl: c.mobileImageUrl,
+      posterUrl:      null,
+      focalX:         c.focalX,
+      focalY:         c.focalY,
+      motionEffect:   'NONE',
+    }));
 
   const spotlightItems: SpotlightItem[] = [
     ...homepageCampaigns.map((c) => ({
@@ -153,6 +168,8 @@ export default async function Home() {
         {/* ── 1. Hero ──────────────────────────────────────────────────────── */}
         <Hero
           items={heroItems}
+          features={heroFeatures}
+          featureRatio={heroRotation.featureRatio}
           rotationMode={heroRotation.mode}
           rotationIntervalSeconds={heroRotation.intervalSeconds}
         />

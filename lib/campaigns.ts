@@ -3,7 +3,7 @@ import type { Campaign } from '@prisma/client';
 
 /** Campaigns visible right now: published and inside their date window. */
 export async function getActiveCampaigns(
-  placement?: 'homepage' | 'banner',
+  placement?: 'homepage' | 'banner' | 'hero',
 ): Promise<Campaign[]> {
   const now = new Date();
   try {
@@ -14,6 +14,7 @@ export async function getActiveCampaigns(
         OR: [{ endsAt: null }, { endsAt: { gt: now } }],
         ...(placement === 'homepage' ? { showOnHomepage: true } : {}),
         ...(placement === 'banner' ? { showBanner: true } : {}),
+        ...(placement === 'hero' ? { showInHero: true } : {}),
       },
       orderBy: { startsAt: 'desc' },
     });

@@ -34,6 +34,7 @@ export interface CampaignFormData {
   audience:       string;
   showOnHomepage: boolean;
   showBanner:     boolean;
+  showInHero:     boolean;
   focalX:         number;
   focalY:         number;
   startsAt:       string;
@@ -566,11 +567,15 @@ export default function NoticeForm({
                 <div className="flex flex-col gap-1 pt-1">
                   <label className="flex items-center gap-2 cursor-pointer min-h-[36px]">
                     <input name="showOnHomepage" type="checkbox" defaultChecked={c?.showOnHomepage ?? false} className="w-5 h-5 accent-brand-neon" />
-                    <span className="text-sm font-bold text-brand-charcoal">Homepage spotlight <span className="font-normal text-brand-charcoal/50">(rotating hero slot)</span></span>
+                    <span className="text-sm font-bold text-brand-charcoal">Noticeboard spotlight <span className="font-normal text-brand-charcoal/50">(rotating card below the hero)</span></span>
                   </label>
                   <label className="flex items-center gap-2 cursor-pointer min-h-[36px]">
                     <input name="showBanner" type="checkbox" defaultChecked={c?.showBanner ?? false} className="w-5 h-5 accent-brand-neon" />
                     <span className="text-sm font-bold text-brand-charcoal">Sitewide banner <span className="font-normal text-brand-charcoal/50">(strongest — newest shows first if several are live)</span></span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer min-h-[36px]">
+                    <input name="showInHero" type="checkbox" defaultChecked={c?.showInHero ?? false} className="w-5 h-5 accent-brand-neon" />
+                    <span className="text-sm font-bold text-brand-charcoal">Hero background <span className="font-normal text-brand-charcoal/50">(featured photo takes a turn in the top-of-page rotation until it ends — set the ratio in Hero Rotation settings)</span></span>
                   </label>
                 </div>
               </div>
