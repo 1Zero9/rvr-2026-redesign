@@ -418,7 +418,7 @@ export default function Header() {
               href="/pay-fees"
               aria-label="Pay Membership & Fees"
               title="Pay Membership & Fees"
-              className="flex min-h-[36px] items-center gap-1.5 whitespace-nowrap rounded-full border-2 border-brand-charcoal bg-brand-neon px-3 py-1.5 font-display text-xs font-black uppercase text-brand-charcoal shadow-brutalist-charcoal transition-all hover:-translate-y-0.5 hover:shadow-none"
+              className="flex min-h-[36px] items-center gap-1.5 whitespace-nowrap rounded-full border-2 border-brand-charcoal bg-brand-maroon px-3 py-1.5 font-display text-xs font-black uppercase text-white shadow-brutalist-charcoal transition-all hover:-translate-y-0.5 hover:shadow-none hover:bg-brand-maroon/90"
             >
               <CreditCard className="h-4 w-4" aria-hidden="true" />
               Pay Fees
@@ -480,7 +480,7 @@ export default function Header() {
               href="/pay-fees"
               aria-label="Pay Membership & Fees"
               onClick={close}
-              className="rounded-full border-2 border-brand-charcoal bg-brand-neon p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-brand-charcoal shadow-brutalist-charcoal"
+              className="rounded-full border-2 border-brand-charcoal bg-brand-maroon p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-white shadow-brutalist-charcoal"
             >
               <CreditCard className="h-5 w-5" aria-hidden="true" />
             </Link>
