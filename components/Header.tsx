@@ -418,9 +418,10 @@ export default function Header() {
               href="/pay-fees"
               aria-label="Pay Membership & Fees"
               title="Pay Membership & Fees"
-              className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-brand-sky hover:text-brand-neon transition-colors"
+              className="flex min-h-[36px] items-center gap-1.5 whitespace-nowrap rounded-full border-2 border-brand-charcoal bg-brand-neon px-3 py-1.5 font-display text-xs font-black uppercase text-brand-charcoal shadow-brutalist-charcoal transition-all hover:-translate-y-0.5 hover:shadow-none"
             >
-              <CreditCard className="h-5 w-5" aria-hidden="true" />
+              <CreditCard className="h-4 w-4" aria-hidden="true" />
+              Pay Fees
             </Link>
             <a
               href="https://www.instagram.com/rvrfc1981"
@@ -479,7 +480,7 @@ export default function Header() {
               href="/pay-fees"
               aria-label="Pay Membership & Fees"
               onClick={close}
-              className="rounded-xl border-2 border-brand-sky/30 bg-white/10 p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-brand-neon"
+              className="rounded-full border-2 border-brand-charcoal bg-brand-neon p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-brand-charcoal shadow-brutalist-charcoal"
             >
               <CreditCard className="h-5 w-5" aria-hidden="true" />
             </Link>

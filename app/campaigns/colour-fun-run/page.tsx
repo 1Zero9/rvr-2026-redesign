@@ -229,7 +229,7 @@ export default function ColourFunRunPage() {
                   event bookings.
                 </p>
                 <div className="-mx-4 -mb-6 mt-2">
-                  <ClubZapCheckoutModal productKeys={["camps"]} />
+                  <ClubZapCheckoutModal productKeys={["camps"]} showIntro={false} />
                 </div>
               </div>
             </div>

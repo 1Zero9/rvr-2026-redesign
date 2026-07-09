@@ -16,6 +16,7 @@ interface ProductDisplay {
 
 interface ClubZapCheckoutModalProps {
   productKeys?: PaymentProductKey[];
+  showIntro?: boolean;
 }
 
 const productDisplay: Record<string, ProductDisplay> = {
@@ -50,6 +51,7 @@ const defaultProductKeys = Object.keys(clubZapPaymentMap) as PaymentProductKey[]
 
 export default function ClubZapCheckoutModal({
   productKeys = defaultProductKeys,
+  showIntro = true,
 }: ClubZapCheckoutModalProps) {
   const [selectedProduct, setSelectedProduct] = useState<PaymentTarget | null>(
     null,
@@ -97,17 +99,29 @@ export default function ClubZapCheckoutModal({
   }, [selectedProduct]);
 
   return (
-    <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:py-16">
-      <div className="mb-8">
-        <p className="mb-3 inline-flex rounded-full border-3 border-brand-charcoal bg-brand-neon px-4 py-2 font-display text-xs font-black uppercase text-brand-charcoal">
-          Club payments
-        </p>
-        <h2 className="font-display text-3xl font-black uppercase leading-none tracking-tight text-brand-charcoal md:text-5xl">
-          Registration and checkout
-        </h2>
-      </div>
+    <section className="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:py-16">
+      {showIntro && (
+        <div className="mb-8 text-center">
+          <p className="mb-3 inline-flex rounded-full border-3 border-brand-charcoal bg-brand-neon px-4 py-2 font-display text-xs font-black uppercase text-brand-charcoal">
+            Club payments
+          </p>
+          <h2 className="font-display text-3xl font-black uppercase leading-none tracking-tight text-brand-charcoal md:text-5xl">
+            Choose what you&apos;re paying for
+          </h2>
+          <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-brand-charcoal/60">
+            Pick an option below and you&apos;ll be taken to a secure checkout powered by{" "}
+            <strong className="text-brand-charcoal">ClubZap</strong>, our club&apos;s
+            registration and payments partner. You&apos;ll pay directly with ClubZap —
+            the club never sees or stores your card details.
+          </p>
+        </div>
+      )}
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 items-stretch">
+      <div
+        className={`grid grid-cols-1 gap-4 items-stretch ${
+          products.length > 1 ? "sm:grid-cols-2" : "mx-auto max-w-sm"
+        }`}
+      >
         {products.map((product, index) => {
           const isDark = index % 2 === 0;
           return (
@@ -194,13 +208,15 @@ export default function ClubZapCheckoutModal({
               />
             </div>
 
-            <footer className="flex shrink-0 flex-col gap-3 border-t-4 border-brand-charcoal bg-brand-cream px-4 py-3 text-sm font-semibold text-brand-charcoal sm:flex-row sm:items-center sm:justify-between">
-              <span>Payments are completed in the secure checkout window.</span>
+            <footer className="flex shrink-0 flex-col gap-2 border-t-4 border-brand-charcoal bg-brand-cream px-4 py-3 text-sm font-semibold text-brand-charcoal sm:flex-row sm:items-center sm:justify-between">
+              <span className="text-xs text-brand-charcoal/60 sm:text-sm">
+                Something stuck or not loading? Open it in a full tab instead.
+              </span>
               <a
                 href={selectedProduct.targetUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-lg font-display text-xs font-black uppercase text-brand-green underline-offset-4 hover:underline focus:outline-none focus:ring-4 focus:ring-brand-neon"
+                className="inline-flex shrink-0 items-center justify-center gap-2 rounded-full border-2 border-brand-charcoal bg-brand-neon px-4 py-2 font-display text-xs font-black uppercase text-brand-charcoal shadow-brutalist-charcoal transition-all hover:-translate-y-0.5 hover:shadow-none focus:outline-none focus:ring-4 focus:ring-brand-neon"
                 aria-label={`Open ${selectedProduct.title} checkout in a new tab`}
               >
                 Open in new tab
