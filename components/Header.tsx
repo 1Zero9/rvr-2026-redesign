@@ -4,7 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { ChevronDown, ChevronRight, Menu, X } from 'lucide-react';
+import { ChevronDown, ChevronRight, CreditCard, Menu, X } from 'lucide-react';
 import SearchOverlay from './SearchOverlay';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -414,6 +414,14 @@ export default function Header() {
                 <path d="m21 21-4.35-4.35" />
               </svg>
             </button>
+            <Link
+              href="/pay-fees"
+              aria-label="Pay Membership & Fees"
+              title="Pay Membership & Fees"
+              className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-brand-sky hover:text-brand-neon transition-colors"
+            >
+              <CreditCard className="h-5 w-5" aria-hidden="true" />
+            </Link>
             <a
               href="https://www.instagram.com/rvrfc1981"
               target="_blank"
@@ -465,8 +473,16 @@ export default function Header() {
             </Link>
           </div>
 
-          {/* Mobile right group: hamburger only */}
+          {/* Mobile right group: pay fees + hamburger */}
           <div className="flex items-center gap-2 lg:hidden">
+            <Link
+              href="/pay-fees"
+              aria-label="Pay Membership & Fees"
+              onClick={close}
+              className="rounded-xl border-2 border-brand-sky/30 bg-white/10 p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-brand-neon"
+            >
+              <CreditCard className="h-5 w-5" aria-hidden="true" />
+            </Link>
             <button
               type="button"
               aria-label={open ? 'Close navigation' : 'Open navigation'}
