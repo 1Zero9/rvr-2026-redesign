@@ -704,6 +704,42 @@ model ClubMoment {
   updatedAt      DateTime @updatedAt
 }
 
+enum HeroMediaType {
+  IMAGE
+  VIDEO
+}
+
+enum HeroMotionEffect {
+  NONE
+  ZOOM_IN
+  ZOOM_OUT
+  PIXELATE
+}
+
+/// Homepage hero rotation pool — photos and videos an admin can add. One is
+/// picked at random client-side when the page loads and stays fixed for that
+/// visit (no auto-advance). Empty pool falls back to the built-in hero video.
+model HeroMedia {
+  id             String           @id @default(cuid())
+  type           HeroMediaType    @default(IMAGE)
+  url            String
+  mobileImageUrl String?
+  /// Video only — poster frame shown before playback starts
+  posterUrl      String?
+  /// Focal point as percentages (0–100) — drives CSS object-position so the
+  /// subject stays visible whatever shape the hero crops to. Applies to
+  /// both images and video.
+  focalX         Float            @default(50)
+  focalY         Float            @default(50)
+  motionEffect   HeroMotionEffect @default(NONE)
+  isEnabled      Boolean          @default(true)
+  sortOrder      Int              @default(0)
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+
+  @@index([isEnabled, sortOrder])
+}
+
 /// Free-form admin-controlled site settings (e.g. spotlight rotation speed).
 model SiteSetting {
   key       String   @id

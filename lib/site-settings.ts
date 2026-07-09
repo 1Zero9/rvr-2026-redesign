@@ -9,7 +9,7 @@ export async function getSpotlightIntervalSeconds(): Promise<number> {
       where: { key: SPOTLIGHT_INTERVAL_KEY },
     });
     const parsed = Number(setting?.value);
-    return Number.isFinite(parsed) && parsed >= 3 && parsed <= 30
+    return Number.isFinite(parsed) && parsed >= 3 && parsed <= 120
       ? parsed
       : SPOTLIGHT_INTERVAL_DEFAULT;
   } catch {

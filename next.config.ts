@@ -40,7 +40,7 @@ const securityHeaders = [
       "frame-ancestors 'none'",
       "base-uri 'self'",
       "object-src 'none'",
-      "media-src 'self'",
+      "media-src 'self' https://*.public.blob.vercel-storage.com",
       "upgrade-insecure-requests",
     ].join("; "),
   },

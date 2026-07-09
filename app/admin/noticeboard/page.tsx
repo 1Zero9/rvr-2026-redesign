@@ -104,7 +104,7 @@ export default async function NoticeboardAdminPage() {
     'use server';
     await requireAdmin();
     const { prisma: db } = await import('@/lib/prisma');
-    const seconds = Math.min(30, Math.max(3, Number(formData.get('seconds') ?? 7)));
+    const seconds = Math.min(120, Math.max(3, Number(formData.get('seconds') ?? 7)));
     await db.siteSetting.upsert({
       where:  { key: SPOTLIGHT_INTERVAL_KEY },
       create: { key: SPOTLIGHT_INTERVAL_KEY, value: String(seconds) },
@@ -204,7 +204,7 @@ export default async function NoticeboardAdminPage() {
             className="flex flex-col sm:flex-row sm:items-center gap-3 border-t border-brand-navy/10 p-4"
           >
             <p className="flex-1 text-xs text-brand-charcoal/60">
-              Seconds each item stays on screen before swapping (3–30). Visitors with
+              Seconds each item stays on screen before swapping (3–120). Visitors with
               reduced-motion enabled never auto-rotate.
             </p>
             <div className="flex items-center gap-2">
@@ -212,7 +212,7 @@ export default async function NoticeboardAdminPage() {
                 name="seconds"
                 type="number"
                 min={3}
-                max={30}
+                max={120}
                 defaultValue={intervalSeconds}
                 aria-label="Rotation interval in seconds"
                 className="w-20 border-2 border-brand-charcoal px-3 py-2 min-h-[44px] bg-white text-brand-charcoal focus:outline-none focus:border-brand-neon"

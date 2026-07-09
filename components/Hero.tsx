@@ -7,6 +7,32 @@ import { UserPlus, Route, Trophy, Newspaper, Pause, Play } from 'lucide-react';
 import { computeClubStats } from '@/lib/club-stats';
 import { CLUB_SEASON } from '@/config/club-season';
 
+export type HeroMotionEffect = 'NONE' | 'ZOOM_IN' | 'ZOOM_OUT' | 'PIXELATE';
+
+export type HeroMediaItem = {
+  id: string;
+  type: 'IMAGE' | 'VIDEO';
+  url: string;
+  mobileImageUrl: string | null;
+  posterUrl: string | null;
+  focalX: number;
+  focalY: number;
+  motionEffect: HeroMotionEffect;
+};
+
+// Built-in fallback — used whenever the admin hasn't added anything to the
+// hero rotation yet, so the homepage never ships blank.
+const DEFAULT_ITEM: HeroMediaItem = {
+  id: 'default-hero-video',
+  type: 'VIDEO',
+  url: '/videos/hero.mp4',
+  mobileImageUrl: null,
+  posterUrl: '/images/home2.jpg',
+  focalX: 50,
+  focalY: 50,
+  motionEffect: 'NONE',
+};
+
 const HERO_CTAS = [
   { label: 'Join the Club',   sub: `Register for ${CLUB_SEASON.registrationSeason}`, href: '/register', icon: UserPlus },
   { label: 'Match Day',       sub: 'Fixtures & results',       href: '/fixtures',      icon: Trophy       },
@@ -32,21 +58,40 @@ const explodeProps = [
   { x: '0px',   y: '-80px', r: '-12deg', delay: '1.1s' },
 ];
 
-export default function Hero() {
+export default function Hero({ items = [] }: { items?: HeroMediaItem[] }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const statsRef = useRef<HTMLDivElement>(null);
   const [videoPaused, setVideoPaused] = useState(false);
   const [ready, setReady] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState(false);
+
+  const pool = items.length > 0 ? items : [DEFAULT_ITEM];
+  // SSR and the first client render both use pool[0] — deterministic, so no
+  // hydration mismatch. The random pick below only runs after mount.
+  const [active, setActive] = useState(pool[0]);
+
+  useEffect(() => {
+    setReducedMotion(window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  }, []);
+
+  // Randomised on page load only — fires once after mount, then the choice
+  // stays fixed for the rest of the visit (no auto-advancing afterwards).
+  useEffect(() => {
+    if (pool.length < 2) return;
+    setActive(pool[Math.floor(Math.random() * pool.length)]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     const v = videoRef.current;
     if (!v) return;
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (reduced) {
+    if (reducedMotion) {
       v.pause();
       setVideoPaused(true);
+    } else {
+      setVideoPaused(v.paused);
     }
-  }, []);
+  }, [active, reducedMotion]);
 
   // Trigger explode-in animation when stat cards enter the viewport
   useEffect(() => {
@@ -60,6 +105,46 @@ export default function Hero() {
     return () => obs.disconnect();
   }, []);
 
+  // Pixelate-in reveal for images: draw a tiny low-res snapshot, then
+  // crossfade it out to reveal the sharp image underneath.
+  const [pixelSrc, setPixelSrc] = useState<string | null>(null);
+  const [pixelRevealed, setPixelRevealed] = useState(false);
+
+  useEffect(() => {
+    setPixelSrc(null);
+    setPixelRevealed(false);
+    if (reducedMotion) return;
+    if (active.type !== 'IMAGE' || active.motionEffect !== 'PIXELATE') return;
+
+    let cancelled = false;
+    const img = new window.Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      if (cancelled) return;
+      try {
+        const w = 24;
+        const h = Math.max(1, Math.round(w * ((img.naturalHeight || 1) / (img.naturalWidth || 1))));
+        const canvas = document.createElement('canvas');
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+        ctx.drawImage(img, 0, 0, w, h);
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.6);
+        if (cancelled) return;
+        setPixelSrc(dataUrl);
+        // Two rAFs so the browser paints the pixelated frame before the
+        // opacity transition to it starts.
+        requestAnimationFrame(() => requestAnimationFrame(() => { if (!cancelled) setPixelRevealed(true); }));
+      } catch {
+        // Cross-origin source without permissive CORS taints the canvas —
+        // skip the reveal and just show the sharp image.
+      }
+    };
+    img.src = active.url;
+    return () => { cancelled = true; };
+  }, [active, reducedMotion]);
+
   const toggleVideo = () => {
     const v = videoRef.current;
     if (!v) return;
@@ -67,20 +152,75 @@ export default function Hero() {
     else          { v.pause(); setVideoPaused(true); }
   };
 
+  const objectPosition = `${active.focalX}% ${active.focalY}%`;
+  const zoomClass =
+    active.motionEffect === 'ZOOM_IN'  ? 'animate-hero-zoom-in'  :
+    active.motionEffect === 'ZOOM_OUT' ? 'animate-hero-zoom-out' :
+    'scale-105';
+
   return (
     <section className="relative min-h-[80vh] w-full flex items-start justify-center bg-brand-navy text-white border-b border-brand-sky/20">
       <div className="absolute inset-0 z-0 select-none pointer-events-none overflow-hidden">
-        <video
-          ref={videoRef}
-          autoPlay
-          loop
-          muted
-          playsInline
-          poster="/images/home2.jpg"
-          className="w-full h-full object-cover opacity-35 scale-105"
-        >
-          <source src="/videos/hero.mp4" type="video/mp4" />
-        </video>
+        {active.type === 'VIDEO' ? (
+          <video
+            key={active.id}
+            ref={videoRef}
+            autoPlay
+            loop
+            muted
+            playsInline
+            poster={active.posterUrl ?? undefined}
+            className={`w-full h-full object-cover opacity-35 ${zoomClass}`}
+            style={{ objectPosition }}
+          >
+            <source src={active.url} type="video/mp4" />
+          </video>
+        ) : active.mobileImageUrl ? (
+          <>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              key={`m-${active.id}`}
+              src={active.mobileImageUrl}
+              alt=""
+              className={`w-full h-full object-cover opacity-35 md:hidden ${zoomClass}`}
+              style={{ objectPosition }}
+            />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              key={`d-${active.id}`}
+              src={active.url}
+              alt=""
+              className={`w-full h-full object-cover opacity-35 hidden md:block ${zoomClass}`}
+              style={{ objectPosition }}
+            />
+          </>
+        ) : (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            key={active.id}
+            src={active.url}
+            alt=""
+            className={`w-full h-full object-cover opacity-35 ${zoomClass}`}
+            style={{ objectPosition }}
+          />
+        )}
+
+        {pixelSrc && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={pixelSrc}
+            alt=""
+            aria-hidden="true"
+            className="absolute inset-0 w-full h-full object-cover"
+            style={{
+              objectPosition,
+              imageRendering: 'pixelated',
+              opacity: pixelRevealed ? 0 : 0.35,
+              transition: 'opacity 1200ms ease-out',
+            }}
+          />
+        )}
+
         <div className="absolute inset-0 z-10 bg-gradient-to-b from-brand-navy/55 via-brand-navy/30 to-brand-navy/65" />
         {/* Neon hairline grid — centred to avoid edge-alignment artefacts on mobile */}
         <div
@@ -96,17 +236,19 @@ export default function Hero() {
 
 
       {/* Video pause control — WCAG 2.2.2 */}
-      <button
-        type="button"
-        onClick={toggleVideo}
-        aria-label={videoPaused ? 'Play background video' : 'Pause background video'}
-        className="absolute bottom-4 left-4 z-30 flex items-center justify-center w-9 h-9 rounded-full border border-white/25 bg-brand-navy/60 text-white/60 hover:text-white hover:bg-brand-navy/80 transition-colors backdrop-blur-sm"
-      >
-        {videoPaused
-          ? <Play  className="h-3.5 w-3.5 fill-current" aria-hidden="true" />
-          : <Pause className="h-3.5 w-3.5 fill-current" aria-hidden="true" />
-        }
-      </button>
+      {active.type === 'VIDEO' && (
+        <button
+          type="button"
+          onClick={toggleVideo}
+          aria-label={videoPaused ? 'Play background video' : 'Pause background video'}
+          className="absolute bottom-4 left-4 z-30 flex items-center justify-center w-9 h-9 rounded-full border border-white/25 bg-brand-navy/60 text-white/60 hover:text-white hover:bg-brand-navy/80 transition-colors backdrop-blur-sm"
+        >
+          {videoPaused
+            ? <Play  className="h-3.5 w-3.5 fill-current" aria-hidden="true" />
+            : <Pause className="h-3.5 w-3.5 fill-current" aria-hidden="true" />
+          }
+        </button>
+      )}
 
       <div className="relative z-20 max-w-5xl mx-auto px-6 text-center py-10 md:py-20 flex flex-col items-center">
         <span className="inline-block bg-brand-neon text-brand-charcoal font-display font-black text-xs md:text-sm px-5 py-2 rounded-full uppercase tracking-wider mb-5 md:mb-8 border-3 border-brand-charcoal shadow-brutalist rotate-[-2deg] hover:rotate-0 transition-transform cursor-default whitespace-nowrap">

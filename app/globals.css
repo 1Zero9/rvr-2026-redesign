@@ -37,6 +37,8 @@
   
   --animate-bounce-spring: bounceSpring 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
   --animate-explode-in: explode-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  --animate-hero-zoom-in: hero-zoom-in 20s ease-out forwards;
+  --animate-hero-zoom-out: hero-zoom-out 20s ease-out forwards;
 }
 
 @keyframes bounceSpring {
@@ -57,6 +59,16 @@
     opacity: 1;
     transform: translate(0, 0) rotate(0deg) scale(1);
   }
+}
+
+@keyframes hero-zoom-in {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.12); }
+}
+
+@keyframes hero-zoom-out {
+  0% { transform: scale(1.12); }
+  100% { transform: scale(1); }
 }
 
 /* Skip-to-content link */
@@ -105,7 +117,9 @@ img {
 @media (prefers-reduced-motion: reduce) {
   .animate-explode-in,
   .animate-ticker,
-  .animate-bounce-spring {
+  .animate-bounce-spring,
+  .animate-hero-zoom-in,
+  .animate-hero-zoom-out {
     animation: none !important;
   }
   video {

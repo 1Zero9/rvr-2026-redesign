@@ -1,5 +1,5 @@
 import Header from '@/components/Header';
-import Hero from '@/components/Hero';
+import Hero, { type HeroMediaItem } from '@/components/Hero';
 import Link from 'next/link';
 import TeletextFixtures from '@/components/TeletextFixtures';
 import ClubSpotlight, { type SpotlightItem } from '@/components/ClubSpotlight';
@@ -84,7 +84,7 @@ export default async function Home() {
 
   const now = new Date();
 
-  const [announcements, homepageCampaigns, clubMoment] = await Promise.all([
+  const [announcements, homepageCampaigns, clubMoment, heroMedia] = await Promise.all([
     prisma.announcement.findMany({
       where: {
         isPublished: true,
@@ -95,8 +95,23 @@ export default async function Home() {
     }),
     getActiveCampaigns('homepage'),
     prisma.clubMoment.findUnique({ where: { id: 'current' } }),
+    prisma.heroMedia.findMany({
+      where: { isEnabled: true },
+      orderBy: { sortOrder: 'asc' },
+    }),
   ]);
   const spotlightIntervalSeconds = await getSpotlightIntervalSeconds();
+
+  const heroItems: HeroMediaItem[] = heroMedia.map((m) => ({
+    id:             m.id,
+    type:           m.type,
+    url:            m.url,
+    mobileImageUrl: m.mobileImageUrl,
+    posterUrl:      m.posterUrl,
+    focalX:         m.focalX,
+    focalY:         m.focalY,
+    motionEffect:   m.motionEffect,
+  }));
 
   const spotlightItems: SpotlightItem[] = [
     ...homepageCampaigns.map((c) => ({
@@ -135,7 +150,7 @@ export default async function Home() {
       <main id="main-content" className="flex-grow">
 
         {/* ── 1. Hero ──────────────────────────────────────────────────────── */}
-        <Hero />
+        <Hero items={heroItems} />
 
         {/* ── 2. Club Spotlight — campaigns + news in one rotating slot ────── */}
         {spotlightItems.length > 0 && (
