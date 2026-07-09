@@ -60,6 +60,7 @@ const NAV_SECTIONS: NavSection[] = [
           { href: '/trials',                label: 'Trials'            },
           { href: '/pathway',               label: 'Player Pathway'    },
           { href: '/membership-calculator', label: 'Calculate Fees'    },
+          { href: '/pay-fees',              label: 'Pay Membership & Fees' },
         ],
       },
       {
@@ -138,6 +139,7 @@ const MOBILE_NAV_SECTIONS: MobileNavSection[] = [
       { href: '/trials',                label: 'Trials'            },
       { href: '/pathway',               label: 'Player Pathway'    },
       { href: '/membership-calculator', label: 'Calculate Fees'    },
+      { href: '/pay-fees',              label: 'Pay Membership & Fees' },
       { href: '/community',             label: 'Community Football'},
       { href: '/football-for-all',      label: 'Football For All'  },
       { href: '/walking-football',      label: 'Walking Football'  },
@@ -177,6 +179,7 @@ function isNavActive(label: string, pathname: string): boolean {
                                pathname === '/trials' ||
                                pathname === '/pathway' ||
                                pathname === '/membership-calculator' ||
+                               pathname === '/pay-fees' ||
                                pathname === '/community' ||
                                pathname === '/football-for-all' ||
                                pathname === '/walking-football' ||
@@ -206,6 +209,7 @@ function isMobileSectionActive(section: MobileNavSection, pathname: string): boo
   if (section.label === 'Join') {
     return pathname === '/register' || pathname === '/trials' ||
            pathname === '/pathway' || pathname === '/membership-calculator' ||
+           pathname === '/pay-fees' ||
            pathname === '/community' || pathname === '/football-for-all' ||
            pathname === '/walking-football' || pathname === '/ladies-football';
   }

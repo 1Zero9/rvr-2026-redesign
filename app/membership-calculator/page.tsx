@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
 import PublicPageShell from '@/components/layout/PublicPageShell';
 import PageHeroNavy from '@/components/layout/PageHeroNavy';
 
@@ -321,9 +322,16 @@ export default function MembershipCalculatorPage() {
                 </p>
               ) : (
                 <p className="border-2 border-brand-navy bg-brand-cream p-4 text-center text-sm font-bold text-brand-navy">
-                  This calculator provides an estimate. Online membership payment is not currently available — register via the club system.
+                  This calculator provides an estimate — pay your membership securely through the club payment portal.
                 </p>
               )}
+
+              <Link
+                href="/pay-fees"
+                className="btn-brutalist-neon flex min-h-12 w-full items-center justify-center px-5 py-3 text-sm"
+              >
+                Pay Membership &amp; Fees →
+              </Link>
             </div>
 
             <div className="mt-6 p-4 border-2 border-dashed border-zinc-300 rounded-xl bg-white space-y-2 text-xs">

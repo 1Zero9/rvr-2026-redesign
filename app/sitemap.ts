@@ -46,6 +46,7 @@ const routes: RouteConfig[] = [
 
   // ── Tools ───────────────────────────────────────────────────────────────────
   { path: '/membership-calculator',    changeFrequency: 'monthly', priority: 0.6 },
+  { path: '/pay-fees',                 changeFrequency: 'monthly', priority: 0.6 },
   { path: '/astro-booking',            changeFrequency: 'monthly', priority: 0.6 },
   { path: '/boot-room',                changeFrequency: 'monthly', priority: 0.5 },
   { path: '/shop',                     changeFrequency: 'monthly', priority: 0.5 },
