@@ -1,6 +1,6 @@
 "use client";
 
-import { ExternalLink, LockKeyhole, ShieldCheck, X } from "lucide-react";
+import { ExternalLink, LockKeyhole, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import {
   PaymentTarget,
@@ -107,35 +107,40 @@ export default function ClubZapCheckoutModal({
         </h2>
       </div>
 
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {products.map((product) => (
-          <article
-            key={product.id}
-            className="flex min-h-64 flex-col justify-between rounded-2xl border-4 border-brand-charcoal bg-white p-6 shadow-brutalist-charcoal-lg transition hover:-translate-y-0.5 hover:shadow-[8px_8px_0_#121212]"
-          >
-            <div>
-              <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl border-3 border-brand-charcoal bg-brand-neon shadow-[3px_3px_0_#121212]">
-                <LockKeyhole className="h-6 w-6 text-brand-charcoal" />
-              </div>
-              <h3 className="font-display text-2xl font-black uppercase leading-tight text-brand-charcoal">
-                {product.title}
-              </h3>
-              <p className="mt-4 text-base font-semibold leading-relaxed text-zinc-700">
-                {product.description}
-              </p>
-            </div>
-
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 items-stretch">
+        {products.map((product, index) => {
+          const isDark = index % 2 === 0;
+          return (
             <button
+              key={product.id}
               type="button"
               onClick={() => setSelectedProduct(product)}
-              className="btn-brutalist-neon mt-6 inline-flex min-h-12 w-full items-center justify-center gap-2 px-5 py-3 text-sm"
               aria-label={`Open secure checkout for ${product.title}`}
+              className={`group flex w-full flex-col items-center p-6 text-center transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none ${
+                isDark
+                  ? 'border-3 border-brand-charcoal bg-brand-navy shadow-brutalist hover:bg-brand-charcoal'
+                  : 'border-2 border-brand-navy/25 bg-white shadow-brutalist hover:border-brand-navy/60 hover:bg-brand-navy/3'
+              }`}
             >
-              <ShieldCheck className="h-5 w-5" />
-              {product.ctaLabel}
+              <LockKeyhole
+                className={`mb-3 h-8 w-8 transition-colors ${
+                  isDark ? 'text-brand-neon' : 'text-brand-navy/60 group-hover:text-brand-navy'
+                }`}
+                aria-hidden="true"
+              />
+              <h3 className={`font-display font-black italic text-xl uppercase leading-tight mb-2 transition-colors ${
+                isDark ? 'text-white' : 'text-brand-navy/70 group-hover:text-brand-navy'
+              }`}>
+                {product.title}
+              </h3>
+              <p className={`text-sm leading-relaxed transition-colors ${
+                isDark ? 'text-brand-sky/80' : 'text-zinc-400 group-hover:text-zinc-600'
+              }`}>
+                {product.description}
+              </p>
             </button>
-          </article>
-        ))}
+          );
+        })}
       </div>
 
       {selectedProduct && (

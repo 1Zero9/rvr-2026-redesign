@@ -35,7 +35,7 @@ const securityHeaders = [
       "img-src 'self' data: blob: https://images.unsplash.com https://rivervalleyrangers.ie https://*.public.blob.vercel-storage.com",
       "font-src 'self' data:",
       "connect-src 'self' https://api.stripe.com https://hooks.stripe.com https://api.sportlomo.com https://widgets.sportlomo.com https://ddsl.ie https://blob.vercel-storage.com https://*.public.blob.vercel-storage.com https://vercel.com",
-      "frame-src https://js.stripe.com https://hooks.stripe.com https://docs.google.com",
+      "frame-src https://js.stripe.com https://hooks.stripe.com https://docs.google.com https://rvrafc.ie",
       "form-action 'self'",
       "frame-ancestors 'none'",
       "base-uri 'self'",
