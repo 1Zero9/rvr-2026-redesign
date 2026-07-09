@@ -250,8 +250,10 @@ export default function ImageCropper({
         </button>
       </div>
 
-      {/* Crop stage — shows the whole photo; the box below marks what's kept */}
-      <div ref={stageRef} className="relative flex-1 min-h-0 mx-4 my-2">
+      {/* Crop stage — shows the whole photo; the box below marks what's kept.
+          overflow-hidden guarantees the mask always reaches the stage edges,
+          even if a layout race briefly sizes the image taller than `fit`. */}
+      <div ref={stageRef} className="relative flex-1 min-h-0 mx-4 my-2 overflow-hidden">
         {src && (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -270,6 +272,7 @@ export default function ImageCropper({
                     left: fit.left + fit.dispW / 2,
                     top: fit.top + fit.dispH / 2,
                     width: imgSize.w * displayScale,
+                    height: imgSize.h * displayScale,
                     transform: `translate(-50%, -50%) rotate(${rotation}deg)`,
                   }
                 : { left: 0, top: 0, opacity: 0, pointerEvents: 'none' }
