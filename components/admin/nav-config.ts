@@ -4,6 +4,7 @@ import {
   Camera,
   ClipboardList,
   Cog,
+  Euro,
   Images,
   Megaphone,
   MessageSquare,
@@ -41,6 +42,7 @@ export const SUPER_NAV: AdminNavItem[] = [
   { href: '/competitions/admin/users', label: 'Users',    icon: Users,    description: 'Admin accounts and role assignments.' },
   { href: '/admin/features',           label: 'Features', icon: Cog,      description: 'Toggle site features and platform configuration.' },
   { href: '/admin/docs',               label: 'Docs',     icon: BookOpen, description: 'Changelog, setup guide, and reference material.' },
+  { href: '/admin/invoice',            label: 'Invoice',  icon: Euro,     description: 'Private dev-work pricing log — not shown on the public site.' },
 ];
 
 export const ROLE_LABELS: Record<string, string> = {

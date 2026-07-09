@@ -9,3 +9,11 @@ export async function requireAdmin(): Promise<void> {
     redirect('/admin/login');
   }
 }
+
+export async function requireSuperAdmin(): Promise<void> {
+  const session = await auth();
+  const role = (session?.user as { globalRole?: string | null } | undefined)?.globalRole;
+  if (role !== GlobalRole.SUPER_ADMIN) {
+    redirect(role ? '/admin' : '/admin/login');
+  }
+}
