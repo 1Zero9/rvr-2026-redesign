@@ -38,6 +38,13 @@ export default async function CompetitionDashboardPage({
   return (
     <CompetitionAdminShell nav={nav}>
       <div className="space-y-6">
+        {competition.isDemo && (
+          <div className="border-3 border-brand-maroon bg-brand-maroon/10 px-4 py-3">
+            <p className="text-sm font-bold text-brand-maroon uppercase tracking-wide">
+              Demo competition — seeded test data, not a real event
+            </p>
+          </div>
+        )}
         <div className="flex items-start justify-between gap-4">
           <div>
             <p className="font-mono text-xs uppercase tracking-widest text-zinc-400 mb-1">

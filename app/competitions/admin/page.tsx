@@ -1,6 +1,11 @@
 import Link from "next/link";
+import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
-import { requireCompetitionSession, getAccessibleCompetitionIds } from "@/lib/competitions/auth-helpers";
+import {
+  requireCompetitionSession,
+  requireSuperAdmin,
+  getAccessibleCompetitionIds,
+} from "@/lib/competitions/auth-helpers";
 import { CompetitionAdminShell } from "@/components/competitions/CompetitionAdminShell";
 import { CompetitionCard } from "@/components/competitions/CompetitionCard";
 import { GlobalRole } from "@prisma/client";
@@ -22,10 +27,19 @@ export default async function CompetitionsAdminPage() {
       type: true,
       ageGroup: true,
       dates: true,
+      isDemo: true,
     },
   });
 
   const isSuperAdmin = user.globalRole === GlobalRole.SUPER_ADMIN;
+
+  async function deleteCompetition(formData: FormData) {
+    "use server";
+    await requireSuperAdmin();
+    const id = formData.get("id") as string;
+    await prisma.competition.delete({ where: { id } });
+    revalidatePath("/competitions/admin");
+  }
 
   const dashboardNav = isSuperAdmin
     ? [
@@ -66,6 +80,7 @@ export default async function CompetitionsAdminPage() {
                 key={c.id}
                 competition={c}
                 href={`/competitions/admin/${c.id}`}
+                onDelete={isSuperAdmin ? deleteCompetition : undefined}
               />
             ))}
           </div>

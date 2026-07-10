@@ -53,6 +53,11 @@ export default async function CompetitionPublicPage({
   if (competition.state === CompetitionState.READY) {
     return (
       <div className="min-h-screen bg-brand-navy flex flex-col items-center justify-center px-4 text-center">
+        {competition.isDemo && (
+          <span className="mb-4 inline-block bg-brand-maroon text-white text-xs font-black uppercase tracking-wider px-3 py-1">
+            Demo competition
+          </span>
+        )}
         <h1 className="font-display font-black italic text-5xl text-brand-neon uppercase mb-4">
           {competition.name}
         </h1>
@@ -84,6 +89,11 @@ export default async function CompetitionPublicPage({
 
   return (
     <div className="min-h-screen bg-brand-cream">
+      {competition.isDemo && (
+        <div className="bg-brand-maroon text-white text-center text-xs font-black uppercase tracking-wider py-2 px-4">
+          Demo competition — seeded test data, not a real event
+        </div>
+      )}
       {/* Hero */}
       <div className="bg-brand-navy py-8 px-4 border-b-3 border-brand-charcoal">
         <div className="max-w-4xl mx-auto">

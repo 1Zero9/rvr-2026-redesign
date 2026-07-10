@@ -934,6 +934,9 @@ model Competition {
   dataNoticeAcknowledgedAt DateTime?
   isPublic                 Boolean                 @default(false)
   publicSlug               String?                 @unique
+  /// Seeded test data — never real fixtures. Shown with a DEMO badge/banner
+  /// everywhere the competition appears, and eligible for one-click delete.
+  isDemo                   Boolean                 @default(false)
   venues                   CompetitionVenue[]
   teams                    CompetitionTeam[]
   playerPool               PlayerPoolEntry[]
@@ -945,6 +948,7 @@ model Competition {
   updatedAt                DateTime                @updatedAt
 
   @@index([state])
+  @@index([isDemo])
 }
 
 model CompetitionVenue {
