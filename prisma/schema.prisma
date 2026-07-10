@@ -1054,6 +1054,9 @@ model CompetitionAssignment {
 model InvoiceLineItem {
   id         String    @id @default(cuid())
   title      String
+  /// Free-text grouping label, e.g. "New Page", "Admin Portal", "New
+  /// Feature", "Design" — shown as a collapsible section in the admin view.
+  category   String    @default("New Feature")
   notes      String?
   /// Null until priced in admin — seeded rows start blank.
   priceCents Int?
@@ -1063,4 +1066,5 @@ model InvoiceLineItem {
   updatedAt  DateTime  @updatedAt
 
   @@index([workDate])
+  @@index([category])
 }
