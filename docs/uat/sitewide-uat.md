@@ -34,15 +34,15 @@ when the checklist or final sign-off state changes.
 | Area | Routes / Journeys | Status | Owner Notes |
 | --- | --- | --- | --- |
 | Homepage and global shell | `/`, header nav, mobile nav, search, footer | In progress | Claude pass complete on nav/footer/search: 1 fix (UAT-005). Footer and search overlay reviewed, no other bugs. |
-| Club and community pages | `/club`, `/club/history`, `/club/anniversary`, `/community`, `/sponsorship`, `/accessibility`, `/privacy` | Not started |  |
-| Programmes | `/academy`, `/football-for-all`, `/walking-football`, `/ladies-football`, `/trials`, `/pathway`, `/get-involved` | Not started |  |
-| Teams and seniors | `/teams`, `/teams/[slug]`, `/club-teams`, `/club-teams/[slug]`, `/seniors`, senior subpages, over-35s pages | Not started |  |
-| Fixtures and matchday | `/fixtures`, `/matchday`, `/pitch-locations` | Not started |  |
-| News and campaigns | `/news`, `/news/[id]`, `/campaigns`, campaign detail pages | Not started |  |
+| Club and community pages | `/club`, `/club/history`, `/club/anniversary`, `/community`, `/sponsorship`, `/accessibility`, `/privacy` | In progress | Claude pass: no bugs found. |
+| Programmes | `/academy`, `/football-for-all`, `/walking-football`, `/ladies-football`, `/trials`, `/pathway`, `/get-involved` | In progress | Claude pass: no bugs found. |
+| Teams and seniors | `/teams`, `/teams/[slug]`, `/club-teams`, `/club-teams/[slug]`, `/seniors`, senior subpages, over-35s pages | In progress | Claude pass: 1 fix (UAT-009, wrong backlink on club-teams detail pages). |
+| Fixtures and matchday | `/fixtures`, `/matchday`, `/pitch-locations` | In progress | Claude pass: no bugs found. |
+| News and campaigns | `/news`, `/news/[id]`, `/campaigns`, campaign detail pages | In progress | Claude pass: no bugs found. |
 | Registration and payments | `/register`, `/pay-fees`, `/membership-calculator`, Stripe/ClubZap handoff paths | In progress | Claude pass complete: 1 fix (UAT-003). No other bugs found; ClubZap iframes to `rvrafc.ie` confirmed intentional (migration in flight). |
 | Contact and enquiry forms | `/contact`, `/club/refereeing`, `/boot-room`, campaign forms | In progress | Claude pass complete: 1 P1 fix (UAT-004). Codex's UAT-002 label fix reviewed and confirmed correct. |
-| Competitions public | `/competitions/[slug]`, `/competitions/login` | Not started |  |
-| Competitions admin | `/competitions/admin` and nested admin routes | Not started |  |
+| Competitions public | `/competitions/[slug]`, `/competitions/login` | In progress | Claude pass: no bugs found. |
+| Competitions admin | `/competitions/admin` and nested admin routes | In progress | Claude pass: 1 P1 fix (UAT-008, missing auth check on state-transition action). |
 | Site admin | `/admin`, noticeboard, hero media, campaigns, announcements, registrations, approvals | In progress | Claude pass complete: no bugs found. Verified `proxy.ts` + `app/admin/layout.tsx` two-layer auth gate (cookie presence at the edge, role check in layout) protects every nested route even where a page/action's own `requireAdmin()` looks like the only guard. |
 | API health and integrations | `/api/health`, fixtures, DDSL, membership calculation, contact/enquiry APIs | In progress | `/api/health` OK; feature flags OK. Membership calculation currently 503 because online payments are feature-disabled. |
 | Responsive and accessibility | 390px mobile, tablet, desktop, keyboard, reduced motion, contrast | In progress | Initial 390px and 1440px route sweep found no horizontal overflow. Claude pass: 2 fixes (UAT-006, UAT-007). `Hero.tsx` reduced-motion handling (video, carousel, pixelate reveal, zoom animation) verified correct. |
@@ -201,6 +201,50 @@ layout's link already covers every route (including ones that don't use
 Validation: typecheck passes.
 
 Status: Fixed by Claude, commit `1537700`.
+
+### UAT-008 — P1 — Competition state transitions could be triggered by a non-super-admin
+
+`app/competitions/admin/[id]/page.tsx`'s `StateButton` component renders an
+inline server action that calls `prisma.competition.update` to advance a
+competition's state (`DRAFT` → `READY` → `LIVE` → `COMPLETE` → `ARCHIVED`).
+The button itself was only rendered when `isSuperAdmin` was true, but that
+check is client/render-side only — the server action closure had no
+authorization check of its own. The page only requires
+`requireEventAdmin(id)`, which also passes for a `CompetitionAssignment`
+with role `EVENT_ADMIN` or `PITCH_ADMIN` (not just `SUPER_ADMIN`). So a
+competition-scoped `EVENT_ADMIN`/`PITCH_ADMIN` — a real, lower-privilege
+admin tier used in this codebase — could invoke the action directly and
+transition a competition's state, an operation clearly intended to be
+`SUPER_ADMIN`-only per the existing pattern in `deleteCompetition`
+(`app/competitions/admin/page.tsx`), which does call `requireSuperAdmin()`.
+
+Impact: an authenticated event/pitch admin for a competition could force it
+`LIVE` or `ARCHIVED` early, bypassing the intended sign-off gate on a
+public-facing competition's lifecycle.
+
+Fix: added `await requireSuperAdmin();` as the first line of the action
+closure, matching `deleteCompetition`'s existing pattern.
+
+Validation: typecheck passes.
+
+Status: Fixed by Claude, commit `279daa3`.
+
+### UAT-009 — P2 — Club Teams detail page "All Teams" backlink points to the wrong listing
+
+`app/club-teams/[slug]/page.tsx`'s "← All Teams" back link pointed to
+`/teams` (the DDSL youth boys/girls fixtures listing) instead of
+`/club-teams` (the "Full Club" listing — academy/adult/community/inclusive/
+events — that this detail page actually belongs to and was reached from).
+
+Impact: visiting any club team's detail page and clicking "All Teams" sends
+the user to an unrelated team listing instead of back to where they came
+from.
+
+Fix: changed the link's `href` to `/club-teams`.
+
+Validation: typecheck passes.
+
+Status: Fixed by Claude, commit `279daa3`.
 
 ## Sign-off
 
