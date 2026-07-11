@@ -146,7 +146,7 @@ export default async function HeroMediaAdminPage() {
                       type="submit"
                       disabled={index === 0}
                       aria-label="Move up"
-                      className="flex min-h-[38px] min-w-[38px] items-center justify-center border-2 border-brand-navy text-brand-navy hover:bg-brand-navy hover:text-brand-cream transition-all disabled:opacity-30 disabled:pointer-events-none"
+                      className="flex min-h-[44px] min-w-[44px] items-center justify-center border-2 border-brand-navy text-brand-navy hover:bg-brand-navy hover:text-brand-cream transition-all disabled:opacity-30 disabled:pointer-events-none"
                     >
                       <ArrowUp className="h-4 w-4" aria-hidden="true" />
                     </button>
@@ -158,7 +158,7 @@ export default async function HeroMediaAdminPage() {
                       type="submit"
                       disabled={index === items.length - 1}
                       aria-label="Move down"
-                      className="flex min-h-[38px] min-w-[38px] items-center justify-center border-2 border-brand-navy text-brand-navy hover:bg-brand-navy hover:text-brand-cream transition-all disabled:opacity-30 disabled:pointer-events-none"
+                      className="flex min-h-[44px] min-w-[44px] items-center justify-center border-2 border-brand-navy text-brand-navy hover:bg-brand-navy hover:text-brand-cream transition-all disabled:opacity-30 disabled:pointer-events-none"
                     >
                       <ArrowDown className="h-4 w-4" aria-hidden="true" />
                     </button>
