@@ -73,6 +73,23 @@ Actual examples:
 
 Status: Open for Claude/Codex review.
 
+### UAT-002 — P2 — Contact form fields used placeholders as accessible names
+
+The compact public `ContactForm` instances on `/contact` and
+`/football-for-all` displayed visible placeholder text but had no label,
+`aria-label`, or `aria-labelledby` for the name, email, and message fields.
+
+Impact: screen reader and voice-control users could encounter unnamed required
+fields, especially on the three separate contact cards on `/contact`.
+
+Fix: added programmatic labels and form `name` attributes in
+`components/ContactForm.tsx` while preserving the current visual layout.
+
+Validation: typecheck passes; browser accessibility spot check reports zero
+unlabeled visible controls on `/contact` and `/football-for-all`.
+
+Status: Fixed by Codex; awaiting Claude review.
+
 ## Sign-off
 
 - Codex: Pending

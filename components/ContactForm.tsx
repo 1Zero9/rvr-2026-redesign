@@ -61,6 +61,8 @@ export default function ContactForm({
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-2.5 mt-3" noValidate>
       <input
+        aria-label="Your name"
+        name="name"
         type="text"
         placeholder="Your name"
         value={name}
@@ -70,6 +72,8 @@ export default function ContactForm({
         className="w-full border border-zinc-200 px-3 py-2.5 text-sm text-brand-charcoal placeholder:text-zinc-400 focus:border-brand-navy focus:outline-none"
       />
       <input
+        aria-label="Your email address"
+        name="email"
         type="email"
         placeholder="Your email address"
         value={email}
@@ -78,6 +82,8 @@ export default function ContactForm({
         className="w-full border border-zinc-200 px-3 py-2.5 text-sm text-brand-charcoal placeholder:text-zinc-400 focus:border-brand-navy focus:outline-none"
       />
       <textarea
+        aria-label={messagePlaceholder}
+        name="message"
         placeholder={messagePlaceholder}
         value={message}
         onChange={(e) => setMessage(e.target.value)}
