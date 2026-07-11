@@ -168,6 +168,7 @@ export default function ImageUploadField({
     if (!file) return;
     setErrorMsg('');
     setStatus('idle');
+    setSuppressInherited(false);
     pendingName.current = file.name;
     setPendingFile(file);
   }

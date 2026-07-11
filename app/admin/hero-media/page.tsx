@@ -27,7 +27,7 @@ export default async function HeroMediaAdminPage() {
   await requireAdmin();
 
   const [items, rotation] = await Promise.all([
-    prisma.heroMedia.findMany({ orderBy: { sortOrder: 'asc' } }),
+    prisma.heroMedia.findMany({ orderBy: [{ sortOrder: 'asc' }, { id: 'asc' }] }),
     getHeroRotationSettings(),
   ]);
   const enabledCount = items.filter((i) => i.isEnabled).length;
@@ -49,16 +49,23 @@ export default async function HeroMediaAdminPage() {
     const { prisma: db } = await import('@/lib/prisma');
     const id = formData.get('id') as string;
     const direction = formData.get('direction') as 'up' | 'down';
-    const ordered = await db.heroMedia.findMany({ orderBy: { sortOrder: 'asc' }, select: { id: true, sortOrder: true } });
+    const ordered = await db.heroMedia.findMany({
+      orderBy: [{ sortOrder: 'asc' }, { id: 'asc' }],
+      select: { id: true },
+    });
     const index = ordered.findIndex((i) => i.id === id);
     const swapIndex = direction === 'up' ? index - 1 : index + 1;
     if (index === -1 || swapIndex < 0 || swapIndex >= ordered.length) return;
-    const current = ordered[index];
-    const swapWith = ordered[swapIndex];
-    await db.$transaction([
-      db.heroMedia.update({ where: { id: current.id }, data: { sortOrder: swapWith.sortOrder } }),
-      db.heroMedia.update({ where: { id: swapWith.id }, data: { sortOrder: current.sortOrder } }),
-    ]);
+    // Reindex everyone to sequential values on every move — cheap at this scale, and it
+    // permanently clears any duplicate/legacy sortOrder ties instead of silently no-op'ing on them.
+    const reindexed = ordered.map((item, i) => ({ id: item.id, sortOrder: i }));
+    [reindexed[index].sortOrder, reindexed[swapIndex].sortOrder] = [
+      reindexed[swapIndex].sortOrder,
+      reindexed[index].sortOrder,
+    ];
+    await db.$transaction(
+      reindexed.map((item) => db.heroMedia.update({ where: { id: item.id }, data: { sortOrder: item.sortOrder } }))
+    );
     revalidatePath('/');
     revalidatePath('/admin/hero-media');
   }
