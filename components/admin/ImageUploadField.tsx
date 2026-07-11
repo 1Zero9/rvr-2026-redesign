@@ -79,7 +79,6 @@ export default function ImageUploadField({
   showPreview = false,
   cropAspects = DEFAULT_ASPECTS,
   initialAspect = 16 / 9,
-  onWatermarkChange,
 }: {
   id: string;
   name: string;
@@ -91,8 +90,6 @@ export default function ImageUploadField({
   showPreview?: boolean;
   cropAspects?: AspectOption[];
   initialAspect?: number | null;
-  /** Fires whenever the watermark toggle or corner changes — lets a parent mirror it into a live preview. */
-  onWatermarkChange?: (watermark: boolean, position: WatermarkPosition) => void;
 }) {
   const [status, setStatus] = useState<'idle' | 'uploading' | 'error'>('idle');
   const [progress, setProgress] = useState(0);
@@ -164,10 +161,7 @@ export default function ImageUploadField({
       if (!blob.type.startsWith('image/')) throw new Error();
       pendingName.current = url.split('/').pop()?.split('?')[0] || 'photo.jpg';
       // Club uploads were already watermarked on the way in — avoid double-stamping
-      if (url.includes('blob.vercel-storage.com')) {
-        setWatermark(false);
-        onWatermarkChange?.(false, watermarkPosition);
-      }
+      if (url.includes('blob.vercel-storage.com')) setWatermark(false);
       setPendingFile(blob);
     } catch {
       setStatus('error');
@@ -243,11 +237,7 @@ export default function ImageUploadField({
         <input
           type="checkbox"
           checked={watermark}
-          onChange={(e) => {
-            const next = e.target.checked;
-            setWatermark(next);
-            onWatermarkChange?.(next, watermarkPosition);
-          }}
+          onChange={(e) => setWatermark(e.target.checked)}
           className="w-4 h-4 accent-brand-neon"
         />
         Add club watermark <span className="text-brand-charcoal/45">(untick for posters/graphics — photos of players should keep it)</span>
@@ -263,10 +253,7 @@ export default function ImageUploadField({
               <button
                 key={pos.value}
                 type="button"
-                onClick={() => {
-                  setWatermarkPosition(pos.value);
-                  onWatermarkChange?.(watermark, pos.value);
-                }}
+                onClick={() => setWatermarkPosition(pos.value)}
                 aria-pressed={watermarkPosition === pos.value}
                 className={`min-h-[44px] min-w-[44px] px-3 border-2 text-[10px] font-bold uppercase transition-colors ${
                   watermarkPosition === pos.value
@@ -277,6 +264,19 @@ export default function ImageUploadField({
                 {pos.label}
               </button>
             ))}
+          </div>
+          <div
+            className="relative mt-2 h-16 w-16 shrink-0 overflow-hidden border-2 border-brand-charcoal/20 bg-brand-navy"
+            aria-hidden="true"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={WATERMARK_SRC}
+              alt=""
+              className={`absolute h-5 w-5 object-contain opacity-80 ${
+                watermarkPosition.startsWith('top') ? 'top-1.5' : 'bottom-1.5'
+              } ${watermarkPosition.endsWith('left') ? 'left-1.5' : 'right-1.5'}`}
+            />
           </div>
         </div>
       )}

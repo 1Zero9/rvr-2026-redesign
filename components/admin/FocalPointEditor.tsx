@@ -3,23 +3,8 @@
 import { useRef, useState } from 'react';
 import { Smartphone, X } from 'lucide-react';
 import { upload } from '@vercel/blob/client';
-import { processImage, WATERMARK_SRC, type WatermarkPosition } from '@/components/admin/ImageUploadField';
+import { processImage } from '@/components/admin/ImageUploadField';
 import ImageCropper from '@/components/admin/ImageCropper';
-
-/** Mirrors the corner math in processImage() so the live preview matches the real export. */
-function watermarkBadgeStyle(position: WatermarkPosition): React.CSSProperties {
-  return {
-    position: 'absolute',
-    width: '12%',
-    aspectRatio: 1,
-    opacity: 0.55,
-    pointerEvents: 'none',
-    top: position.startsWith('top') ? '4%' : undefined,
-    bottom: position.startsWith('bottom') ? '4%' : undefined,
-    left: position.endsWith('left') ? '4%' : undefined,
-    right: position.endsWith('right') ? '4%' : undefined,
-  };
-}
 
 export default function FocalPointEditor({
   heroUrl,
@@ -31,8 +16,6 @@ export default function FocalPointEditor({
   mobileUploadPath = 'campaigns/mobile-portrait.jpg',
   desktopAspect = 21 / 9,
   desktopAspectLabel = '21:9',
-  watermark = false,
-  watermarkPosition = 'bottom-right',
 }: {
   heroUrl: string;
   mobileUrl: string;
@@ -46,9 +29,6 @@ export default function FocalPointEditor({
   /** Aspect ratio of the "desktop card crop" preview, to match the real placement */
   desktopAspect?: number;
   desktopAspectLabel?: string;
-  /** Mirrors the Photo field's watermark toggle — shows a live preview badge, doesn't affect the saved image */
-  watermark?: boolean;
-  watermarkPosition?: WatermarkPosition;
 }) {
   const objectPosition = `${focalX}% ${focalY}%`;
   const [dragging, setDragging] = useState(false);
@@ -153,10 +133,6 @@ export default function FocalPointEditor({
               className="pointer-events-none absolute h-9 w-9 -translate-x-1/2 -translate-y-1/2 rounded-full border-[3px] border-brand-neon shadow-[0_0_0_2px_rgba(0,0,0,0.6)] bg-brand-neon/15"
               style={{ left: `${focalX}%`, top: `${focalY}%` }}
             />
-            {watermark && (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={WATERMARK_SRC} alt="" style={watermarkBadgeStyle(watermarkPosition)} />
-            )}
           </div>
         </div>
 
@@ -165,13 +141,9 @@ export default function FocalPointEditor({
             <p className="text-[10px] font-black uppercase tracking-widest text-brand-green mb-1.5">
               Desktop crop ({desktopAspectLabel})
             </p>
-            <div className="relative overflow-hidden border-2 border-brand-charcoal/20" style={{ aspectRatio: desktopAspect }}>
+            <div className="overflow-hidden border-2 border-brand-charcoal/20" style={{ aspectRatio: desktopAspect }}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={heroUrl} alt="" className="h-full w-full object-cover" style={{ objectPosition }} />
-              {watermark && (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={WATERMARK_SRC} alt="" style={watermarkBadgeStyle(watermarkPosition)} />
-              )}
             </div>
           </div>
           <div className="flex gap-3">
