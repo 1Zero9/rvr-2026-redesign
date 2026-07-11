@@ -39,8 +39,8 @@ when the checklist or final sign-off state changes.
 | Teams and seniors | `/teams`, `/teams/[slug]`, `/club-teams`, `/club-teams/[slug]`, `/seniors`, senior subpages, over-35s pages | Not started |  |
 | Fixtures and matchday | `/fixtures`, `/matchday`, `/pitch-locations` | Not started |  |
 | News and campaigns | `/news`, `/news/[id]`, `/campaigns`, campaign detail pages | Not started |  |
-| Registration and payments | `/register`, `/pay-fees`, `/membership-calculator`, Stripe/ClubZap handoff paths | Not started |  |
-| Contact and enquiry forms | `/contact`, `/club/refereeing`, `/boot-room`, campaign forms | Not started |  |
+| Registration and payments | `/register`, `/pay-fees`, `/membership-calculator`, Stripe/ClubZap handoff paths | In progress | Claude pass complete: 1 fix (UAT-003). No other bugs found; ClubZap iframes to `rvrafc.ie` confirmed intentional (migration in flight). |
+| Contact and enquiry forms | `/contact`, `/club/refereeing`, `/boot-room`, campaign forms | In progress | Claude pass complete: 1 P1 fix (UAT-004). Codex's UAT-002 label fix reviewed and confirmed correct. |
 | Competitions public | `/competitions/[slug]`, `/competitions/login` | Not started |  |
 | Competitions admin | `/competitions/admin` and nested admin routes | Not started |  |
 | Site admin | `/admin`, noticeboard, hero media, campaigns, announcements, registrations, approvals | Not started |  |
@@ -88,7 +88,48 @@ Fix: added programmatic labels and form `name` attributes in
 Validation: typecheck passes; browser accessibility spot check reports zero
 unlabeled visible controls on `/contact` and `/football-for-all`.
 
-Status: Fixed by Codex; awaiting Claude review.
+Status: Fixed by Codex; reviewed and confirmed correct by Claude.
+
+### UAT-003 — P2 — Membership calculator sibling discount matched by name, not id
+
+`app/membership-calculator/page.tsx` looked up each family member's computed
+sibling-discount price from `siblingLines` by matching `member.name`. Two
+family members sharing the same display name (default names are unique, but
+a parent can rename both to the same text, e.g. twins) would both render
+whichever entry matched first — the wrong price/discount shown right before
+the user goes to `/pay-fees`.
+
+Fix: match `siblingLines` entries by `member.id` (unique, stable across
+add/remove) instead of `name`, in both the family-builder list and the cost
+summary panel.
+
+Validation: typecheck passes; unique-name case (the common path) is
+byte-for-byte unchanged.
+
+Status: Fixed by Claude, commit `9cefa03`.
+
+### UAT-004 — P1 — Two enquiry forms always fail Turnstile bot check in production
+
+`RefInterestForm` (`/club/refereeing`) and the "Request a Friendly Call Back"
+form (`/football-for-all`) both POST to `/api/enquiries`, which calls
+`verifyTurnstile(body.turnstileToken, ip)`. That function returns `false`
+whenever the token is empty, once `TURNSTILE_SECRET_KEY` is configured
+(i.e. in production). Neither form ever rendered a `TurnstileWidget` or sent
+a `turnstileToken`, so every real submission would receive a 403 "Bot check
+failed" error — both conversion journeys were silently broken end-to-end in
+production, while working in local/dev (where the check bypasses without a
+secret key configured).
+
+Impact: prospective referees and Football For All families requesting a
+callback could never successfully submit either form once deployed.
+
+Fix: wired both forms up the same way `ContactForm`/`PublicEnquiryForm`
+already do — added `TurnstileWidget`, tracked the token in state, and
+included `turnstileToken` in the POST body.
+
+Validation: typecheck passes.
+
+Status: Fixed by Claude, commit `0e2801e`.
 
 ## Sign-off
 
