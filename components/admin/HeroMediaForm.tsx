@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import ImageUploadField from '@/components/admin/ImageUploadField';
+import ImageUploadField, { type WatermarkPosition } from '@/components/admin/ImageUploadField';
 import FocalPointEditor from '@/components/admin/FocalPointEditor';
 import { ImageIcon, Video } from 'lucide-react';
 
@@ -39,6 +39,8 @@ export default function HeroMediaForm({
   const [focalX, setFocalX] = useState(data?.focalX ?? 50);
   const [focalY, setFocalY] = useState(data?.focalY ?? 50);
   const [motionEffect, setMotionEffect] = useState(data?.motionEffect ?? 'NONE');
+  const [watermark, setWatermark] = useState(true);
+  const [watermarkPosition, setWatermarkPosition] = useState<WatermarkPosition>('bottom-right');
 
   const isImage = type === 'IMAGE';
   const focalSourceUrl = isImage ? imageUrl : posterUrl;
@@ -94,16 +96,19 @@ export default function HeroMediaForm({
                 url={imageUrl}
                 onUrlChange={setImageUrl}
                 pathPrefix="hero-media"
+                onWatermarkChange={(w, p) => { setWatermark(w); setWatermarkPosition(p); }}
               />
               <ImageUploadField
                 id="mobileImageUrl"
                 name="mobileImageUrl"
                 label="Mobile Photo"
-                hint="optional — portrait crop"
+                hint="portrait crop, so phones don't just get the middle of the wide photo"
                 url={mobileUrl}
                 onUrlChange={setMobileUrl}
                 pathPrefix="hero-media"
                 initialAspect={4 / 5}
+                watermarkFrom={{ watermark, position: watermarkPosition }}
+                required={Boolean(imageUrl)}
               />
             </div>
           </div>
@@ -177,17 +182,16 @@ export default function HeroMediaForm({
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label htmlFor="sortOrder" className={LABEL}>Order <span className="font-normal text-brand-charcoal/50">(lower numbers first — doesn&rsquo;t affect the random pick)</span></label>
-            <input id="sortOrder" name="sortOrder" type="number" defaultValue={data?.sortOrder ?? 0} className={INPUT} />
-          </div>
-          <div className="flex items-end pb-2">
-            <label className="flex items-center gap-2 cursor-pointer min-h-[44px]">
-              <input name="isEnabled" type="checkbox" defaultChecked={data?.isEnabled ?? true} className="w-5 h-5 accent-brand-neon" />
-              <span className="text-sm font-bold text-brand-charcoal">In rotation</span>
-            </label>
-          </div>
+        <div>
+          <label className="flex items-center gap-2 cursor-pointer min-h-[44px]">
+            <input name="isEnabled" type="checkbox" defaultChecked={data?.isEnabled ?? true} className="w-5 h-5 accent-brand-neon" />
+            <span className="text-sm font-bold text-brand-charcoal">In rotation</span>
+          </label>
+          {!isEdit && (
+            <p className="mt-1 text-xs text-brand-charcoal/60">
+              New items join the end of the rotation — reorder them from the Hero Rotation list after saving.
+            </p>
+          )}
         </div>
 
         <div className="sticky bottom-0 z-10 -mx-4 px-4 py-3 bg-brand-cream/95 backdrop-blur-sm border-t-2 border-brand-charcoal/10 sm:static sm:mx-0 sm:p-0 sm:bg-transparent sm:border-0 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:pb-0">

@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Megaphone, Newspaper, Wand2 } from 'lucide-react';
-import ImageUploadField from '@/components/admin/ImageUploadField';
+import ImageUploadField, { type WatermarkPosition } from '@/components/admin/ImageUploadField';
 import FocalPointEditor from '@/components/admin/FocalPointEditor';
 import PosterMaker from '@/components/admin/PosterMaker';
 
@@ -304,6 +304,8 @@ export default function NoticeForm({
   const [focalX, setFocalX]         = useState(c?.focalX ?? n?.focalX ?? 50);
   const [focalY, setFocalY]         = useState(c?.focalY ?? n?.focalY ?? 50);
   const [posterOpen, setPosterOpen] = useState(false);
+  const [watermark, setWatermark]           = useState(true);
+  const [watermarkPosition, setWatermarkPosition] = useState<WatermarkPosition>('bottom-right');
 
   const action = type === 'news' ? newsAction : campaignAction;
   const isNews = type === 'news';
@@ -490,16 +492,19 @@ export default function NoticeForm({
                   url={heroUrl}
                   onUrlChange={setHeroUrl}
                   pathPrefix="campaigns"
+                  onWatermarkChange={(w, p) => { setWatermark(w); setWatermarkPosition(p); }}
                 />
                 <ImageUploadField
                   id="mobileImageUrl"
                   name="mobileImageUrl"
                   label="Mobile Image"
-                  hint="optional — portrait crop"
+                  hint="portrait crop, so phones don't just get the middle of the wide photo"
                   url={mobileUrl}
                   onUrlChange={setMobileUrl}
                   pathPrefix="campaigns"
                   initialAspect={4 / 5}
+                  watermarkFrom={{ watermark, position: watermarkPosition }}
+                  required={Boolean(heroUrl)}
                 />
               </div>
               <ImageGuidelines />

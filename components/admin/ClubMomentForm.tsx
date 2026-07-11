@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Wand2 } from 'lucide-react';
-import ImageUploadField from '@/components/admin/ImageUploadField';
+import ImageUploadField, { type WatermarkPosition } from '@/components/admin/ImageUploadField';
 import FocalPointEditor from '@/components/admin/FocalPointEditor';
 import PosterMaker from '@/components/admin/PosterMaker';
 
@@ -32,6 +32,8 @@ export default function ClubMomentForm({
   const [focalX, setFocalX] = useState(data.focalX);
   const [focalY, setFocalY] = useState(data.focalY);
   const [posterOpen, setPosterOpen] = useState(false);
+  const [watermark, setWatermark] = useState(true);
+  const [watermarkPosition, setWatermarkPosition] = useState<WatermarkPosition>('bottom-right');
 
   return (
     <div className="space-y-6">
@@ -64,16 +66,19 @@ export default function ClubMomentForm({
               url={heroUrl}
               onUrlChange={setHeroUrl}
               pathPrefix="club-moment"
+              onWatermarkChange={(w, p) => { setWatermark(w); setWatermarkPosition(p); }}
             />
             <ImageUploadField
               id="mobileImageUrl"
               name="mobileImageUrl"
               label="Mobile Photo"
-              hint="optional — portrait crop"
+              hint="portrait crop, so phones don't just get the middle of the wide photo"
               url={mobileUrl}
               onUrlChange={setMobileUrl}
               pathPrefix="club-moment"
               initialAspect={4 / 5}
+              watermarkFrom={{ watermark, position: watermarkPosition }}
+              required={Boolean(heroUrl)}
             />
           </div>
         </div>
