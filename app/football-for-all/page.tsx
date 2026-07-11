@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import PublicPageShell from '@/components/layout/PublicPageShell';
 import PageHeroNavy from '@/components/layout/PageHeroNavy';
 import ContactForm from '@/components/ContactForm';
+import TurnstileWidget from '@/components/TurnstileWidget';
 import { Activity, CalendarDays, Eye, VolumeX } from 'lucide-react';
 
 interface Testimonial {
@@ -52,6 +53,7 @@ export default function FootballForAllPage() {
   const [callbackPhone, setCallbackPhone] = useState('');
   const [callbackError, setCallbackError] = useState('');
   const [callbackSubmitting, setCallbackSubmitting] = useState(false);
+  const [callbackToken, setCallbackToken] = useState<string | null>(null);
 
   // Proportional font sizing definitions
   const fontSizeClass = 
@@ -82,6 +84,7 @@ export default function FootballForAllPage() {
           type: 'FOOTBALL_FOR_ALL_CALLBACK',
           name: callbackName,
           phone: callbackPhone,
+          turnstileToken: callbackToken,
         }),
       });
 
@@ -271,6 +274,7 @@ export default function FootballForAllPage() {
                         placeholder="Your phone number"
                       />
                     </div>
+                    <TurnstileWidget onToken={setCallbackToken} action="football_for_all_callback" />
                     {callbackError && (
                       <p role="alert" className="text-sm font-bold text-red-700">
                         {callbackError}

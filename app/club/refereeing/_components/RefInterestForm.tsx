@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import TurnstileWidget from '@/components/TurnstileWidget';
 
 const FIELD = 'w-full border-2 border-brand-charcoal px-3 py-2 min-h-[44px] bg-white focus:outline-none focus:border-brand-neon text-brand-charcoal';
 const LABEL = 'block text-sm font-bold text-brand-charcoal mb-1';
@@ -8,6 +9,7 @@ const LABEL = 'block text-sm font-bold text-brand-charcoal mb-1';
 export default function RefInterestForm() {
   const [state, setState] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
   const [message, setMessage] = useState('');
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -27,6 +29,7 @@ export default function RefInterestForm() {
           email: data.get('email'),
           phone: data.get('phone'),
           website: data.get('website'),
+          turnstileToken,
           details: [
             `Age / year of birth: ${data.get('age') || 'Not supplied'}`,
             `Route: ${data.get('route') || 'Not sure yet'}`,
@@ -97,6 +100,8 @@ export default function RefInterestForm() {
         <label htmlFor="ref-website">Website</label>
         <input id="ref-website" name="website" type="text" tabIndex={-1} autoComplete="off" />
       </div>
+
+      <TurnstileWidget onToken={setTurnstileToken} action="ref_interest" />
 
       <button
         type="submit"
