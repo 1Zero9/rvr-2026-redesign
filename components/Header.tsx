@@ -328,6 +328,11 @@ export default function Header() {
               onMouseEnter={() => {
                 if (closeTimer.current) clearTimeout(closeTimer.current);
               }}
+              onBlur={(e) => {
+                if (!e.currentTarget.contains(e.relatedTarget as Node | null)) {
+                  setOpenSection(null);
+                }
+              }}
             >
               {NAV_SECTIONS.map((section) => {
                 const isOpen   = openSection === section.label;
