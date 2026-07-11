@@ -10,7 +10,7 @@ const LABEL = 'block text-sm font-bold text-brand-charcoal mb-1';
 const INPUT = 'w-full border-2 border-brand-charcoal px-3 py-2 min-h-[44px] bg-white focus:outline-none focus:border-brand-neon text-brand-charcoal';
 const ACTION_BTN = 'flex-1 min-w-0 inline-flex min-h-[44px] cursor-pointer items-center justify-center gap-1.5 border-2 border-brand-navy bg-brand-navy px-2 text-xs font-bold text-brand-cream hover:bg-brand-navy/85 transition-colors disabled:opacity-50';
 
-const WATERMARK_SRC = '/river-valley-rangers-logo-pack-v2/RVR-New-White2.png';
+export const WATERMARK_SRC = '/river-valley-rangers-logo-pack-v2/RVR-New-White2.png';
 const MAX_WIDTH = 1920;
 
 export type WatermarkPosition = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
@@ -79,6 +79,7 @@ export default function ImageUploadField({
   showPreview = false,
   cropAspects = DEFAULT_ASPECTS,
   initialAspect = 16 / 9,
+  onWatermarkChange,
 }: {
   id: string;
   name: string;
@@ -90,6 +91,8 @@ export default function ImageUploadField({
   showPreview?: boolean;
   cropAspects?: AspectOption[];
   initialAspect?: number | null;
+  /** Fires whenever the watermark toggle or corner changes — lets a parent mirror it into a live preview. */
+  onWatermarkChange?: (watermark: boolean, position: WatermarkPosition) => void;
 }) {
   const [status, setStatus] = useState<'idle' | 'uploading' | 'error'>('idle');
   const [progress, setProgress] = useState(0);
@@ -161,7 +164,10 @@ export default function ImageUploadField({
       if (!blob.type.startsWith('image/')) throw new Error();
       pendingName.current = url.split('/').pop()?.split('?')[0] || 'photo.jpg';
       // Club uploads were already watermarked on the way in — avoid double-stamping
-      if (url.includes('blob.vercel-storage.com')) setWatermark(false);
+      if (url.includes('blob.vercel-storage.com')) {
+        setWatermark(false);
+        onWatermarkChange?.(false, watermarkPosition);
+      }
       setPendingFile(blob);
     } catch {
       setStatus('error');
@@ -237,7 +243,11 @@ export default function ImageUploadField({
         <input
           type="checkbox"
           checked={watermark}
-          onChange={(e) => setWatermark(e.target.checked)}
+          onChange={(e) => {
+            const next = e.target.checked;
+            setWatermark(next);
+            onWatermarkChange?.(next, watermarkPosition);
+          }}
           className="w-4 h-4 accent-brand-neon"
         />
         Add club watermark <span className="text-brand-charcoal/45">(untick for posters/graphics — photos of players should keep it)</span>
@@ -253,7 +263,10 @@ export default function ImageUploadField({
               <button
                 key={pos.value}
                 type="button"
-                onClick={() => setWatermarkPosition(pos.value)}
+                onClick={() => {
+                  setWatermarkPosition(pos.value);
+                  onWatermarkChange?.(watermark, pos.value);
+                }}
                 aria-pressed={watermarkPosition === pos.value}
                 className={`min-h-[44px] min-w-[44px] px-3 border-2 text-[10px] font-bold uppercase transition-colors ${
                   watermarkPosition === pos.value

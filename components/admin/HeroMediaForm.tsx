@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import ImageUploadField from '@/components/admin/ImageUploadField';
+import ImageUploadField, { type WatermarkPosition } from '@/components/admin/ImageUploadField';
 import FocalPointEditor from '@/components/admin/FocalPointEditor';
 import { ImageIcon, Video } from 'lucide-react';
 
@@ -39,6 +39,8 @@ export default function HeroMediaForm({
   const [focalX, setFocalX] = useState(data?.focalX ?? 50);
   const [focalY, setFocalY] = useState(data?.focalY ?? 50);
   const [motionEffect, setMotionEffect] = useState(data?.motionEffect ?? 'NONE');
+  const [watermark, setWatermark] = useState(true);
+  const [watermarkPosition, setWatermarkPosition] = useState<WatermarkPosition>('bottom-right');
 
   const isImage = type === 'IMAGE';
   const focalSourceUrl = isImage ? imageUrl : posterUrl;
@@ -94,6 +96,7 @@ export default function HeroMediaForm({
                 url={imageUrl}
                 onUrlChange={setImageUrl}
                 pathPrefix="hero-media"
+                onWatermarkChange={(on, position) => { setWatermark(on); setWatermarkPosition(position); }}
               />
               <ImageUploadField
                 id="mobileImageUrl"
@@ -138,6 +141,7 @@ export default function HeroMediaForm({
               url={posterUrl}
               onUrlChange={setPosterUrl}
               pathPrefix="hero-media"
+              onWatermarkChange={(on, position) => { setWatermark(on); setWatermarkPosition(position); }}
             />
           </div>
         )}
@@ -153,6 +157,8 @@ export default function HeroMediaForm({
             mobileUploadPath="hero-media/mobile-portrait.jpg"
             desktopAspect={16 / 9}
             desktopAspectLabel="16:9"
+            watermark={watermark}
+            watermarkPosition={watermarkPosition}
           />
         )}
         <input type="hidden" name="focalX" value={focalX} />
