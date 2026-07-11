@@ -43,7 +43,7 @@ when the checklist or final sign-off state changes.
 | Contact and enquiry forms | `/contact`, `/club/refereeing`, `/boot-room`, campaign forms | In progress | Claude pass complete: 1 P1 fix (UAT-004). Codex's UAT-002 label fix reviewed and confirmed correct. |
 | Competitions public | `/competitions/[slug]`, `/competitions/login` | Not started |  |
 | Competitions admin | `/competitions/admin` and nested admin routes | Not started |  |
-| Site admin | `/admin`, noticeboard, hero media, campaigns, announcements, registrations, approvals | Not started |  |
+| Site admin | `/admin`, noticeboard, hero media, campaigns, announcements, registrations, approvals | In progress | Claude pass complete: no bugs found. Verified `proxy.ts` + `app/admin/layout.tsx` two-layer auth gate (cookie presence at the edge, role check in layout) protects every nested route even where a page/action's own `requireAdmin()` looks like the only guard. |
 | API health and integrations | `/api/health`, fixtures, DDSL, membership calculation, contact/enquiry APIs | In progress | `/api/health` OK; feature flags OK. Membership calculation currently 503 because online payments are feature-disabled. |
 | Responsive and accessibility | 390px mobile, tablet, desktop, keyboard, reduced motion, contrast | In progress | Initial 390px and 1440px route sweep found no horizontal overflow. |
 | Build and automated checks | `npm run typecheck`, `npm test`, `npm run build`, `npm run lint` baseline | In progress | Typecheck, tests, and build pass. Lint fails on existing React/escaping/prefer-const issues. |
