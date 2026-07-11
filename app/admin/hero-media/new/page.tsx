@@ -18,6 +18,7 @@ export default async function NewHeroMediaPage() {
     await requireAdmin();
     const { prisma } = await import('@/lib/prisma');
     const type = formData.get('type') as HeroMediaType;
+    const { _max } = await prisma.heroMedia.aggregate({ _max: { sortOrder: true } });
     await prisma.heroMedia.create({
       data: {
         type,
@@ -28,7 +29,8 @@ export default async function NewHeroMediaPage() {
         focalY:         Number(formData.get('focalY') ?? 50),
         motionEffect:   formData.get('motionEffect') as HeroMotionEffect,
         isEnabled:      formData.get('isEnabled') === 'on',
-        sortOrder:      Number(formData.get('sortOrder') ?? 0),
+        // New items always join the end of the rotation — reordering happens from the list page.
+        sortOrder:      (_max.sortOrder ?? -1) + 1,
       },
     });
     revalidatePath('/');

@@ -79,6 +79,9 @@ export default function ImageUploadField({
   showPreview = false,
   cropAspects = DEFAULT_ASPECTS,
   initialAspect = 16 / 9,
+  watermarkFrom,
+  onWatermarkChange,
+  required = false,
 }: {
   id: string;
   name: string;
@@ -90,12 +93,19 @@ export default function ImageUploadField({
   showPreview?: boolean;
   cropAspects?: AspectOption[];
   initialAspect?: number | null;
+  /** When set, this field has no watermark controls of its own — it silently reuses another field's settings (e.g. Mobile Photo matching the main Photo). */
+  watermarkFrom?: { watermark: boolean; position: WatermarkPosition };
+  /** Fires whenever this field's own watermark controls change, so a paired field can mirror them via `watermarkFrom`. */
+  onWatermarkChange?: (watermark: boolean, position: WatermarkPosition) => void;
+  /** Blocks form submission until this field has a value — used for mobile crops once a main photo is set. */
+  required?: boolean;
 }) {
   const [status, setStatus] = useState<'idle' | 'uploading' | 'error'>('idle');
   const [progress, setProgress] = useState(0);
   const [errorMsg, setErrorMsg] = useState('');
-  const [watermark, setWatermark] = useState(true);
-  const [watermarkPosition, setWatermarkPosition] = useState<WatermarkPosition>('bottom-right');
+  const [watermark, setWatermarkState] = useState(true);
+  const [watermarkPosition, setWatermarkPositionState] = useState<WatermarkPosition>('bottom-right');
+  const [suppressInherited, setSuppressInherited] = useState(false);
   const [pendingFile, setPendingFile] = useState<Blob | null>(null);
   const [libraryOpen, setLibraryOpen] = useState(false);
   const [fetching, setFetching] = useState(false);
@@ -103,6 +113,18 @@ export default function ImageUploadField({
   const cameraRef = useRef<HTMLInputElement>(null);
   const pendingName = useRef('photo.jpg');
   const abortRef = useRef<AbortController | null>(null);
+
+  function setWatermark(next: boolean) {
+    setWatermarkState(next);
+    onWatermarkChange?.(next, watermarkPosition);
+  }
+  function setWatermarkPosition(next: WatermarkPosition) {
+    setWatermarkPositionState(next);
+    onWatermarkChange?.(watermark, next);
+  }
+
+  const effectiveWatermark = watermarkFrom ? watermarkFrom.watermark && !suppressInherited : watermark;
+  const effectiveWatermarkPosition = watermarkFrom ? watermarkFrom.position : watermarkPosition;
 
   async function uploadCropped(blob: Blob) {
     const originalName = pendingName.current;
@@ -113,7 +135,7 @@ export default function ImageUploadField({
     const controller = new AbortController();
     abortRef.current = controller;
     try {
-      const processed = await processImage(blob, watermark, watermarkPosition);
+      const processed = await processImage(blob, effectiveWatermark, effectiveWatermarkPosition);
       const jpgName = originalName.replace(/\.[^.]+$/, '') + '.jpg';
       const result = await upload(`${pathPrefix}/${jpgName}`, processed, {
         access: 'public',
@@ -146,6 +168,7 @@ export default function ImageUploadField({
     if (!file) return;
     setErrorMsg('');
     setStatus('idle');
+    setSuppressInherited(false);
     pendingName.current = file.name;
     setPendingFile(file);
   }
@@ -161,7 +184,10 @@ export default function ImageUploadField({
       if (!blob.type.startsWith('image/')) throw new Error();
       pendingName.current = url.split('/').pop()?.split('?')[0] || 'photo.jpg';
       // Club uploads were already watermarked on the way in — avoid double-stamping
-      if (url.includes('blob.vercel-storage.com')) setWatermark(false);
+      if (url.includes('blob.vercel-storage.com')) {
+        if (watermarkFrom) setSuppressInherited(true);
+        else setWatermark(false);
+      }
       setPendingFile(blob);
     } catch {
       setStatus('error');
@@ -173,7 +199,9 @@ export default function ImageUploadField({
 
   return (
     <div>
-      <label htmlFor={id} className={LABEL}>{label} <span className="font-normal text-brand-charcoal/50">({hint})</span></label>
+      <label htmlFor={id} className={LABEL}>
+        {label}{required && <span className="text-brand-maroon"> *</span>} <span className="font-normal text-brand-charcoal/50">({hint})</span>
+      </label>
       <input
         id={id}
         name={name}
@@ -181,6 +209,7 @@ export default function ImageUploadField({
         value={url}
         onChange={(e) => onUrlChange(e.target.value)}
         placeholder="Add a photo below or paste a URL"
+        required={required}
         className={INPUT}
       />
 
@@ -233,52 +262,62 @@ export default function ImageUploadField({
         </button>
       )}
 
-      <label className="mt-1.5 flex items-center gap-2 cursor-pointer text-xs text-brand-charcoal/70">
-        <input
-          type="checkbox"
-          checked={watermark}
-          onChange={(e) => setWatermark(e.target.checked)}
-          className="w-4 h-4 accent-brand-neon"
-        />
-        Add club watermark <span className="text-brand-charcoal/45">(untick for posters/graphics — photos of players should keep it)</span>
-      </label>
-
-      {watermark && (
-        <div className="mt-2">
-          <p className="text-[10px] font-black uppercase tracking-widest text-brand-charcoal/50 mb-1">
-            Watermark position
-          </p>
-          <div className="grid grid-cols-2 gap-1 w-fit">
-            {WATERMARK_POSITIONS.map((pos) => (
-              <button
-                key={pos.value}
-                type="button"
-                onClick={() => setWatermarkPosition(pos.value)}
-                aria-pressed={watermarkPosition === pos.value}
-                className={`min-h-[44px] min-w-[44px] px-3 border-2 text-[10px] font-bold uppercase transition-colors ${
-                  watermarkPosition === pos.value
-                    ? 'border-brand-neon bg-brand-neon text-brand-charcoal'
-                    : 'border-brand-charcoal/20 bg-white text-brand-charcoal/60'
-                }`}
-              >
-                {pos.label}
-              </button>
-            ))}
-          </div>
-          <div
-            className="relative mt-2 h-16 w-16 shrink-0 overflow-hidden border-2 border-brand-charcoal/20 bg-brand-navy"
-            aria-hidden="true"
-          >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={WATERMARK_SRC}
-              alt=""
-              className={`absolute h-5 w-5 object-contain opacity-80 ${
-                watermarkPosition.startsWith('top') ? 'top-1.5' : 'bottom-1.5'
-              } ${watermarkPosition.endsWith('left') ? 'left-1.5' : 'right-1.5'}`}
+      {watermarkFrom ? (
+        <p className="mt-1.5 text-xs text-brand-charcoal/50">
+          {watermarkFrom.watermark
+            ? `Watermark: same position as the main photo (${WATERMARK_POSITIONS.find((p) => p.value === watermarkFrom.position)?.label.toLowerCase()})`
+            : 'No watermark (matches the main photo)'}
+        </p>
+      ) : (
+        <>
+          <label className="mt-1.5 flex items-center gap-2 cursor-pointer text-xs text-brand-charcoal/70">
+            <input
+              type="checkbox"
+              checked={watermark}
+              onChange={(e) => setWatermark(e.target.checked)}
+              className="w-4 h-4 accent-brand-neon"
             />
-          </div>
-        </div>
+            Add club watermark <span className="text-brand-charcoal/45">(untick for posters/graphics — photos of players should keep it)</span>
+          </label>
+
+          {watermark && (
+            <div className="mt-2">
+              <p className="text-[10px] font-black uppercase tracking-widest text-brand-charcoal/50 mb-1">
+                Watermark position
+              </p>
+              <div className="grid grid-cols-2 gap-1 w-fit">
+                {WATERMARK_POSITIONS.map((pos) => (
+                  <button
+                    key={pos.value}
+                    type="button"
+                    onClick={() => setWatermarkPosition(pos.value)}
+                    aria-pressed={watermarkPosition === pos.value}
+                    className={`min-h-[44px] min-w-[44px] px-3 border-2 text-[10px] font-bold uppercase transition-colors ${
+                      watermarkPosition === pos.value
+                        ? 'border-brand-neon bg-brand-neon text-brand-charcoal'
+                        : 'border-brand-charcoal/20 bg-white text-brand-charcoal/60'
+                    }`}
+                  >
+                    {pos.label}
+                  </button>
+                ))}
+              </div>
+              <div
+                className="relative mt-2 h-16 w-16 shrink-0 overflow-hidden border-2 border-brand-charcoal/20 bg-brand-navy"
+                aria-hidden="true"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={WATERMARK_SRC}
+                  alt=""
+                  className={`absolute h-5 w-5 object-contain opacity-80 ${
+                    watermarkPosition.startsWith('top') ? 'top-1.5' : 'bottom-1.5'
+                  } ${watermarkPosition.endsWith('left') ? 'left-1.5' : 'right-1.5'}`}
+                />
+              </div>
+            </div>
+          )}
+        </>
       )}
 
       {status === 'uploading' && (

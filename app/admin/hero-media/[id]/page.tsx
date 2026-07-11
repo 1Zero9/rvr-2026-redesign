@@ -35,7 +35,7 @@ export default async function EditHeroMediaPage({
         focalY:         Number(formData.get('focalY') ?? 50),
         motionEffect:   formData.get('motionEffect') as HeroMotionEffect,
         isEnabled:      formData.get('isEnabled') === 'on',
-        sortOrder:      Number(formData.get('sortOrder') ?? 0),
+        // sortOrder isn't edited here — reorder from the Hero Rotation list page.
       },
     });
     revalidatePath('/');

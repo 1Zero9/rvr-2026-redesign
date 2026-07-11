@@ -98,7 +98,7 @@ export default async function Home() {
     prisma.clubMoment.findUnique({ where: { id: 'current' } }),
     prisma.heroMedia.findMany({
       where: { isEnabled: true },
-      orderBy: { sortOrder: 'asc' },
+      orderBy: [{ sortOrder: 'asc' }, { id: 'asc' }],
     }),
   ]);
   const spotlightIntervalSeconds = await getSpotlightIntervalSeconds();

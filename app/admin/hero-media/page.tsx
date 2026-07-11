@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
+import { ArrowDown, ArrowUp } from 'lucide-react';
 import { prisma } from '@/lib/prisma';
 import { requireAdmin } from '@/lib/admin/require-admin';
 import {
@@ -26,7 +27,7 @@ export default async function HeroMediaAdminPage() {
   await requireAdmin();
 
   const [items, rotation] = await Promise.all([
-    prisma.heroMedia.findMany({ orderBy: { sortOrder: 'asc' } }),
+    prisma.heroMedia.findMany({ orderBy: [{ sortOrder: 'asc' }, { id: 'asc' }] }),
     getHeroRotationSettings(),
   ]);
   const enabledCount = items.filter((i) => i.isEnabled).length;
@@ -38,6 +39,33 @@ export default async function HeroMediaAdminPage() {
     const id = formData.get('id') as string;
     const isEnabled = formData.get('isEnabled') === 'on';
     await db.heroMedia.update({ where: { id }, data: { isEnabled: !isEnabled } });
+    revalidatePath('/');
+    revalidatePath('/admin/hero-media');
+  }
+
+  async function moveHeroMedia(formData: FormData) {
+    'use server';
+    await requireAdmin();
+    const { prisma: db } = await import('@/lib/prisma');
+    const id = formData.get('id') as string;
+    const direction = formData.get('direction') as 'up' | 'down';
+    const ordered = await db.heroMedia.findMany({
+      orderBy: [{ sortOrder: 'asc' }, { id: 'asc' }],
+      select: { id: true },
+    });
+    const index = ordered.findIndex((i) => i.id === id);
+    const swapIndex = direction === 'up' ? index - 1 : index + 1;
+    if (index === -1 || swapIndex < 0 || swapIndex >= ordered.length) return;
+    // Reindex everyone to sequential values on every move — cheap at this scale, and it
+    // permanently clears any duplicate/legacy sortOrder ties instead of silently no-op'ing on them.
+    const reindexed = ordered.map((item, i) => ({ id: item.id, sortOrder: i }));
+    [reindexed[index].sortOrder, reindexed[swapIndex].sortOrder] = [
+      reindexed[swapIndex].sortOrder,
+      reindexed[index].sortOrder,
+    ];
+    await db.$transaction(
+      reindexed.map((item) => db.heroMedia.update({ where: { id: item.id }, data: { sortOrder: item.sortOrder } }))
+    );
     revalidatePath('/');
     revalidatePath('/admin/hero-media');
   }
@@ -103,13 +131,40 @@ export default async function HeroMediaAdminPage() {
           </div>
         ) : (
           <div className="space-y-3">
-            {items.map((item) => (
+            {items.map((item, index) => (
               <div
                 key={item.id}
                 className={`bg-white border-2 p-4 flex items-center gap-4 ${
                   item.isEnabled ? 'border-brand-neon' : 'border-brand-charcoal/10'
                 }`}
               >
+                <div className="flex shrink-0 flex-col gap-1">
+                  <form action={moveHeroMedia}>
+                    <input type="hidden" name="id" value={item.id} />
+                    <input type="hidden" name="direction" value="up" />
+                    <button
+                      type="submit"
+                      disabled={index === 0}
+                      aria-label="Move up"
+                      className="flex min-h-[44px] min-w-[44px] items-center justify-center border-2 border-brand-navy text-brand-navy hover:bg-brand-navy hover:text-brand-cream transition-all disabled:opacity-30 disabled:pointer-events-none"
+                    >
+                      <ArrowUp className="h-4 w-4" aria-hidden="true" />
+                    </button>
+                  </form>
+                  <form action={moveHeroMedia}>
+                    <input type="hidden" name="id" value={item.id} />
+                    <input type="hidden" name="direction" value="down" />
+                    <button
+                      type="submit"
+                      disabled={index === items.length - 1}
+                      aria-label="Move down"
+                      className="flex min-h-[44px] min-w-[44px] items-center justify-center border-2 border-brand-navy text-brand-navy hover:bg-brand-navy hover:text-brand-cream transition-all disabled:opacity-30 disabled:pointer-events-none"
+                    >
+                      <ArrowDown className="h-4 w-4" aria-hidden="true" />
+                    </button>
+                  </form>
+                </div>
+
                 <div className="h-16 w-28 shrink-0 overflow-hidden border-2 border-brand-charcoal/15 bg-brand-charcoal/5">
                   {item.type === 'IMAGE' && item.url ? (
                     // eslint-disable-next-line @next/next/no-img-element
@@ -149,7 +204,6 @@ export default async function HeroMediaAdminPage() {
                     )}
                   </div>
                   <p className="text-xs text-brand-charcoal/50 truncate font-mono">{item.url}</p>
-                  <p className="text-xs text-brand-charcoal/40 mt-0.5">Order {item.sortOrder}</p>
                 </div>
 
                 <div className="flex items-center gap-2 shrink-0">
