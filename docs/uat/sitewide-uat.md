@@ -45,7 +45,7 @@ when the checklist or final sign-off state changes.
 | Competitions admin | `/competitions/admin` and nested admin routes | Not started |  |
 | Site admin | `/admin`, noticeboard, hero media, campaigns, announcements, registrations, approvals | In progress | Claude pass complete: no bugs found. Verified `proxy.ts` + `app/admin/layout.tsx` two-layer auth gate (cookie presence at the edge, role check in layout) protects every nested route even where a page/action's own `requireAdmin()` looks like the only guard. |
 | API health and integrations | `/api/health`, fixtures, DDSL, membership calculation, contact/enquiry APIs | In progress | `/api/health` OK; feature flags OK. Membership calculation currently 503 because online payments are feature-disabled. |
-| Responsive and accessibility | 390px mobile, tablet, desktop, keyboard, reduced motion, contrast | In progress | Initial 390px and 1440px route sweep found no horizontal overflow. |
+| Responsive and accessibility | 390px mobile, tablet, desktop, keyboard, reduced motion, contrast | In progress | Initial 390px and 1440px route sweep found no horizontal overflow. Claude pass: 2 fixes (UAT-006, UAT-007). `Hero.tsx` reduced-motion handling (video, carousel, pixelate reveal, zoom animation) verified correct. |
 | Build and automated checks | `npm run typecheck`, `npm test`, `npm run build`, `npm run lint` baseline | In progress | Typecheck, tests, and build pass. Lint fails on existing React/escaping/prefer-const issues. |
 
 ## Findings
@@ -160,6 +160,47 @@ missing `/swords`, `/campaigns`(+ prefix), and `/news/` prefix checks to both
 Validation: typecheck passes.
 
 Status: Fixed by Claude, commit `d2228c1`.
+
+### UAT-006 — P2 — Desktop mega-menu can't be closed by keyboard once focus moves past it
+
+`Header.tsx`'s desktop mega-menu opened a section on hover, click, or focus,
+and closed on mouse-leave (after a 150ms grace timer) or the global Escape
+handler — but had no path to close when a keyboard user simply tabbed past
+the open panel onto the next control (Search, Pay Fees, Instagram). The
+panel stayed visually open, absolutely positioned over page content below
+the header, until the user pressed Escape or clicked elsewhere.
+
+Impact: keyboard-only users seeing a stray open dropdown floating over the
+page after tabbing through it — no dead end, but a real "content doesn't
+behave as expected" trap for non-mouse navigation.
+
+Fix: added an `onBlur` handler on the `<nav>` container that closes the open
+section only when focus leaves the entire nav (checked via
+`e.currentTarget.contains(e.relatedTarget)`), so tabbing between sections
+within the nav still works but tabbing out of it closes whatever was open.
+
+Validation: typecheck passes.
+
+Status: Fixed by Claude, commit `1537700`.
+
+### UAT-007 — P3 — Duplicate "Skip to main content" link on 42+ public pages
+
+`app/layout.tsx` (root layout, wraps every route) already renders one
+"Skip to main content" link targeting `#main-content`. `PublicPageShell.tsx`
+— used by 42+ public content pages — rendered a second, separately-styled
+skip link with the same target, so keyboard and screen-reader users on any
+of those pages hit two identical skip links before reaching the header nav.
+
+Impact: minor but real — redundant/confusing first two tab stops on most
+public pages.
+
+Fix: removed the duplicate skip link from `PublicPageShell.tsx`; the root
+layout's link already covers every route (including ones that don't use
+`PublicPageShell`, like the homepage and admin).
+
+Validation: typecheck passes.
+
+Status: Fixed by Claude, commit `1537700`.
 
 ## Sign-off
 
