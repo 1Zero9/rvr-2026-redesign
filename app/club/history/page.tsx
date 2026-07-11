@@ -5,7 +5,7 @@ import PublicPageShell from '@/components/layout/PublicPageShell';
 import PageHeroNavy from '@/components/layout/PageHeroNavy';
 
 export const metadata: Metadata = {
-  title: 'Club History | Rivervalley Rangers AFC',
+  title: 'Club History',
   description:
     'The history of Rivervalley Rangers AFC — founded in Swords in 1981, serving the community for over 40 years through youth football, senior teams, and grassroots development.',
 };

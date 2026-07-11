@@ -29,9 +29,9 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const division = KNOWN_DIVISIONS.find((d) => d.slug === slug);
-  if (!division) return { title: 'Team | Rivervalley Rangers AFC' };
+  if (!division) return { title: 'Team' };
   return {
-    title: `${division.competitionName} | Rivervalley Rangers AFC`,
+    title: division.competitionName,
     description: `Rivervalley Rangers ${division.competitionName} — fixtures, results, and league table. ${division.ageGroup} football in Swords, North Dublin, ${CLUB_SEASON.currentSeason} season.`,
     alternates: { canonical: `/teams/${slug}` },
   };

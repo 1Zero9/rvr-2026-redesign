@@ -5,7 +5,7 @@ import PublicPageShell from '@/components/layout/PublicPageShell';
 import PageHeroNavy from '@/components/layout/PageHeroNavy';
 
 export const metadata: Metadata = {
-  title: 'Player Pathway | Rivervalley Rangers AFC',
+  title: 'Player Pathway',
   description:
     'From first kick to senior football — the Rivervalley Rangers player pathway. Boys, girls, community and inclusive routes for ages 4 to 35+.',
 };
