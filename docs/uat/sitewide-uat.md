@@ -33,7 +33,7 @@ when the checklist or final sign-off state changes.
 
 | Area | Routes / Journeys | Status | Owner Notes |
 | --- | --- | --- | --- |
-| Homepage and global shell | `/`, header nav, mobile nav, search, footer | In progress | Initial desktop/mobile route render pass OK. Mobile nav open/close verified. |
+| Homepage and global shell | `/`, header nav, mobile nav, search, footer | In progress | Claude pass complete on nav/footer/search: 1 fix (UAT-005). Footer and search overlay reviewed, no other bugs. |
 | Club and community pages | `/club`, `/club/history`, `/club/anniversary`, `/community`, `/sponsorship`, `/accessibility`, `/privacy` | Not started |  |
 | Programmes | `/academy`, `/football-for-all`, `/walking-football`, `/ladies-football`, `/trials`, `/pathway`, `/get-involved` | Not started |  |
 | Teams and seniors | `/teams`, `/teams/[slug]`, `/club-teams`, `/club-teams/[slug]`, `/seniors`, senior subpages, over-35s pages | Not started |  |
@@ -130,6 +130,36 @@ included `turnstileToken` in the POST body.
 Validation: typecheck passes.
 
 Status: Fixed by Claude, commit `0e2801e`.
+
+### UAT-005 — P3 — Header nav highlights wrong/no section on several real routes
+
+`Header.tsx`'s `isNavActive` (desktop mega-menu) and `isMobileSectionActive`
+(mobile drawer) hardcode which pathnames belong to each nav section,
+independent of the actual link lists (`NAV_SECTIONS` / `MOBILE_NAV_SECTIONS`).
+The two lists had drifted:
+
+- `pathname.startsWith('/club')` also matched the unrelated `/club-teams` and
+  `/club-teams/[slug]` routes, so visiting Club Teams pages lit up the "Club"
+  nav item instead of nothing/"Play".
+- `/swords` (linked under Club → About RVR) was never checked at all.
+- `/campaigns` detail pages (`/campaigns/45th-anniversary-kit`,
+  `/campaigns/colour-fun-run`) weren't matched on desktop or mobile, and
+  desktop never matched even the `/campaigns` index.
+- `/news/[id]` article pages weren't matched on desktop or mobile (only the
+  exact `/news` index was) — meaning every individual news article, a
+  high-traffic page type, failed to highlight "Club" in the nav.
+
+Impact: cosmetic only — no broken links or blocked journeys, just incorrect
+or missing active-state highlighting in the header nav on several real pages.
+
+Fix: bounded the `/club` prefix match to `pathname === '/club' ||
+pathname.startsWith('/club/')` (excludes `/club-teams`), and added the
+missing `/swords`, `/campaigns`(+ prefix), and `/news/` prefix checks to both
+`isNavActive` and `isMobileSectionActive` so desktop and mobile agree.
+
+Validation: typecheck passes.
+
+Status: Fixed by Claude, commit `d2228c1`.
 
 ## Sign-off
 
