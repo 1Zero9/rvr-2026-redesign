@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import { requireEventAdmin } from "@/lib/competitions/auth-helpers";
+import { requireEventAdmin, requireSuperAdmin } from "@/lib/competitions/auth-helpers";
 import { CompetitionAdminShell } from "@/components/competitions/CompetitionAdminShell";
 import { GlobalRole, CompetitionState } from "@prisma/client";
 
@@ -145,6 +145,7 @@ function StateButton({ id, currentState }: { id: string; currentState: Competiti
     <form
       action={async () => {
         "use server";
+        await requireSuperAdmin();
         await prisma.competition.update({
           where: { id },
           data: { state: action.state },
