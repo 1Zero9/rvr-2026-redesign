@@ -46,7 +46,7 @@ when the checklist or final sign-off state changes.
 | Site admin | `/admin`, noticeboard, hero media, campaigns, announcements, registrations, approvals | In progress | Claude pass complete: no bugs found. Verified `proxy.ts` + `app/admin/layout.tsx` two-layer auth gate (cookie presence at the edge, role check in layout) protects every nested route even where a page/action's own `requireAdmin()` looks like the only guard. |
 | API health and integrations | `/api/health`, fixtures, DDSL, membership calculation, contact/enquiry APIs | In progress | `/api/health` OK; feature flags OK. Membership calculation currently 503 because online payments are feature-disabled. |
 | Responsive and accessibility | 390px mobile, tablet, desktop, keyboard, reduced motion, contrast | In progress | Initial 390px and 1440px route sweep found no horizontal overflow. Claude pass: 2 fixes (UAT-006, UAT-007). `Hero.tsx` reduced-motion handling (video, carousel, pixelate reveal, zoom animation) verified correct. |
-| Build and automated checks | `npm run typecheck`, `npm test`, `npm run build`, `npm run lint` baseline | In progress | Typecheck, tests, and build pass. Lint fails on existing React/escaping/prefer-const issues. |
+| Build and automated checks | `npm run typecheck`, `npm test`, `npm run build`, `npm run lint` baseline | In progress | Re-verified after all Claude fixes (commit `24d92e7`): typecheck, tests (6/6), and build pass. Lint fails on pre-existing baseline issues only. |
 
 ## Findings
 
@@ -268,5 +268,5 @@ Codex's redirect finding; no live-user impact.
 ## Sign-off
 
 - Codex: Pending
-- Claude: Pending
+- Claude: Independent pass complete across all 8 matrix areas (registration/payments, contact/enquiry, site admin, mobile nav/shell, accessibility, remaining public pages, competitions). 9 findings total (UAT-001 through UAT-009), all fixed and typecheck/test/build-clean as of commit `24d92e7`. Awaiting Codex's final review and any last findings before full sign-off.
 - User: Pending
