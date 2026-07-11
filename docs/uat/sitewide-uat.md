@@ -36,7 +36,7 @@ when the checklist or final sign-off state changes.
 | Homepage and global shell | `/`, header nav, mobile nav, search, footer | In progress | Claude pass complete on nav/footer/search: 1 fix (UAT-005). Footer and search overlay reviewed, no other bugs. |
 | Club and community pages | `/club`, `/club/history`, `/club/anniversary`, `/community`, `/sponsorship`, `/accessibility`, `/privacy` | In progress | Claude pass: no bugs found. |
 | Programmes | `/academy`, `/football-for-all`, `/walking-football`, `/ladies-football`, `/trials`, `/pathway`, `/get-involved` | In progress | Claude pass: no bugs found. |
-| Teams and seniors | `/teams`, `/teams/[slug]`, `/club-teams`, `/club-teams/[slug]`, `/seniors`, senior subpages, over-35s pages | In progress | Claude pass: 1 fix (UAT-009, wrong backlink on club-teams detail pages). |
+| Teams and seniors | `/teams`, `/teams/[slug]`, `/club-teams`, `/club-teams/[slug]`, `/seniors`, senior subpages, over-35s pages | In progress | Claude pass: 1 fix (UAT-009, downgraded to P3 — `/club-teams*` permanently redirects to `/teams` per `next.config.ts`, so the affected code is unreachable). |
 | Fixtures and matchday | `/fixtures`, `/matchday`, `/pitch-locations` | In progress | Claude pass: no bugs found. |
 | News and campaigns | `/news`, `/news/[id]`, `/campaigns`, campaign detail pages | In progress | Claude pass: no bugs found. |
 | Registration and payments | `/register`, `/pay-fees`, `/membership-calculator`, Stripe/ClubZap handoff paths | In progress | Claude pass complete: 1 fix (UAT-003). No other bugs found; ClubZap iframes to `rvrafc.ie` confirmed intentional (migration in flight). |
@@ -71,7 +71,18 @@ Actual examples:
 - `Club History | Rivervalley Rangers AFC | Rivervalley Rangers AFC`
 - `Development Academy | Rivervalley Rangers AFC | Rivervalley Rangers AFC`
 
-Status: Open for Claude/Codex review.
+Fix: removed the redundant `| Rivervalley Rangers AFC` suffix from each
+page's own `title` (`app/club/history/page.tsx`, `app/academy/page.tsx`,
+`app/ladies-football/page.tsx`, `app/pathway/page.tsx`, and the
+`generateMetadata` in `app/teams/[slug]/page.tsx`, which covers every team
+slug including `/teams/u7-boys`) — the root layout's `title.template`
+already appends the site suffix once.
+
+Validation: typecheck passes; grepped the whole `app/` tree for any other
+`title:`/`` title: `...` `` string containing the literal site name to
+confirm these were the only five affected.
+
+Status: Fixed by Claude, commit `523d822`.
 
 ### UAT-002 — P2 — Contact form fields used placeholders as accessible names
 
@@ -229,22 +240,30 @@ Validation: typecheck passes.
 
 Status: Fixed by Claude, commit `279daa3`.
 
-### UAT-009 — P2 — Club Teams detail page "All Teams" backlink points to the wrong listing
+### UAT-009 — P3 — Club Teams detail page "All Teams" backlink pointed to `/teams`, but the whole route is dead code
 
-`app/club-teams/[slug]/page.tsx`'s "← All Teams" back link pointed to
-`/teams` (the DDSL youth boys/girls fixtures listing) instead of
-`/club-teams` (the "Full Club" listing — academy/adult/community/inclusive/
-events — that this detail page actually belongs to and was reached from).
+**Correction after Codex's baseline sweep**: `next.config.ts` has a
+permanent redirect for both `/club-teams` and `/club-teams/:slug*` to
+`/teams`, so `app/club-teams/[slug]/page.tsx` (and the rest of the
+`app/club-teams` tree) is never actually reachable — Next.js redirects the
+request before that page component ever renders, the same way
+`components/Navigation.tsx` was found to be dead/unimported code in the
+mobile-nav pass. Originally filed as a P2 "wrong backlink sends users to
+the wrong listing" — that impact doesn't apply to any real visitor, since
+no real visitor can reach this page in the first place.
 
-Impact: visiting any club team's detail page and clicking "All Teams" sends
-the user to an unrelated team listing instead of back to where they came
-from.
-
-Fix: changed the link's `href` to `/club-teams`.
+Fix (harmless, low-value but not reverted): the backlink's `href` still
+changed from `/teams` to `/club-teams`, which is more internally correct
+given the page's own `CLUB_TEAMS` data/content, in case this route is ever
+un-redirected. The `/club-teams` bounding in UAT-005's `isNavActive` /
+`isMobileSectionActive` fix is similarly precautionary rather than fixing
+an active bug, since a real user's pathname can never actually be
+`/club-teams*` — but it's still correct in isolation and doesn't hurt.
 
 Validation: typecheck passes.
 
-Status: Fixed by Claude, commit `279daa3`.
+Status: Fixed by Claude (commit `279daa3`), reclassified P2 → P3 after
+Codex's redirect finding; no live-user impact.
 
 ## Sign-off
 
