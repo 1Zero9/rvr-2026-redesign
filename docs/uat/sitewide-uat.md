@@ -33,7 +33,7 @@ when the checklist or final sign-off state changes.
 
 | Area | Routes / Journeys | Status | Owner Notes |
 | --- | --- | --- | --- |
-| Homepage and global shell | `/`, header nav, mobile nav, search, footer | Not started |  |
+| Homepage and global shell | `/`, header nav, mobile nav, search, footer | In progress | Initial desktop/mobile route render pass OK. Mobile nav open/close verified. |
 | Club and community pages | `/club`, `/club/history`, `/club/anniversary`, `/community`, `/sponsorship`, `/accessibility`, `/privacy` | Not started |  |
 | Programmes | `/academy`, `/football-for-all`, `/walking-football`, `/ladies-football`, `/trials`, `/pathway`, `/get-involved` | Not started |  |
 | Teams and seniors | `/teams`, `/teams/[slug]`, `/club-teams`, `/club-teams/[slug]`, `/seniors`, senior subpages, over-35s pages | Not started |  |
@@ -44,13 +44,34 @@ when the checklist or final sign-off state changes.
 | Competitions public | `/competitions/[slug]`, `/competitions/login` | Not started |  |
 | Competitions admin | `/competitions/admin` and nested admin routes | Not started |  |
 | Site admin | `/admin`, noticeboard, hero media, campaigns, announcements, registrations, approvals | Not started |  |
-| API health and integrations | `/api/health`, fixtures, DDSL, membership calculation, contact/enquiry APIs | Not started |  |
-| Responsive and accessibility | 390px mobile, tablet, desktop, keyboard, reduced motion, contrast | Not started |  |
-| Build and automated checks | `npm run typecheck`, `npm test`, `npm run build`, `npm run lint` baseline | Not started |  |
+| API health and integrations | `/api/health`, fixtures, DDSL, membership calculation, contact/enquiry APIs | In progress | `/api/health` OK; feature flags OK. Membership calculation currently 503 because online payments are feature-disabled. |
+| Responsive and accessibility | 390px mobile, tablet, desktop, keyboard, reduced motion, contrast | In progress | Initial 390px and 1440px route sweep found no horizontal overflow. |
+| Build and automated checks | `npm run typecheck`, `npm test`, `npm run build`, `npm run lint` baseline | In progress | Typecheck, tests, and build pass. Lint fails on existing React/escaping/prefer-const issues. |
 
 ## Findings
 
-No UAT findings logged yet.
+### UAT-001 — P3 — Duplicate site name in some document titles
+
+Some pages set `metadata.title` to a string that already includes
+`Rivervalley Rangers AFC`; the root metadata template then appends
+`| Rivervalley Rangers AFC` again.
+
+Observed examples:
+
+- `/club/history`
+- `/academy`
+- `/ladies-football`
+- `/pathway`
+- `/teams/u7-boys`
+
+Expected: page title should include the page-specific title plus one site suffix.
+
+Actual examples:
+
+- `Club History | Rivervalley Rangers AFC | Rivervalley Rangers AFC`
+- `Development Academy | Rivervalley Rangers AFC | Rivervalley Rangers AFC`
+
+Status: Open for Claude/Codex review.
 
 ## Sign-off
 
