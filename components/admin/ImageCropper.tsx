@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { RotateCw, X } from 'lucide-react';
+import { RefreshCcw, RotateCw, X } from 'lucide-react';
 
 export interface AspectOption {
   label: string;
@@ -198,6 +198,13 @@ export default function ImageCropper({
     setRotation((r) => (r + 90) % 360);
   }
 
+  function resetAll() {
+    if (!imgSize) return;
+    setRotation(0);
+    setAspect(initialAspect);
+    setBox(defaultBox(imgSize, initialAspect));
+  }
+
   async function handleConfirm() {
     const img = imgRef.current;
     if (!img || !imgSize || !rotated) return;
@@ -343,14 +350,25 @@ export default function ImageCropper({
               {a.label}
             </button>
           ))}
-          <button
-            type="button"
-            onClick={rotate}
-            className="ml-auto shrink-0 flex h-10 w-10 items-center justify-center border-2 border-white/30 text-white/70 hover:border-white/60"
-            aria-label="Rotate 90 degrees"
-          >
-            <RotateCw className="h-4 w-4" aria-hidden="true" />
-          </button>
+          <div className="ml-auto flex shrink-0 gap-1.5">
+            <button
+              type="button"
+              onClick={resetAll}
+              disabled={!imgSize}
+              className="flex h-10 w-10 items-center justify-center border-2 border-white/30 text-white/70 hover:border-white/60 disabled:opacity-40"
+              aria-label="Reset crop, rotation, and aspect"
+            >
+              <RefreshCcw className="h-4 w-4" aria-hidden="true" />
+            </button>
+            <button
+              type="button"
+              onClick={rotate}
+              className="flex h-10 w-10 items-center justify-center border-2 border-white/30 text-white/70 hover:border-white/60"
+              aria-label="Rotate 90 degrees"
+            >
+              <RotateCw className="h-4 w-4" aria-hidden="true" />
+            </button>
+          </div>
         </div>
 
         {/* Actions */}

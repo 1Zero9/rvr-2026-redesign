@@ -2,7 +2,7 @@
 
 import { useRef, useState } from 'react';
 import { upload } from '@vercel/blob/client';
-import { Camera, Crop, FolderOpen, ImagePlus } from 'lucide-react';
+import { Camera, Crop, FolderOpen, ImagePlus, X } from 'lucide-react';
 import ImageCropper, { type AspectOption, DEFAULT_ASPECTS } from '@/components/admin/ImageCropper';
 import ImageLibraryModal from '@/components/admin/ImageLibraryModal';
 
@@ -13,12 +13,25 @@ const ACTION_BTN = 'flex-1 min-w-0 inline-flex min-h-[44px] cursor-pointer items
 const WATERMARK_SRC = '/river-valley-rangers-logo-pack-v2/RVR-New-White2.png';
 const MAX_WIDTH = 1920;
 
+export type WatermarkPosition = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
+
+export const WATERMARK_POSITIONS: { value: WatermarkPosition; label: string }[] = [
+  { value: 'top-left', label: 'Top left' },
+  { value: 'top-right', label: 'Top right' },
+  { value: 'bottom-left', label: 'Bottom left' },
+  { value: 'bottom-right', label: 'Bottom right' },
+];
+
 /**
  * Re-encode the photo through a canvas: caps width at 1920px, strips ALL
  * metadata (EXIF/GPS — important for photos of children), and optionally
- * stamps the club watermark bottom-right.
+ * stamps the club watermark in the given corner.
  */
-export async function processImage(file: Blob, watermark: boolean): Promise<Blob> {
+export async function processImage(
+  file: Blob,
+  watermark: boolean,
+  position: WatermarkPosition = 'bottom-right',
+): Promise<Blob> {
   const bitmap = await createImageBitmap(file);
   const scale = Math.min(1, MAX_WIDTH / bitmap.width);
   const width = Math.round(bitmap.width * scale);
@@ -39,8 +52,10 @@ export async function processImage(file: Blob, watermark: boolean): Promise<Blob
     const logoWidth = Math.round(width * 0.12);
     const logoHeight = Math.round(logoWidth * (logo.naturalHeight / logo.naturalWidth));
     const margin = Math.round(width * 0.02);
+    const x = position.endsWith('left') ? margin : width - logoWidth - margin;
+    const y = position.startsWith('top') ? margin : height - logoHeight - margin;
     ctx.globalAlpha = 0.45;
-    ctx.drawImage(logo, width - logoWidth - margin, height - logoHeight - margin, logoWidth, logoHeight);
+    ctx.drawImage(logo, x, y, logoWidth, logoHeight);
     ctx.globalAlpha = 1;
   }
 
@@ -80,12 +95,14 @@ export default function ImageUploadField({
   const [progress, setProgress] = useState(0);
   const [errorMsg, setErrorMsg] = useState('');
   const [watermark, setWatermark] = useState(true);
+  const [watermarkPosition, setWatermarkPosition] = useState<WatermarkPosition>('bottom-right');
   const [pendingFile, setPendingFile] = useState<Blob | null>(null);
   const [libraryOpen, setLibraryOpen] = useState(false);
   const [fetching, setFetching] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
   const cameraRef = useRef<HTMLInputElement>(null);
   const pendingName = useRef('photo.jpg');
+  const abortRef = useRef<AbortController | null>(null);
 
   async function uploadCropped(blob: Blob) {
     const originalName = pendingName.current;
@@ -93,21 +110,34 @@ export default function ImageUploadField({
     setStatus('uploading');
     setProgress(0);
     setErrorMsg('');
+    const controller = new AbortController();
+    abortRef.current = controller;
     try {
-      const processed = await processImage(blob, watermark);
+      const processed = await processImage(blob, watermark, watermarkPosition);
       const jpgName = originalName.replace(/\.[^.]+$/, '') + '.jpg';
       const result = await upload(`${pathPrefix}/${jpgName}`, processed, {
         access: 'public',
         handleUploadUrl: '/api/admin/blob-upload',
         contentType: 'image/jpeg',
+        abortSignal: controller.signal,
         onUploadProgress: ({ percentage }) => setProgress(Math.round(percentage)),
       });
       onUrlChange(result.url);
       setStatus('idle');
     } catch (err) {
+      if (controller.signal.aborted) {
+        setStatus('idle');
+        return;
+      }
       setStatus('error');
       setErrorMsg(err instanceof Error ? err.message : 'Upload failed');
+    } finally {
+      abortRef.current = null;
     }
+  }
+
+  function cancelUpload() {
+    abortRef.current?.abort();
   }
 
   function handleFile(file: File | undefined) {
@@ -213,19 +243,54 @@ export default function ImageUploadField({
         Add club watermark <span className="text-brand-charcoal/45">(untick for posters/graphics — photos of players should keep it)</span>
       </label>
 
+      {watermark && (
+        <div className="mt-2">
+          <p className="text-[10px] font-black uppercase tracking-widest text-brand-charcoal/50 mb-1">
+            Watermark position
+          </p>
+          <div className="grid grid-cols-2 gap-1 w-fit">
+            {WATERMARK_POSITIONS.map((pos) => (
+              <button
+                key={pos.value}
+                type="button"
+                onClick={() => setWatermarkPosition(pos.value)}
+                aria-pressed={watermarkPosition === pos.value}
+                className={`min-h-[44px] min-w-[44px] px-3 border-2 text-[10px] font-bold uppercase transition-colors ${
+                  watermarkPosition === pos.value
+                    ? 'border-brand-neon bg-brand-neon text-brand-charcoal'
+                    : 'border-brand-charcoal/20 bg-white text-brand-charcoal/60'
+                }`}
+              >
+                {pos.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
       {status === 'uploading' && (
-        <div
-          className="mt-2 h-2 w-full border border-brand-charcoal/20 bg-brand-charcoal/5"
-          role="progressbar"
-          aria-valuenow={progress}
-          aria-valuemin={0}
-          aria-valuemax={100}
-          aria-label={`Uploading ${label}`}
-        >
+        <div className="mt-2 flex items-center gap-2">
           <div
-            className="h-full bg-brand-neon transition-[width] duration-200"
-            style={{ width: `${progress}%` }}
-          />
+            className="h-2 flex-1 border border-brand-charcoal/20 bg-brand-charcoal/5"
+            role="progressbar"
+            aria-valuenow={progress}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-label={`Uploading ${label}`}
+          >
+            <div
+              className="h-full bg-brand-neon transition-[width] duration-200"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
+          <button
+            type="button"
+            onClick={cancelUpload}
+            aria-label="Cancel upload"
+            className="inline-flex min-h-[44px] min-w-[44px] shrink-0 items-center justify-center border-2 border-brand-maroon text-brand-maroon hover:bg-brand-maroon hover:text-white transition-colors"
+          >
+            <X className="h-4 w-4" aria-hidden="true" />
+          </button>
         </div>
       )}
       {status === 'error' && (

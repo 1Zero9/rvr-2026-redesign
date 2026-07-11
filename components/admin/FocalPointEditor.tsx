@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { Smartphone } from 'lucide-react';
+import { useRef, useState } from 'react';
+import { Smartphone, X } from 'lucide-react';
 import { upload } from '@vercel/blob/client';
 import { processImage } from '@/components/admin/ImageUploadField';
 import ImageCropper from '@/components/admin/ImageCropper';
@@ -35,6 +35,7 @@ export default function FocalPointEditor({
   const [mobileSource, setMobileSource] = useState<Blob | null>(null);
   const [mobileBusy, setMobileBusy] = useState<'idle' | 'opening' | 'saving'>('idle');
   const [mobileError, setMobileError] = useState('');
+  const abortRef = useRef<AbortController | null>(null);
 
   async function startMobileCrop() {
     setMobileError('');
@@ -56,6 +57,8 @@ export default function FocalPointEditor({
     setMobileSource(null);
     setMobileBusy('saving');
     setMobileError('');
+    const controller = new AbortController();
+    abortRef.current = controller;
     try {
       // No watermark — the hero was already stamped on its way in
       const processed = await processImage(blob, false);
@@ -63,13 +66,23 @@ export default function FocalPointEditor({
         access: 'public',
         handleUploadUrl: '/api/admin/blob-upload',
         contentType: 'image/jpeg',
+        abortSignal: controller.signal,
       });
       onMobileCreated?.(result.url);
     } catch (err) {
+      if (controller.signal.aborted) {
+        setMobileBusy('idle');
+        return;
+      }
       setMobileError(err instanceof Error ? err.message : 'Could not save the phone version');
     } finally {
       setMobileBusy('idle');
+      abortRef.current = null;
     }
+  }
+
+  function cancelMobileSave() {
+    abortRef.current?.abort();
   }
 
   function setFromPointer(e: React.PointerEvent<HTMLDivElement>) {
@@ -156,21 +169,33 @@ export default function FocalPointEditor({
                       ? 'Phones show your portrait version, framed exactly as you cropped it.'
                       : 'Phones will crop the hero image as shown — or frame it yourself:'}
                   </p>
-                  <button
-                    type="button"
-                    onClick={startMobileCrop}
-                    disabled={mobileBusy !== 'idle'}
-                    className="inline-flex min-h-[44px] w-full items-center justify-center gap-1.5 border-2 border-brand-navy bg-white px-2 text-xs font-bold text-brand-navy hover:bg-brand-navy hover:text-brand-cream transition-colors disabled:opacity-50"
-                  >
-                    <Smartphone className="h-4 w-4 shrink-0" aria-hidden="true" />
-                    {mobileBusy === 'opening'
-                      ? 'Opening…'
-                      : mobileBusy === 'saving'
-                        ? 'Saving…'
-                        : mobileUrl
-                          ? 'Re-crop phone version'
-                          : 'Create phone version'}
-                  </button>
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={startMobileCrop}
+                      disabled={mobileBusy !== 'idle'}
+                      className="inline-flex min-h-[44px] flex-1 items-center justify-center gap-1.5 border-2 border-brand-navy bg-white px-2 text-xs font-bold text-brand-navy hover:bg-brand-navy hover:text-brand-cream transition-colors disabled:opacity-50"
+                    >
+                      <Smartphone className="h-4 w-4 shrink-0" aria-hidden="true" />
+                      {mobileBusy === 'opening'
+                        ? 'Opening…'
+                        : mobileBusy === 'saving'
+                          ? 'Saving…'
+                          : mobileUrl
+                            ? 'Re-crop phone version'
+                            : 'Create phone version'}
+                    </button>
+                    {mobileBusy === 'saving' && (
+                      <button
+                        type="button"
+                        onClick={cancelMobileSave}
+                        aria-label="Cancel saving phone version"
+                        className="inline-flex min-h-[44px] min-w-[44px] shrink-0 items-center justify-center border-2 border-brand-maroon text-brand-maroon hover:bg-brand-maroon hover:text-white transition-colors"
+                      >
+                        <X className="h-4 w-4" aria-hidden="true" />
+                      </button>
+                    )}
+                  </div>
                   {mobileError && (
                     <p className="text-xs font-bold text-brand-maroon" role="alert">{mobileError}</p>
                   )}
