@@ -104,6 +104,9 @@ model Campaign {
   /// Featured slot in the homepage Hero background rotation, at a
   /// configurable ratio against the stock hero photos/videos, until endsAt.
   showInHero     Boolean          @default(false)
+  /// Pulsing/glowing floating badge on the homepage — for major one-off
+  /// events (e.g. the annual fundraiser). Use sparingly.
+  highlight      Boolean          @default(false)
   /// Focal point as percentages (0–100) — drives CSS object-position so the
   /// subject stays visible whatever shape each placement crops to
   focalX         Float            @default(50)

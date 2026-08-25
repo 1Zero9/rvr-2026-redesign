@@ -64,6 +64,7 @@ export default async function NewNoticePage({
         showOnHomepage: formData.get('showOnHomepage') === 'on',
         showBanner:     formData.get('showBanner') === 'on',
         showInHero:     formData.get('showInHero') === 'on',
+        highlight:      formData.get('highlight') === 'on',
         focalX:         Number(formData.get('focalX') ?? 50),
         focalY:         Number(formData.get('focalY') ?? 50),
         startsAt:       new Date(formData.get('startsAt') as string),
