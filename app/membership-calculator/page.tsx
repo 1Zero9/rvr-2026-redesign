@@ -6,8 +6,7 @@ import PublicPageShell from '@/components/layout/PublicPageShell';
 import PageHeroNavy from '@/components/layout/PageHeroNavy';
 
 type MemberRole =
-  | 'underage-ndsl'
-  | 'underage-ddsl'
+  | 'underage-boys'
   | 'underage-girls'
   | 'academy'
   | 'senior-full'
@@ -24,16 +23,17 @@ interface Member {
 interface PricingEntry {
   label: string;
   price: number;
+  monthlyPrice?: number;
   isYouth: boolean;
   siblingDiscount: boolean;
   note?: string;
 }
 
 const PRICING: Record<MemberRole, PricingEntry> = {
-  'underage-ndsl':  { label: 'Youth Boys NDSL (U8–U18)', price: 260, isYouth: true,  siblingDiscount: true  },
-  'underage-ddsl':  { label: 'Youth Boys DDSL (U8–U18)', price: 230, isYouth: true,  siblingDiscount: true,
-                      note: '+€30 payable direct to DDSL, explained at registration' },
-  'underage-girls': { label: 'Youth Girls (U8–U18)',      price: 200, isYouth: true,  siblingDiscount: true  },
+  'underage-boys':  { label: 'Schoolboys DDSL (U8–U18)', price: 240, monthlyPrice: 60, isYouth: true, siblingDiscount: true,
+                      note: 'Or 4 monthly payments of €60 · DDSL registration levy applies separately' },
+  'underage-girls': { label: 'Schoolgirls (U8–U18)',      price: 220, monthlyPrice: 55, isYouth: true, siblingDiscount: true,
+                      note: 'Or 4 monthly payments of €55' },
   'academy':        { label: 'Academy (U6 & Under)',      price: 120, isYouth: true,  siblingDiscount: false },
   'senior-full':    { label: 'Senior (Full Season)',      price: 290, isYouth: false, siblingDiscount: false,
                       note: '€110 upfront + 4 × €45 monthly, or pay in full' },
@@ -43,8 +43,10 @@ const PRICING: Record<MemberRole, PricingEntry> = {
                       note: 'Pay in full or 5 monthly instalments' },
 };
 
-const SIBLING_RATE_2ND = 160;
-const SIBLING_RATE_3RD = 110;
+const SIBLING_RATE_2ND = 170;
+const SIBLING_RATE_2ND_MONTHLY = 42.5;
+const SIBLING_RATE_3RD = 120;
+const SIBLING_RATE_3RD_MONTHLY = 30;
 
 export default function MembershipCalculatorPage() {
   const [members, setMembers] = useState<Member[]>([]);
@@ -59,7 +61,7 @@ export default function MembershipCalculatorPage() {
   }, []);
 
   const addMember = (isAdult: boolean) => {
-    const defaultRole: MemberRole = isAdult ? 'senior-full' : 'underage-ddsl';
+    const defaultRole: MemberRole = isAdult ? 'senior-full' : 'underage-boys';
     setMembers((prev) => [...prev, { id: nextId, name: `Member #${nextId}`, role: defaultRole }]);
     setNextId((n) => n + 1);
   };
@@ -69,7 +71,7 @@ export default function MembershipCalculatorPage() {
   const updateMember = (id: number, fields: Partial<Member>) =>
     setMembers((prev) => prev.map((m) => (m.id === id ? { ...m, ...fields } : m)));
 
-  // Sibling discount: sort eligible youth by price desc; 2nd → €160, 3rd+ → €110
+  // Sibling discount: sort eligible youth by price desc; 2nd → €170, 3rd+ → €120
   const calculateTotal = () => {
     const eligible = members
       .filter((m) => PRICING[m.role].siblingDiscount)
@@ -104,7 +106,7 @@ export default function MembershipCalculatorPage() {
 
   const { subtotal, finalPrice, savings, siblingApplied, siblingLines } = calculateTotal();
 
-  const YOUTH_ROLES  = (['underage-ndsl', 'underage-ddsl', 'underage-girls', 'academy'] as MemberRole[]);
+  const YOUTH_ROLES  = (['underage-boys', 'underage-girls', 'academy'] as MemberRole[]);
   const ADULT_ROLES  = (['senior-full', 'senior-half', 'junior-half', 'over35'] as MemberRole[]);
 
   return (
@@ -112,7 +114,7 @@ export default function MembershipCalculatorPage() {
       <PageHeroNavy
         eyebrow="Registration Portal"
         title="Family Membership Pricing"
-        description="Build your family group and see your applicable membership fees and sibling discounts for 2025/26."
+        description="Build your family group and see your applicable membership fees and sibling discounts for 2026/27."
       />
 
       <section className="mx-auto w-full max-w-6xl px-4 py-12 md:px-6">
@@ -300,7 +302,7 @@ export default function MembershipCalculatorPage() {
                     Sibling Discount Applied
                   </span>
                   <p className="text-[11px] text-zinc-600 font-semibold leading-snug">
-                    2nd youth player €{SIBLING_RATE_2ND} · 3rd+ youth player €{SIBLING_RATE_3RD}
+                    2nd youth player €{SIBLING_RATE_2ND} (or €{SIBLING_RATE_2ND_MONTHLY}/mo) · 3rd+ youth player €{SIBLING_RATE_3RD} (or €{SIBLING_RATE_3RD_MONTHLY}/mo)
                   </p>
                   <div className="flex items-center justify-between text-brand-green font-bold text-sm mt-1">
                     <span>You save</span>
@@ -336,13 +338,13 @@ export default function MembershipCalculatorPage() {
 
             <div className="mt-6 p-4 border-2 border-dashed border-zinc-300 rounded-xl bg-white space-y-2 text-xs">
               <span className="font-display font-bold text-brand-charcoal uppercase tracking-wider">
-                Sibling Discount Policy (2025/26)
+                Sibling Discount Policy (2026/27)
               </span>
               <p className="text-zinc-500 font-semibold leading-relaxed">
-                Applies to Youth Boys NDSL, Youth Boys DDSL, and Youth Girls players. First child pays the full category fee. Second child is €160. Third child and beyond are €110 each. Academy players are priced separately.
+                Applies to Schoolboys DDSL and Schoolgirls players. First child pays the full category fee. Second child is €170 (or €42.50/mo). Third child and beyond are €120 (or €30/mo) each. Academy players are priced separately.
               </p>
               <p className="text-zinc-400 font-semibold leading-relaxed">
-                DDSL members pay an additional €30 direct to DDSL — this is separate and will be explained at registration. Senior full-season members can pay €110 upfront + 4 × €45 monthly or in full. Over 35&apos;s can pay in full or 5 monthly instalments.
+                Schoolboys/Schoolgirls fees can be paid in full or as 4 monthly payments. A DDSL registration levy applies separately — this is explained at registration. Senior full-season members can pay €110 upfront + 4 × €45 monthly or in full. Over 35&apos;s can pay in full or 5 monthly instalments.
               </p>
             </div>
           </div>

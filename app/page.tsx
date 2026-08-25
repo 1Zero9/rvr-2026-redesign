@@ -273,7 +273,7 @@ export default async function Home() {
               <p className="font-display font-black italic text-2xl md:text-3xl uppercase text-brand-charcoal leading-tight">
                 From <span className="text-brand-green">€115</span> per half-season
               </p>
-              <p className="text-brand-muted text-sm mt-1">Academy from €120 · Sibling discounts applied automatically</p>
+              <p className="text-brand-muted text-sm mt-1">2026/27 registration: Schoolboys €240 · Schoolgirls €220 — or 4 monthly payments · Sibling discounts applied automatically</p>
             </div>
             <Link
               href="/membership-calculator"
