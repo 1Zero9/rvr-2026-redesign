@@ -71,6 +71,7 @@ export default async function NoticeboardAdminPage() {
           ...(c.showOnHomepage ? [{ label: 'Spotlight', className: 'bg-brand-green text-white' }] : []),
           ...(c.showBanner ? [{ label: 'Banner', className: 'bg-brand-neon text-brand-charcoal' }] : []),
           ...(c.showInHero ? [{ label: 'Hero', className: 'bg-brand-navy text-brand-cream' }] : []),
+          ...(c.highlight ? [{ label: '✨ Highlight', className: 'bg-white border border-brand-charcoal text-brand-charcoal' }] : []),
         ],
         editHref: `/admin/campaigns/${c.id}`,
         liveHref: `/campaigns#campaign-${c.id}`,
@@ -124,6 +125,12 @@ export default async function NoticeboardAdminPage() {
       hint: 'rotating card below the hero — campaigns + news together',
       rows: rows.filter((r) => r.live && (r.kind === 'announcement' || hasChip(r, 'Spotlight'))),
     },
+    {
+      label: 'Highlight badge',
+      href: '/',
+      hint: 'pulsing floating badge, bottom-right of every homepage visit',
+      rows: rows.filter((r) => r.live && hasChip(r, '✨ Highlight')),
+    },
   ];
 
   async function saveSpotlightInterval(formData: FormData) {
@@ -167,7 +174,7 @@ export default async function NoticeboardAdminPage() {
           <p className="mb-3 text-xs font-black uppercase tracking-wider text-brand-sky">
             Live now, by placement
           </p>
-          <div className="grid gap-3 sm:grid-cols-3">
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {placements.map((p) => (
               <div key={p.label} className="bg-brand-cream/5 border border-brand-sky/20 p-3">
                 <div className="flex items-start justify-between gap-2 mb-1.5">

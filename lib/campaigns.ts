@@ -22,3 +22,21 @@ export async function getActiveCampaigns(
     return [];
   }
 }
+
+/** The single live campaign (if any) flagged for the floating highlight badge. */
+export async function getHighlightedCampaign(): Promise<Campaign | null> {
+  const now = new Date();
+  try {
+    return await prisma.campaign.findFirst({
+      where: {
+        isPublished: true,
+        highlight: true,
+        startsAt: { lte: now },
+        OR: [{ endsAt: null }, { endsAt: { gt: now } }],
+      },
+      orderBy: { startsAt: 'desc' },
+    });
+  } catch {
+    return null;
+  }
+}

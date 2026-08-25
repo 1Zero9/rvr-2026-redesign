@@ -7,8 +7,9 @@ import InstagramFeed from '@/components/InstagramFeed';
 import PlayerPathway from '@/components/PlayerPathway';
 import Footer from '@/components/layout/Footer';
 import CampaignBanner from '@/components/CampaignBanner';
+import HighlightBadge from '@/components/HighlightBadge';
 import { prisma } from '@/lib/prisma';
-import { getActiveCampaigns } from '@/lib/campaigns';
+import { getActiveCampaigns, getHighlightedCampaign } from '@/lib/campaigns';
 import { getSpotlightIntervalSeconds, getHeroRotationSettings } from '@/lib/site-settings';
 import { getFeatureAvailability } from '@/lib/features';
 import { GraduationCap, Trophy, Users, Heart, User, Calculator, type LucideIcon } from 'lucide-react';
@@ -84,7 +85,7 @@ export default async function Home() {
 
   const now = new Date();
 
-  const [announcements, homepageCampaigns, heroCampaigns, clubMoment, heroMedia] = await Promise.all([
+  const [announcements, homepageCampaigns, heroCampaigns, clubMoment, heroMedia, highlightedCampaign] = await Promise.all([
     prisma.announcement.findMany({
       where: {
         isPublished: true,
@@ -100,6 +101,7 @@ export default async function Home() {
       where: { isEnabled: true },
       orderBy: [{ sortOrder: 'asc' }, { id: 'asc' }],
     }),
+    getHighlightedCampaign(),
   ]);
   const spotlightIntervalSeconds = await getSpotlightIntervalSeconds();
   const heroRotation = await getHeroRotationSettings();
@@ -367,6 +369,17 @@ export default async function Home() {
       </main>
 
       <Footer />
+
+      {highlightedCampaign && (
+        <HighlightBadge
+          campaign={{
+            id:       highlightedCampaign.id,
+            title:    highlightedCampaign.title,
+            ctaLabel: highlightedCampaign.ctaLabel,
+            ctaUrl:   highlightedCampaign.ctaUrl,
+          }}
+        />
+      )}
     </div>
   );
 }

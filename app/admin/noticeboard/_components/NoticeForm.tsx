@@ -35,6 +35,7 @@ export interface CampaignFormData {
   showOnHomepage: boolean;
   showBanner:     boolean;
   showInHero:     boolean;
+  highlight:      boolean;
   focalX:         number;
   focalY:         number;
   startsAt:       string;
@@ -581,6 +582,10 @@ export default function NoticeForm({
                   <label className="flex items-center gap-2 cursor-pointer min-h-[36px]">
                     <input name="showInHero" type="checkbox" defaultChecked={c?.showInHero ?? false} className="w-5 h-5 accent-brand-neon" />
                     <span className="text-sm font-bold text-brand-charcoal">Hero background <span className="font-normal text-brand-charcoal/50">(featured photo takes a turn in the top-of-page rotation until it ends — set the ratio in Hero Rotation settings)</span></span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer min-h-[36px]">
+                    <input name="highlight" type="checkbox" defaultChecked={c?.highlight ?? false} className="w-5 h-5 accent-brand-neon" />
+                    <span className="text-sm font-bold text-brand-charcoal">✨ Highlight badge <span className="font-normal text-brand-charcoal/50">(pulsing floating badge on the homepage — for major one-off events only, use sparingly)</span></span>
                   </label>
                 </div>
               </div>
