@@ -14,13 +14,7 @@ import type { SportLoMoFixture, SportLoMoStandingsTable } from './types';
 
 const SEASON     = '2025/26';
 const RVR_ID     = 87086;
-const RVR_NAME       = 'Rivervalley Rangers AFC';
 const RVR_NAME_SHORT = 'Rivervalley Rangers';
-const RVR_HOME_1 = {
-  venueId:      1001,
-  venueName:    'Rivervalley Astro Pitch',
-  venueAddress: 'Rivervalley Road, Swords, Co. Dublin',
-};
 
 // ---------------------------------------------------------------------------
 // Standings
@@ -94,99 +88,15 @@ const STANDINGS: SportLoMoStandingsTable[] = [
 const FIXTURES: SportLoMoFixture[] = [];
 
 // ---------------------------------------------------------------------------
-// Results — U12 Boys Major Saturday sample (season complete, no AJAX data)
+// Results — empty; these were 2025/26 season results and are no longer valid
+// now that the club has rolled over to the 2026/27 season (see CLUB_SEASON).
+// Do NOT repopulate this with hardcoded results — stale scores here get
+// displayed to visitors as if they were current whenever the live AJAX
+// results feed is temporarily empty (e.g. early in a new season before any
+// matches have been played). Live AJAX supplies real results once they exist.
 // ---------------------------------------------------------------------------
 
-const RESULTS: SportLoMoFixture[] = [
-  {
-    fixtureId:   8006,
-    fixtureDate: '2026-05-24',
-    fixtureTime: '10:00',
-    homeTeam:  { teamId: 87101, teamName: RVR_NAME,         clubId: RVR_ID, clubName: RVR_NAME },
-    awayTeam:  { teamId: 13001, teamName: 'Greystones AFC', clubId: 13000,  clubName: 'Greystones AFC' },
-    venue:       RVR_HOME_1,
-    competition: { competitionId: 208581, competitionName: 'DDSL U12 Boys Major Saturday' },
-    status:      'Result',
-    score:       { home: 4, away: 1 },
-  },
-  {
-    fixtureId:   8001,
-    fixtureDate: '2026-06-07',
-    fixtureTime: '10:00',
-    homeTeam:  { teamId: 24001, teamName: 'Cherry Orchard FC', clubId: 24000, clubName: 'Cherry Orchard FC' },
-    awayTeam:  { teamId: 87101, teamName: RVR_NAME,            clubId: RVR_ID, clubName: RVR_NAME },
-    venue:       { venueName: 'Cherry Orchard Park', venueAddress: 'Cherry Orchard, Dublin 10' },
-    competition: { competitionId: 208581, competitionName: 'DDSL U12 Boys Major Saturday' },
-    status:      'Result',
-    score:       { home: 3, away: 2 },
-  },
-  {
-    fixtureId:   8007,
-    fixtureDate: '2026-05-10',
-    fixtureTime: '10:00',
-    homeTeam:  { teamId: 87101, teamName: RVR_NAME,     clubId: RVR_ID, clubName: RVR_NAME },
-    awayTeam:  { teamId: 32001, teamName: 'Corduff FC', clubId: 32000,  clubName: 'Corduff FC' },
-    venue:       RVR_HOME_1,
-    competition: { competitionId: 208581, competitionName: 'DDSL U12 Boys Major Saturday' },
-    status:      'Result',
-    score:       { home: 3, away: 0 },
-  },
-  {
-    fixtureId:   8008,
-    fixtureDate: '2026-04-26',
-    fixtureTime: '11:00',
-    homeTeam:  { teamId: 27001, teamName: 'Crumlin United AFC', clubId: 27000, clubName: 'Crumlin United AFC' },
-    awayTeam:  { teamId: 87101, teamName: RVR_NAME,             clubId: RVR_ID, clubName: RVR_NAME },
-    venue:       { venueName: 'Crumlin United Park', venueAddress: 'Crumlin, Dublin 12' },
-    competition: { competitionId: 208581, competitionName: 'DDSL U12 Boys Major Saturday' },
-    status:      'Result',
-    score:       { home: 1, away: 1 },
-  },
-  {
-    fixtureId:   8009,
-    fixtureDate: '2026-04-12',
-    fixtureTime: '10:00',
-    homeTeam:  { teamId: 87101, teamName: RVR_NAME,       clubId: RVR_ID, clubName: RVR_NAME },
-    awayTeam:  { teamId: 12001, teamName: 'Belvedere FC', clubId: 12000,  clubName: 'Belvedere FC' },
-    venue:       RVR_HOME_1,
-    competition: { competitionId: 208581, competitionName: 'DDSL U12 Boys Major Saturday' },
-    status:      'Result',
-    score:       { home: 0, away: 2 },
-  },
-  {
-    fixtureId:   8010,
-    fixtureDate: '2026-03-28',
-    fixtureTime: '10:00',
-    homeTeam:  { teamId: 11001, teamName: 'Kilnamanagh AFC', clubId: 22000, clubName: 'Kilnamanagh AFC' },
-    awayTeam:  { teamId: 87101, teamName: RVR_NAME,          clubId: RVR_ID, clubName: RVR_NAME },
-    venue:       { venueName: 'Kilnamanagh Park', venueAddress: 'Kilnamanagh, Dublin 24' },
-    competition: { competitionId: 208581, competitionName: 'DDSL U12 Boys Major Saturday' },
-    status:      'Result',
-    score:       { home: 4, away: 0 },
-  },
-  {
-    fixtureId:   8011,
-    fixtureDate: '2026-03-14',
-    fixtureTime: '10:30',
-    homeTeam:  { teamId: 25001, teamName: 'Leixlip United AFC', clubId: 25000, clubName: 'Leixlip United AFC' },
-    awayTeam:  { teamId: 87101, teamName: RVR_NAME,             clubId: RVR_ID, clubName: RVR_NAME },
-    venue:       { venueName: 'Leixlip United Park', venueAddress: 'Leixlip, Co. Kildare' },
-    competition: { competitionId: 208581, competitionName: 'DDSL U12 Boys Major Saturday' },
-    status:      'Result',
-    score:       { home: 3, away: 1 },
-  },
-  {
-    fixtureId:   8012,
-    fixtureDate: '2026-02-28',
-    fixtureTime: '10:00',
-    homeTeam:  { teamId: 87101, teamName: RVR_NAME,      clubId: RVR_ID, clubName: RVR_NAME },
-    awayTeam:  { teamId: 30001, teamName: 'Bohemian FC', clubId: 30000,  clubName: 'Bohemian FC' },
-    venue:       RVR_HOME_1,
-    competition: { competitionId: 208581, competitionName: 'DDSL U12 Boys Major Saturday' },
-    status:      'Result',
-    score:       { home: 1, away: 1 },
-  },
-];
+const RESULTS: SportLoMoFixture[] = [];
 
 // ---------------------------------------------------------------------------
 // Exported bundle
