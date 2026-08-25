@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import MobileNavBar from "@/components/MobileNavBar";
 import ImageProtection from "@/components/ImageProtection";
 import { FavouritesProvider } from "@/lib/favourites/context";
@@ -176,6 +177,7 @@ export default function RootLayout({
         </FavouritesProvider>
         <ImageProtection />
         <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
