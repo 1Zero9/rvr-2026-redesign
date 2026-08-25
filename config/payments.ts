@@ -8,7 +8,7 @@ export const clubZapPaymentMap: Record<string, PaymentTarget> = {
   membership: {
     id: "membership",
     title: "Club Membership Signup",
-    targetUrl: "https://rvrafc.ie/membership_signup?iframe=1",
+    targetUrl: "https://rvrafc.ie/membership_products?iframe=1",
   },
   shop: {
     id: "shop",
