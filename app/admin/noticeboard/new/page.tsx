@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
-import NoticeForm from '../_components/NoticeForm';
+import ContentWizard from '../_components/ContentWizard';
 import { requireAdmin } from '@/lib/admin/require-admin';
 import type { CampaignAudience } from '@prisma/client';
 
@@ -45,7 +45,7 @@ export default async function NewNoticePage({
       const { pingIndexNow } = await import('@/lib/seo/indexnow');
       await pingIndexNow(['/', '/news', `/news/${created.id}`, '/sitemap.xml']);
     }
-    redirect('/admin/noticeboard');
+    redirect('/admin/content');
   }
 
   async function createCampaign(formData: FormData) {
@@ -81,7 +81,7 @@ export default async function NewNoticePage({
       const { pingIndexNow } = await import('@/lib/seo/indexnow');
       await pingIndexNow(['/', '/campaigns', '/sitemap.xml']);
     }
-    redirect('/admin/noticeboard');
+    redirect('/admin/content');
   }
 
   return (
@@ -90,18 +90,18 @@ export default async function NewNoticePage({
 
         <div className="mb-8">
           <Link
-            href="/admin/noticeboard"
+            href="/admin/content"
             className="text-sm text-brand-charcoal/50 hover:text-brand-navy transition-colors"
           >
-            ← Back to Noticeboard
+            ← Back to Content
           </Link>
           <h1 className="font-display font-black italic text-4xl uppercase text-brand-navy mt-3">
             New Notice
           </h1>
         </div>
 
-        <NoticeForm
-          initialType={initialType}
+        <ContentWizard
+          initialKind={initialType}
           newsAction={createNews}
           campaignAction={createCampaign}
         />

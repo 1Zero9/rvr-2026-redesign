@@ -29,7 +29,7 @@ export interface AdminNavItem {
 }
 
 export const SITE_NAV: AdminNavItem[] = [
-  { href: '/admin/noticeboard',   label: 'Noticeboard',   icon: Megaphone,     badge: 'ann', description: 'News and campaigns together, plus the homepage spotlight.' },
+  { href: '/admin/content',       label: 'Content',        icon: Megaphone,     badge: 'ann', description: 'News, campaigns, banners, and the homepage spotlight — all in one place.' },
   { href: '/admin/registrations', label: 'Registrations', icon: ClipboardList, badge: 'reg', description: 'Review and process player registration submissions.' },
   { href: '/admin/enquiries',     label: 'Enquiries',     icon: MessageSquare, badge: 'enq', description: 'Public contact and callback requests from the website.' },
   { href: '/admin/approvals',     label: 'Approvals',     icon: Shield,        badge: 'appr', description: 'Shirt designs and Boot Room listings awaiting a yes or no.' },

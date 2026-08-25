@@ -55,7 +55,7 @@ export default async function EditCampaignPage({
       const { pingIndexNow } = await import('@/lib/seo/indexnow');
       await pingIndexNow(['/', '/campaigns', '/sitemap.xml']);
     }
-    redirect('/admin/noticeboard');
+    redirect('/admin/content');
   }
 
   async function deleteCampaign() {
@@ -68,7 +68,7 @@ export default async function EditCampaignPage({
     revalidatePath('/news');
     const { pingIndexNow } = await import('@/lib/seo/indexnow');
     await pingIndexNow(['/', '/campaigns', '/sitemap.xml']);
-    redirect('/admin/noticeboard');
+    redirect('/admin/content');
   }
 
   const campaignData = {
@@ -97,10 +97,10 @@ export default async function EditCampaignPage({
 
         <div className="mb-8">
           <Link
-            href="/admin/noticeboard"
+            href="/admin/content"
             className="text-sm text-brand-charcoal/50 hover:text-brand-navy transition-colors"
           >
-            ← Back to Noticeboard
+            ← Back to Content
           </Link>
           <h1 className="font-display font-black italic text-4xl uppercase text-brand-navy mt-3">
             Edit Campaign
