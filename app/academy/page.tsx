@@ -13,7 +13,7 @@ import PublicPageShell from '@/components/layout/PublicPageShell';
 import PageHeroNavy from '@/components/layout/PageHeroNavy';
 
 export const metadata: Metadata = {
-  title: 'Development Academy | Rivervalley Rangers AFC',
+  title: 'Development Academy',
   description:
     'The Rivervalley Rangers Development Academy — fun Saturday football in Swords for children born 2020–2022 (ages 4–6). Over 20 years in the community.',
 };

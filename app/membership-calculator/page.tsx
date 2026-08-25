@@ -79,7 +79,7 @@ export default function MembershipCalculatorPage() {
 
     let subtotal = 0;
     let discountTotal = 0;
-    let siblingLines: { name: string; full: number; applied: number }[] = [];
+    let siblingLines: { id: number; full: number; applied: number }[] = [];
 
     eligible.forEach((m, i) => {
       const full = PRICING[m.role].price;
@@ -89,7 +89,7 @@ export default function MembershipCalculatorPage() {
       else              applied = Math.min(full, SIBLING_RATE_3RD);
       subtotal += full;
       discountTotal += applied;
-      siblingLines.push({ name: m.name, full, applied });
+      siblingLines.push({ id: m.id, full, applied });
     });
 
     const ineligibleTotal = ineligible.reduce((s, m) => s + PRICING[m.role].price, 0);
@@ -148,7 +148,7 @@ export default function MembershipCalculatorPage() {
             ) : (
               <div className="space-y-4">
                 {members.map((member) => {
-                  const siblingLine = siblingLines.find((s) => s.name === member.name);
+                  const siblingLine = siblingLines.find((s) => s.id === member.id);
                   const hasDiscount = siblingLine && siblingLine.applied < siblingLine.full;
                   return (
                     <div key={member.id} className="brutalist-card p-5 bg-white relative flex flex-col md:flex-row md:items-start justify-between gap-6 hover:shadow-brutalist transition-shadow">
@@ -268,7 +268,7 @@ export default function MembershipCalculatorPage() {
               {members.length > 0 && (
                 <div className="space-y-2">
                   {members.map((m) => {
-                    const sl = siblingLines.find((s) => s.name === m.name);
+                    const sl = siblingLines.find((s) => s.id === m.id);
                     const hasDiscount = sl && sl.applied < sl.full;
                     return (
                       <div key={m.id} className="flex items-center justify-between text-sm">

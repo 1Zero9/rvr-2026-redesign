@@ -85,6 +85,15 @@ const SEASON_OPTIONS: SeasonOption[] = [
 
 type SelectedDivisionKey = "all" | string;
 
+type ShowCount = 10 | 25 | 50 | "all";
+
+const SHOW_COUNT_OPTIONS: { value: ShowCount; label: string }[] = [
+  { value: 10, label: "Show 10" },
+  { value: 25, label: "Show 25" },
+  { value: 50, label: "Show 50" },
+  { value: "all", label: "Show all" },
+];
+
 interface DivisionOption {
   key: SelectedDivisionKey;
   label: string;
@@ -411,6 +420,7 @@ export default function MatchesPage() {
   const [historicalError, setHistoricalError] = useState("");
 
   const [selectedDivisionKey, setSelectedDivisionKey] = useState<SelectedDivisionKey>("all");
+  const [showCount, setShowCount] = useState<ShowCount>(10);
 
   const isArchived = selectedSeason === "archived";
 
@@ -486,12 +496,16 @@ export default function MatchesPage() {
   const accent = inferAccentFromDivision(selectedDivision?.competitionName ?? null);
 
   // Current-season filtered data
-  const liveMatches = useMemo(() => {
+  const allLiveMatches = useMemo(() => {
     if (!syncData || isArchived) return [];
     return [...syncData.results, ...syncData.fixtures]
       .filter((m) => teamMatchesCompetition(m, selectedDivision))
       .sort((a, b) => `${b.date} ${b.time}`.localeCompare(`${a.date} ${a.time}`));
   }, [syncData, selectedDivision, isArchived]);
+
+  const liveMatches = useMemo(() => {
+    return showCount === "all" ? allLiveMatches : allLiveMatches.slice(0, showCount);
+  }, [allLiveMatches, showCount]);
 
   const visibleTables = useMemo(() => {
     if (isArchived) {
@@ -577,7 +591,7 @@ export default function MatchesPage() {
           <div className="flex flex-col gap-4">
 
             {/* Season + division row */}
-            <div className="grid gap-3 sm:grid-cols-2">
+            <div className={`grid gap-3 ${isArchived ? "sm:grid-cols-2" : "sm:grid-cols-3"}`}>
 
               {/* Season dropdown */}
               <label
@@ -639,6 +653,40 @@ export default function MatchesPage() {
                   />
                 </span>
               </label>
+
+              {/* Fixtures/results count filter (live season only) */}
+              {!isArchived && (
+                <label
+                  className="grid gap-3 rounded-[2rem] border-4 border-white bg-brand-navy p-4"
+                  style={{ boxShadow: `6px 6px 0 ${accent}` }}
+                >
+                  <span className="font-display text-xs font-black uppercase" style={{ color: accent }}>
+                    Fixtures shown
+                  </span>
+                  <span className="relative">
+                    <select
+                      value={String(showCount)}
+                      onChange={(e) =>
+                        setShowCount(e.target.value === "all" ? "all" : (Number(e.target.value) as ShowCount))
+                      }
+                      className="min-h-14 w-full appearance-none rounded-2xl border-3 bg-brand-navy px-4 py-3 pr-12 font-display text-sm font-black uppercase text-white outline-none focus:ring-4"
+                      style={{ borderColor: accent, boxShadow: `4px 4px 0 ${accent}` }}
+                      aria-label="Number of fixtures and results to show"
+                    >
+                      {SHOW_COUNT_OPTIONS.map((opt) => (
+                        <option key={String(opt.value)} value={String(opt.value)}>
+                          {opt.label}
+                        </option>
+                      ))}
+                    </select>
+                    <ChevronDown
+                      className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2"
+                      aria-hidden="true"
+                      style={{ color: accent }}
+                    />
+                  </span>
+                </label>
+              )}
             </div>
           </div>
         </section>

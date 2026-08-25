@@ -115,17 +115,36 @@ export async function discoverCompetitionId(clubId: number): Promise<number | nu
 // can process. The short names come from the AJAX league-link text.
 //
 // Examples:
-//   "15.5 Boys Sat"  → "DDSL U15 Boys Saturday Division 5"
-//   "14.3 Girls Sun" → "DDSL U14 Girls Sunday Division 3"
-//   "10.4 Boys Sun"  → "DDSL U10 Boys Sunday Division 4"
-//   "12.5 Boys Sun"  → "DDSL U12 Boys Sunday Division 5"
+//   "15.5 Boys Sat"        → "DDSL U15 Boys Saturday Division 5"
+//   "14.3 Girls Sun"       → "DDSL U14 Girls Sunday Division 3"
+//   "10.4 Boys Sun"        → "DDSL U10 Boys Sunday Division 4"
+//   "12.5 Boys Sun"        → "DDSL U12 Boys Sunday Division 5"
+//   "12 Major Boys Sat"    → "DDSL U12 Boys Major Saturday"
+//   "13 Major 1 Boys Sat"  → "DDSL U13 Boys Major 1 Saturday"
+//   "13 Major 1 Girls (11AS) Sun" → "DDSL U13 Girls Major 1 Sunday"
 export function ddslShortToCanonical(shortName: string): string {
-  const m = shortName.trim().match(/^(\d{1,2})\.(\d+)\s+(Boys|Girls)\s+(Sat|Sun)$/i);
-  if (!m) return `DDSL ${shortName}`;
-  const [, age, div, gender, day] = m;
-  const fullDay = /^sat/i.test(day) ? 'Saturday' : 'Sunday';
-  const g = gender.charAt(0).toUpperCase() + gender.slice(1).toLowerCase();
-  return `DDSL U${age} ${g} ${fullDay} Division ${div}`;
+  const clean = shortName.trim().replace(/\s*\([^)]*\)\s*/g, ' ').replace(/\s+/g, ' ').trim();
+
+  // Numbered division format: "12.5 Boys Sun"
+  const numbered = clean.match(/^(\d{1,2})\.(\d+)\s+(Boys|Girls)\s+(Sat|Sun)$/i);
+  if (numbered) {
+    const [, age, div, gender, day] = numbered;
+    const fullDay = /^sat/i.test(day) ? 'Saturday' : 'Sunday';
+    const g = gender.charAt(0).toUpperCase() + gender.slice(1).toLowerCase();
+    return `DDSL U${age} ${g} ${fullDay} Division ${div}`;
+  }
+
+  // Top-tier "Major" format: "12 Major Boys Sat" / "13 Major 1 Boys Sat"
+  const major = clean.match(/^(\d{1,2})\s+Major(?:\s+(\d+))?\s+(Boys|Girls)\s+(Sat|Sun)$/i);
+  if (major) {
+    const [, age, tier, gender, day] = major;
+    const fullDay = /^sat/i.test(day) ? 'Saturday' : 'Sunday';
+    const g = gender.charAt(0).toUpperCase() + gender.slice(1).toLowerCase();
+    const tierLabel = tier ? `Major ${tier}` : 'Major';
+    return `DDSL U${age} ${g} ${tierLabel} ${fullDay}`;
+  }
+
+  return `DDSL ${shortName}`;
 }
 
 // Parse "Saturday, 20 June 2026" or "Monday 15 June 2026" → "2026-06-20"

@@ -5,7 +5,7 @@ import PublicPageShell from '@/components/layout/PublicPageShell';
 import PageHeroNavy from '@/components/layout/PageHeroNavy';
 
 export const metadata: Metadata = {
-  title: 'Ladies Football | Rivervalley Rangers AFC',
+  title: 'Ladies Football',
   description:
     'Ladies Football Fit at Rivervalley Rangers — Tuesdays 8pm on the Small Astro, Rivervalley Park. Get fit, have fun and learn the game. All abilities welcome.',
 };

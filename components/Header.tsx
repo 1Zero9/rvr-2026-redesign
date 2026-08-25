@@ -184,8 +184,13 @@ function isNavActive(label: string, pathname: string): boolean {
                                pathname === '/football-for-all' ||
                                pathname === '/walking-football' ||
                                pathname === '/ladies-football';
-  if (label === 'Club') return pathname.startsWith('/club') ||
+  if (label === 'Club') return pathname === '/club' ||
+                               pathname.startsWith('/club/') ||
+                               pathname === '/swords' ||
                                pathname === '/news' ||
+                               pathname.startsWith('/news/') ||
+                               pathname === '/campaigns' ||
+                               pathname.startsWith('/campaigns/') ||
                                pathname === '/get-involved' ||
                                pathname === '/sponsorship' ||
                                pathname === '/boot-room' ||
@@ -214,10 +219,13 @@ function isMobileSectionActive(section: MobileNavSection, pathname: string): boo
            pathname === '/walking-football' || pathname === '/ladies-football';
   }
   if (section.label === 'Club') {
-    return pathname.startsWith('/club') || pathname === '/news' ||
+    return pathname === '/club' || pathname.startsWith('/club/') ||
+           pathname === '/swords' ||
+           pathname === '/news' || pathname.startsWith('/news/') ||
            pathname === '/get-involved' || pathname === '/sponsorship' ||
            pathname === '/boot-room' || pathname === '/contact' ||
-           pathname === '/campaigns' || pathname === '/shop';
+           pathname === '/campaigns' || pathname.startsWith('/campaigns/') ||
+           pathname === '/shop';
   }
   return hrefMatchesPath(section.href, pathname) ||
          Boolean(section.links?.some((link) => hrefMatchesPath(link.href, pathname)));
@@ -319,6 +327,11 @@ export default function Header() {
               }}
               onMouseEnter={() => {
                 if (closeTimer.current) clearTimeout(closeTimer.current);
+              }}
+              onBlur={(e) => {
+                if (!e.currentTarget.contains(e.relatedTarget as Node | null)) {
+                  setOpenSection(null);
+                }
               }}
             >
               {NAV_SECTIONS.map((section) => {

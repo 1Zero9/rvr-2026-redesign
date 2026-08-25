@@ -29,8 +29,8 @@ interface ClubSeasonConfig {
 }
 
 export const CLUB_SEASON = {
-  currentSeason:        "2025/26",
-  registrationSeason:   "2026/27",
+  currentSeason:        "2026/27",
+  registrationSeason:   "2027/28",
   juniorAcademyAges:    "U7 – U12",
   youthCompetitiveAges: "U13 – U18",
   foundingYear:         1981,

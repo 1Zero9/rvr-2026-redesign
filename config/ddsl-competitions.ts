@@ -57,6 +57,10 @@ export const KNOWN_DIVISIONS: KnownDivision[] = [
   { sportlomoId: 208993, officialName: '11.9 Boys Sun', competitionName: 'DDSL U11 Boys Sunday Division 9', ageGroup: 'U11', slug: 'u11-boys-sunday-division-9', leagueUrl: 'https://ddsl.ie/league/208993/' },
 
   // ── U12 (competitive — mercy rule applies) ───────────────────────────────
+  // NOTE: 208581 is the FINAL 2025/26 table (RVR finished 13th/13 and were
+  // relegated). DDSL freezes old league pages after the season rolls over, so
+  // this entry is kept for historical continuity — RVR no longer play in this
+  // division in 2026/27 (see 218148 below, U13 Boys Major 1 Saturday).
   {
     sportlomoId: 208581,
     officialName: '12 MAJOR BOYS SAT',
@@ -64,7 +68,7 @@ export const KNOWN_DIVISIONS: KnownDivision[] = [
     ageGroup: 'U12',
     slug: 'u12-boys-major-saturday',
     leagueUrl: 'https://ddsl.ie/league/208581/',
-    // Team names verified against ddsl.ie/league/208581/ (17 Jun 2026).
+    // Team names verified against ddsl.ie/league/208581/ (17 Jun 2026) — final 2025/26 table.
     knownMembers: [
       'Rivervalley Rangers',
       'River Valley Rangers',
@@ -87,10 +91,56 @@ export const KNOWN_DIVISIONS: KnownDivision[] = [
   { sportlomoId: 208714, officialName: '12.8 Boys Sat',  competitionName: 'DDSL U12 Boys Saturday Division 8', ageGroup: 'U12', slug: 'u12-boys-saturday-division-8', leagueUrl: 'https://ddsl.ie/league/208714/' },
   { sportlomoId: 208699, officialName: '12.5 Boys Sun',  competitionName: 'DDSL U12 Boys Sunday Division 5',  ageGroup: 'U12', slug: 'u12-boys-sunday-division-5',  leagueUrl: 'https://ddsl.ie/league/208699/' },
   { sportlomoId: 208703, officialName: '12.9 Boys Sun',  competitionName: 'DDSL U12 Boys Sunday Division 9',  ageGroup: 'U12', slug: 'u12-boys-sunday-division-9',  leagueUrl: 'https://ddsl.ie/league/208703/' },
+  {
+    sportlomoId: 217961,
+    officialName: '12.2 Boys Sun',
+    competitionName: 'DDSL U12 Boys Sunday Division 2',
+    ageGroup: 'U12',
+    slug: 'u12-boys-sunday-division-2',
+    leagueUrl: 'https://ddsl.ie/league/217961/',
+    // 2026/27 season. Verified against ddsl.ie/league/217961/ (25 Aug 2026).
+    knownMembers: [
+      'Belvedere FC', 'River Valley Rangers', 'River Valley Rangers FC', 'Rivervalley Rangers',
+      "St Kevin's FC", 'Shankill FC', 'Swords Celtic FC', 'Clontarf Boys & Girls FC',
+      'Tallaght Town AFC', 'St Itas AFC', 'Terenure Rangers FC', "St Mochtas FC",
+    ],
+  },
   { sportlomoId: 208749, officialName: '12.1 Girls Sun', competitionName: 'DDSL U12 Girls Sunday Division 1', ageGroup: 'U12', slug: 'u12-girls-sunday-division-1', leagueUrl: 'https://ddsl.ie/league/208749/' },
   { sportlomoId: 208753, officialName: '12.5 Girls Sun', competitionName: 'DDSL U12 Girls Sunday Division 5', ageGroup: 'U12', slug: 'u12-girls-sunday-division-5', leagueUrl: 'https://ddsl.ie/league/208753/' },
 
   // ── U13 (competitive) ────────────────────────────────────────────────────
+  {
+    sportlomoId: 218148,
+    officialName: '13 Major 1 Boys Sat',
+    competitionName: 'DDSL U13 Boys Major 1 Saturday',
+    ageGroup: 'U13',
+    slug: 'u13-boys-major-1-saturday',
+    leagueUrl: 'https://ddsl.ie/league/218148/',
+    // 2026/27 season. RVR relegated from U12 Boys Major Saturday (208581) into
+    // this division. Verified against ddsl.ie/league/218148/ (25 Aug 2026).
+    knownMembers: [
+      'Cherry Orchard FC', 'Castleknock Celtic FC', 'Granada FC', 'Rosemount Mulvey FC',
+      'River Valley Rangers', 'River Valley Rangers FC', 'Rivervalley Rangers',
+      'Greystones United AFC', 'Arthur Griffith Park FC', 'Collinstown FC',
+      'Lourdes Celtic FC', 'Bohemian FC', 'Phoenix FC', 'Mount Merrion Youths FC',
+      "St Joseph's AFC",
+    ],
+  },
+  {
+    sportlomoId: 218115,
+    officialName: '13 Major 1 Girls (11AS) Sun',
+    competitionName: 'DDSL U13 Girls Major 1 Sunday',
+    ageGroup: 'U13',
+    slug: 'u13-girls-major-1-sunday',
+    leagueUrl: 'https://ddsl.ie/league/218115/',
+    // 2026/27 season. Verified against ddsl.ie/league/218115/ (25 Aug 2026).
+    knownMembers: [
+      'River Valley Rangers', 'River Valley Rangers FC', 'Rivervalley Rangers',
+      'Balbriggan FC', 'Glasnevin FC', 'Templeogue United FC', 'Killester Donnycarney FC',
+      'Hartstown / Huntstown FC', 'Newbridge Town FC', 'Leixlip United AFC',
+      'Railway Union FC', 'Ashbourne United FC', 'Cambridge FC',
+    ],
+  },
   { sportlomoId: 208857, officialName: '13.8 Boys Sat', competitionName: 'DDSL U13 Boys Saturday Division 8', ageGroup: 'U13', slug: 'u13-boys-saturday-division-8', leagueUrl: 'https://ddsl.ie/league/208857/' },
   { sportlomoId: 208862, officialName: '13.5 Boys Sun', competitionName: 'DDSL U13 Boys Sunday Division 5',  ageGroup: 'U13', slug: 'u13-boys-sunday-division-5',  leagueUrl: 'https://ddsl.ie/league/208862/' },
   { sportlomoId: 208867, officialName: '13.9 Boys Sun', competitionName: 'DDSL U13 Boys Sunday Division 9',  ageGroup: 'U13', slug: 'u13-boys-sunday-division-9',  leagueUrl: 'https://ddsl.ie/league/208867/' },
@@ -104,9 +154,54 @@ export const KNOWN_DIVISIONS: KnownDivision[] = [
 
   // ── U15 (competitive) ────────────────────────────────────────────────────
   { sportlomoId: 208885, officialName: '15.5 Boys Sat', competitionName: 'DDSL U15 Boys Saturday Division 5', ageGroup: 'U15', slug: 'u15-boys-saturday-division-5', leagueUrl: 'https://ddsl.ie/league/208885/' },
+  {
+    sportlomoId: 218106,
+    officialName: '15.1 Boys Sun',
+    competitionName: 'DDSL U15 Boys Sunday Division 1',
+    ageGroup: 'U15',
+    slug: 'u15-boys-sunday-division-1',
+    leagueUrl: 'https://ddsl.ie/league/218106/',
+    // 2026/27 season. Verified against ddsl.ie/league/218106/ (25 Aug 2026).
+    knownMembers: [
+      'Park Celtic FC', 'Cherry Orchard FC', 'Kinsealy United FC',
+      'River Valley Rangers', 'River Valley Rangers FC', 'Rivervalley Rangers',
+      'Marino AFC', "St Kevin's FC", 'Peamount United FC', 'Verona FC', 'Tallaght Town AFC',
+    ],
+  },
+  {
+    sportlomoId: 218048,
+    officialName: '15.2 Girls Sun',
+    competitionName: 'DDSL U15 Girls Sunday Division 2',
+    ageGroup: 'U15',
+    slug: 'u15-girls-sunday-division-2',
+    leagueUrl: 'https://ddsl.ie/league/218048/',
+    // 2026/27 season. Verified against ddsl.ie/league/218048/ (25 Aug 2026).
+    knownMembers: [
+      'Rosemount Mulvey FC', 'River Valley Rangers', 'River Valley Rangers FC', 'Rivervalley Rangers',
+      'Skerries Town FC', 'Donacarney Celtic FC', 'Clonee United FC', 'Malahide United FC',
+      'Rathcoole FC', 'Mount Merrion Youths FC', 'Tolka Rovers AFC', 'Railway Union FC',
+      'Tyrrelstown United FC', 'Ratoath Harps FC',
+    ],
+  },
 
   // ── U17 (competitive) — league ID TBC (not found in 207000-210200 scan)
   // { sportlomoId: ???, officialName: '17.4 Boys Sun', competitionName: 'DDSL U17 Boys Sunday Division 4', ageGroup: 'U17', slug: 'u17-boys-sunday-division-4', leagueUrl: 'https://ddsl.ie/league/???/' },
+
+  // ── U18 (competitive) — new age group for RVR in 2026/27 ────────────────
+  {
+    sportlomoId: 217886,
+    officialName: '18 Boys Sun',
+    competitionName: 'DDSL U18 Boys Sunday Division 1',
+    ageGroup: 'U18',
+    slug: 'u18-boys-sunday-division-1',
+    leagueUrl: 'https://ddsl.ie/league/217886/',
+    // 2026/27 season. Verified against ddsl.ie/league/217886/ (25 Aug 2026).
+    knownMembers: [
+      'Kilnamanagh AFC', 'Stamullen FC', 'Balbriggan FC', 'Hartstown / Huntstown FC',
+      'Dunboyne FC', 'River Valley Rangers', 'River Valley Rangers FC', 'Rivervalley Rangers',
+      'Newlands/Castle Park FC', 'Finglas United FC', 'Swords Manor FC', 'St Itas AFC',
+    ],
+  },
 ];
 
 /**
