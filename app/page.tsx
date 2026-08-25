@@ -176,7 +176,7 @@ export default async function Home() {
 
         {/* ── 2. Club Spotlight — campaigns + news in one rotating slot ────── */}
         {spotlightItems.length > 0 && (
-          <section className="py-14 bg-brand-cream border-b border-brand-navy/10">
+          <section id="club-spotlight" className="py-14 bg-brand-cream border-b border-brand-navy/10">
             <div className="max-w-6xl mx-auto px-6 mb-6">
               <p className="font-display font-black text-[10px] uppercase tracking-widest text-brand-green mb-1">
                 Happening now
