@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, refresh } from 'next/cache';
 import { ArrowDown, ArrowUp } from 'lucide-react';
 import { prisma } from '@/lib/prisma';
 import { requireAdmin } from '@/lib/admin/require-admin';
@@ -41,6 +41,7 @@ export default async function HeroMediaAdminPage() {
     await db.heroMedia.update({ where: { id }, data: { isEnabled: !isEnabled } });
     revalidatePath('/');
     revalidatePath('/admin/hero-media');
+    refresh();
   }
 
   async function moveHeroMedia(formData: FormData) {
@@ -68,6 +69,7 @@ export default async function HeroMediaAdminPage() {
     );
     revalidatePath('/');
     revalidatePath('/admin/hero-media');
+    refresh();
   }
 
   async function saveRotationSettings(formData: FormData) {
