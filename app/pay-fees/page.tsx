@@ -3,7 +3,7 @@ import Link from "next/link";
 import PublicPageShell from "@/components/layout/PublicPageShell";
 import PageHeroNavy from "@/components/layout/PageHeroNavy";
 import ClubZapCheckoutModal from "@/components/ClubZapCheckoutModal";
-import { ShieldCheck, Calculator, Info, ExternalLink } from "lucide-react";
+import { ShieldCheck, Calculator, Info, ExternalLink, Megaphone } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Pay Membership & Fees",
@@ -40,6 +40,70 @@ export default function PayFeesPage() {
       </div>
 
       <ClubZapCheckoutModal productKeys={["membership", "fees"]} />
+
+      {/* 2026/27 Underage Membership Registration */}
+      <section className="bg-white border-t-2 border-brand-navy/10">
+        <div className="max-w-3xl mx-auto px-4 py-10 sm:px-6">
+          <div className="flex items-center gap-2 mb-4">
+            <Megaphone className="h-5 w-5 text-brand-navy shrink-0" aria-hidden="true" />
+            <h2 className="font-display font-black italic text-2xl uppercase tracking-tight text-brand-charcoal">
+              2026/27 Underage Registration Now Open
+            </h2>
+          </div>
+          <p className="text-brand-charcoal/70 text-sm leading-relaxed mb-6 max-w-2xl">
+            River Valley Rangers AFC underage membership registration for the{' '}
+            <strong className="text-brand-charcoal">2026/27 season</strong> is now open through ClubZap.
+          </p>
+
+          <div className="overflow-x-auto mb-6 rounded-xl border-2 border-brand-navy/15">
+            <table className="w-full text-sm text-left">
+              <thead className="bg-brand-navy text-white">
+                <tr>
+                  <th className="px-4 py-3 font-display font-black uppercase tracking-wide text-xs">Category</th>
+                  <th className="px-4 py-3 font-display font-black uppercase tracking-wide text-xs">Paid in full</th>
+                  <th className="px-4 py-3 font-display font-black uppercase tracking-wide text-xs">Or 4 monthly payments of</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-brand-navy/10 bg-white">
+                <tr>
+                  <td className="px-4 py-3 font-semibold text-brand-charcoal">Schoolboys DDSL (U8–U18)</td>
+                  <td className="px-4 py-3 text-brand-charcoal/80">€240</td>
+                  <td className="px-4 py-3 text-brand-charcoal/80">€60</td>
+                </tr>
+                <tr>
+                  <td className="px-4 py-3 font-semibold text-brand-charcoal">Schoolgirls</td>
+                  <td className="px-4 py-3 text-brand-charcoal/80">€220</td>
+                  <td className="px-4 py-3 text-brand-charcoal/80">€55</td>
+                </tr>
+                <tr>
+                  <td className="px-4 py-3 font-semibold text-brand-charcoal">Second child</td>
+                  <td className="px-4 py-3 text-brand-charcoal/80">€170</td>
+                  <td className="px-4 py-3 text-brand-charcoal/80">€42.50</td>
+                </tr>
+                <tr>
+                  <td className="px-4 py-3 font-semibold text-brand-charcoal">Third child</td>
+                  <td className="px-4 py-3 text-brand-charcoal/80">€120</td>
+                  <td className="px-4 py-3 text-brand-charcoal/80">€30</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <p className="text-brand-charcoal/60 text-xs leading-relaxed mb-6 max-w-2xl">
+            The payment option can be selected at checkout, with monthly payments debited automatically.
+          </p>
+
+          <a
+            href="https://rvrafc.ie/membership_products"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center min-h-[48px] px-6 bg-brand-navy text-brand-neon font-display font-black italic uppercase text-sm border-3 border-brand-charcoal shadow-brutalist hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all gap-2"
+          >
+            Register for 2026/27
+            <ExternalLink className="h-4 w-4" aria-hidden="true" />
+          </a>
+        </div>
+      </section>
 
       {/* DDSL Registration info */}
       <section className="bg-brand-cream border-t-2 border-brand-navy/10">
