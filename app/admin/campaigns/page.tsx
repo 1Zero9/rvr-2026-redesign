@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation';
 
-// Campaigns are managed on the combined Noticeboard panel
+// Campaigns are managed in the Content admin
 export default function CampaignsAdminPage() {
-  redirect('/admin/noticeboard');
+  redirect('/admin/content');
 }

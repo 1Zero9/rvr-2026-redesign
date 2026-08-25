@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation';
 
-// Announcements are managed on the combined Noticeboard panel
+// Announcements are managed in the Content admin
 export default function AnnouncementsAdminPage() {
-  redirect('/admin/noticeboard');
+  redirect('/admin/content');
 }
