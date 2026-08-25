@@ -83,7 +83,7 @@ function getActiveColour(type: TeamType): string {
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-const COMPETITIVE_AGES = new Set(['U12', 'U13', 'U14', 'U15', 'U17']);
+const COMPETITIVE_AGES = new Set(['U12', 'U13', 'U14', 'U15', 'U16', 'U17', 'U18']);
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 

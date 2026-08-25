@@ -15,7 +15,7 @@ type Filter = 'ALL' | 'BOYS' | 'GIRLS' | 'SENIOR' | 'OVER35S';
 const DEVELOPMENT_AGES = new Set(['U7', 'U8', 'U9', 'U10', 'U11']);
 
 const AGE_ORDER: Record<string, number> = {
-  U7: 0, U8: 1, U9: 2, U10: 3, U11: 4, U12: 5, U13: 6, U14: 7, U15: 8, U17: 9,
+  U7: 0, U8: 1, U9: 2, U10: 3, U11: 4, U12: 5, U13: 6, U14: 7, U15: 8, U16: 9, U17: 10, U18: 11,
 };
 
 const PILLS: { id: Filter; label: string; activeClass: string }[] = [
