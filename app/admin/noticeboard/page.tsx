@@ -41,6 +41,7 @@ type NoticeRow = {
   expired: boolean;
   chips: Array<{ label: string; className: string }>;
   editHref: string;
+  liveHref: string | null;
 };
 
 export default async function NoticeboardAdminPage() {
@@ -67,10 +68,12 @@ export default async function NoticeboardAdminPage() {
         expired,
         chips: [
           { label: 'Campaign', className: 'bg-brand-charcoal text-brand-neon' },
-          ...(c.showOnHomepage ? [{ label: 'Homepage', className: 'bg-brand-green text-white' }] : []),
+          ...(c.showOnHomepage ? [{ label: 'Spotlight', className: 'bg-brand-green text-white' }] : []),
           ...(c.showBanner ? [{ label: 'Banner', className: 'bg-brand-neon text-brand-charcoal' }] : []),
+          ...(c.showInHero ? [{ label: 'Hero', className: 'bg-brand-navy text-brand-cream' }] : []),
         ],
         editHref: `/admin/campaigns/${c.id}`,
+        liveHref: `/campaigns#campaign-${c.id}`,
       };
     }),
     ...announcements.map((a): NoticeRow => {
@@ -94,11 +97,34 @@ export default async function NoticeboardAdminPage() {
           ...(a.pinned ? [{ label: 'Pinned', className: 'bg-brand-neon/40 text-brand-charcoal' }] : []),
         ],
         editHref: `/admin/announcements/${a.id}`,
+        liveHref: `/news/${a.id}`,
       };
     }),
   ].sort((x, y) => y.date.getTime() - x.date.getTime());
 
   const liveCount = rows.filter((r) => r.live).length;
+
+  const hasChip = (r: NoticeRow, label: string) => r.chips.some((ch) => ch.label === label);
+  const placements: Array<{ label: string; href: string; hint: string; rows: NoticeRow[] }> = [
+    {
+      label: 'Sitewide banner',
+      href: '/',
+      hint: 'top strip, every page — newest wins if several are live',
+      rows: rows.filter((r) => r.live && hasChip(r, 'Banner')),
+    },
+    {
+      label: 'Hero background',
+      href: '/#main-content',
+      hint: 'rotates into the top-of-homepage photo/video slot',
+      rows: rows.filter((r) => r.live && hasChip(r, 'Hero')),
+    },
+    {
+      label: 'Noticeboard spotlight',
+      href: '/#club-spotlight',
+      hint: 'rotating card below the hero — campaigns + news together',
+      rows: rows.filter((r) => r.live && (r.kind === 'announcement' || hasChip(r, 'Spotlight'))),
+    },
+  ];
 
   async function saveSpotlightInterval(formData: FormData) {
     'use server';
@@ -134,6 +160,42 @@ export default async function NoticeboardAdminPage() {
           >
             + New Notice
           </Link>
+        </div>
+
+        {/* What's actually live right now, grouped by where it shows on the site */}
+        <div className="mb-8 border-2 border-brand-navy bg-brand-navy p-4 sm:p-5">
+          <p className="mb-3 text-xs font-black uppercase tracking-wider text-brand-sky">
+            Live now, by placement
+          </p>
+          <div className="grid gap-3 sm:grid-cols-3">
+            {placements.map((p) => (
+              <div key={p.label} className="bg-brand-cream/5 border border-brand-sky/20 p-3">
+                <div className="flex items-start justify-between gap-2 mb-1.5">
+                  <p className="text-xs font-bold text-brand-cream">{p.label}</p>
+                  <a
+                    href={p.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="shrink-0 text-[10px] font-bold text-brand-neon hover:underline"
+                  >
+                    View live →
+                  </a>
+                </div>
+                <p className="text-[10px] text-brand-sky/70 mb-2">{p.hint}</p>
+                {p.rows.length === 0 ? (
+                  <p className="text-xs text-brand-sky/50 italic">Nothing live here</p>
+                ) : (
+                  <ul className="space-y-1">
+                    {p.rows.map((r) => (
+                      <li key={`${r.kind}-${r.id}`} className="text-xs text-brand-cream/90 truncate">
+                        ● {r.title}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
 
         {rows.length === 0 ? (
@@ -183,12 +245,24 @@ export default async function NoticeboardAdminPage() {
                     {r.endDate && <> → {r.endDate.toLocaleDateString('en-IE')}</>}
                   </p>
                 </div>
-                <Link
-                  href={r.editHref}
-                  className="shrink-0 min-h-[44px] px-4 flex items-center text-sm font-bold border-2 border-brand-navy text-brand-navy hover:bg-brand-navy hover:text-brand-cream transition-all"
-                >
-                  Edit
-                </Link>
+                <div className="shrink-0 flex flex-col gap-1.5 sm:flex-row sm:items-center">
+                  {r.live && r.liveHref && (
+                    <a
+                      href={r.liveHref}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="min-h-[44px] px-3 flex items-center justify-center text-xs font-bold border-2 border-brand-charcoal/20 text-brand-charcoal/60 hover:border-brand-navy hover:text-brand-navy transition-all"
+                    >
+                      View live
+                    </a>
+                  )}
+                  <Link
+                    href={r.editHref}
+                    className="min-h-[44px] px-4 flex items-center justify-center text-sm font-bold border-2 border-brand-navy text-brand-navy hover:bg-brand-navy hover:text-brand-cream transition-all"
+                  >
+                    Edit
+                  </Link>
+                </div>
               </div>
             ))}
           </div>

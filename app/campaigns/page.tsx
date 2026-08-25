@@ -45,8 +45,9 @@ export default async function CampaignsPage() {
             {campaigns.map((campaign) => (
               <Link
                 key={campaign.id}
+                id={`campaign-${campaign.id}`}
                 href={campaign.ctaUrl}
-                className="group block overflow-hidden border-3 border-brand-charcoal bg-white shadow-brutalist transition hover:translate-x-1 hover:translate-y-1 hover:shadow-none"
+                className="group block overflow-hidden border-3 border-brand-charcoal bg-white shadow-brutalist transition hover:translate-x-1 hover:translate-y-1 hover:shadow-none scroll-mt-24"
               >
                 {campaign.heroImageUrl && (
                   <div className="relative h-44 sm:h-56 overflow-hidden border-b-3 border-brand-charcoal">
