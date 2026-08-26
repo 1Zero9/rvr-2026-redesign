@@ -27,7 +27,7 @@ export default async function EditAnnouncementPage({
     await db.announcement.update({
       where: { id },
       data: {
-        title:       formData.get('title') as string,
+        title:       (formData.get('title') as string).trim(),
         category:    formData.get('category') as 'BREAKING' | 'CONGRATULATIONS' | 'COMMUNITY_NEWS' | 'IN_SYMPATHY',
         body:        formData.get('body') as string,
         imageUrl:    (formData.get('imageUrl') as string)  || null,
