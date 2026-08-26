@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/prisma';
-import NoticeForm from '@/app/admin/noticeboard/_components/NoticeForm';
+import ContentWizard from '@/app/admin/noticeboard/_components/ContentWizard';
 import { requireAdmin } from '@/lib/admin/require-admin';
 import type { CampaignAudience } from '@prisma/client';
 
@@ -108,9 +108,10 @@ export default async function EditCampaignPage({
           <p className="text-brand-charcoal/40 text-xs font-mono mt-1">{id}</p>
         </div>
 
-        <NoticeForm
-          initialType="campaign"
+        <ContentWizard
+          initialKind="campaign"
           lockType
+          newsAction={updateCampaign}
           campaignAction={updateCampaign}
           deleteAction={deleteCampaign}
           campaignData={campaignData}
