@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/prisma';
-import NoticeForm from '@/app/admin/noticeboard/_components/NoticeForm';
+import ContentWizard from '@/app/admin/noticeboard/_components/ContentWizard';
 import { requireAdmin } from '@/lib/admin/require-admin';
 
 export const metadata: Metadata = {
@@ -96,10 +96,11 @@ export default async function EditAnnouncementPage({
           <p className="text-brand-charcoal/40 text-xs font-mono mt-1">{id}</p>
         </div>
 
-        <NoticeForm
-          initialType="news"
+        <ContentWizard
+          initialKind="news"
           lockType
           newsAction={updateAnnouncement}
+          campaignAction={updateAnnouncement}
           deleteAction={deleteAnnouncement}
           newsData={newsData}
         />
