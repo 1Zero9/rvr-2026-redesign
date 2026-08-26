@@ -28,8 +28,8 @@ export default async function EditCampaignPage({
     await db.campaign.update({
       where: { id },
       data: {
-        title:          formData.get('title') as string,
-        subtitle:       (formData.get('subtitle') as string)       || null,
+        title:          (formData.get('title') as string).trim(),
+        subtitle:       (formData.get('subtitle') as string)?.trim()  || null,
         heroImageUrl:   (formData.get('heroImageUrl') as string)   || null,
         mobileImageUrl: (formData.get('mobileImageUrl') as string) || null,
         ctaLabel:       formData.get('ctaLabel') as string,

@@ -24,7 +24,7 @@ export default async function NewNoticePage({
     const { prisma } = await import('@/lib/prisma');
     const created = await prisma.announcement.create({
       data: {
-        title:       formData.get('title') as string,
+        title:       (formData.get('title') as string).trim(),
         category:    formData.get('category') as 'BREAKING' | 'CONGRATULATIONS' | 'COMMUNITY_NEWS' | 'IN_SYMPATHY',
         body:        formData.get('body') as string,
         imageUrl:    (formData.get('imageUrl') as string)  || null,
@@ -54,8 +54,8 @@ export default async function NewNoticePage({
     const { prisma } = await import('@/lib/prisma');
     const created = await prisma.campaign.create({
       data: {
-        title:          formData.get('title') as string,
-        subtitle:       (formData.get('subtitle') as string)       || null,
+        title:          (formData.get('title') as string).trim(),
+        subtitle:       (formData.get('subtitle') as string)?.trim()  || null,
         heroImageUrl:   (formData.get('heroImageUrl') as string)   || null,
         mobileImageUrl: (formData.get('mobileImageUrl') as string) || null,
         ctaLabel:       formData.get('ctaLabel') as string,
