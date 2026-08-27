@@ -30,6 +30,14 @@ export async function generateMetadata({
   const { slug } = await params;
   const division = KNOWN_DIVISIONS.find((d) => d.slug === slug);
   if (!division) return { title: 'Team' };
+  if (division.archived) {
+    return {
+      title: `${division.competitionName} (Archived)`,
+      description: `Rivervalley Rangers ${division.competitionName} — archived final table from a previous season. RVR now play in a different division.`,
+      alternates: { canonical: `/teams/${slug}` },
+      robots: { index: false, follow: true },
+    };
+  }
   return {
     title: division.competitionName,
     description: `Rivervalley Rangers ${division.competitionName} — fixtures, results, and league table. ${division.ageGroup} football in Swords, North Dublin, ${CLUB_SEASON.currentSeason} season.`,
@@ -367,7 +375,11 @@ export default async function TeamPage({
         backHref="/teams"
         backLabel="All Teams"
         title={displayName}
-        description={`${division.ageGroup} · DDSL ${CLUB_SEASON.currentSeason} Season`}
+        description={
+          division.archived
+            ? `${division.ageGroup} · Archived — final table from a previous season. RVR have moved up to a new division.`
+            : `${division.ageGroup} · DDSL ${CLUB_SEASON.currentSeason} Season`
+        }
         actions={
           <>
             <span className={`inline-block px-3 py-1 text-xs font-display font-black uppercase tracking-wider ${colours.bg} ${colours.text}`}>

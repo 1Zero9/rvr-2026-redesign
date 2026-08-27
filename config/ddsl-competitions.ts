@@ -28,6 +28,14 @@ export interface KnownDivision {
   knownMembers?: string[];
   /** Public DDSL league page URL. The sync route scrapes live standings here. */
   leagueUrl?: string;
+  /**
+   * True when RVR no longer play in this division (promoted/relegated to a
+   * new competition ID for the current season) but the entry is kept so old
+   * links/bookmarks still resolve. Archived divisions are excluded from the
+   * /teams listing, the total-teams count, and the sitemap — they only
+   * remain reachable by direct URL, clearly labelled as a past season.
+   */
+  archived?: boolean;
 }
 
 export const KNOWN_DIVISIONS: KnownDivision[] = [
@@ -68,6 +76,7 @@ export const KNOWN_DIVISIONS: KnownDivision[] = [
     ageGroup: 'U12',
     slug: 'u12-boys-major-saturday',
     leagueUrl: 'https://ddsl.ie/league/208581/',
+    archived: true,
     // Team names verified against ddsl.ie/league/208581/ (17 Jun 2026) — final 2025/26 table.
     knownMembers: [
       'Rivervalley Rangers',
