@@ -7,7 +7,8 @@ import { AFL_DIVISIONS } from '@/config/afl-competitions';
 import { CLUB_SEASON } from '@/config/club-season';
 import TeamsClient from './TeamsClient';
 
-const totalTeams = KNOWN_DIVISIONS.length + 1 + AFL_DIVISIONS.length;
+const ACTIVE_DIVISIONS = KNOWN_DIVISIONS.filter((d) => !d.archived);
+const totalTeams = ACTIVE_DIVISIONS.length + 1 + AFL_DIVISIONS.length;
 
 export const metadata: Metadata = {
   title: 'Our Teams',
@@ -91,7 +92,7 @@ export default async function TeamsPage({
       </div>
 
         <TeamsClient
-          youthDivisions={KNOWN_DIVISIONS}
+          youthDivisions={ACTIVE_DIVISIONS}
           aflDivisions={AFL_DIVISIONS}
           initialFilter={initialFilter}
         />

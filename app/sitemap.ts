@@ -88,7 +88,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority,
   }));
 
-  const teamEntries: MetadataRoute.Sitemap = KNOWN_DIVISIONS.map((d) => ({
+  const teamEntries: MetadataRoute.Sitemap = KNOWN_DIVISIONS.filter((d) => !d.archived).map((d) => ({
     url: `${SITE_URL}/teams/${d.slug}`,
     lastModified: now,
     changeFrequency: 'weekly',
